@@ -11,7 +11,7 @@
         Dim pulpit As New Zaleznosci.Pulpit(1, 1)
         pulpit.Kostki(0, 0) = kostka
         imlKostki.Images.Add(Rysuj(pulpit, konf))
-        lvKostki.Items.Add(nazwa, ix)
+        lvPulpitKostki.Items.Add(nazwa, ix)
     End Sub
 
     Private Sub UtworzListeKostek()
@@ -76,8 +76,8 @@
         RysujPulpit()
     End Sub
 
-    Private Sub lvKostki_MouseDown(sender As Object, e As MouseEventArgs) Handles lvKostki.MouseDown
-        Dim lvi As ListViewItem = lvKostki.GetItemAt(e.X, e.Y)
+    Private Sub lvKostki_MouseDown(sender As Object, e As MouseEventArgs) Handles lvPulpitKostki.MouseDown
+        Dim lvi As ListViewItem = lvPulpitKostki.GetItemAt(e.X, e.Y)
         If lvi IsNot Nothing Then
             DoDragDrop(lvi.Text, DragDropEffects.All)
         End If
@@ -86,4 +86,5 @@
     Private Sub wndKonfiguratorStacji_Resize() Handles Me.Resize
         RysujPulpit()
     End Sub
+
 End Class
