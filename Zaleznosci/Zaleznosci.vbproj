@@ -98,7 +98,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Struktura\LicznikOsi.vb" />
+    <Compile Include="Struktura\ParaLicznikowOsi.vb" />
     <Compile Include="Struktura\OdcinekToru.vb" />
     <Compile Include="Struktura\Pulpit.vb" />
   </ItemGroup>

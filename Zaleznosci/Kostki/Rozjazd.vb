@@ -3,6 +3,7 @@
     Public Property PredkoscGlowna As Integer
     Public Property PredkoscBoczna As Integer
     Public Property Numer As Integer
+    Public Property Adres As Integer
     Public Sub New(typ As TypKostki)
         MyBase.New(typ)
     End Sub

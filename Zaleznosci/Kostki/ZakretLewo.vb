@@ -1,5 +1,5 @@
 ﻿Public Class ZakretLewo
-    Inherits Kostka
+    Inherits Tor
     Public Sub New()
         MyBase.New(TypKostki.ZakretLewo)
     End Sub
