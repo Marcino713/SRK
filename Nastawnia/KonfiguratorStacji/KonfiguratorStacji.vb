@@ -5,6 +5,8 @@
 
     Private Konfiguracja As New KonfiguracjaRysowania
     Private Pulpit As New Zaleznosci.Pulpit
+    Private PoprzedniPunkt As New Point(-1, -1)
+    Private LokalizacjaPulpitu As New Point(-1, -1)
 
     Private Sub DodajKostkeDoListy(kostka As Zaleznosci.Kostka, nazwa As String, ix As Integer)
         Static Dim konf As New KonfiguracjaRysowania() With {.Skalowanie = 48, .RysujKrawedzieKostek = False}
@@ -31,16 +33,33 @@
 
     Private Sub RysujPulpit()
         Dim img As Image = pctPulpit.Image
-        pctPulpit.Image = Rysuj(Pulpit, Konfiguracja)
+        Dim obr As Image = Rysuj(Pulpit, Konfiguracja)
+        pctPulpit.Image = obr
+        pctPulpit.Size = obr.Size
         img?.Dispose()
     End Sub
 
     Private Sub mnuDodajKostki_Click() Handles mnuDodajKostki.Click
-
+        Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Dodaj)
+        If wnd.ShowDialog = DialogResult.OK Then
+            Pulpit.PowiekszPulpit(wnd.KierunekEdycji, wnd.LiczbaKostek)
+            RysujPulpit()
+        End If
     End Sub
 
     Private Sub mnuUsunKostki_Click() Handles mnuUsunKostki.Click
-
+        Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Usun)
+        If (wnd.ShowDialog = DialogResult.OK) Then
+            Try
+                If Pulpit.PomniejszPulpit(wnd.KierunekEdycji, wnd.LiczbaKostek) Then
+                    RysujPulpit()
+                Else
+                    PokazBlad("Nie udało się usunąć kostek - w wybranym zakresie usuwania pulpit nie jest pusty.")
+                End If
+            Catch ex As Exception
+                PokazBlad("Wystąpił błąd podczas usuwania kostek:" & vbCrLf & ex.Message)
+            End Try
+        End If
     End Sub
 
     Private Sub wndKonfiguratorStacji_Load() Handles Me.Load
@@ -62,18 +81,20 @@
         RysujPulpit()
     End Sub
 
-    Private Sub pctPulpit_MouseMove(sender As Object, e As MouseEventArgs) Handles pctPulpit.MouseMove
-        If e.Button = MouseButtons.Left Then
-            'Debug.Print("A")
-        End If
-    End Sub
-
-    Private Sub pctPulpit_MouseWheel(sender As Object, e As MouseEventArgs) Handles pctPulpit.MouseWheel
+    Private Sub pctPulpit_MouseWheel(sender As Object, e As MouseEventArgs) Handles pctPulpit.MouseWheel, pnlPulpit.MouseWheel
         Dim sk As Single = Konfiguracja.Skalowanie + e.Delta * SKALOWANIE_ZMIANA
         If sk < SKALOWANIE_MIN Then sk = SKALOWANIE_MIN
         If sk > SKALOWANIE_MAX Then sk = SKALOWANIE_MAX
+
         Konfiguracja.Skalowanie = sk
+        Dim poz As Point = pctPulpit.PointToClient(MousePosition)
+        Dim wspx As Double = poz.X / pctPulpit.Size.Width
+        Dim wspy As Double = poz.Y / pctPulpit.Size.Height
         RysujPulpit()
+
+        Dim nowy As New Point(CInt(wspx * pctPulpit.Width), CInt(wspy * pctPulpit.Height))
+        Dim p As Point = pctPulpit.PointToClient(MousePosition)
+        pctPulpit.Location = New Point(pctPulpit.Location.X + p.X - nowy.X, pctPulpit.Location.Y + p.Y - nowy.Y)
     End Sub
 
     Private Sub lvKostki_MouseDown(sender As Object, e As MouseEventArgs) Handles lvPulpitKostki.MouseDown
@@ -87,4 +108,32 @@
         RysujPulpit()
     End Sub
 
+    Private Sub pnlPulpit_MouseMove(sender As Object, e As MouseEventArgs) Handles pnlPulpit.MouseMove, pctPulpit.MouseMove
+        If e.Button = MouseButtons.Left Then
+            If PoprzedniPunkt.X <> -1 Then
+                Dim zm As Point = pnlPulpit.PointToClient(MousePosition)
+                Dim zmX As Integer = zm.X - PoprzedniPunkt.X
+                Dim zmY As Integer = zm.Y - PoprzedniPunkt.Y
+                pctPulpit.Location = New Point(LokalizacjaPulpitu.X + zmX, LokalizacjaPulpitu.Y + zmY)
+            End If
+        End If
+    End Sub
+
+    Private Sub pnlPulpit_MouseUp() Handles pnlPulpit.MouseUp, pctPulpit.MouseUp
+        PoprzedniPunkt.X = -1
+        PoprzedniPunkt.Y = -1
+    End Sub
+
+    Private Sub pnlPulpit_MouseDown(sender As Object, e As MouseEventArgs) Handles pnlPulpit.MouseDown, pctPulpit.MouseDown
+        PoprzedniPunkt = pnlPulpit.PointToClient(MousePosition)
+        LokalizacjaPulpitu.X = pctPulpit.Location.X
+        LokalizacjaPulpitu.Y = pctPulpit.Location.Y
+    End Sub
+
+    Private Sub mnuNazwa_Click() Handles mnuNazwa.Click
+        Dim wnd As New wndNazwaStacji(Pulpit.Nazwa)
+        If wnd.ShowDialog = DialogResult.OK Then
+            Pulpit.Nazwa = wnd.Nazwa
+        End If
+    End Sub
 End Class

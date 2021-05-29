@@ -37,6 +37,57 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaPulpit = New System.Windows.Forms.SplitContainer()
         Me.lvPulpitKostki = New System.Windows.Forms.ListView()
         Me.imlKostki = New System.Windows.Forms.ImageList(Me.components)
+        Me.pnlKonfRozjazd = New System.Windows.Forms.Panel()
+        Me.GroupBox3 = New System.Windows.Forms.GroupBox()
+        Me.cboKonfRozjazdBok2 = New System.Windows.Forms.ComboBox()
+        Me.cboKonfRozjazdBok1 = New System.Windows.Forms.ComboBox()
+        Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.rbKonfRozjazdBok2Plus = New System.Windows.Forms.RadioButton()
+        Me.rbKonfRozjazdBok2Minus = New System.Windows.Forms.RadioButton()
+        Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.rbKonfRozjazdBok1Plus = New System.Windows.Forms.RadioButton()
+        Me.rbKonfRozjazdBok1Minus = New System.Windows.Forms.RadioButton()
+        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.rbKonfRozjazdWprost2Plus = New System.Windows.Forms.RadioButton()
+        Me.rbKonfRozjazdWprost2Minus = New System.Windows.Forms.RadioButton()
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.rbKonfRozjazdWprost1Plus = New System.Windows.Forms.RadioButton()
+        Me.rbKonfRozjazdWprost1Minus = New System.Windows.Forms.RadioButton()
+        Me.cboKonfRozjazdWprost2 = New System.Windows.Forms.ComboBox()
+        Me.cboKonfRozjazdWprost1 = New System.Windows.Forms.ComboBox()
+        Me.txtKonfRozjazdPredkoscBoczna = New System.Windows.Forms.TextBox()
+        Me.txtKonfRozjazdPredkZasad = New System.Windows.Forms.TextBox()
+        Me.txtKonfRozjazdNazwa = New System.Windows.Forms.TextBox()
+        Me.txtKonfRozjazdAdres = New System.Windows.Forms.TextBox()
+        Me.Label16 = New System.Windows.Forms.Label()
+        Me.Label15 = New System.Windows.Forms.Label()
+        Me.Label14 = New System.Windows.Forms.Label()
+        Me.Label13 = New System.Windows.Forms.Label()
+        Me.pnlKonfTor = New System.Windows.Forms.Panel()
+        Me.txtKonfTorPredkosc = New System.Windows.Forms.TextBox()
+        Me.Label12 = New System.Windows.Forms.Label()
+        Me.pnlKonfSygn = New System.Windows.Forms.Panel()
+        Me.pnlKonfSygnSwiatla = New System.Windows.Forms.Panel()
+        Me.Label20 = New System.Windows.Forms.Label()
+        Me.cbKonfSygnPomPas = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnZielPas = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnBiale = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnPomDol = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnCzer = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnPomGor = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnZiel = New System.Windows.Forms.CheckBox()
+        Me.cboKonfSygnOdcinekNast = New System.Windows.Forms.ComboBox()
+        Me.txtKonfSygnNazwa = New System.Windows.Forms.TextBox()
+        Me.txtKonfSygnAdres = New System.Windows.Forms.TextBox()
+        Me.Label19 = New System.Windows.Forms.Label()
+        Me.Label18 = New System.Windows.Forms.Label()
+        Me.Label17 = New System.Windows.Forms.Label()
+        Me.pnlKonfPrzycisk = New System.Windows.Forms.Panel()
+        Me.cboKonfPrzyciskSygnalizator = New System.Windows.Forms.ComboBox()
+        Me.cboKonfPrzyciskTyp = New System.Windows.Forms.ComboBox()
+        Me.Label22 = New System.Windows.Forms.Label()
+        Me.Label21 = New System.Windows.Forms.Label()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
         Me.splKartaTory = New System.Windows.Forms.SplitContainer()
         Me.lvTory = New System.Windows.Forms.ListView()
@@ -69,39 +120,6 @@ Partial Class wndKonfiguratorStacji
         Me.Label11 = New System.Windows.Forms.Label()
         Me.Label9 = New System.Windows.Forms.Label()
         Me.Label8 = New System.Windows.Forms.Label()
-        Me.pnlKonfTor = New System.Windows.Forms.Panel()
-        Me.Label12 = New System.Windows.Forms.Label()
-        Me.txtKonfTorPredkosc = New System.Windows.Forms.TextBox()
-        Me.pnlKonfRozjazd = New System.Windows.Forms.Panel()
-        Me.Label13 = New System.Windows.Forms.Label()
-        Me.Label14 = New System.Windows.Forms.Label()
-        Me.Label15 = New System.Windows.Forms.Label()
-        Me.Label16 = New System.Windows.Forms.Label()
-        Me.txtKonfRozjazdAdres = New System.Windows.Forms.TextBox()
-        Me.txtKonfRozjazdNazwa = New System.Windows.Forms.TextBox()
-        Me.txtKonfRozjazdPredkZasad = New System.Windows.Forms.TextBox()
-        Me.txtKonfRozjazdPredkoscBoczna = New System.Windows.Forms.TextBox()
-        Me.pnlKonfSygn = New System.Windows.Forms.Panel()
-        Me.Label17 = New System.Windows.Forms.Label()
-        Me.Label18 = New System.Windows.Forms.Label()
-        Me.Label19 = New System.Windows.Forms.Label()
-        Me.txtKonfSygnAdres = New System.Windows.Forms.TextBox()
-        Me.txtKonfSygnNazwa = New System.Windows.Forms.TextBox()
-        Me.cboKonfSygnOdcinekNast = New System.Windows.Forms.ComboBox()
-        Me.pnlKonfSygnSwiatla = New System.Windows.Forms.Panel()
-        Me.cbKonfSygnZiel = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnPomGor = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnCzer = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnPomDol = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnBiale = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnZielPas = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnPomPas = New System.Windows.Forms.CheckBox()
-        Me.Label20 = New System.Windows.Forms.Label()
-        Me.pnlKonfPrzycisk = New System.Windows.Forms.Panel()
-        Me.Label21 = New System.Windows.Forms.Label()
-        Me.Label22 = New System.Windows.Forms.Label()
-        Me.cboKonfPrzyciskTyp = New System.Windows.Forms.ComboBox()
-        Me.cboKonfPrzyciskSygnalizator = New System.Windows.Forms.ComboBox()
         Me.mnuMenu.SuspendLayout()
         CType(Me.pctPulpit, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -115,6 +133,17 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaPulpit.Panel1.SuspendLayout()
         Me.splKartaPulpit.Panel2.SuspendLayout()
         Me.splKartaPulpit.SuspendLayout()
+        Me.pnlKonfRozjazd.SuspendLayout()
+        Me.GroupBox3.SuspendLayout()
+        Me.Panel4.SuspendLayout()
+        Me.Panel3.SuspendLayout()
+        Me.GroupBox2.SuspendLayout()
+        Me.Panel2.SuspendLayout()
+        Me.Panel1.SuspendLayout()
+        Me.pnlKonfTor.SuspendLayout()
+        Me.pnlKonfSygn.SuspendLayout()
+        Me.pnlKonfSygnSwiatla.SuspendLayout()
+        Me.pnlKonfPrzycisk.SuspendLayout()
         Me.TabPage2.SuspendLayout()
         CType(Me.splKartaTory, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splKartaTory.Panel1.SuspendLayout()
@@ -127,11 +156,6 @@ Partial Class wndKonfiguratorStacji
         Me.splLiczniki.Panel2.SuspendLayout()
         Me.splLiczniki.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
-        Me.pnlKonfTor.SuspendLayout()
-        Me.pnlKonfRozjazd.SuspendLayout()
-        Me.pnlKonfSygn.SuspendLayout()
-        Me.pnlKonfSygnSwiatla.SuspendLayout()
-        Me.pnlKonfPrzycisk.SuspendLayout()
         Me.SuspendLayout()
         '
         'mnuMenu
@@ -206,6 +230,7 @@ Partial Class wndKonfiguratorStacji
         '
         Me.pnlPulpit.AllowDrop = True
         Me.pnlPulpit.Controls.Add(Me.pctPulpit)
+        Me.pnlPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
         Me.pnlPulpit.Dock = System.Windows.Forms.DockStyle.Fill
         Me.pnlPulpit.Location = New System.Drawing.Point(0, 0)
         Me.pnlPulpit.Name = "pnlPulpit"
@@ -248,10 +273,10 @@ Partial Class wndKonfiguratorStacji
         '
         'splKartaPulpit.Panel2
         '
-        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfPrzycisk)
-        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygn)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfRozjazd)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfTor)
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygn)
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfPrzycisk)
         Me.splKartaPulpit.Size = New System.Drawing.Size(200, 638)
         Me.splKartaPulpit.SplitterDistance = 319
         Me.splKartaPulpit.TabIndex = 1
@@ -273,6 +298,541 @@ Partial Class wndKonfiguratorStacji
         Me.imlKostki.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit
         Me.imlKostki.ImageSize = New System.Drawing.Size(48, 48)
         Me.imlKostki.TransparentColor = System.Drawing.Color.Transparent
+        '
+        'pnlKonfRozjazd
+        '
+        Me.pnlKonfRozjazd.Controls.Add(Me.GroupBox3)
+        Me.pnlKonfRozjazd.Controls.Add(Me.GroupBox2)
+        Me.pnlKonfRozjazd.Controls.Add(Me.txtKonfRozjazdPredkoscBoczna)
+        Me.pnlKonfRozjazd.Controls.Add(Me.txtKonfRozjazdPredkZasad)
+        Me.pnlKonfRozjazd.Controls.Add(Me.txtKonfRozjazdNazwa)
+        Me.pnlKonfRozjazd.Controls.Add(Me.txtKonfRozjazdAdres)
+        Me.pnlKonfRozjazd.Controls.Add(Me.Label16)
+        Me.pnlKonfRozjazd.Controls.Add(Me.Label15)
+        Me.pnlKonfRozjazd.Controls.Add(Me.Label14)
+        Me.pnlKonfRozjazd.Controls.Add(Me.Label13)
+        Me.pnlKonfRozjazd.Location = New System.Drawing.Point(13, 50)
+        Me.pnlKonfRozjazd.Name = "pnlKonfRozjazd"
+        Me.pnlKonfRozjazd.Size = New System.Drawing.Size(260, 337)
+        Me.pnlKonfRozjazd.TabIndex = 1
+        '
+        'GroupBox3
+        '
+        Me.GroupBox3.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox3.Controls.Add(Me.cboKonfRozjazdBok2)
+        Me.GroupBox3.Controls.Add(Me.cboKonfRozjazdBok1)
+        Me.GroupBox3.Controls.Add(Me.Panel4)
+        Me.GroupBox3.Controls.Add(Me.Panel3)
+        Me.GroupBox3.Location = New System.Drawing.Point(6, 242)
+        Me.GroupBox3.Name = "GroupBox3"
+        Me.GroupBox3.Size = New System.Drawing.Size(251, 80)
+        Me.GroupBox3.TabIndex = 9
+        Me.GroupBox3.TabStop = False
+        Me.GroupBox3.Text = "Jeśli na bok, ustaw rozjazdy:"
+        '
+        'cboKonfRozjazdBok2
+        '
+        Me.cboKonfRozjazdBok2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfRozjazdBok2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfRozjazdBok2.FormattingEnabled = True
+        Me.cboKonfRozjazdBok2.Location = New System.Drawing.Point(6, 47)
+        Me.cboKonfRozjazdBok2.Name = "cboKonfRozjazdBok2"
+        Me.cboKonfRozjazdBok2.Size = New System.Drawing.Size(168, 21)
+        Me.cboKonfRozjazdBok2.TabIndex = 11
+        '
+        'cboKonfRozjazdBok1
+        '
+        Me.cboKonfRozjazdBok1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfRozjazdBok1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfRozjazdBok1.FormattingEnabled = True
+        Me.cboKonfRozjazdBok1.Location = New System.Drawing.Point(6, 20)
+        Me.cboKonfRozjazdBok1.Name = "cboKonfRozjazdBok1"
+        Me.cboKonfRozjazdBok1.Size = New System.Drawing.Size(168, 21)
+        Me.cboKonfRozjazdBok1.TabIndex = 10
+        '
+        'Panel4
+        '
+        Me.Panel4.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Panel4.Controls.Add(Me.rbKonfRozjazdBok2Plus)
+        Me.Panel4.Controls.Add(Me.rbKonfRozjazdBok2Minus)
+        Me.Panel4.Location = New System.Drawing.Point(180, 48)
+        Me.Panel4.Name = "Panel4"
+        Me.Panel4.Size = New System.Drawing.Size(65, 21)
+        Me.Panel4.TabIndex = 9
+        '
+        'rbKonfRozjazdBok2Plus
+        '
+        Me.rbKonfRozjazdBok2Plus.AutoSize = True
+        Me.rbKonfRozjazdBok2Plus.Location = New System.Drawing.Point(0, 0)
+        Me.rbKonfRozjazdBok2Plus.Name = "rbKonfRozjazdBok2Plus"
+        Me.rbKonfRozjazdBok2Plus.Size = New System.Drawing.Size(31, 17)
+        Me.rbKonfRozjazdBok2Plus.TabIndex = 3
+        Me.rbKonfRozjazdBok2Plus.TabStop = True
+        Me.rbKonfRozjazdBok2Plus.Text = "+"
+        Me.rbKonfRozjazdBok2Plus.UseVisualStyleBackColor = True
+        '
+        'rbKonfRozjazdBok2Minus
+        '
+        Me.rbKonfRozjazdBok2Minus.AutoSize = True
+        Me.rbKonfRozjazdBok2Minus.Location = New System.Drawing.Point(37, 0)
+        Me.rbKonfRozjazdBok2Minus.Name = "rbKonfRozjazdBok2Minus"
+        Me.rbKonfRozjazdBok2Minus.Size = New System.Drawing.Size(28, 17)
+        Me.rbKonfRozjazdBok2Minus.TabIndex = 4
+        Me.rbKonfRozjazdBok2Minus.TabStop = True
+        Me.rbKonfRozjazdBok2Minus.Text = "-"
+        Me.rbKonfRozjazdBok2Minus.UseVisualStyleBackColor = True
+        '
+        'Panel3
+        '
+        Me.Panel3.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Panel3.Controls.Add(Me.rbKonfRozjazdBok1Plus)
+        Me.Panel3.Controls.Add(Me.rbKonfRozjazdBok1Minus)
+        Me.Panel3.Location = New System.Drawing.Point(180, 21)
+        Me.Panel3.Name = "Panel3"
+        Me.Panel3.Size = New System.Drawing.Size(65, 21)
+        Me.Panel3.TabIndex = 9
+        '
+        'rbKonfRozjazdBok1Plus
+        '
+        Me.rbKonfRozjazdBok1Plus.AutoSize = True
+        Me.rbKonfRozjazdBok1Plus.Location = New System.Drawing.Point(0, 0)
+        Me.rbKonfRozjazdBok1Plus.Name = "rbKonfRozjazdBok1Plus"
+        Me.rbKonfRozjazdBok1Plus.Size = New System.Drawing.Size(31, 17)
+        Me.rbKonfRozjazdBok1Plus.TabIndex = 3
+        Me.rbKonfRozjazdBok1Plus.TabStop = True
+        Me.rbKonfRozjazdBok1Plus.Text = "+"
+        Me.rbKonfRozjazdBok1Plus.UseVisualStyleBackColor = True
+        '
+        'rbKonfRozjazdBok1Minus
+        '
+        Me.rbKonfRozjazdBok1Minus.AutoSize = True
+        Me.rbKonfRozjazdBok1Minus.Location = New System.Drawing.Point(37, 0)
+        Me.rbKonfRozjazdBok1Minus.Name = "rbKonfRozjazdBok1Minus"
+        Me.rbKonfRozjazdBok1Minus.Size = New System.Drawing.Size(28, 17)
+        Me.rbKonfRozjazdBok1Minus.TabIndex = 4
+        Me.rbKonfRozjazdBok1Minus.TabStop = True
+        Me.rbKonfRozjazdBok1Minus.Text = "-"
+        Me.rbKonfRozjazdBok1Minus.UseVisualStyleBackColor = True
+        '
+        'GroupBox2
+        '
+        Me.GroupBox2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox2.Controls.Add(Me.Panel2)
+        Me.GroupBox2.Controls.Add(Me.Panel1)
+        Me.GroupBox2.Controls.Add(Me.cboKonfRozjazdWprost2)
+        Me.GroupBox2.Controls.Add(Me.cboKonfRozjazdWprost1)
+        Me.GroupBox2.Location = New System.Drawing.Point(6, 159)
+        Me.GroupBox2.Name = "GroupBox2"
+        Me.GroupBox2.Size = New System.Drawing.Size(251, 77)
+        Me.GroupBox2.TabIndex = 8
+        Me.GroupBox2.TabStop = False
+        Me.GroupBox2.Text = "Jeśli na wprost, ustaw rozjazdy:"
+        '
+        'Panel2
+        '
+        Me.Panel2.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Panel2.Controls.Add(Me.rbKonfRozjazdWprost2Plus)
+        Me.Panel2.Controls.Add(Me.rbKonfRozjazdWprost2Minus)
+        Me.Panel2.Location = New System.Drawing.Point(180, 46)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(65, 21)
+        Me.Panel2.TabIndex = 9
+        '
+        'rbKonfRozjazdWprost2Plus
+        '
+        Me.rbKonfRozjazdWprost2Plus.AutoSize = True
+        Me.rbKonfRozjazdWprost2Plus.Location = New System.Drawing.Point(0, 0)
+        Me.rbKonfRozjazdWprost2Plus.Name = "rbKonfRozjazdWprost2Plus"
+        Me.rbKonfRozjazdWprost2Plus.Size = New System.Drawing.Size(31, 17)
+        Me.rbKonfRozjazdWprost2Plus.TabIndex = 3
+        Me.rbKonfRozjazdWprost2Plus.TabStop = True
+        Me.rbKonfRozjazdWprost2Plus.Text = "+"
+        Me.rbKonfRozjazdWprost2Plus.UseVisualStyleBackColor = True
+        '
+        'rbKonfRozjazdWprost2Minus
+        '
+        Me.rbKonfRozjazdWprost2Minus.AutoSize = True
+        Me.rbKonfRozjazdWprost2Minus.Location = New System.Drawing.Point(37, 0)
+        Me.rbKonfRozjazdWprost2Minus.Name = "rbKonfRozjazdWprost2Minus"
+        Me.rbKonfRozjazdWprost2Minus.Size = New System.Drawing.Size(28, 17)
+        Me.rbKonfRozjazdWprost2Minus.TabIndex = 4
+        Me.rbKonfRozjazdWprost2Minus.TabStop = True
+        Me.rbKonfRozjazdWprost2Minus.Text = "-"
+        Me.rbKonfRozjazdWprost2Minus.UseVisualStyleBackColor = True
+        '
+        'Panel1
+        '
+        Me.Panel1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Panel1.Controls.Add(Me.rbKonfRozjazdWprost1Plus)
+        Me.Panel1.Controls.Add(Me.rbKonfRozjazdWprost1Minus)
+        Me.Panel1.Location = New System.Drawing.Point(180, 19)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(65, 21)
+        Me.Panel1.TabIndex = 8
+        '
+        'rbKonfRozjazdWprost1Plus
+        '
+        Me.rbKonfRozjazdWprost1Plus.AutoSize = True
+        Me.rbKonfRozjazdWprost1Plus.Location = New System.Drawing.Point(0, 0)
+        Me.rbKonfRozjazdWprost1Plus.Name = "rbKonfRozjazdWprost1Plus"
+        Me.rbKonfRozjazdWprost1Plus.Size = New System.Drawing.Size(31, 17)
+        Me.rbKonfRozjazdWprost1Plus.TabIndex = 3
+        Me.rbKonfRozjazdWprost1Plus.TabStop = True
+        Me.rbKonfRozjazdWprost1Plus.Text = "+"
+        Me.rbKonfRozjazdWprost1Plus.UseVisualStyleBackColor = True
+        '
+        'rbKonfRozjazdWprost1Minus
+        '
+        Me.rbKonfRozjazdWprost1Minus.AutoSize = True
+        Me.rbKonfRozjazdWprost1Minus.Location = New System.Drawing.Point(37, 0)
+        Me.rbKonfRozjazdWprost1Minus.Name = "rbKonfRozjazdWprost1Minus"
+        Me.rbKonfRozjazdWprost1Minus.Size = New System.Drawing.Size(28, 17)
+        Me.rbKonfRozjazdWprost1Minus.TabIndex = 4
+        Me.rbKonfRozjazdWprost1Minus.TabStop = True
+        Me.rbKonfRozjazdWprost1Minus.Text = "-"
+        Me.rbKonfRozjazdWprost1Minus.UseVisualStyleBackColor = True
+        '
+        'cboKonfRozjazdWprost2
+        '
+        Me.cboKonfRozjazdWprost2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfRozjazdWprost2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfRozjazdWprost2.FormattingEnabled = True
+        Me.cboKonfRozjazdWprost2.Location = New System.Drawing.Point(6, 45)
+        Me.cboKonfRozjazdWprost2.Name = "cboKonfRozjazdWprost2"
+        Me.cboKonfRozjazdWprost2.Size = New System.Drawing.Size(168, 21)
+        Me.cboKonfRozjazdWprost2.TabIndex = 5
+        '
+        'cboKonfRozjazdWprost1
+        '
+        Me.cboKonfRozjazdWprost1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfRozjazdWprost1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfRozjazdWprost1.FormattingEnabled = True
+        Me.cboKonfRozjazdWprost1.Location = New System.Drawing.Point(6, 18)
+        Me.cboKonfRozjazdWprost1.Name = "cboKonfRozjazdWprost1"
+        Me.cboKonfRozjazdWprost1.Size = New System.Drawing.Size(168, 21)
+        Me.cboKonfRozjazdWprost1.TabIndex = 2
+        '
+        'txtKonfRozjazdPredkoscBoczna
+        '
+        Me.txtKonfRozjazdPredkoscBoczna.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfRozjazdPredkoscBoczna.Location = New System.Drawing.Point(6, 133)
+        Me.txtKonfRozjazdPredkoscBoczna.Name = "txtKonfRozjazdPredkoscBoczna"
+        Me.txtKonfRozjazdPredkoscBoczna.Size = New System.Drawing.Size(251, 20)
+        Me.txtKonfRozjazdPredkoscBoczna.TabIndex = 7
+        '
+        'txtKonfRozjazdPredkZasad
+        '
+        Me.txtKonfRozjazdPredkZasad.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfRozjazdPredkZasad.Location = New System.Drawing.Point(6, 94)
+        Me.txtKonfRozjazdPredkZasad.Name = "txtKonfRozjazdPredkZasad"
+        Me.txtKonfRozjazdPredkZasad.Size = New System.Drawing.Size(251, 20)
+        Me.txtKonfRozjazdPredkZasad.TabIndex = 6
+        '
+        'txtKonfRozjazdNazwa
+        '
+        Me.txtKonfRozjazdNazwa.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfRozjazdNazwa.Location = New System.Drawing.Point(6, 55)
+        Me.txtKonfRozjazdNazwa.Name = "txtKonfRozjazdNazwa"
+        Me.txtKonfRozjazdNazwa.Size = New System.Drawing.Size(251, 20)
+        Me.txtKonfRozjazdNazwa.TabIndex = 5
+        '
+        'txtKonfRozjazdAdres
+        '
+        Me.txtKonfRozjazdAdres.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfRozjazdAdres.Location = New System.Drawing.Point(6, 16)
+        Me.txtKonfRozjazdAdres.Name = "txtKonfRozjazdAdres"
+        Me.txtKonfRozjazdAdres.Size = New System.Drawing.Size(251, 20)
+        Me.txtKonfRozjazdAdres.TabIndex = 4
+        '
+        'Label16
+        '
+        Me.Label16.AutoSize = True
+        Me.Label16.Location = New System.Drawing.Point(3, 117)
+        Me.Label16.Name = "Label16"
+        Me.Label16.Size = New System.Drawing.Size(155, 13)
+        Me.Label16.TabIndex = 3
+        Me.Label16.Text = "Prędkość w kierunku bocznym:"
+        '
+        'Label15
+        '
+        Me.Label15.AutoSize = True
+        Me.Label15.Location = New System.Drawing.Point(3, 78)
+        Me.Label15.Name = "Label15"
+        Me.Label15.Size = New System.Drawing.Size(173, 13)
+        Me.Label15.TabIndex = 2
+        Me.Label15.Text = "Prędkość w kierunku zasadniczym:"
+        '
+        'Label14
+        '
+        Me.Label14.AutoSize = True
+        Me.Label14.Location = New System.Drawing.Point(3, 39)
+        Me.Label14.Name = "Label14"
+        Me.Label14.Size = New System.Drawing.Size(43, 13)
+        Me.Label14.TabIndex = 1
+        Me.Label14.Text = "Nazwa:"
+        '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.Location = New System.Drawing.Point(3, 0)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(37, 13)
+        Me.Label13.TabIndex = 0
+        Me.Label13.Text = "Adres:"
+        '
+        'pnlKonfTor
+        '
+        Me.pnlKonfTor.Controls.Add(Me.txtKonfTorPredkosc)
+        Me.pnlKonfTor.Controls.Add(Me.Label12)
+        Me.pnlKonfTor.Location = New System.Drawing.Point(93, 3)
+        Me.pnlKonfTor.Name = "pnlKonfTor"
+        Me.pnlKonfTor.Size = New System.Drawing.Size(170, 52)
+        Me.pnlKonfTor.TabIndex = 0
+        '
+        'txtKonfTorPredkosc
+        '
+        Me.txtKonfTorPredkosc.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfTorPredkosc.Location = New System.Drawing.Point(6, 16)
+        Me.txtKonfTorPredkosc.Name = "txtKonfTorPredkosc"
+        Me.txtKonfTorPredkosc.Size = New System.Drawing.Size(161, 20)
+        Me.txtKonfTorPredkosc.TabIndex = 1
+        '
+        'Label12
+        '
+        Me.Label12.AutoSize = True
+        Me.Label12.Location = New System.Drawing.Point(3, 0)
+        Me.Label12.Name = "Label12"
+        Me.Label12.Size = New System.Drawing.Size(116, 13)
+        Me.Label12.TabIndex = 0
+        Me.Label12.Text = "Prędkość maksymalna:"
+        '
+        'pnlKonfSygn
+        '
+        Me.pnlKonfSygn.Controls.Add(Me.pnlKonfSygnSwiatla)
+        Me.pnlKonfSygn.Controls.Add(Me.cboKonfSygnOdcinekNast)
+        Me.pnlKonfSygn.Controls.Add(Me.txtKonfSygnNazwa)
+        Me.pnlKonfSygn.Controls.Add(Me.txtKonfSygnAdres)
+        Me.pnlKonfSygn.Controls.Add(Me.Label19)
+        Me.pnlKonfSygn.Controls.Add(Me.Label18)
+        Me.pnlKonfSygn.Controls.Add(Me.Label17)
+        Me.pnlKonfSygn.Location = New System.Drawing.Point(58, 34)
+        Me.pnlKonfSygn.Name = "pnlKonfSygn"
+        Me.pnlKonfSygn.Size = New System.Drawing.Size(202, 323)
+        Me.pnlKonfSygn.TabIndex = 1
+        '
+        'pnlKonfSygnSwiatla
+        '
+        Me.pnlKonfSygnSwiatla.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfSygnSwiatla.Controls.Add(Me.Label20)
+        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnPomPas)
+        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnZielPas)
+        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnBiale)
+        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnPomDol)
+        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnCzer)
+        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnPomGor)
+        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnZiel)
+        Me.pnlKonfSygnSwiatla.Location = New System.Drawing.Point(0, 121)
+        Me.pnlKonfSygnSwiatla.Name = "pnlKonfSygnSwiatla"
+        Me.pnlKonfSygnSwiatla.Size = New System.Drawing.Size(202, 186)
+        Me.pnlKonfSygnSwiatla.TabIndex = 6
+        '
+        'Label20
+        '
+        Me.Label20.AutoSize = True
+        Me.Label20.Location = New System.Drawing.Point(3, 0)
+        Me.Label20.Name = "Label20"
+        Me.Label20.Size = New System.Drawing.Size(93, 13)
+        Me.Label20.TabIndex = 7
+        Me.Label20.Text = "Dostępne światła:"
+        '
+        'cbKonfSygnPomPas
+        '
+        Me.cbKonfSygnPomPas.AutoSize = True
+        Me.cbKonfSygnPomPas.Location = New System.Drawing.Point(6, 154)
+        Me.cbKonfSygnPomPas.Name = "cbKonfSygnPomPas"
+        Me.cbKonfSygnPomPas.Size = New System.Drawing.Size(118, 17)
+        Me.cbKonfSygnPomPas.TabIndex = 6
+        Me.cbKonfSygnPomPas.Text = "Pomarańczowy pas"
+        Me.cbKonfSygnPomPas.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnZielPas
+        '
+        Me.cbKonfSygnZielPas.AutoSize = True
+        Me.cbKonfSygnZielPas.Location = New System.Drawing.Point(6, 131)
+        Me.cbKonfSygnZielPas.Name = "cbKonfSygnZielPas"
+        Me.cbKonfSygnZielPas.Size = New System.Drawing.Size(80, 17)
+        Me.cbKonfSygnZielPas.TabIndex = 5
+        Me.cbKonfSygnZielPas.Text = "Zielony pas"
+        Me.cbKonfSygnZielPas.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnBiale
+        '
+        Me.cbKonfSygnBiale.AutoSize = True
+        Me.cbKonfSygnBiale.Location = New System.Drawing.Point(6, 108)
+        Me.cbKonfSygnBiale.Name = "cbKonfSygnBiale"
+        Me.cbKonfSygnBiale.Size = New System.Drawing.Size(51, 17)
+        Me.cbKonfSygnBiale.TabIndex = 4
+        Me.cbKonfSygnBiale.Text = "Białe"
+        Me.cbKonfSygnBiale.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnPomDol
+        '
+        Me.cbKonfSygnPomDol.AutoSize = True
+        Me.cbKonfSygnPomDol.Location = New System.Drawing.Point(6, 85)
+        Me.cbKonfSygnPomDol.Name = "cbKonfSygnPomDol"
+        Me.cbKonfSygnPomDol.Size = New System.Drawing.Size(128, 17)
+        Me.cbKonfSygnPomDol.TabIndex = 3
+        Me.cbKonfSygnPomDol.Text = "Pomarańczowe dolne"
+        Me.cbKonfSygnPomDol.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnCzer
+        '
+        Me.cbKonfSygnCzer.AutoSize = True
+        Me.cbKonfSygnCzer.Location = New System.Drawing.Point(6, 62)
+        Me.cbKonfSygnCzer.Name = "cbKonfSygnCzer"
+        Me.cbKonfSygnCzer.Size = New System.Drawing.Size(73, 17)
+        Me.cbKonfSygnCzer.TabIndex = 2
+        Me.cbKonfSygnCzer.Text = "Czerwone"
+        Me.cbKonfSygnCzer.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnPomGor
+        '
+        Me.cbKonfSygnPomGor.AutoSize = True
+        Me.cbKonfSygnPomGor.Location = New System.Drawing.Point(6, 39)
+        Me.cbKonfSygnPomGor.Name = "cbKonfSygnPomGor"
+        Me.cbKonfSygnPomGor.Size = New System.Drawing.Size(129, 17)
+        Me.cbKonfSygnPomGor.TabIndex = 1
+        Me.cbKonfSygnPomGor.Text = "Pomarańczowe górne"
+        Me.cbKonfSygnPomGor.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnZiel
+        '
+        Me.cbKonfSygnZiel.AutoSize = True
+        Me.cbKonfSygnZiel.Location = New System.Drawing.Point(6, 16)
+        Me.cbKonfSygnZiel.Name = "cbKonfSygnZiel"
+        Me.cbKonfSygnZiel.Size = New System.Drawing.Size(61, 17)
+        Me.cbKonfSygnZiel.TabIndex = 0
+        Me.cbKonfSygnZiel.Text = "Zielone"
+        Me.cbKonfSygnZiel.UseVisualStyleBackColor = True
+        '
+        'cboKonfSygnOdcinekNast
+        '
+        Me.cboKonfSygnOdcinekNast.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfSygnOdcinekNast.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfSygnOdcinekNast.FormattingEnabled = True
+        Me.cboKonfSygnOdcinekNast.Location = New System.Drawing.Point(6, 94)
+        Me.cboKonfSygnOdcinekNast.Name = "cboKonfSygnOdcinekNast"
+        Me.cboKonfSygnOdcinekNast.Size = New System.Drawing.Size(193, 21)
+        Me.cboKonfSygnOdcinekNast.TabIndex = 5
+        '
+        'txtKonfSygnNazwa
+        '
+        Me.txtKonfSygnNazwa.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfSygnNazwa.Location = New System.Drawing.Point(6, 55)
+        Me.txtKonfSygnNazwa.Name = "txtKonfSygnNazwa"
+        Me.txtKonfSygnNazwa.Size = New System.Drawing.Size(193, 20)
+        Me.txtKonfSygnNazwa.TabIndex = 4
+        '
+        'txtKonfSygnAdres
+        '
+        Me.txtKonfSygnAdres.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfSygnAdres.Location = New System.Drawing.Point(6, 16)
+        Me.txtKonfSygnAdres.Name = "txtKonfSygnAdres"
+        Me.txtKonfSygnAdres.Size = New System.Drawing.Size(193, 20)
+        Me.txtKonfSygnAdres.TabIndex = 3
+        '
+        'Label19
+        '
+        Me.Label19.AutoSize = True
+        Me.Label19.Location = New System.Drawing.Point(3, 78)
+        Me.Label19.Name = "Label19"
+        Me.Label19.Size = New System.Drawing.Size(131, 13)
+        Me.Label19.TabIndex = 2
+        Me.Label19.Text = "Odcinek toru następujący:"
+        '
+        'Label18
+        '
+        Me.Label18.AutoSize = True
+        Me.Label18.Location = New System.Drawing.Point(3, 39)
+        Me.Label18.Name = "Label18"
+        Me.Label18.Size = New System.Drawing.Size(43, 13)
+        Me.Label18.TabIndex = 1
+        Me.Label18.Text = "Nazwa:"
+        '
+        'Label17
+        '
+        Me.Label17.AutoSize = True
+        Me.Label17.Location = New System.Drawing.Point(3, 0)
+        Me.Label17.Name = "Label17"
+        Me.Label17.Size = New System.Drawing.Size(37, 13)
+        Me.Label17.TabIndex = 0
+        Me.Label17.Text = "Adres:"
+        '
+        'pnlKonfPrzycisk
+        '
+        Me.pnlKonfPrzycisk.Controls.Add(Me.cboKonfPrzyciskSygnalizator)
+        Me.pnlKonfPrzycisk.Controls.Add(Me.cboKonfPrzyciskTyp)
+        Me.pnlKonfPrzycisk.Controls.Add(Me.Label22)
+        Me.pnlKonfPrzycisk.Controls.Add(Me.Label21)
+        Me.pnlKonfPrzycisk.Location = New System.Drawing.Point(78, 18)
+        Me.pnlKonfPrzycisk.Name = "pnlKonfPrzycisk"
+        Me.pnlKonfPrzycisk.Size = New System.Drawing.Size(185, 105)
+        Me.pnlKonfPrzycisk.TabIndex = 1
+        '
+        'cboKonfPrzyciskSygnalizator
+        '
+        Me.cboKonfPrzyciskSygnalizator.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfPrzyciskSygnalizator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfPrzyciskSygnalizator.FormattingEnabled = True
+        Me.cboKonfPrzyciskSygnalizator.Location = New System.Drawing.Point(6, 56)
+        Me.cboKonfPrzyciskSygnalizator.Name = "cboKonfPrzyciskSygnalizator"
+        Me.cboKonfPrzyciskSygnalizator.Size = New System.Drawing.Size(176, 21)
+        Me.cboKonfPrzyciskSygnalizator.TabIndex = 5
+        '
+        'cboKonfPrzyciskTyp
+        '
+        Me.cboKonfPrzyciskTyp.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfPrzyciskTyp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfPrzyciskTyp.FormattingEnabled = True
+        Me.cboKonfPrzyciskTyp.Location = New System.Drawing.Point(6, 16)
+        Me.cboKonfPrzyciskTyp.Name = "cboKonfPrzyciskTyp"
+        Me.cboKonfPrzyciskTyp.Size = New System.Drawing.Size(176, 21)
+        Me.cboKonfPrzyciskTyp.TabIndex = 4
+        '
+        'Label22
+        '
+        Me.Label22.AutoSize = True
+        Me.Label22.Location = New System.Drawing.Point(3, 40)
+        Me.Label22.Name = "Label22"
+        Me.Label22.Size = New System.Drawing.Size(119, 13)
+        Me.Label22.TabIndex = 1
+        Me.Label22.Text = "Powiązany sygnalizator:"
+        '
+        'Label21
+        '
+        Me.Label21.AutoSize = True
+        Me.Label21.Location = New System.Drawing.Point(3, 0)
+        Me.Label21.Name = "Label21"
+        Me.Label21.Size = New System.Drawing.Size(75, 13)
+        Me.Label21.TabIndex = 0
+        Me.Label21.Text = "Typ przycisku:"
         '
         'TabPage2
         '
@@ -611,337 +1171,6 @@ Partial Class wndKonfiguratorStacji
         Me.Label8.TabIndex = 0
         Me.Label8.Text = "Adres licznika 1"
         '
-        'pnlKonfTor
-        '
-        Me.pnlKonfTor.Controls.Add(Me.txtKonfTorPredkosc)
-        Me.pnlKonfTor.Controls.Add(Me.Label12)
-        Me.pnlKonfTor.Location = New System.Drawing.Point(93, 3)
-        Me.pnlKonfTor.Name = "pnlKonfTor"
-        Me.pnlKonfTor.Size = New System.Drawing.Size(170, 52)
-        Me.pnlKonfTor.TabIndex = 0
-        '
-        'Label12
-        '
-        Me.Label12.AutoSize = True
-        Me.Label12.Location = New System.Drawing.Point(3, 0)
-        Me.Label12.Name = "Label12"
-        Me.Label12.Size = New System.Drawing.Size(116, 13)
-        Me.Label12.TabIndex = 0
-        Me.Label12.Text = "Prędkość maksymalna:"
-        '
-        'txtKonfTorPredkosc
-        '
-        Me.txtKonfTorPredkosc.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtKonfTorPredkosc.Location = New System.Drawing.Point(6, 16)
-        Me.txtKonfTorPredkosc.Name = "txtKonfTorPredkosc"
-        Me.txtKonfTorPredkosc.Size = New System.Drawing.Size(161, 20)
-        Me.txtKonfTorPredkosc.TabIndex = 1
-        '
-        'pnlKonfRozjazd
-        '
-        Me.pnlKonfRozjazd.Controls.Add(Me.txtKonfRozjazdPredkoscBoczna)
-        Me.pnlKonfRozjazd.Controls.Add(Me.txtKonfRozjazdPredkZasad)
-        Me.pnlKonfRozjazd.Controls.Add(Me.txtKonfRozjazdNazwa)
-        Me.pnlKonfRozjazd.Controls.Add(Me.txtKonfRozjazdAdres)
-        Me.pnlKonfRozjazd.Controls.Add(Me.Label16)
-        Me.pnlKonfRozjazd.Controls.Add(Me.Label15)
-        Me.pnlKonfRozjazd.Controls.Add(Me.Label14)
-        Me.pnlKonfRozjazd.Controls.Add(Me.Label13)
-        Me.pnlKonfRozjazd.Location = New System.Drawing.Point(65, 19)
-        Me.pnlKonfRozjazd.Name = "pnlKonfRozjazd"
-        Me.pnlKonfRozjazd.Size = New System.Drawing.Size(195, 167)
-        Me.pnlKonfRozjazd.TabIndex = 1
-        '
-        'Label13
-        '
-        Me.Label13.AutoSize = True
-        Me.Label13.Location = New System.Drawing.Point(3, 0)
-        Me.Label13.Name = "Label13"
-        Me.Label13.Size = New System.Drawing.Size(37, 13)
-        Me.Label13.TabIndex = 0
-        Me.Label13.Text = "Adres:"
-        '
-        'Label14
-        '
-        Me.Label14.AutoSize = True
-        Me.Label14.Location = New System.Drawing.Point(3, 39)
-        Me.Label14.Name = "Label14"
-        Me.Label14.Size = New System.Drawing.Size(43, 13)
-        Me.Label14.TabIndex = 1
-        Me.Label14.Text = "Nazwa:"
-        '
-        'Label15
-        '
-        Me.Label15.AutoSize = True
-        Me.Label15.Location = New System.Drawing.Point(3, 78)
-        Me.Label15.Name = "Label15"
-        Me.Label15.Size = New System.Drawing.Size(173, 13)
-        Me.Label15.TabIndex = 2
-        Me.Label15.Text = "Prędkość w kierunku zasadniczym:"
-        '
-        'Label16
-        '
-        Me.Label16.AutoSize = True
-        Me.Label16.Location = New System.Drawing.Point(3, 117)
-        Me.Label16.Name = "Label16"
-        Me.Label16.Size = New System.Drawing.Size(155, 13)
-        Me.Label16.TabIndex = 3
-        Me.Label16.Text = "Prędkość w kierunku bocznym:"
-        '
-        'txtKonfRozjazdAdres
-        '
-        Me.txtKonfRozjazdAdres.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtKonfRozjazdAdres.Location = New System.Drawing.Point(6, 16)
-        Me.txtKonfRozjazdAdres.Name = "txtKonfRozjazdAdres"
-        Me.txtKonfRozjazdAdres.Size = New System.Drawing.Size(186, 20)
-        Me.txtKonfRozjazdAdres.TabIndex = 4
-        '
-        'txtKonfRozjazdNazwa
-        '
-        Me.txtKonfRozjazdNazwa.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtKonfRozjazdNazwa.Location = New System.Drawing.Point(6, 55)
-        Me.txtKonfRozjazdNazwa.Name = "txtKonfRozjazdNazwa"
-        Me.txtKonfRozjazdNazwa.Size = New System.Drawing.Size(186, 20)
-        Me.txtKonfRozjazdNazwa.TabIndex = 5
-        '
-        'txtKonfRozjazdPredkZasad
-        '
-        Me.txtKonfRozjazdPredkZasad.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtKonfRozjazdPredkZasad.Location = New System.Drawing.Point(6, 94)
-        Me.txtKonfRozjazdPredkZasad.Name = "txtKonfRozjazdPredkZasad"
-        Me.txtKonfRozjazdPredkZasad.Size = New System.Drawing.Size(186, 20)
-        Me.txtKonfRozjazdPredkZasad.TabIndex = 6
-        '
-        'txtKonfRozjazdPredkoscBoczna
-        '
-        Me.txtKonfRozjazdPredkoscBoczna.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtKonfRozjazdPredkoscBoczna.Location = New System.Drawing.Point(6, 133)
-        Me.txtKonfRozjazdPredkoscBoczna.Name = "txtKonfRozjazdPredkoscBoczna"
-        Me.txtKonfRozjazdPredkoscBoczna.Size = New System.Drawing.Size(186, 20)
-        Me.txtKonfRozjazdPredkoscBoczna.TabIndex = 7
-        '
-        'pnlKonfSygn
-        '
-        Me.pnlKonfSygn.Controls.Add(Me.pnlKonfSygnSwiatla)
-        Me.pnlKonfSygn.Controls.Add(Me.cboKonfSygnOdcinekNast)
-        Me.pnlKonfSygn.Controls.Add(Me.txtKonfSygnNazwa)
-        Me.pnlKonfSygn.Controls.Add(Me.txtKonfSygnAdres)
-        Me.pnlKonfSygn.Controls.Add(Me.Label19)
-        Me.pnlKonfSygn.Controls.Add(Me.Label18)
-        Me.pnlKonfSygn.Controls.Add(Me.Label17)
-        Me.pnlKonfSygn.Location = New System.Drawing.Point(39, 45)
-        Me.pnlKonfSygn.Name = "pnlKonfSygn"
-        Me.pnlKonfSygn.Size = New System.Drawing.Size(202, 323)
-        Me.pnlKonfSygn.TabIndex = 1
-        '
-        'Label17
-        '
-        Me.Label17.AutoSize = True
-        Me.Label17.Location = New System.Drawing.Point(3, 0)
-        Me.Label17.Name = "Label17"
-        Me.Label17.Size = New System.Drawing.Size(37, 13)
-        Me.Label17.TabIndex = 0
-        Me.Label17.Text = "Adres:"
-        '
-        'Label18
-        '
-        Me.Label18.AutoSize = True
-        Me.Label18.Location = New System.Drawing.Point(3, 39)
-        Me.Label18.Name = "Label18"
-        Me.Label18.Size = New System.Drawing.Size(43, 13)
-        Me.Label18.TabIndex = 1
-        Me.Label18.Text = "Nazwa:"
-        '
-        'Label19
-        '
-        Me.Label19.AutoSize = True
-        Me.Label19.Location = New System.Drawing.Point(3, 78)
-        Me.Label19.Name = "Label19"
-        Me.Label19.Size = New System.Drawing.Size(131, 13)
-        Me.Label19.TabIndex = 2
-        Me.Label19.Text = "Odcinek toru następujący:"
-        '
-        'txtKonfSygnAdres
-        '
-        Me.txtKonfSygnAdres.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtKonfSygnAdres.Location = New System.Drawing.Point(6, 16)
-        Me.txtKonfSygnAdres.Name = "txtKonfSygnAdres"
-        Me.txtKonfSygnAdres.Size = New System.Drawing.Size(193, 20)
-        Me.txtKonfSygnAdres.TabIndex = 3
-        '
-        'txtKonfSygnNazwa
-        '
-        Me.txtKonfSygnNazwa.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtKonfSygnNazwa.Location = New System.Drawing.Point(6, 55)
-        Me.txtKonfSygnNazwa.Name = "txtKonfSygnNazwa"
-        Me.txtKonfSygnNazwa.Size = New System.Drawing.Size(193, 20)
-        Me.txtKonfSygnNazwa.TabIndex = 4
-        '
-        'cboKonfSygnOdcinekNast
-        '
-        Me.cboKonfSygnOdcinekNast.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cboKonfSygnOdcinekNast.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboKonfSygnOdcinekNast.FormattingEnabled = True
-        Me.cboKonfSygnOdcinekNast.Location = New System.Drawing.Point(6, 94)
-        Me.cboKonfSygnOdcinekNast.Name = "cboKonfSygnOdcinekNast"
-        Me.cboKonfSygnOdcinekNast.Size = New System.Drawing.Size(193, 21)
-        Me.cboKonfSygnOdcinekNast.TabIndex = 5
-        '
-        'pnlKonfSygnSwiatla
-        '
-        Me.pnlKonfSygnSwiatla.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.Label20)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnPomPas)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnZielPas)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnBiale)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnPomDol)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnCzer)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnPomGor)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnZiel)
-        Me.pnlKonfSygnSwiatla.Location = New System.Drawing.Point(0, 121)
-        Me.pnlKonfSygnSwiatla.Name = "pnlKonfSygnSwiatla"
-        Me.pnlKonfSygnSwiatla.Size = New System.Drawing.Size(202, 186)
-        Me.pnlKonfSygnSwiatla.TabIndex = 6
-        '
-        'cbKonfSygnZiel
-        '
-        Me.cbKonfSygnZiel.AutoSize = True
-        Me.cbKonfSygnZiel.Location = New System.Drawing.Point(6, 16)
-        Me.cbKonfSygnZiel.Name = "cbKonfSygnZiel"
-        Me.cbKonfSygnZiel.Size = New System.Drawing.Size(61, 17)
-        Me.cbKonfSygnZiel.TabIndex = 0
-        Me.cbKonfSygnZiel.Text = "Zielone"
-        Me.cbKonfSygnZiel.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnPomGor
-        '
-        Me.cbKonfSygnPomGor.AutoSize = True
-        Me.cbKonfSygnPomGor.Location = New System.Drawing.Point(6, 39)
-        Me.cbKonfSygnPomGor.Name = "cbKonfSygnPomGor"
-        Me.cbKonfSygnPomGor.Size = New System.Drawing.Size(129, 17)
-        Me.cbKonfSygnPomGor.TabIndex = 1
-        Me.cbKonfSygnPomGor.Text = "Pomarańczowe górne"
-        Me.cbKonfSygnPomGor.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnCzer
-        '
-        Me.cbKonfSygnCzer.AutoSize = True
-        Me.cbKonfSygnCzer.Location = New System.Drawing.Point(6, 62)
-        Me.cbKonfSygnCzer.Name = "cbKonfSygnCzer"
-        Me.cbKonfSygnCzer.Size = New System.Drawing.Size(73, 17)
-        Me.cbKonfSygnCzer.TabIndex = 2
-        Me.cbKonfSygnCzer.Text = "Czerwone"
-        Me.cbKonfSygnCzer.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnPomDol
-        '
-        Me.cbKonfSygnPomDol.AutoSize = True
-        Me.cbKonfSygnPomDol.Location = New System.Drawing.Point(6, 85)
-        Me.cbKonfSygnPomDol.Name = "cbKonfSygnPomDol"
-        Me.cbKonfSygnPomDol.Size = New System.Drawing.Size(128, 17)
-        Me.cbKonfSygnPomDol.TabIndex = 3
-        Me.cbKonfSygnPomDol.Text = "Pomarańczowe dolne"
-        Me.cbKonfSygnPomDol.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnBiale
-        '
-        Me.cbKonfSygnBiale.AutoSize = True
-        Me.cbKonfSygnBiale.Location = New System.Drawing.Point(6, 108)
-        Me.cbKonfSygnBiale.Name = "cbKonfSygnBiale"
-        Me.cbKonfSygnBiale.Size = New System.Drawing.Size(51, 17)
-        Me.cbKonfSygnBiale.TabIndex = 4
-        Me.cbKonfSygnBiale.Text = "Białe"
-        Me.cbKonfSygnBiale.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnZielPas
-        '
-        Me.cbKonfSygnZielPas.AutoSize = True
-        Me.cbKonfSygnZielPas.Location = New System.Drawing.Point(6, 131)
-        Me.cbKonfSygnZielPas.Name = "cbKonfSygnZielPas"
-        Me.cbKonfSygnZielPas.Size = New System.Drawing.Size(80, 17)
-        Me.cbKonfSygnZielPas.TabIndex = 5
-        Me.cbKonfSygnZielPas.Text = "Zielony pas"
-        Me.cbKonfSygnZielPas.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnPomPas
-        '
-        Me.cbKonfSygnPomPas.AutoSize = True
-        Me.cbKonfSygnPomPas.Location = New System.Drawing.Point(6, 154)
-        Me.cbKonfSygnPomPas.Name = "cbKonfSygnPomPas"
-        Me.cbKonfSygnPomPas.Size = New System.Drawing.Size(118, 17)
-        Me.cbKonfSygnPomPas.TabIndex = 6
-        Me.cbKonfSygnPomPas.Text = "Pomarańczowy pas"
-        Me.cbKonfSygnPomPas.UseVisualStyleBackColor = True
-        '
-        'Label20
-        '
-        Me.Label20.AutoSize = True
-        Me.Label20.Location = New System.Drawing.Point(3, 0)
-        Me.Label20.Name = "Label20"
-        Me.Label20.Size = New System.Drawing.Size(93, 13)
-        Me.Label20.TabIndex = 7
-        Me.Label20.Text = "Dostępne światła:"
-        '
-        'pnlKonfPrzycisk
-        '
-        Me.pnlKonfPrzycisk.Controls.Add(Me.cboKonfPrzyciskSygnalizator)
-        Me.pnlKonfPrzycisk.Controls.Add(Me.cboKonfPrzyciskTyp)
-        Me.pnlKonfPrzycisk.Controls.Add(Me.Label22)
-        Me.pnlKonfPrzycisk.Controls.Add(Me.Label21)
-        Me.pnlKonfPrzycisk.Location = New System.Drawing.Point(15, 55)
-        Me.pnlKonfPrzycisk.Name = "pnlKonfPrzycisk"
-        Me.pnlKonfPrzycisk.Size = New System.Drawing.Size(185, 105)
-        Me.pnlKonfPrzycisk.TabIndex = 1
-        '
-        'Label21
-        '
-        Me.Label21.AutoSize = True
-        Me.Label21.Location = New System.Drawing.Point(3, 0)
-        Me.Label21.Name = "Label21"
-        Me.Label21.Size = New System.Drawing.Size(75, 13)
-        Me.Label21.TabIndex = 0
-        Me.Label21.Text = "Typ przycisku:"
-        '
-        'Label22
-        '
-        Me.Label22.AutoSize = True
-        Me.Label22.Location = New System.Drawing.Point(3, 40)
-        Me.Label22.Name = "Label22"
-        Me.Label22.Size = New System.Drawing.Size(119, 13)
-        Me.Label22.TabIndex = 1
-        Me.Label22.Text = "Powiązany sygnalizator:"
-        '
-        'cboKonfPrzyciskTyp
-        '
-        Me.cboKonfPrzyciskTyp.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cboKonfPrzyciskTyp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboKonfPrzyciskTyp.FormattingEnabled = True
-        Me.cboKonfPrzyciskTyp.Location = New System.Drawing.Point(6, 16)
-        Me.cboKonfPrzyciskTyp.Name = "cboKonfPrzyciskTyp"
-        Me.cboKonfPrzyciskTyp.Size = New System.Drawing.Size(176, 21)
-        Me.cboKonfPrzyciskTyp.TabIndex = 4
-        '
-        'cboKonfPrzyciskSygnalizator
-        '
-        Me.cboKonfPrzyciskSygnalizator.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cboKonfPrzyciskSygnalizator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboKonfPrzyciskSygnalizator.FormattingEnabled = True
-        Me.cboKonfPrzyciskSygnalizator.Location = New System.Drawing.Point(6, 56)
-        Me.cboKonfPrzyciskSygnalizator.Name = "cboKonfPrzyciskSygnalizator"
-        Me.cboKonfPrzyciskSygnalizator.Size = New System.Drawing.Size(176, 21)
-        Me.cboKonfPrzyciskSygnalizator.TabIndex = 5
-        '
         'wndKonfiguratorStacji
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -966,6 +1195,26 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaPulpit.Panel2.ResumeLayout(False)
         CType(Me.splKartaPulpit, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splKartaPulpit.ResumeLayout(False)
+        Me.pnlKonfRozjazd.ResumeLayout(False)
+        Me.pnlKonfRozjazd.PerformLayout()
+        Me.GroupBox3.ResumeLayout(False)
+        Me.Panel4.ResumeLayout(False)
+        Me.Panel4.PerformLayout()
+        Me.Panel3.ResumeLayout(False)
+        Me.Panel3.PerformLayout()
+        Me.GroupBox2.ResumeLayout(False)
+        Me.Panel2.ResumeLayout(False)
+        Me.Panel2.PerformLayout()
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
+        Me.pnlKonfTor.ResumeLayout(False)
+        Me.pnlKonfTor.PerformLayout()
+        Me.pnlKonfSygn.ResumeLayout(False)
+        Me.pnlKonfSygn.PerformLayout()
+        Me.pnlKonfSygnSwiatla.ResumeLayout(False)
+        Me.pnlKonfSygnSwiatla.PerformLayout()
+        Me.pnlKonfPrzycisk.ResumeLayout(False)
+        Me.pnlKonfPrzycisk.PerformLayout()
         Me.TabPage2.ResumeLayout(False)
         Me.splKartaTory.Panel1.ResumeLayout(False)
         Me.splKartaTory.Panel2.ResumeLayout(False)
@@ -982,16 +1231,6 @@ Partial Class wndKonfiguratorStacji
         Me.splLiczniki.ResumeLayout(False)
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
-        Me.pnlKonfTor.ResumeLayout(False)
-        Me.pnlKonfTor.PerformLayout()
-        Me.pnlKonfRozjazd.ResumeLayout(False)
-        Me.pnlKonfRozjazd.PerformLayout()
-        Me.pnlKonfSygn.ResumeLayout(False)
-        Me.pnlKonfSygn.PerformLayout()
-        Me.pnlKonfSygnSwiatla.ResumeLayout(False)
-        Me.pnlKonfSygnSwiatla.PerformLayout()
-        Me.pnlKonfPrzycisk.ResumeLayout(False)
-        Me.pnlKonfPrzycisk.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1076,4 +1315,22 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents Label22 As Label
     Friend WithEvents Label21 As Label
     Friend WithEvents cboKonfPrzyciskSygnalizator As ComboBox
+    Friend WithEvents GroupBox3 As GroupBox
+    Friend WithEvents cboKonfRozjazdBok2 As ComboBox
+    Friend WithEvents cboKonfRozjazdBok1 As ComboBox
+    Friend WithEvents Panel4 As Panel
+    Friend WithEvents rbKonfRozjazdBok2Plus As RadioButton
+    Friend WithEvents rbKonfRozjazdBok2Minus As RadioButton
+    Friend WithEvents Panel3 As Panel
+    Friend WithEvents rbKonfRozjazdBok1Plus As RadioButton
+    Friend WithEvents rbKonfRozjazdBok1Minus As RadioButton
+    Friend WithEvents GroupBox2 As GroupBox
+    Friend WithEvents Panel2 As Panel
+    Friend WithEvents rbKonfRozjazdWprost2Plus As RadioButton
+    Friend WithEvents rbKonfRozjazdWprost2Minus As RadioButton
+    Friend WithEvents Panel1 As Panel
+    Friend WithEvents rbKonfRozjazdWprost1Plus As RadioButton
+    Friend WithEvents rbKonfRozjazdWprost1Minus As RadioButton
+    Friend WithEvents cboKonfRozjazdWprost2 As ComboBox
+    Friend WithEvents cboKonfRozjazdWprost1 As ComboBox
 End Class

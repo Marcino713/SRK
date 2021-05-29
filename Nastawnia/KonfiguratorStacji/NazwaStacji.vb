@@ -1,5 +1,10 @@
 ﻿Public Class wndNazwaStacji
-    Public Nazwa As String
+    Public Nazwa As String = ""
+    Public Sub New(NazwaStacji As String)
+        InitializeComponent()
+        txtNazwa.Text = NazwaStacji
+    End Sub
+
     Private Sub btnOK_Click() Handles btnOK.Click
         If txtNazwa.Text = "" Then
             PokazBlad("Nie podano nazwy posterunku.")

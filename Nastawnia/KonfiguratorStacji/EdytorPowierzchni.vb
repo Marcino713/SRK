@@ -17,15 +17,7 @@
         If rbPrawo.Checked Then KierunekEdycji = Zaleznosci.KierunekEdycjiPulpitu.Prawo
         If rbDol.Checked Then KierunekEdycji = Zaleznosci.KierunekEdycjiPulpitu.Dol
 
-        If txtLiczbaKostek.Text = "" Then
-            PokazBlad("Należy podać liczbę kostek.")
-            Exit Sub
-        End If
-
-        If Not Integer.TryParse(txtLiczbaKostek.Text, LiczbaKostek) Then
-            PokazBlad("Wartość w polu Liczba kostek musi być liczbą.")
-            Exit Sub
-        End If
+        LiczbaKostek = CInt(numLiczbaKostek.Value)
 
         DialogResult = DialogResult.OK
         Close()
