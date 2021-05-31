@@ -25,6 +25,7 @@
     Private ReadOnly PEDZEL_SYGN_KRAWEDZ As New Pen(KolorRGB("#000000"), 0)
     Private ReadOnly PEDZEL_PRZYCISK As New SolidBrush(KolorRGB("#000000"))
     Private ReadOnly PEDZEL_TEKST As New SolidBrush(KolorRGB("#000000"))
+    Private ReadOnly PEDZEL_ZAZN_KOSTKA As New SolidBrush(KolorRGB("#009DFF"))
 
     Private ReadOnly CZCIONKA As New Font("Arial", 0.2)
 
@@ -34,12 +35,20 @@
         Dim poczx As Integer = 0
         Dim poczy As Integer = 0
 
-        Dim img As New Bitmap(CInt(pulpit.Szerokosc * konfiguracja.Skalowanie), CInt(pulpit.Wysokosc * konfiguracja.Skalowanie))
+        Dim img As New Bitmap(CInt(pulpit.Szerokosc * konfiguracja.Skalowanie) + 1, CInt(pulpit.Wysokosc * konfiguracja.Skalowanie) + 1)
         gr = Graphics.FromImage(img)
         gr.Clear(konfiguracja.KolorKostki)
 
+        If konfiguracja.ZaznaczX >= 0 And konfiguracja.ZaznaczX < pulpit.Szerokosc And konfiguracja.ZaznaczY >= 0 And konfiguracja.ZaznaczY < pulpit.Wysokosc Then
+            gr.ScaleTransform(konfiguracja.Skalowanie, konfiguracja.Skalowanie)
+            gr.FillRectangle(PEDZEL_ZAZN_KOSTKA, konfiguracja.ZaznaczX, konfiguracja.ZaznaczY, 1, 1)
+            If konfiguracja.PrzesuwanaKostka IsNot Nothing Then RysujKostke(konfiguracja.ZaznaczX, konfiguracja.ZaznaczY, konfiguracja.Skalowanie, konfiguracja.PrzesuwanaKostka)
+            gr.ResetTransform()
+        End If
+
         If konfiguracja.RysujKrawedzieKostek Then
             gr.ScaleTransform(konfiguracja.Skalowanie, konfiguracja.Skalowanie)
+
             For x As Integer = 0 To pulpit.Szerokosc
                 gr.DrawLine(PEDZEL_KRAWEDZIE, x, 0, x, pulpit.Wysokosc)
             Next
@@ -53,43 +62,47 @@
                 Dim k As Zaleznosci.Kostka = pulpit.Kostki(x, y)
                 If k Is Nothing Then Continue For
 
-                gr.ResetTransform()
-                gr.ScaleTransform(konfiguracja.Skalowanie, konfiguracja.Skalowanie)
-                gr.TranslateTransform(x + 0.5F, y + 0.5F)
-                gr.RotateTransform(k.Obrot)
-                gr.TranslateTransform(-0.5F, -0.5F)
-
-                Select Case k.Typ
-                    Case Zaleznosci.TypKostki.Tor
-                        RysujTor()
-                    Case Zaleznosci.TypKostki.TorKoniec
-                        RysujTorKoniec()
-                    Case Zaleznosci.TypKostki.ZakretLewo
-                        RysujZakretLewo()
-                    Case Zaleznosci.TypKostki.ZakretPrawo
-                        RysujZakretPrawo()
-                    Case Zaleznosci.TypKostki.RozjazdLewo
-                        RysujZwrotnicaLewo(CType(k, Zaleznosci.RozjazdLewo))
-                    Case Zaleznosci.TypKostki.RozjazdPrawo
-                        RysujZwrotnicaPrawo(CType(k, Zaleznosci.RozjazdPrawo))
-                    Case Zaleznosci.TypKostki.SygnalizatorManewrowy
-                        RysujSygnalizatorManewrowy()
-                    Case Zaleznosci.TypKostki.SygnalizatorPolsamoczynny
-                        RysujSygnalizatorPolsamoczynny()
-                    Case Zaleznosci.TypKostki.SygnalizatorSamoczynny
-                        RysujSygnalizatorSamoczynny()
-                    Case Zaleznosci.TypKostki.Przycisk
-                        RysujPrzycisk()
-                    Case Zaleznosci.TypKostki.PrzyciskTor
-                        RysujPrzyciskTor()
-                    Case Zaleznosci.TypKostki.Kierunek
-                        RysujKierunek()
-                End Select
+                RysujKostke(x, y, konfiguracja.Skalowanie, k)
             Next
         Next
 
         Return img
     End Function
+
+    Private Sub RysujKostke(x As Integer, y As Integer, skalowanie As Single, kostka As Zaleznosci.Kostka)
+        gr.ResetTransform()
+        gr.ScaleTransform(skalowanie, skalowanie)
+        gr.TranslateTransform(x + 0.5F, y + 0.5F)
+        gr.RotateTransform(kostka.Obrot)
+        gr.TranslateTransform(-0.5F, -0.5F)
+
+        Select Case kostka.Typ
+            Case Zaleznosci.TypKostki.Tor
+                RysujTor()
+            Case Zaleznosci.TypKostki.TorKoniec
+                RysujTorKoniec()
+            Case Zaleznosci.TypKostki.ZakretLewo
+                RysujZakretLewo()
+            Case Zaleznosci.TypKostki.ZakretPrawo
+                RysujZakretPrawo()
+            Case Zaleznosci.TypKostki.RozjazdLewo
+                RysujRozjazdLewo(CType(kostka, Zaleznosci.RozjazdLewo))
+            Case Zaleznosci.TypKostki.RozjazdPrawo
+                RysujRozjazdPrawo(CType(kostka, Zaleznosci.RozjazdPrawo))
+            Case Zaleznosci.TypKostki.SygnalizatorManewrowy
+                RysujSygnalizatorManewrowy()
+            Case Zaleznosci.TypKostki.SygnalizatorPolsamoczynny
+                RysujSygnalizatorPolsamoczynny()
+            Case Zaleznosci.TypKostki.SygnalizatorSamoczynny
+                RysujSygnalizatorSamoczynny()
+            Case Zaleznosci.TypKostki.Przycisk
+                RysujPrzycisk()
+            Case Zaleznosci.TypKostki.PrzyciskTor
+                RysujPrzyciskTor()
+            Case Zaleznosci.TypKostki.Kierunek
+                RysujKierunek()
+        End Select
+    End Sub
 
     Private Sub RysujTor()
         gr.FillRectangle(PEDZEL_TOR_WOLNY, 0, 0.5 - TOR_SZEROKOSC / 2, 1, TOR_SZEROKOSC)
@@ -100,7 +113,7 @@
     End Sub
 
     Private Sub RysujZakretLewo()
-        Dim szer As Single = TOR_SZEROKOSC '/ COS45
+        Dim szer As Single = TOR_SZEROKOSC / COS45
         gr.FillPolygon(PEDZEL_TOR_WOLNY, {
         New PointF(1, 0.5F - szer / 2),
         New PointF(1, 0.5F + szer / 2),
@@ -110,7 +123,7 @@
     End Sub
 
     Private Sub RysujZakretPrawo()
-        Dim szer As Single = TOR_SZEROKOSC '/ COS45
+        Dim szer As Single = TOR_SZEROKOSC / COS45
         gr.FillPolygon(PEDZEL_TOR_WOLNY, {
         New PointF(1, 0.5F - szer / 2),
         New PointF(0.5F + szer / 2, 0),
@@ -119,14 +132,14 @@
         })
     End Sub
 
-    Private Sub RysujZwrotnicaLewo(zwrotnica As Zaleznosci.RozjazdLewo)
+    Private Sub RysujRozjazdLewo(zwrotnica As Zaleznosci.RozjazdLewo)
         RysujTor()
         RysujZakretLewo()
         RysujPrzycisk()
         gr.DrawString(zwrotnica.Numer.ToString(), CZCIONKA, PEDZEL_TEKST, TEKST_POZ_X, TEKST_POZ_Y)
     End Sub
 
-    Private Sub RysujZwrotnicaPrawo(zwrotnica As Zaleznosci.RozjazdPrawo)
+    Private Sub RysujRozjazdPrawo(zwrotnica As Zaleznosci.RozjazdPrawo)
         RysujTor()
         RysujZakretPrawo()
         RysujPrzycisk(2)

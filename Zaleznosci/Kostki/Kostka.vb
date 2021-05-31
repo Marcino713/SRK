@@ -1,7 +1,5 @@
 ﻿Public MustInherit Class Kostka
     Public ReadOnly Property Typ As TypKostki
-    Public Property X As Integer
-    Public Property Y As Integer
     Public Property Obrot As Integer
     Public Sub New(typ As TypKostki)
         Me.Typ = typ
