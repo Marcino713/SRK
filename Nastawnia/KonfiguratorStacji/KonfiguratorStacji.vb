@@ -10,6 +10,31 @@
     Private PoprzedniPunkt As New Point(-1, -1)
     Private LokalizacjaPulpitu As New Point(-1, -1)
 
+#Region "Okno"
+
+    Private Sub wndKonfiguratorStacji_Load() Handles Me.Load
+        UtworzListeKostek()
+
+        Pulpit.Kostki(4, 2) = New Zaleznosci.Tor
+        Pulpit.Kostki(3, 2) = New Zaleznosci.ZakretLewo
+        Pulpit.Kostki(2, 2) = New Zaleznosci.ZakretPrawo
+        Pulpit.Kostki(1, 2) = New Zaleznosci.TorKoniec
+        Pulpit.Kostki(4, 3) = New Zaleznosci.RozjazdLewo() With {.Numer = 101, .Obrot = 90}
+        Pulpit.Kostki(3, 3) = New Zaleznosci.RozjazdPrawo() With {.Numer = 102}
+        Pulpit.Kostki(2, 3) = New Zaleznosci.SygnalizatorManewrowy
+        Pulpit.Kostki(1, 3) = New Zaleznosci.SygnalizatorPolsamoczynny
+        Pulpit.Kostki(0, 3) = New Zaleznosci.SygnalizatorSamoczynny
+        Pulpit.Kostki(2, 5) = New Zaleznosci.Przycisk
+        Pulpit.Kostki(1, 5) = New Zaleznosci.PrzyciskTor
+        Pulpit.Kostki(0, 5) = New Zaleznosci.Kierunek
+
+        RysujPulpit()
+    End Sub
+
+    Private Sub wndKonfiguratorStacji_Resize() Handles Me.Resize
+        RysujPulpit()
+    End Sub
+
     Private Sub DodajKostkeDoListy(kostka As Zaleznosci.Kostka, nazwa As String, ix As Integer)
         Static Dim konf As New KonfiguracjaRysowania() With {.Skalowanie = 48, .RysujKrawedzieKostek = False}
         Dim pulpit As New Zaleznosci.Pulpit(1, 1)
@@ -35,13 +60,9 @@
         DodajKostkeDoListy(New Zaleznosci.Kierunek(), "Wjazd/wyjazd ze stacji", 11)
     End Sub
 
-    Private Sub RysujPulpit()
-        Dim img As Image = pctPulpit.Image
-        Dim obr As Image = Rysuj(Pulpit, Konfiguracja)
-        pctPulpit.Image = obr
-        pctPulpit.Size = obr.Size
-        img?.Dispose()
-    End Sub
+#End Region
+
+#Region "Menu"
 
     Private Sub mnuDodajKostki_Click() Handles mnuDodajKostki.Click
         Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Dodaj)
@@ -66,22 +87,62 @@
         End If
     End Sub
 
-    Private Sub wndKonfiguratorStacji_Load() Handles Me.Load
-        UtworzListeKostek()
+    Private Sub mnuNazwa_Click() Handles mnuNazwa.Click
+        Dim wnd As New wndNazwaStacji(Pulpit.Nazwa)
+        If wnd.ShowDialog = DialogResult.OK Then
+            Pulpit.Nazwa = wnd.Nazwa
+        End If
+    End Sub
 
-        Pulpit.Kostki(4, 2) = New Zaleznosci.Tor
-        Pulpit.Kostki(3, 2) = New Zaleznosci.ZakretLewo
-        Pulpit.Kostki(2, 2) = New Zaleznosci.ZakretPrawo
-        Pulpit.Kostki(1, 2) = New Zaleznosci.TorKoniec
-        Pulpit.Kostki(4, 3) = New Zaleznosci.RozjazdLewo() With {.Numer = 101, .Obrot = 90}
-        Pulpit.Kostki(3, 3) = New Zaleznosci.RozjazdPrawo() With {.Numer = 102}
-        Pulpit.Kostki(2, 3) = New Zaleznosci.SygnalizatorManewrowy
-        Pulpit.Kostki(1, 3) = New Zaleznosci.SygnalizatorPolsamoczynny
-        Pulpit.Kostki(0, 3) = New Zaleznosci.SygnalizatorSamoczynny
-        Pulpit.Kostki(2, 5) = New Zaleznosci.Przycisk
-        Pulpit.Kostki(1, 5) = New Zaleznosci.PrzyciskTor
-        Pulpit.Kostki(0, 5) = New Zaleznosci.Kierunek
+#End Region
 
+#Region "Zakładka Pulpit"
+
+    Private Sub lvKostki_MouseDown(sender As Object, e As MouseEventArgs) Handles lvPulpitKostki.MouseDown
+        Dim lvi As ListViewItem = lvPulpitKostki.GetItemAt(e.X, e.Y)
+        If lvi IsNot Nothing Then
+            lvi.Selected = True
+            DoDragDrop(Activator.CreateInstance(DirectCast(lvi.Tag, Type)), DragDropEffects.Copy)
+        End If
+    End Sub
+
+#End Region
+
+#Region "Pulpit"
+
+    Private Sub pctPulpit_LostFocus() Handles pctPulpit.LostFocus
+        Konfiguracja.WyczyscZaznaczenie()
+        RysujPulpit()
+    End Sub
+
+    Private Sub pctPulpit_KeyDown(sender As Object, e As KeyEventArgs) Handles pctPulpit.KeyDown
+        Dim p As New Point(Konfiguracja.ZaznaczX, Konfiguracja.ZaznaczY)
+        If CzyKostkaWZakresiePulpitu(p) Then
+
+            If e.KeyData = Keys.R Then
+                Dim obrot As Integer = Pulpit.Kostki(p.X, p.Y).Obrot
+                obrot = (obrot + ZWIEKSZ_OBROT) Mod KAT_PELNY
+                Pulpit.Kostki(p.X, p.Y).Obrot = obrot
+                RysujPulpit()
+
+            ElseIf e.KeyData = Keys.Delete
+                Pulpit.Kostki(p.X, p.Y) = Nothing
+                Konfiguracja.WyczyscZaznaczenie()
+                RysujPulpit()
+            End If
+
+        End If
+    End Sub
+
+    Private Sub pctPulpit_Click() Handles pctPulpit.Click
+        pctPulpit.Focus()
+        Dim p As Point = PobierzKliknieteWspolrzedneKostki()
+        If CzyKostkaWZakresiePulpitu(p) AndAlso Pulpit.Kostki(p.X, p.Y) IsNot Nothing Then
+            Konfiguracja.ZaznaczX = p.X
+            Konfiguracja.ZaznaczY = p.Y
+        Else
+            Konfiguracja.WyczyscZaznaczenie()
+        End If
         RysujPulpit()
     End Sub
 
@@ -99,18 +160,6 @@
         Dim nowy As New Point(CInt(wspx * pctPulpit.Width), CInt(wspy * pctPulpit.Height))
         Dim p As Point = pctPulpit.PointToClient(MousePosition)
         pctPulpit.Location = New Point(pctPulpit.Location.X + p.X - nowy.X, pctPulpit.Location.Y + p.Y - nowy.Y)
-    End Sub
-
-    Private Sub lvKostki_MouseDown(sender As Object, e As MouseEventArgs) Handles lvPulpitKostki.MouseDown
-        Dim lvi As ListViewItem = lvPulpitKostki.GetItemAt(e.X, e.Y)
-        If lvi IsNot Nothing Then
-            lvi.Selected = True
-            DoDragDrop(Activator.CreateInstance(DirectCast(lvi.Tag, Type)), DragDropEffects.Copy)
-        End If
-    End Sub
-
-    Private Sub wndKonfiguratorStacji_Resize() Handles Me.Resize
-        RysujPulpit()
     End Sub
 
     Private Sub pnlPulpit_MouseMove(sender As Object, e As MouseEventArgs) Handles pnlPulpit.MouseMove, pctPulpit.MouseMove
@@ -133,13 +182,6 @@
         PoprzedniPunkt = pnlPulpit.PointToClient(MousePosition)
         LokalizacjaPulpitu.X = pctPulpit.Location.X
         LokalizacjaPulpitu.Y = pctPulpit.Location.Y
-    End Sub
-
-    Private Sub mnuNazwa_Click() Handles mnuNazwa.Click
-        Dim wnd As New wndNazwaStacji(Pulpit.Nazwa)
-        If wnd.ShowDialog = DialogResult.OK Then
-            Pulpit.Nazwa = wnd.Nazwa
-        End If
     End Sub
 
     Private Sub pnlPulpit_DragOver(sender As Object, e As DragEventArgs) Handles pnlPulpit.DragOver
@@ -173,6 +215,14 @@
         RysujPulpit()
     End Sub
 
+    Private Sub RysujPulpit()
+        Dim img As Image = pctPulpit.Image
+        Dim obr As Image = Rysuj(Pulpit, Konfiguracja)
+        pctPulpit.Image = obr
+        pctPulpit.Size = obr.Size
+        img?.Dispose()
+    End Sub
+
     Private Function PobierzDodawanaKostke(e As DragEventArgs) As Zaleznosci.Kostka
         Return DirectCast(e.Data.GetData(e.Data.GetFormats()(0)), Zaleznosci.Kostka)
     End Function
@@ -189,39 +239,6 @@
         )
     End Function
 
-    Private Sub pctPulpit_Click() Handles pctPulpit.Click
-        pctPulpit.Focus()
-        Dim p As Point = PobierzKliknieteWspolrzedneKostki()
-        If CzyKostkaWZakresiePulpitu(p) AndAlso Pulpit.Kostki(p.X, p.Y) IsNot Nothing Then
-            Konfiguracja.ZaznaczX = p.X
-            Konfiguracja.ZaznaczY = p.Y
-        Else
-            Konfiguracja.WyczyscZaznaczenie()
-        End If
-        RysujPulpit()
-    End Sub
+#End Region
 
-    Private Sub pctPulpit_LostFocus() Handles pctPulpit.LostFocus
-        Konfiguracja.WyczyscZaznaczenie()
-        RysujPulpit()
-    End Sub
-
-    Private Sub pctPulpit_KeyDown(sender As Object, e As KeyEventArgs) Handles pctPulpit.KeyDown
-        Dim p As New Point(Konfiguracja.ZaznaczX, Konfiguracja.ZaznaczY)
-        If CzyKostkaWZakresiePulpitu(p) Then
-
-            If e.KeyData = Keys.R Then
-                Dim obrot As Integer = Pulpit.Kostki(p.X, p.Y).Obrot
-                obrot = (obrot + ZWIEKSZ_OBROT) Mod KAT_PELNY
-                Pulpit.Kostki(p.X, p.Y).Obrot = obrot
-                RysujPulpit()
-
-            ElseIf e.KeyData = Keys.Delete
-                Pulpit.Kostki(p.X, p.Y) = Nothing
-                Konfiguracja.WyczyscZaznaczenie()
-                RysujPulpit()
-            End If
-
-        End If
-    End Sub
 End Class
