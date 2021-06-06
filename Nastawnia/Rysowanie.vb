@@ -81,10 +81,8 @@
                 RysujTor()
             Case Zaleznosci.TypKostki.TorKoniec
                 RysujTorKoniec()
-            Case Zaleznosci.TypKostki.ZakretLewo
-                RysujZakretLewo()
-            Case Zaleznosci.TypKostki.ZakretPrawo
-                RysujZakretPrawo()
+            Case Zaleznosci.TypKostki.Zakret
+                RysujZakret()
             Case Zaleznosci.TypKostki.RozjazdLewo
                 RysujRozjazdLewo(CType(kostka, Zaleznosci.RozjazdLewo))
             Case Zaleznosci.TypKostki.RozjazdPrawo
@@ -112,7 +110,7 @@
         gr.FillRectangle(PEDZEL_TOR_WOLNY, 0, 0.5 - TOR_SZEROKOSC / 2, 0.5, TOR_SZEROKOSC)
     End Sub
 
-    Private Sub RysujZakretLewo()
+    Private Sub RysujZakret()
         Dim szer As Single = TOR_SZEROKOSC / COS45
         gr.FillPolygon(PEDZEL_TOR_WOLNY, {
         New PointF(1, 0.5F - szer / 2),
@@ -132,18 +130,18 @@
         })
     End Sub
 
-    Private Sub RysujRozjazdLewo(zwrotnica As Zaleznosci.RozjazdLewo)
+    Private Sub RysujRozjazdLewo(rozjazd As Zaleznosci.RozjazdLewo)
         RysujTor()
-        RysujZakretLewo()
+        RysujZakret()
         RysujPrzycisk()
-        gr.DrawString(zwrotnica.Numer.ToString(), CZCIONKA, PEDZEL_TEKST, TEKST_POZ_X, TEKST_POZ_Y)
+        gr.DrawString(rozjazd.Nazwa, CZCIONKA, PEDZEL_TEKST, TEKST_POZ_X, TEKST_POZ_Y)
     End Sub
 
-    Private Sub RysujRozjazdPrawo(zwrotnica As Zaleznosci.RozjazdPrawo)
+    Private Sub RysujRozjazdPrawo(rozjazd As Zaleznosci.RozjazdPrawo)
         RysujTor()
         RysujZakretPrawo()
         RysujPrzycisk(2)
-        gr.DrawString(zwrotnica.Numer.ToString(), CZCIONKA, PEDZEL_TEKST, TEKST_POZ_X, TEKST_POZ_Y + 2 * SYGN_POZ)
+        gr.DrawString(rozjazd.Nazwa, CZCIONKA, PEDZEL_TEKST, TEKST_POZ_X, TEKST_POZ_Y + 2 * SYGN_POZ)
     End Sub
 
     Private Sub RysujSygnalizatorManewrowy()

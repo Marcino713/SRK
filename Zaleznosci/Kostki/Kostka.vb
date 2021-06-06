@@ -4,13 +4,14 @@
     Public Sub New(typ As TypKostki)
         Me.Typ = typ
     End Sub
+    Public Overridable Sub UsunPowiazanie(kostka As Kostka)
+    End Sub
 End Class
 
 Public Enum TypKostki
     Tor
     TorKoniec
-    ZakretLewo
-    ZakretPrawo
+    Zakret
     RozjazdLewo
     RozjazdPrawo
     SygnalizatorManewrowy

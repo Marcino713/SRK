@@ -59,6 +59,14 @@
 
     End Sub
 
+    Public Sub UsunKostkeZPowiazan(kostka As Kostka)
+        For x As Integer = 0 To _Szerokosc - 1
+            For y As Integer = 0 To _Wysokosc - 1
+                If _Kostki(x, y) IsNot Nothing Then _Kostki(x, y).UsunPowiazanie(kostka)
+            Next
+        Next
+    End Sub
+
     Public Sub PowiekszPulpit(kierunek As KierunekEdycjiPulpitu, rozmiar As Integer)
         If rozmiar < 0 Then
             Throw New ArgumentException("Rozmiar nie może być ujemny.")

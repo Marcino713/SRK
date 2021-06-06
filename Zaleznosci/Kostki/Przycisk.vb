@@ -5,6 +5,9 @@
     Public Sub New()
         MyBase.New(TypKostki.Przycisk)
     End Sub
+    Public Overrides Sub UsunPowiazanie(kostka As Kostka)
+        If ObslugiwanySygnalizator Is kostka Then ObslugiwanySygnalizator = Nothing
+    End Sub
 End Class
 
 Public Enum TypPrzyciskuEnum

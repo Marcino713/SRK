@@ -76,10 +76,10 @@
     <Compile Include="Kostki\SygnalizatorManewrowy.vb" />
     <Compile Include="Kostki\SygnalizatorPolsamoczynny.vb" />
     <Compile Include="Kostki\SygnalizatorSamoczynny.vb" />
+    <Compile Include="Kostki\SygnalizatorUzalezniony.vb" />
     <Compile Include="Kostki\Tor.vb" />
     <Compile Include="Kostki\TorKoniec.vb" />
-    <Compile Include="Kostki\ZakretLewo.vb" />
-    <Compile Include="Kostki\ZakretPrawo.vb" />
+    <Compile Include="Kostki\Zakret.vb" />
     <Compile Include="Kostki\Rozjazd.vb" />
     <Compile Include="Kostki\RozjazdLewo.vb" />
     <Compile Include="Kostki\RozjazdPrawo.vb" />

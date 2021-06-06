@@ -1,6 +1,5 @@
 ﻿Public Class SygnalizatorPolsamoczynny
-    Inherits Sygnalizator
-    Public Property SygnalizatorNastepny As Sygnalizator
+    Inherits SygnalizatorUzalezniony
     Public Property DostepneSwiatla As DostepneSwiatlaEnum
     Public Sub New()
         MyBase.New(TypKostki.SygnalizatorPolsamoczynny)
