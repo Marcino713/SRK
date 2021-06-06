@@ -26,12 +26,14 @@ Partial Class wndNazwaStacji
         Me.txtNazwa = New System.Windows.Forms.TextBox()
         Me.btnOK = New System.Windows.Forms.Button()
         Me.btnAnuluj = New System.Windows.Forms.Button()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.txtAdres = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(12, 15)
+        Me.Label1.Location = New System.Drawing.Point(12, 39)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(99, 13)
         Me.Label1.TabIndex = 0
@@ -39,14 +41,14 @@ Partial Class wndNazwaStacji
         '
         'txtNazwa
         '
-        Me.txtNazwa.Location = New System.Drawing.Point(117, 12)
+        Me.txtNazwa.Location = New System.Drawing.Point(117, 38)
         Me.txtNazwa.Name = "txtNazwa"
         Me.txtNazwa.Size = New System.Drawing.Size(203, 20)
         Me.txtNazwa.TabIndex = 1
         '
         'btnOK
         '
-        Me.btnOK.Location = New System.Drawing.Point(164, 38)
+        Me.btnOK.Location = New System.Drawing.Point(164, 64)
         Me.btnOK.Name = "btnOK"
         Me.btnOK.Size = New System.Drawing.Size(75, 23)
         Me.btnOK.TabIndex = 2
@@ -55,23 +57,42 @@ Partial Class wndNazwaStacji
         '
         'btnAnuluj
         '
-        Me.btnAnuluj.Location = New System.Drawing.Point(245, 38)
+        Me.btnAnuluj.Location = New System.Drawing.Point(245, 64)
         Me.btnAnuluj.Name = "btnAnuluj"
         Me.btnAnuluj.Size = New System.Drawing.Size(75, 23)
         Me.btnAnuluj.TabIndex = 3
         Me.btnAnuluj.Text = "Anuluj"
         Me.btnAnuluj.UseVisualStyleBackColor = True
         '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(12, 15)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(37, 13)
+        Me.Label2.TabIndex = 4
+        Me.Label2.Text = "Adres:"
+        '
+        'txtAdres
+        '
+        Me.txtAdres.Location = New System.Drawing.Point(117, 12)
+        Me.txtAdres.Name = "txtAdres"
+        Me.txtAdres.Size = New System.Drawing.Size(203, 20)
+        Me.txtAdres.TabIndex = 5
+        '
         'wndNazwaStacji
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(332, 72)
+        Me.ClientSize = New System.Drawing.Size(332, 96)
+        Me.Controls.Add(Me.txtAdres)
+        Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.btnAnuluj)
         Me.Controls.Add(Me.btnOK)
         Me.Controls.Add(Me.txtNazwa)
         Me.Controls.Add(Me.Label1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
+        Me.MaximizeBox = False
         Me.Name = "wndNazwaStacji"
         Me.Text = "Edycja nazwy"
         Me.ResumeLayout(False)
@@ -83,4 +104,6 @@ Partial Class wndNazwaStacji
     Friend WithEvents txtNazwa As TextBox
     Friend WithEvents btnOK As Button
     Friend WithEvents btnAnuluj As Button
+    Friend WithEvents Label2 As Label
+    Friend WithEvents txtAdres As TextBox
 End Class

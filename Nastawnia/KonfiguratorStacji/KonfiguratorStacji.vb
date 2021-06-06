@@ -97,8 +97,9 @@
     End Sub
 
     Private Sub mnuNazwa_Click() Handles mnuNazwa.Click
-        Dim wnd As New wndNazwaStacji(Pulpit.Nazwa)
+        Dim wnd As New wndNazwaStacji(Pulpit.Adres, Pulpit.Nazwa)
         If wnd.ShowDialog = DialogResult.OK Then
+            Pulpit.Adres = wnd.Adres
             Pulpit.Nazwa = wnd.Nazwa
         End If
     End Sub
@@ -531,11 +532,6 @@
 #End Region
 
 #Region "Pulpit"
-
-    'Private Sub pctPulpit_LostFocus() Handles pctPulpit.LostFocus
-    '    Konfiguracja.WyczyscZaznaczenie()
-    '    RysujPulpit()
-    'End Sub
 
     Private Sub pctPulpit_KeyDown(sender As Object, e As KeyEventArgs) Handles pctPulpit.KeyDown
         Dim p As New Point(Konfiguracja.ZaznaczX, Konfiguracja.ZaznaczY)

@@ -1,17 +1,34 @@
 ﻿Public Class wndNazwaStacji
+    Public Adres As Integer = 0
     Public Nazwa As String = ""
-    Public Sub New(NazwaStacji As String)
+    Public Sub New(AdresStacji As Integer, NazwaStacji As String)
         InitializeComponent()
+        txtAdres.Text = AdresStacji.ToString
         txtNazwa.Text = NazwaStacji
     End Sub
 
     Private Sub btnOK_Click() Handles btnOK.Click
-        If txtNazwa.Text = "" Then
-            PokazBlad("Nie podano nazwy posterunku.")
+        If txtAdres.Text = "" Then
+            PokazBlad("Należy podać adres posterunku.")
             Exit Sub
         End If
 
+        If Not Integer.TryParse(txtAdres.Text, Adres) Then
+            PokazBlad("Adres posterunku musi być liczbą.")
+            Exit Sub
+        End If
+
+        If Adres < 0 Then
+            PokazBlad("Adres posterunku musi być liczbą dodatnią.")
+            Exit Sub
+        End If
+
+        If txtNazwa.Text = "" Then
+            PokazBlad("Należy podać nazwę posterunku.")
+            Exit Sub
+        End If
         Nazwa = txtNazwa.Text
+
         DialogResult = DialogResult.OK
         Close()
     End Sub

@@ -17,7 +17,7 @@
     End Property
 
     Public Property Nazwa As String = ""
-
+    Public Property Adres As Integer
     Public ReadOnly Property DataUtworzenia As Date
 
     Private _Szerokosc As Integer
@@ -49,6 +49,7 @@
         _Szerokosc = szer
         _Wysokosc = wys
         ReDim _Kostki(_Szerokosc - 1, _Wysokosc - 1)
+        DataUtworzenia = Now
     End Sub
 
     Public Sub Zapisz(Strumien As BinaryWriter)
