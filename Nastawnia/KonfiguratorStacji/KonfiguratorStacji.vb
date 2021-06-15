@@ -11,6 +11,8 @@
     Private LokalizacjaPulpitu As New Point(-1, -1)
     Private PaneleKonfKostek As Panel()
     Private ZaznaczonaKostka As Zaleznosci.Kostka
+    Private ZdarzeniaWlaczone As Boolean = True
+    Private ZaznaczonaLampaNaLiscie As ListViewItem
 
     Private Delegate Function SprawdzTypKostki(kostka As Zaleznosci.Kostka) As Boolean
     Private Delegate Function PobierzNazweKostki(kostka As Zaleznosci.Kostka) As String
@@ -39,9 +41,16 @@
         Pulpit.Kostki(0, 5) = New Zaleznosci.Kierunek
 
         RysujPulpit()
+
+        UstawAktywnoscPolLamp(False)
     End Sub
 
     Private Sub wndKonfiguratorStacji_Resize() Handles Me.Resize
+        RysujPulpit()
+    End Sub
+
+    Private Sub tabUstawienia_Selected() Handles tabUstawienia.Selected
+        Konfiguracja.RysujLampy = tabUstawienia.SelectedTab Is tbpLampy
         RysujPulpit()
     End Sub
 
@@ -307,17 +316,6 @@
     End Sub
 
 
-    'Walidacja
-    Private Function PobierzLiczbeNieujemna(obiekt As TextBox) As Integer
-        Dim predkosc As Integer = 0
-        If Integer.TryParse(obiekt.Text, predkosc) Then
-            If predkosc < 0 Then predkosc = 0
-        End If
-
-        Return predkosc
-    End Function
-
-
     'Wyświetlanie paneli
     Private Sub UkryjPaneleKonf()
         For i As Integer = 0 To PaneleKonfKostek.Length - 1
@@ -531,6 +529,117 @@
 
 #End Region
 
+#Region "Zakładka Lampy"
+
+    Private Sub lvLampy_SelectedIndexChanged() Handles lvLampy.SelectedIndexChanged
+        ZdarzeniaWlaczone = False
+        ZaznaczonaLampaNaLiscie = PobierzZaznaczonyElementNaLiscie(lvLampy)
+        Dim lampa As Zaleznosci.Lampa = PobierzZaznaczonaLampe()
+        If lampa Is Nothing Then
+            txtLampaAdres.Text = ""
+            txtLampaX.Text = ""
+            txtLampaY.Text = ""
+            UstawAktywnoscPolLamp(False)
+        Else
+            txtLampaAdres.Text = lampa.Adres.ToString
+            txtLampaX.Text = lampa.X.ToString
+            txtLampaY.Text = lampa.Y.ToString
+            UstawAktywnoscPolLamp(True)
+        End If
+        Konfiguracja.ZaznaczonaLampa = lampa
+        RysujPulpit()
+        ZdarzeniaWlaczone = True
+    End Sub
+
+    Private Sub btnLampaDodaj_Click() Handles btnLampaDodaj.Click
+        Pulpit.Lampy.Add(New Zaleznosci.Lampa())
+        OdswiezListeLamp()
+    End Sub
+
+    Private Sub btnLampaUsun_Click() Handles btnLampaUsun.Click
+        Dim lampa As Zaleznosci.Lampa = Konfiguracja.ZaznaczonaLampa
+        If lampa Is Nothing Then Exit Sub
+
+        If ZadajPytanie("Czy usunąć lampę o adresie " & lampa.Adres.ToString & "?") = DialogResult.Yes Then
+            Pulpit.Lampy.Remove(lampa)
+            OdswiezListeLamp()
+        End If
+    End Sub
+
+    Private Sub txtLampaAdres_TextChanged() Handles txtLampaAdres.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim lampa As Zaleznosci.Lampa = Konfiguracja.ZaznaczonaLampa
+        If lampa IsNot Nothing Then
+            lampa.Adres = PobierzLiczbeNieujemna(txtLampaAdres)
+            ZaznaczonaLampaNaLiscie.SubItems(0).Text = lampa.Adres.ToString
+        End If
+        RysujPulpit()
+    End Sub
+
+    Private Sub txtLampaX_TextChanged() Handles txtLampaX.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim lampa As Zaleznosci.Lampa = Konfiguracja.ZaznaczonaLampa
+        If lampa IsNot Nothing Then
+            lampa.X = PobierzLiczbeNieujemnaRzeczywista(txtLampaX)
+            ZaznaczonaLampaNaLiscie.SubItems(1).Text = lampa.X.ToString
+        End If
+        RysujPulpit()
+    End Sub
+
+    Private Sub txtLampaY_TextChanged() Handles txtLampaY.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim lampa As Zaleznosci.Lampa = Konfiguracja.ZaznaczonaLampa
+        If lampa IsNot Nothing Then
+            lampa.Y = PobierzLiczbeNieujemnaRzeczywista(txtLampaY)
+            ZaznaczonaLampaNaLiscie.SubItems(2).Text = lampa.Y.ToString
+        End If
+        RysujPulpit()
+    End Sub
+
+    Private Sub OdswiezListeLamp()
+        Dim lampa As Zaleznosci.Lampa = Konfiguracja.ZaznaczonaLampa
+        lvLampy.Items.Clear()
+        ZaznaczonaLampaNaLiscie = Nothing
+
+        Dim en As List(Of Zaleznosci.Lampa).Enumerator = Pulpit.Lampy.GetEnumerator
+        While en.MoveNext
+            Dim l As Zaleznosci.Lampa = en.Current
+            Dim lvi As New ListViewItem(New String() {l.Adres.ToString, l.X.ToString, l.Y.ToString})
+            lvi.Tag = l
+            If en.Current Is lampa Then
+                lvi.Selected = True
+                ZaznaczonaLampaNaLiscie = lvi
+            End If
+            lvLampy.Items.Add(lvi)
+        End While
+
+        If ZaznaczonaLampaNaLiscie Is Nothing Then
+            lvLampy_SelectedIndexChanged()
+        End If
+
+        RysujPulpit()
+    End Sub
+
+    Private Function PobierzZaznaczonaLampe() As Zaleznosci.Lampa
+        If lvLampy.SelectedItems Is Nothing OrElse lvLampy.SelectedItems.Count = 0 Then
+            Return Nothing
+        Else
+            Return DirectCast(lvLampy.SelectedItems(0).Tag, Zaleznosci.Lampa)
+        End If
+    End Function
+
+    Private Sub UstawAktywnoscPolLamp(wlaczony As Boolean)
+        btnLampaUsun.Enabled = wlaczony
+        txtLampaAdres.Enabled = wlaczony
+        txtLampaX.Enabled = wlaczony
+        txtLampaY.Enabled = wlaczony
+    End Sub
+
+#End Region
+
 #Region "Pulpit"
 
     Private Sub pctPulpit_KeyDown(sender As Object, e As KeyEventArgs) Handles pctPulpit.KeyDown
@@ -557,7 +666,8 @@
         pctPulpit.Focus()
         UkryjPaneleKonf()
         Dim p As Point = PobierzKliknieteWspolrzedneKostki()
-        If CzyKostkaWZakresiePulpitu(p) AndAlso Pulpit.Kostki(p.X, p.Y) IsNot Nothing Then
+        Dim l As Zaleznosci.Lampa = PobierzKliknietaLampe()
+        If CzyKostkaWZakresiePulpitu(p) AndAlso Pulpit.Kostki(p.X, p.Y) IsNot Nothing AndAlso l Is Nothing Then
             Konfiguracja.ZaznaczX = p.X
             Konfiguracja.ZaznaczY = p.Y
             ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
@@ -566,6 +676,17 @@
             Konfiguracja.WyczyscZaznaczenie()
             ZaznaczonaKostka = Nothing
         End If
+
+        If l IsNot Nothing Then
+            For i As Integer = 0 To lvLampy.Items.Count - 1
+                Dim lvi As ListViewItem = lvLampy.Items(i)
+                If DirectCast(lvi.Tag, Zaleznosci.Lampa) Is l Then
+                    lvi.Selected = True
+                    Exit For
+                End If
+            Next
+        End If
+
         RysujPulpit()
     End Sub
 
@@ -662,8 +783,52 @@
         )
     End Function
 
+    Private Function PobierzKliknietaLampe() As Zaleznosci.Lampa
+        If Not Konfiguracja.RysujLampy Then Return Nothing
+
+        Dim k As Point = pctPulpit.PointToClient(MousePosition)
+        Dim s As PointF = New PointF(k.X / Konfiguracja.Skalowanie, k.Y / Konfiguracja.Skalowanie)
+        Dim pol As Single = Rysowanie.LAMPA_SZER / 2
+        Dim en As List(Of Zaleznosci.Lampa).Enumerator = Pulpit.Lampy.GetEnumerator
+
+        While en.MoveNext
+            Dim l As Zaleznosci.Lampa = en.Current
+            If (s.X <= l.X + pol) And (s.X >= l.X - pol) And (s.Y <= l.Y + pol) And (s.Y >= l.Y - pol) Then
+                Return l
+            End If
+        End While
+
+        Return Nothing
+    End Function
 
 #End Region
+
+#Region "Reszta"
+    Private Function PobierzZaznaczonyElementNaLiscie(lv As ListView) As ListViewItem
+        If lv.SelectedItems Is Nothing OrElse lv.SelectedItems.Count = 0 Then
+            Return Nothing
+        Else
+            Return lv.SelectedItems(0)
+        End If
+    End Function
+
+    Private Function PobierzLiczbeNieujemna(pole As TextBox) As Integer
+        Dim liczba As Integer = 0
+        If Integer.TryParse(pole.Text, liczba) Then
+            If liczba < 0 Then liczba = 0
+        End If
+
+        Return liczba
+    End Function
+
+    Private Function PobierzLiczbeNieujemnaRzeczywista(pole As TextBox) As Double
+        Dim liczba As Double = 0.0
+        If Double.TryParse(pole.Text, liczba) Then
+            If liczba < 0.0 Then liczba = 0.0
+        End If
+
+        Return liczba
+    End Function
 
     Private Class ObiektComboBox(Of T)
         Public Wartosc As T
@@ -676,5 +841,7 @@
             Return Tekst
         End Function
     End Class
+
+#End Region
 
 End Class

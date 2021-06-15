@@ -1,5 +1,6 @@
 ﻿Public Module Rysowanie
-    Private Const TOR_SZEROKOSC As Single = 0.1 'szerokość szczeliny
+    Public Const LAMPA_SZER As Single = 0.25     'średnica lampy
+    Private Const TOR_SZEROKOSC As Single = 0.1 'szerokość toru na kostce
     Private Const SYGN_POZ As Single = 0.25     'wielokorotność stałej oznacza położenie środków kolejnych świateł sygnałów na osi X
     Private Const SYGN_SZER As Single = 0.18    'średnica sygnału
     Private Const SYGN_TLO_SZER As Single = 0.28        'średnica okręgu stanowiącego tło sygnału
@@ -26,6 +27,8 @@
     Private ReadOnly PEDZEL_PRZYCISK As New SolidBrush(KolorRGB("#000000"))
     Private ReadOnly PEDZEL_TEKST As New SolidBrush(KolorRGB("#000000"))
     Private ReadOnly PEDZEL_ZAZN_KOSTKA As New SolidBrush(KolorRGB("#009DFF"))
+    Private ReadOnly PEDZEL_LAMPA_TLO As New SolidBrush(KolorRGB("#FFEA00"))
+    Private ReadOnly PEDZEL_LAMPA_ZAZN As New SolidBrush(KolorRGB("#FF9500"))
 
     Private ReadOnly CZCIONKA As New Font("Arial", 0.2)
 
@@ -65,6 +68,24 @@
                 RysujKostke(x, y, konfiguracja.Skalowanie, k)
             Next
         Next
+
+        If konfiguracja.RysujLampy Then
+            Dim en As List(Of Zaleznosci.Lampa).Enumerator = pulpit.Lampy.GetEnumerator
+            While en.MoveNext
+                Dim l As Zaleznosci.Lampa = en.Current
+                gr.ResetTransform()
+                gr.ScaleTransform(konfiguracja.Skalowanie, konfiguracja.Skalowanie)
+                gr.TranslateTransform(CSng(l.X - LAMPA_SZER / 2), CSng(l.Y - LAMPA_SZER / 2))
+
+                Dim pedzel As SolidBrush
+                If l Is konfiguracja.ZaznaczonaLampa Then
+                    pedzel = PEDZEL_LAMPA_ZAZN
+                Else
+                    pedzel = PEDZEL_LAMPA_TLO
+                End If
+                gr.FillEllipse(pedzel, 0, 0, LAMPA_SZER, LAMPA_SZER)
+            End While
+        End If
 
         Return img
     End Function

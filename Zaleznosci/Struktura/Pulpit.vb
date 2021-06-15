@@ -41,6 +41,13 @@
         End Get
     End Property
 
+    Private _Lampy As New List(Of Lampa)
+    Public ReadOnly Property Lampy As List(Of Lampa)
+        Get
+            Return _Lampy
+        End Get
+    End Property
+
     Public Sub New()
         Me.New(10, 10)
     End Sub
