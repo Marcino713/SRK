@@ -93,6 +93,9 @@ Partial Class wndKonfiguratorStacji
         Me.tbpOdcinkiTorow = New System.Windows.Forms.TabPage()
         Me.splKartaTory = New System.Windows.Forms.SplitContainer()
         Me.lvTory = New System.Windows.Forms.ListView()
+        Me.ColumnHeader4 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader5 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader6 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.txtTorAdres = New System.Windows.Forms.TextBox()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.pnlTorLegenda = New System.Windows.Forms.Panel()
@@ -108,7 +111,6 @@ Partial Class wndKonfiguratorStacji
         Me.txtTorNazwa = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.btnTorEdytuj = New System.Windows.Forms.Button()
         Me.btnTorDodaj = New System.Windows.Forms.Button()
         Me.tbpLicznikiOsi = New System.Windows.Forms.TabPage()
         Me.splLiczniki = New System.Windows.Forms.SplitContainer()
@@ -923,7 +925,6 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaTory.Panel2.Controls.Add(Me.txtTorNazwa)
         Me.splKartaTory.Panel2.Controls.Add(Me.Label2)
         Me.splKartaTory.Panel2.Controls.Add(Me.Label1)
-        Me.splKartaTory.Panel2.Controls.Add(Me.btnTorEdytuj)
         Me.splKartaTory.Panel2.Controls.Add(Me.btnTorDodaj)
         Me.splKartaTory.Size = New System.Drawing.Size(200, 638)
         Me.splKartaTory.SplitterDistance = 191
@@ -931,12 +932,28 @@ Partial Class wndKonfiguratorStacji
         '
         'lvTory
         '
+        Me.lvTory.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader4, Me.ColumnHeader5, Me.ColumnHeader6})
         Me.lvTory.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lvTory.FullRowSelect = True
+        Me.lvTory.HideSelection = False
         Me.lvTory.Location = New System.Drawing.Point(0, 0)
         Me.lvTory.Name = "lvTory"
         Me.lvTory.Size = New System.Drawing.Size(200, 191)
         Me.lvTory.TabIndex = 0
         Me.lvTory.UseCompatibleStateImageBehavior = False
+        Me.lvTory.View = System.Windows.Forms.View.Details
+        '
+        'ColumnHeader4
+        '
+        Me.ColumnHeader4.Text = "Adres"
+        '
+        'ColumnHeader5
+        '
+        Me.ColumnHeader5.Text = "Nazwa"
+        '
+        'ColumnHeader6
+        '
+        Me.ColumnHeader6.Text = "Kostki"
         '
         'txtTorAdres
         '
@@ -1001,7 +1018,6 @@ Partial Class wndKonfiguratorStacji
         '
         'pnlTorNieprzypisany
         '
-        Me.pnlTorNieprzypisany.BackColor = System.Drawing.Color.Red
         Me.pnlTorNieprzypisany.Location = New System.Drawing.Point(4, 55)
         Me.pnlTorNieprzypisany.Name = "pnlTorNieprzypisany"
         Me.pnlTorNieprzypisany.Size = New System.Drawing.Size(13, 13)
@@ -1009,7 +1025,6 @@ Partial Class wndKonfiguratorStacji
         '
         'pnlTorTenOdcinek
         '
-        Me.pnlTorTenOdcinek.BackColor = System.Drawing.Color.Red
         Me.pnlTorTenOdcinek.Location = New System.Drawing.Point(4, 17)
         Me.pnlTorTenOdcinek.Name = "pnlTorTenOdcinek"
         Me.pnlTorTenOdcinek.Size = New System.Drawing.Size(13, 13)
@@ -1026,7 +1041,6 @@ Partial Class wndKonfiguratorStacji
         '
         'pnlTorInnyOdcinek
         '
-        Me.pnlTorInnyOdcinek.BackColor = System.Drawing.Color.Red
         Me.pnlTorInnyOdcinek.Location = New System.Drawing.Point(4, 36)
         Me.pnlTorInnyOdcinek.Name = "pnlTorInnyOdcinek"
         Me.pnlTorInnyOdcinek.Size = New System.Drawing.Size(13, 13)
@@ -1034,9 +1048,9 @@ Partial Class wndKonfiguratorStacji
         '
         'btnTorUsun
         '
-        Me.btnTorUsun.Location = New System.Drawing.Point(135, 3)
+        Me.btnTorUsun.Location = New System.Drawing.Point(102, 3)
         Me.btnTorUsun.Name = "btnTorUsun"
-        Me.btnTorUsun.Size = New System.Drawing.Size(60, 23)
+        Me.btnTorUsun.Size = New System.Drawing.Size(93, 23)
         Me.btnTorUsun.TabIndex = 2
         Me.btnTorUsun.Text = "Usuń"
         Me.btnTorUsun.UseVisualStyleBackColor = True
@@ -1078,20 +1092,11 @@ Partial Class wndKonfiguratorStacji
         Me.Label1.TabIndex = 2
         Me.Label1.Text = "Nazwa:"
         '
-        'btnTorEdytuj
-        '
-        Me.btnTorEdytuj.Location = New System.Drawing.Point(69, 3)
-        Me.btnTorEdytuj.Name = "btnTorEdytuj"
-        Me.btnTorEdytuj.Size = New System.Drawing.Size(60, 23)
-        Me.btnTorEdytuj.TabIndex = 1
-        Me.btnTorEdytuj.Text = "Edytuj"
-        Me.btnTorEdytuj.UseVisualStyleBackColor = True
-        '
         'btnTorDodaj
         '
         Me.btnTorDodaj.Location = New System.Drawing.Point(3, 3)
         Me.btnTorDodaj.Name = "btnTorDodaj"
-        Me.btnTorDodaj.Size = New System.Drawing.Size(60, 23)
+        Me.btnTorDodaj.Size = New System.Drawing.Size(93, 23)
         Me.btnTorDodaj.TabIndex = 0
         Me.btnTorDodaj.Text = "Dodaj"
         Me.btnTorDodaj.UseVisualStyleBackColor = True
@@ -1455,7 +1460,6 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents txtTorNazwa As TextBox
     Friend WithEvents Label2 As Label
     Friend WithEvents Label1 As Label
-    Friend WithEvents btnTorEdytuj As Button
     Friend WithEvents btnTorDodaj As Button
     Friend WithEvents Label4 As Label
     Friend WithEvents pnlTorTenOdcinek As Panel
@@ -1545,4 +1549,7 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents Label24 As Label
     Friend WithEvents btnLampaUsun As Button
     Friend WithEvents btnLampaDodaj As Button
+    Friend WithEvents ColumnHeader4 As ColumnHeader
+    Friend WithEvents ColumnHeader5 As ColumnHeader
+    Friend WithEvents ColumnHeader6 As ColumnHeader
 End Class

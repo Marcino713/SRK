@@ -7,8 +7,10 @@
     Public PrzesuwanaKostka As Zaleznosci.Kostka
     Public RysujLampy As Boolean = False
     Public ZaznaczonaLampa As Zaleznosci.Lampa
+    Public RysujOdcinki As Boolean = False
+    Public ZaznaczonyOdcinek As Zaleznosci.OdcinekToru
 
-    Public Sub WyczyscZaznaczenie()
+    Public Sub WyczyscZaznaczenieKostki()
         ZaznaczX = -1
         ZaznaczY = -1
         PrzesuwanaKostka = Nothing

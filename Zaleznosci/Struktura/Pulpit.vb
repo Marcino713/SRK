@@ -48,6 +48,13 @@
         End Get
     End Property
 
+    Private _Odcinki As New List(Of OdcinekToru)
+    Public ReadOnly Property OdcinkiTorow As List(Of OdcinekToru)
+        Get
+            Return _Odcinki
+        End Get
+    End Property
+
     Public Sub New()
         Me.New(10, 10)
     End Sub
@@ -71,6 +78,24 @@
         For x As Integer = 0 To _Szerokosc - 1
             For y As Integer = 0 To _Wysokosc - 1
                 If _Kostki(x, y) IsNot Nothing Then _Kostki(x, y).UsunPowiazanie(kostka)
+            Next
+        Next
+    End Sub
+
+    Public Sub UsunOdcinekToruZPowiazan(odcinek As OdcinekToru)
+        For x As Integer = 0 To _Szerokosc - 1
+            For y As Integer = 0 To _Wysokosc - 1
+                If TypeOf _Kostki(x, y) Is Tor Then
+                    Dim t As Tor = DirectCast(_Kostki(x, y), Tor)
+                    If t.NalezyDoOdcinka Is odcinek Then
+                        t.NalezyDoOdcinka = Nothing
+                    End If
+                ElseIf TypeOf (_Kostki(x, y)) Is Sygnalizator
+                    Dim s As Sygnalizator = DirectCast(_Kostki(x, y), Sygnalizator)
+                    If s.OdcinekNastepujacy Is odcinek Then
+                        s.OdcinekNastepujacy = Nothing
+                    End If
+                End If
             Next
         Next
     End Sub

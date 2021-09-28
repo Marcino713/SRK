@@ -12,8 +12,14 @@
     Private Const TEKST_POZ_Y As Single = 0.1
     Private Const COS45 As Single = 0.707
 
+    Public ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")        'tor przypisany do innego odcinka
+    Public ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")       'tor przypisany do zaznaczonego odcinka
+    Public ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")     'tor nieprzypisany do żadnego odcinka
+
     Private ReadOnly PEDZEL_KRAWEDZIE As New Pen(Color.White, 0)
-    Private ReadOnly PEDZEL_TOR_WOLNY As New SolidBrush(KolorRGB("#8C8C8C"))
+    Private ReadOnly PEDZEL_TOR_WOLNY As New SolidBrush(KOLOR_TOR_PRZYPISANY)
+    Private ReadOnly PEDZEL_TOR_TEN_ODCINEK As New SolidBrush(KOLOR_TOR_TEN_ODCINEK)
+    Private ReadOnly PEDZEL_TOR_NIEPRZYPISANY As New SolidBrush(KOLOR_TOR_NIEPRZYPISANY)
     Private ReadOnly PEDZEL_SYGN_CZER As New SolidBrush(KolorRGB("#800000"))
     Private ReadOnly PEDZEL_SYGN_CZER_JASNY As New SolidBrush(KolorRGB("#FF0000"))
     Private ReadOnly PEDZEL_SYGN_ZIEL As New SolidBrush(KolorRGB("#008000"))
@@ -33,6 +39,7 @@
     Private ReadOnly CZCIONKA As New Font("Arial", 0.2)
 
     Private gr As Graphics
+    Private pedzelToru As SolidBrush
 
     Public Function Rysuj(pulpit As Zaleznosci.Pulpit, konfiguracja As KonfiguracjaRysowania) As Bitmap
         Dim poczx As Integer = 0
@@ -41,8 +48,9 @@
         Dim img As New Bitmap(CInt(pulpit.Szerokosc * konfiguracja.Skalowanie) + 1, CInt(pulpit.Wysokosc * konfiguracja.Skalowanie) + 1)
         gr = Graphics.FromImage(img)
         gr.Clear(konfiguracja.KolorKostki)
+        pedzelToru = PEDZEL_TOR_WOLNY
 
-        If konfiguracja.ZaznaczX >= 0 And konfiguracja.ZaznaczX < pulpit.Szerokosc And konfiguracja.ZaznaczY >= 0 And konfiguracja.ZaznaczY < pulpit.Wysokosc Then
+        If (Not konfiguracja.RysujOdcinki) And konfiguracja.ZaznaczX >= 0 And konfiguracja.ZaznaczX < pulpit.Szerokosc And konfiguracja.ZaznaczY >= 0 And konfiguracja.ZaznaczY < pulpit.Wysokosc Then
             gr.ScaleTransform(konfiguracja.Skalowanie, konfiguracja.Skalowanie)
             gr.FillRectangle(PEDZEL_ZAZN_KOSTKA, konfiguracja.ZaznaczX, konfiguracja.ZaznaczY, 1, 1)
             If konfiguracja.PrzesuwanaKostka IsNot Nothing Then RysujKostke(konfiguracja.ZaznaczX, konfiguracja.ZaznaczY, konfiguracja.Skalowanie, konfiguracja.PrzesuwanaKostka)
@@ -65,6 +73,7 @@
                 Dim k As Zaleznosci.Kostka = pulpit.Kostki(x, y)
                 If k Is Nothing Then Continue For
 
+                If konfiguracja.RysujOdcinki Then UstawKolorToru(k, konfiguracja.ZaznaczonyOdcinek)
                 RysujKostke(x, y, konfiguracja.Skalowanie, k)
             Next
         Next
@@ -101,7 +110,7 @@
             Case Zaleznosci.TypKostki.Tor
                 RysujTor()
             Case Zaleznosci.TypKostki.TorKoniec
-                RysujTorKoniec()
+                RysujTor(0.5)
             Case Zaleznosci.TypKostki.Zakret
                 RysujZakret()
             Case Zaleznosci.TypKostki.RozjazdLewo
@@ -123,17 +132,13 @@
         End Select
     End Sub
 
-    Private Sub RysujTor()
-        gr.FillRectangle(PEDZEL_TOR_WOLNY, 0, 0.5 - TOR_SZEROKOSC / 2, 1, TOR_SZEROKOSC)
-    End Sub
-
-    Private Sub RysujTorKoniec()
-        gr.FillRectangle(PEDZEL_TOR_WOLNY, 0, 0.5 - TOR_SZEROKOSC / 2, 0.5, TOR_SZEROKOSC)
+    Private Sub RysujTor(Optional Dlugosc As Single = 1)
+        gr.FillRectangle(pedzelToru, 0, 0.5 - TOR_SZEROKOSC / 2, Dlugosc, TOR_SZEROKOSC)
     End Sub
 
     Private Sub RysujZakret()
         Dim szer As Single = TOR_SZEROKOSC / COS45
-        gr.FillPolygon(PEDZEL_TOR_WOLNY, {
+        gr.FillPolygon(pedzelToru, {
         New PointF(1, 0.5F - szer / 2),
         New PointF(1, 0.5F + szer / 2),
         New PointF(0.5F + szer / 2, 1),
@@ -143,7 +148,7 @@
 
     Private Sub RysujZakretPrawo()
         Dim szer As Single = TOR_SZEROKOSC / COS45
-        gr.FillPolygon(PEDZEL_TOR_WOLNY, {
+        gr.FillPolygon(pedzelToru, {
         New PointF(1, 0.5F - szer / 2),
         New PointF(0.5F + szer / 2, 0),
         New PointF(0.5F - szer / 2, 0),
@@ -232,4 +237,18 @@
         gr.DrawLine(PEDZEL_SYGN_KRAWEDZ, x1, y3, x1, y2)
     End Sub
 
+    Private Sub UstawKolorToru(k As Zaleznosci.Kostka, zazn As Zaleznosci.OdcinekToru)
+        If TypeOf k Is Zaleznosci.Tor Then
+            Dim t As Zaleznosci.Tor = DirectCast(k, Zaleznosci.Tor)
+            If t.NalezyDoOdcinka Is zazn And zazn IsNot Nothing Then
+                pedzelToru = PEDZEL_TOR_TEN_ODCINEK
+            ElseIf t.NalezyDoOdcinka IsNot Nothing
+                pedzelToru = PEDZEL_TOR_WOLNY
+            Else
+                pedzelToru = PEDZEL_TOR_NIEPRZYPISANY
+            End If
+        Else
+            pedzelToru = PEDZEL_TOR_WOLNY
+        End If
+    End Sub
 End Module

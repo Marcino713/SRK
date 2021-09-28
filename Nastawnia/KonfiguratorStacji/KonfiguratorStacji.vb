@@ -13,6 +13,7 @@
     Private ZaznaczonaKostka As Zaleznosci.Kostka
     Private ZdarzeniaWlaczone As Boolean = True
     Private ZaznaczonaLampaNaLiscie As ListViewItem
+    Private ZaznaczonyTorNaLiscie As ListViewItem
 
     Private Delegate Function SprawdzTypKostki(kostka As Zaleznosci.Kostka) As Boolean
     Private Delegate Function PobierzNazweKostki(kostka As Zaleznosci.Kostka) As String
@@ -43,6 +44,11 @@
         RysujPulpit()
 
         UstawAktywnoscPolLamp(False)
+        UstawAktywnoscPolTorow(False)
+
+        pnlTorTenOdcinek.BackColor = KOLOR_TOR_TEN_ODCINEK
+        pnlTorInnyOdcinek.BackColor = KOLOR_TOR_PRZYPISANY
+        pnlTorNieprzypisany.BackColor = KOLOR_TOR_NIEPRZYPISANY
     End Sub
 
     Private Sub wndKonfiguratorStacji_Resize() Handles Me.Resize
@@ -51,6 +57,8 @@
 
     Private Sub tabUstawienia_Selected() Handles tabUstawienia.Selected
         Konfiguracja.RysujLampy = tabUstawienia.SelectedTab Is tbpLampy
+        Konfiguracja.RysujOdcinki = tabUstawienia.SelectedTab Is tbpOdcinkiTorow
+        If tabUstawienia.SelectedTab Is tbpOdcinkiTorow Then OdswiezListeTorow()
         RysujPulpit()
     End Sub
 
@@ -128,7 +136,7 @@
 
     'Tor
     Private Sub txtKonfTorPredkosc_TextChanged() Handles txtKonfTorPredkosc.TextChanged
-        DirectCast(ZaznaczonaKostka, Zaleznosci.Tor).Predkosc = PobierzLiczbeNieujemna(txtKonfTorPredkosc)
+        DirectCast(ZaznaczonaKostka, Zaleznosci.Tor).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfTorPredkosc)
     End Sub
 
 
@@ -219,6 +227,12 @@
         DirectCast(ZaznaczonaKostka, Zaleznosci.Sygnalizator).Nazwa = txtKonfSygnNazwa.Text
     End Sub
 
+    Private Sub cboKonfSygnOdcinekNast_SelectedIndexChanged() Handles cboKonfSygnOdcinekNast.SelectedIndexChanged
+        If cboKonfSygnOdcinekNast.SelectedItem Is Nothing Then Exit Sub
+        Dim el As ObiektComboBox(Of Zaleznosci.OdcinekToru) = DirectCast(cboKonfSygnOdcinekNast.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru))
+        DirectCast(ZaznaczonaKostka, Zaleznosci.Sygnalizator).OdcinekNastepujacy = el.Wartosc
+    End Sub
+
     Private Sub cboKonfSygnSygnNast_SelectedIndexChanged() Handles cboKonfSygnSygnNast.SelectedIndexChanged
         If cboKonfSygnSygnNast.SelectedItem Is Nothing Then Exit Sub
         Dim el As ObiektComboBox(Of Zaleznosci.Kostka) = DirectCast(cboKonfSygnSygnNast.SelectedItem, ObiektComboBox(Of Zaleznosci.Kostka))
@@ -272,7 +286,7 @@
                     If typ = Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegow Then aktywny = False
                     cboKonfPrzyciskSygnalizator.Items.Clear()
                     cboKonfPrzyciskSygnalizator.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweSygnalizatora))
-                    ZaznaczElement(cboKonfPrzyciskSygnalizator, prz.ObslugiwanySygnalizator)
+                    ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskSygnalizator, prz.ObslugiwanySygnalizator)
 
                 Case Zaleznosci.TypKostki.PrzyciskTor
                     Dim typ As Zaleznosci.TypPrzyciskuTorEnum = DirectCast(el, ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)).Wartosc
@@ -290,7 +304,7 @@
                     End If
                     cboKonfPrzyciskSygnalizator.Items.Clear()
                     cboKonfPrzyciskSygnalizator.Items.AddRange(PobierzElementyDoComboBox(f, AddressOf PobierzNazweSygnalizatora))
-                    ZaznaczElement(cboKonfPrzyciskSygnalizator, prz.ObslugiwanySygnalizator)
+                    ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskSygnalizator, prz.ObslugiwanySygnalizator)
 
             End Select
 
@@ -339,7 +353,7 @@
     Private Sub PokazKonfTor()
         Dim tor As Zaleznosci.Tor = DirectCast(ZaznaczonaKostka, Zaleznosci.Tor)
 
-        txtKonfTorPredkosc.Text = tor.Predkosc.ToString()
+        txtKonfTorPredkosc.Text = tor.PredkoscZasadnicza.ToString()
         pnlKonfTor.Visible = True
     End Sub
 
@@ -368,10 +382,10 @@
         cboKonfRozjazdBok1.Items.AddRange(el)
         cboKonfRozjazdBok2.Items.AddRange(el)
 
-        ZaznaczElement(cboKonfRozjazdWprost1, roz.ZaleznosciJesliWprost(0).RozjazdZalezny)
-        ZaznaczElement(cboKonfRozjazdWprost2, roz.ZaleznosciJesliWprost(1).RozjazdZalezny)
-        ZaznaczElement(cboKonfRozjazdBok1, roz.ZaleznosciJesliBok(0).RozjazdZalezny)
-        ZaznaczElement(cboKonfRozjazdBok2, roz.ZaleznosciJesliBok(1).RozjazdZalezny)
+        ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfRozjazdWprost1, roz.ZaleznosciJesliWprost(0).RozjazdZalezny)
+        ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfRozjazdWprost2, roz.ZaleznosciJesliWprost(1).RozjazdZalezny)
+        ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfRozjazdBok1, roz.ZaleznosciJesliBok(0).RozjazdZalezny)
+        ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfRozjazdBok2, roz.ZaleznosciJesliBok(1).RozjazdZalezny)
 
         AktywujPrzyciskiKonfiguracjiRozjazdu(roz.ZaleznosciJesliWprost(0).RozjazdZalezny, rbKonfRozjazdWprost1Plus, rbKonfRozjazdWprost1Minus)
         AktywujPrzyciskiKonfiguracjiRozjazdu(roz.ZaleznosciJesliWprost(1).RozjazdZalezny, rbKonfRozjazdWprost2Plus, rbKonfRozjazdWprost2Minus)
@@ -394,6 +408,11 @@
         pnlKonfSygnSwiatla.Visible = (sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny)
 
         cboKonfSygnOdcinekNast.Items.Clear()
+        Dim en As List(Of Zaleznosci.OdcinekToru).Enumerator = Pulpit.OdcinkiTorow.GetEnumerator()
+        Do While en.MoveNext()
+            cboKonfSygnOdcinekNast.Items.Add(New ObiektComboBox(Of Zaleznosci.OdcinekToru)(en.Current, en.Current.Nazwa))
+        Loop
+        ZaznaczElement(cboKonfSygnOdcinekNast, sygn.OdcinekNastepujacy)
 
         cboKonfSygnSygnNast.Items.Clear()
         Dim sygn_nast As Zaleznosci.Sygnalizator = Nothing
@@ -403,7 +422,7 @@
             cboKonfSygnSygnNast.Items.Add(pusty_sygn)
             cboKonfSygnSygnNast.Items.AddRange(sygnalizatory)
             sygn_nast = DirectCast(sygn, Zaleznosci.SygnalizatorUzalezniony).SygnalizatorNastepny
-            ZaznaczElement(cboKonfSygnSygnNast, sygn_nast)
+            ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfSygnSygnNast, sygn_nast)
         End If
 
         If sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Then
@@ -513,17 +532,126 @@
         Return kostki.OrderBy(Function(k As ObiektComboBox(Of Zaleznosci.Kostka)) nazwa(k.Wartosc)).ToArray()
     End Function
 
-    Private Sub ZaznaczElement(cbo As ComboBox, el As Zaleznosci.Kostka)
+    Private Sub ZaznaczElement(Of T As Class)(cbo As ComboBox, el As T)
         If el Is Nothing Then
             cbo.SelectedItem = Nothing
             Exit Sub
         End If
 
         For i As Integer = 0 To cbo.Items.Count - 1
-            If DirectCast(cbo.Items(i), ObiektComboBox(Of Zaleznosci.Kostka)).Wartosc Is el Then
+            If DirectCast(cbo.Items(i), ObiektComboBox(Of T)).Wartosc Is el Then
                 cbo.SelectedIndex = i
                 Exit Sub
             End If
+        Next
+    End Sub
+
+#End Region
+
+#Region "Zakładka Odcinki torów"
+
+    Private Sub lvTory_SelectedIndexChanged() Handles lvTory.SelectedIndexChanged
+        ZdarzeniaWlaczone = False
+        ZaznaczonyTorNaLiscie = PobierzZaznaczonyElementNaLiscie(lvTory)
+        Dim odcinek As Zaleznosci.OdcinekToru = PobierzZaznaczonyElement(Of Zaleznosci.OdcinekToru)(lvTory)
+        If odcinek Is Nothing Then
+            txtTorAdres.Text = ""
+            txtTorNazwa.Text = ""
+            txtTorOpis.Text = ""
+            UstawAktywnoscPolTorow(False)
+        Else
+            txtTorAdres.Text = odcinek.Adres.ToString
+            txtTorNazwa.Text = odcinek.Nazwa.ToString
+            txtTorOpis.Text = odcinek.Opis.ToString
+            UstawAktywnoscPolTorow(True)
+        End If
+        Konfiguracja.ZaznaczonyOdcinek = odcinek
+        RysujPulpit()
+        ZdarzeniaWlaczone = True
+    End Sub
+
+    Private Sub btnTorDodaj_Click() Handles btnTorDodaj.Click
+        Pulpit.OdcinkiTorow.Add(New Zaleznosci.OdcinekToru)
+        OdswiezListeTorow()
+    End Sub
+
+    Private Sub btnTorUsun_Click() Handles btnTorUsun.Click
+        Dim odcinek As Zaleznosci.OdcinekToru = Konfiguracja.ZaznaczonyOdcinek
+        If odcinek Is Nothing Then Exit Sub
+
+        If ZadajPytanie("Czy usunąć odcinek torów o nazwie " & odcinek.Nazwa & "?") = DialogResult.Yes Then
+            Pulpit.OdcinkiTorow.Remove(odcinek)
+            Pulpit.UsunOdcinekToruZPowiazan(odcinek)
+            OdswiezListeTorow()
+        End If
+    End Sub
+
+    Private Sub txtTorAdres_TextChanged() Handles txtTorAdres.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim tor As Zaleznosci.OdcinekToru = Konfiguracja.ZaznaczonyOdcinek
+        If tor IsNot Nothing Then
+            tor.Adres = PobierzLiczbeNieujemna(txtTorAdres)
+            ZaznaczonyTorNaLiscie.SubItems(0).Text = tor.Adres.ToString
+        End If
+    End Sub
+
+    Private Sub txtTorNazwa_TextChanged() Handles txtTorNazwa.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim tor As Zaleznosci.OdcinekToru = Konfiguracja.ZaznaczonyOdcinek
+        If tor IsNot Nothing Then
+            tor.Nazwa = txtTorNazwa.Text
+            ZaznaczonyTorNaLiscie.SubItems(1).Text = tor.Nazwa
+        End If
+    End Sub
+
+    Private Sub txtTorOpis_TextChanged() Handles txtTorOpis.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim tor As Zaleznosci.OdcinekToru = Konfiguracja.ZaznaczonyOdcinek
+        If tor IsNot Nothing Then
+            tor.Opis = txtTorOpis.Text
+        End If
+    End Sub
+
+    Private Sub OdswiezListeTorow()
+        Dim odcinek As Zaleznosci.OdcinekToru = Konfiguracja.ZaznaczonyOdcinek
+        lvTory.Items.Clear()
+        ZaznaczonyTorNaLiscie = Nothing
+
+        Dim en As List(Of Zaleznosci.OdcinekToru).Enumerator = Pulpit.OdcinkiTorow.GetEnumerator
+        While en.MoveNext
+            Dim o As Zaleznosci.OdcinekToru = en.Current
+            Dim lvi As New ListViewItem(New String() {o.Adres.ToString, o.Nazwa.ToString, o.KostkiTory.Count.ToString()})
+            lvi.Tag = o
+            If en.Current Is odcinek Then
+                lvi.Selected = True
+                ZaznaczonyTorNaLiscie = lvi
+            End If
+            lvTory.Items.Add(lvi)
+        End While
+
+        If ZaznaczonyTorNaLiscie Is Nothing Then
+            lvTory_SelectedIndexChanged()
+        End If
+
+        RysujPulpit()
+    End Sub
+
+    Private Sub UstawAktywnoscPolTorow(wlaczony As Boolean)
+        btnTorUsun.Enabled = wlaczony
+        txtTorAdres.Enabled = wlaczony
+        txtTorNazwa.Enabled = wlaczony
+        txtTorOpis.Enabled = wlaczony
+    End Sub
+
+    Private Sub OdswiezLiczbePrzypisanychKostekTorow()
+        If lvTory.Items Is Nothing Then Exit Sub
+
+        For i As Integer = 0 To lvTory.Items.Count - 1
+            Dim o As Zaleznosci.OdcinekToru = DirectCast(lvTory.Items(i).Tag, Zaleznosci.OdcinekToru)
+            lvTory.Items(i).SubItems(2).Text = o.KostkiTory.Count.ToString()
         Next
     End Sub
 
@@ -534,7 +662,7 @@
     Private Sub lvLampy_SelectedIndexChanged() Handles lvLampy.SelectedIndexChanged
         ZdarzeniaWlaczone = False
         ZaznaczonaLampaNaLiscie = PobierzZaznaczonyElementNaLiscie(lvLampy)
-        Dim lampa As Zaleznosci.Lampa = PobierzZaznaczonaLampe()
+        Dim lampa As Zaleznosci.Lampa = PobierzZaznaczonyElement(Of Zaleznosci.Lampa)(lvLampy)
         If lampa Is Nothing Then
             txtLampaAdres.Text = ""
             txtLampaX.Text = ""
@@ -574,7 +702,6 @@
             lampa.Adres = PobierzLiczbeNieujemna(txtLampaAdres)
             ZaznaczonaLampaNaLiscie.SubItems(0).Text = lampa.Adres.ToString
         End If
-        RysujPulpit()
     End Sub
 
     Private Sub txtLampaX_TextChanged() Handles txtLampaX.TextChanged
@@ -623,14 +750,6 @@
         RysujPulpit()
     End Sub
 
-    Private Function PobierzZaznaczonaLampe() As Zaleznosci.Lampa
-        If lvLampy.SelectedItems Is Nothing OrElse lvLampy.SelectedItems.Count = 0 Then
-            Return Nothing
-        Else
-            Return DirectCast(lvLampy.SelectedItems(0).Tag, Zaleznosci.Lampa)
-        End If
-    End Function
-
     Private Sub UstawAktywnoscPolLamp(wlaczony As Boolean)
         btnLampaUsun.Enabled = wlaczony
         txtLampaAdres.Enabled = wlaczony
@@ -653,9 +772,13 @@
                 RysujPulpit()
 
             ElseIf e.KeyData = Keys.Delete
+                If TypeOf (ZaznaczonaKostka) Is Zaleznosci.Tor Then
+                    Dim tor As Zaleznosci.Tor = DirectCast(ZaznaczonaKostka, Zaleznosci.Tor)
+                    tor.NalezyDoOdcinka?.KostkiTory.Remove(tor)
+                End If
                 Pulpit.Kostki(p.X, p.Y) = Nothing
                 Pulpit.UsunKostkeZPowiazan(ZaznaczonaKostka)
-                Konfiguracja.WyczyscZaznaczenie()
+                Konfiguracja.WyczyscZaznaczenieKostki()
                 RysujPulpit()
             End If
 
@@ -663,28 +786,52 @@
     End Sub
 
     Private Sub pctPulpit_Click() Handles pctPulpit.Click
-        pctPulpit.Focus()
-        UkryjPaneleKonf()
         Dim p As Point = PobierzKliknieteWspolrzedneKostki()
-        Dim l As Zaleznosci.Lampa = PobierzKliknietaLampe()
-        If CzyKostkaWZakresiePulpitu(p) AndAlso Pulpit.Kostki(p.X, p.Y) IsNot Nothing AndAlso l Is Nothing Then
-            Konfiguracja.ZaznaczX = p.X
-            Konfiguracja.ZaznaczY = p.Y
-            ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
-            PokazPanelKonf()
-        Else
-            Konfiguracja.WyczyscZaznaczenie()
-            ZaznaczonaKostka = Nothing
-        End If
 
-        If l IsNot Nothing Then
-            For i As Integer = 0 To lvLampy.Items.Count - 1
-                Dim lvi As ListViewItem = lvLampy.Items(i)
-                If DirectCast(lvi.Tag, Zaleznosci.Lampa) Is l Then
-                    lvi.Selected = True
-                    Exit For
+        If Konfiguracja.RysujOdcinki Then
+            If CzyKostkaWZakresiePulpitu(p) Then
+                Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
+                If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.Tor AndAlso Konfiguracja.ZaznaczonyOdcinek IsNot Nothing Then
+
+                    Dim t As Zaleznosci.Tor = DirectCast(kostka, Zaleznosci.Tor)
+                    Dim nalezyDoTegoOdcinka As Boolean = t.NalezyDoOdcinka Is Konfiguracja.ZaznaczonyOdcinek
+                    If t.NalezyDoOdcinka IsNot Nothing Then t.NalezyDoOdcinka.KostkiTory.Remove(t)
+                    If nalezyDoTegoOdcinka Then
+                        t.NalezyDoOdcinka = Nothing
+                    Else
+                        t.NalezyDoOdcinka = Konfiguracja.ZaznaczonyOdcinek
+                        Konfiguracja.ZaznaczonyOdcinek.KostkiTory.Add(t)
+                    End If
+                    OdswiezLiczbePrzypisanychKostekTorow()
+
                 End If
-            Next
+            End If
+
+        Else
+            pctPulpit.Focus()
+            UkryjPaneleKonf()
+
+            Dim l As Zaleznosci.Lampa = PobierzKliknietaLampe()
+            If CzyKostkaWZakresiePulpitu(p) AndAlso Pulpit.Kostki(p.X, p.Y) IsNot Nothing AndAlso l Is Nothing Then
+                Konfiguracja.ZaznaczX = p.X
+                Konfiguracja.ZaznaczY = p.Y
+                ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
+                PokazPanelKonf()
+            Else
+                Konfiguracja.WyczyscZaznaczenieKostki()
+                ZaznaczonaKostka = Nothing
+            End If
+
+            If l IsNot Nothing Then
+                For i As Integer = 0 To lvLampy.Items.Count - 1
+                    Dim lvi As ListViewItem = lvLampy.Items(i)
+                    If DirectCast(lvi.Tag, Zaleznosci.Lampa) Is l Then
+                        lvi.Selected = True
+                        Exit For
+                    End If
+                Next
+            End If
+
         End If
 
         RysujPulpit()
@@ -755,7 +902,7 @@
         Dim k As Zaleznosci.Kostka = PobierzDodawanaKostke(e)
         Pulpit.Kostki(Konfiguracja.ZaznaczX, Konfiguracja.ZaznaczY) = k
 
-        Konfiguracja.WyczyscZaznaczenie()
+        Konfiguracja.WyczyscZaznaczenieKostki()
         RysujPulpit()
     End Sub
 
@@ -812,6 +959,14 @@
         End If
     End Function
 
+    Private Function PobierzZaznaczonyElement(Of T)(lv As ListView) As T
+        If lv.SelectedItems Is Nothing OrElse lv.SelectedItems.Count = 0 Then
+            Return Nothing
+        Else
+            Return DirectCast(lv.SelectedItems(0).Tag, T)
+        End If
+    End Function
+
     Private Function PobierzLiczbeNieujemna(pole As TextBox) As Integer
         Dim liczba As Integer = 0
         If Integer.TryParse(pole.Text, liczba) Then
@@ -829,6 +984,8 @@
 
         Return liczba
     End Function
+
+
 
     Private Class ObiektComboBox(Of T)
         Public Wartosc As T

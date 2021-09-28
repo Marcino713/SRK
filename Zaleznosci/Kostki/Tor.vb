@@ -1,6 +1,8 @@
 ﻿Public Class Tor
     Inherits Kostka
-    Public Property Predkosc As Integer
+    Public Property PredkoscZasadnicza As Integer
+    Public Property NalezyDoOdcinka As OdcinekToru
+
     Public Sub New()
         MyBase.New(TypKostki.Tor)
     End Sub

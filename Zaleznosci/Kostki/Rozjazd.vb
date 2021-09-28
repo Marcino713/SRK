@@ -1,8 +1,7 @@
 ﻿Public MustInherit Class Rozjazd
-    Inherits Kostka
+    Inherits Tor
     Private Const LICZBA_ROZJAZDOW_ZALEZNYCH As Integer = 2
 
-    Public Property PredkoscZasadnicza As Integer
     Public Property PredkoscBoczna As Integer
     Public Property Nazwa As String = ""
     Public Property Adres As Integer
