@@ -238,8 +238,8 @@
     End Sub
 
     Private Sub UstawKolorToru(k As Zaleznosci.Kostka, zazn As Zaleznosci.OdcinekToru)
-        If TypeOf k Is Zaleznosci.Tor Then
-            Dim t As Zaleznosci.Tor = DirectCast(k, Zaleznosci.Tor)
+        If TypeOf k Is Zaleznosci.ITor Then
+            Dim t As Zaleznosci.ITor = DirectCast(k, Zaleznosci.ITor)
             If t.NalezyDoOdcinka Is zazn And zazn IsNot Nothing Then
                 pedzelToru = PEDZEL_TOR_TEN_ODCINEK
             ElseIf t.NalezyDoOdcinka IsNot Nothing

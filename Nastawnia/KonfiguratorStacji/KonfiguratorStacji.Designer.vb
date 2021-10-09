@@ -32,12 +32,9 @@ Partial Class wndKonfiguratorStacji
         Me.pctPulpit = New System.Windows.Forms.PictureBox()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
         Me.pnlPulpit = New System.Windows.Forms.Panel()
-        Me.tabUstawienia = New System.Windows.Forms.TabControl()
-        Me.tbpPulpit = New System.Windows.Forms.TabPage()
-        Me.splKartaPulpit = New System.Windows.Forms.SplitContainer()
-        Me.lvPulpitKostki = New System.Windows.Forms.ListView()
-        Me.imlKostki = New System.Windows.Forms.ImageList(Me.components)
         Me.pnlKonfSygn = New System.Windows.Forms.Panel()
+        Me.txtKonfSygnPredkosc = New System.Windows.Forms.TextBox()
+        Me.Label28 = New System.Windows.Forms.Label()
         Me.cboKonfSygnSygnNast = New System.Windows.Forms.ComboBox()
         Me.Label23 = New System.Windows.Forms.Label()
         Me.pnlKonfSygnSwiatla = New System.Windows.Forms.Panel()
@@ -55,9 +52,22 @@ Partial Class wndKonfiguratorStacji
         Me.Label19 = New System.Windows.Forms.Label()
         Me.Label18 = New System.Windows.Forms.Label()
         Me.Label17 = New System.Windows.Forms.Label()
+        Me.tabUstawienia = New System.Windows.Forms.TabControl()
+        Me.tbpPulpit = New System.Windows.Forms.TabPage()
+        Me.splKartaPulpit = New System.Windows.Forms.SplitContainer()
+        Me.lvPulpitKostki = New System.Windows.Forms.ListView()
+        Me.imlKostki = New System.Windows.Forms.ImageList(Me.components)
         Me.pnlKonfTor = New System.Windows.Forms.Panel()
         Me.txtKonfTorPredkosc = New System.Windows.Forms.TextBox()
         Me.Label12 = New System.Windows.Forms.Label()
+        Me.pnlKonfPrzycisk = New System.Windows.Forms.Panel()
+        Me.pnlKonfPrzyciskPredkosc = New System.Windows.Forms.Panel()
+        Me.txtKonfPrzyciskPredkosc = New System.Windows.Forms.TextBox()
+        Me.Label27 = New System.Windows.Forms.Label()
+        Me.cboKonfPrzyciskSygnalizator = New System.Windows.Forms.ComboBox()
+        Me.cboKonfPrzyciskTyp = New System.Windows.Forms.ComboBox()
+        Me.Label22 = New System.Windows.Forms.Label()
+        Me.Label21 = New System.Windows.Forms.Label()
         Me.pnlKonfRozjazd = New System.Windows.Forms.Panel()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
         Me.cboKonfRozjazdBok2 = New System.Windows.Forms.ComboBox()
@@ -85,11 +95,6 @@ Partial Class wndKonfiguratorStacji
         Me.Label15 = New System.Windows.Forms.Label()
         Me.Label14 = New System.Windows.Forms.Label()
         Me.Label13 = New System.Windows.Forms.Label()
-        Me.pnlKonfPrzycisk = New System.Windows.Forms.Panel()
-        Me.cboKonfPrzyciskSygnalizator = New System.Windows.Forms.ComboBox()
-        Me.cboKonfPrzyciskTyp = New System.Windows.Forms.ComboBox()
-        Me.Label22 = New System.Windows.Forms.Label()
-        Me.Label21 = New System.Windows.Forms.Label()
         Me.tbpOdcinkiTorow = New System.Windows.Forms.TabPage()
         Me.splKartaTory = New System.Windows.Forms.SplitContainer()
         Me.lvTory = New System.Windows.Forms.ListView()
@@ -145,15 +150,17 @@ Partial Class wndKonfiguratorStacji
         Me.splOkno.Panel2.SuspendLayout()
         Me.splOkno.SuspendLayout()
         Me.pnlPulpit.SuspendLayout()
+        Me.pnlKonfSygn.SuspendLayout()
+        Me.pnlKonfSygnSwiatla.SuspendLayout()
         Me.tabUstawienia.SuspendLayout()
         Me.tbpPulpit.SuspendLayout()
         CType(Me.splKartaPulpit, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splKartaPulpit.Panel1.SuspendLayout()
         Me.splKartaPulpit.Panel2.SuspendLayout()
         Me.splKartaPulpit.SuspendLayout()
-        Me.pnlKonfSygn.SuspendLayout()
-        Me.pnlKonfSygnSwiatla.SuspendLayout()
         Me.pnlKonfTor.SuspendLayout()
+        Me.pnlKonfPrzycisk.SuspendLayout()
+        Me.pnlKonfPrzyciskPredkosc.SuspendLayout()
         Me.pnlKonfRozjazd.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
         Me.Panel4.SuspendLayout()
@@ -161,7 +168,6 @@ Partial Class wndKonfiguratorStacji
         Me.GroupBox2.SuspendLayout()
         Me.Panel2.SuspendLayout()
         Me.Panel1.SuspendLayout()
-        Me.pnlKonfPrzycisk.SuspendLayout()
         Me.tbpOdcinkiTorow.SuspendLayout()
         CType(Me.splKartaTory, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splKartaTory.Panel1.SuspendLayout()
@@ -260,73 +266,12 @@ Partial Class wndKonfiguratorStacji
         Me.pnlPulpit.Size = New System.Drawing.Size(788, 670)
         Me.pnlPulpit.TabIndex = 2
         '
-        'tabUstawienia
-        '
-        Me.tabUstawienia.Controls.Add(Me.tbpPulpit)
-        Me.tabUstawienia.Controls.Add(Me.tbpOdcinkiTorow)
-        Me.tabUstawienia.Controls.Add(Me.tbpLicznikiOsi)
-        Me.tabUstawienia.Controls.Add(Me.tbpLampy)
-        Me.tabUstawienia.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.tabUstawienia.Location = New System.Drawing.Point(0, 0)
-        Me.tabUstawienia.Name = "tabUstawienia"
-        Me.tabUstawienia.SelectedIndex = 0
-        Me.tabUstawienia.Size = New System.Drawing.Size(214, 670)
-        Me.tabUstawienia.TabIndex = 0
-        '
-        'tbpPulpit
-        '
-        Me.tbpPulpit.Controls.Add(Me.splKartaPulpit)
-        Me.tbpPulpit.Location = New System.Drawing.Point(4, 22)
-        Me.tbpPulpit.Name = "tbpPulpit"
-        Me.tbpPulpit.Padding = New System.Windows.Forms.Padding(3)
-        Me.tbpPulpit.Size = New System.Drawing.Size(206, 644)
-        Me.tbpPulpit.TabIndex = 0
-        Me.tbpPulpit.Text = "Pulpit"
-        Me.tbpPulpit.UseVisualStyleBackColor = True
-        '
-        'splKartaPulpit
-        '
-        Me.splKartaPulpit.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.splKartaPulpit.Location = New System.Drawing.Point(3, 3)
-        Me.splKartaPulpit.Name = "splKartaPulpit"
-        Me.splKartaPulpit.Orientation = System.Windows.Forms.Orientation.Horizontal
-        '
-        'splKartaPulpit.Panel1
-        '
-        Me.splKartaPulpit.Panel1.Controls.Add(Me.lvPulpitKostki)
-        '
-        'splKartaPulpit.Panel2
-        '
-        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygn)
-        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfTor)
-        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfRozjazd)
-        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfPrzycisk)
-        Me.splKartaPulpit.Size = New System.Drawing.Size(200, 638)
-        Me.splKartaPulpit.SplitterDistance = 319
-        Me.splKartaPulpit.TabIndex = 1
-        '
-        'lvPulpitKostki
-        '
-        Me.lvPulpitKostki.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lvPulpitKostki.HideSelection = False
-        Me.lvPulpitKostki.LargeImageList = Me.imlKostki
-        Me.lvPulpitKostki.Location = New System.Drawing.Point(0, 0)
-        Me.lvPulpitKostki.MultiSelect = False
-        Me.lvPulpitKostki.Name = "lvPulpitKostki"
-        Me.lvPulpitKostki.Size = New System.Drawing.Size(200, 319)
-        Me.lvPulpitKostki.TabIndex = 0
-        Me.lvPulpitKostki.UseCompatibleStateImageBehavior = False
-        '
-        'imlKostki
-        '
-        Me.imlKostki.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit
-        Me.imlKostki.ImageSize = New System.Drawing.Size(48, 48)
-        Me.imlKostki.TransparentColor = System.Drawing.Color.Transparent
-        '
         'pnlKonfSygn
         '
         Me.pnlKonfSygn.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfSygn.Controls.Add(Me.txtKonfSygnPredkosc)
+        Me.pnlKonfSygn.Controls.Add(Me.Label28)
         Me.pnlKonfSygn.Controls.Add(Me.cboKonfSygnSygnNast)
         Me.pnlKonfSygn.Controls.Add(Me.Label23)
         Me.pnlKonfSygn.Controls.Add(Me.pnlKonfSygnSwiatla)
@@ -336,11 +281,29 @@ Partial Class wndKonfiguratorStacji
         Me.pnlKonfSygn.Controls.Add(Me.Label19)
         Me.pnlKonfSygn.Controls.Add(Me.Label18)
         Me.pnlKonfSygn.Controls.Add(Me.Label17)
-        Me.pnlKonfSygn.Location = New System.Drawing.Point(10, 61)
+        Me.pnlKonfSygn.Location = New System.Drawing.Point(32, 6)
         Me.pnlKonfSygn.Name = "pnlKonfSygn"
-        Me.pnlKonfSygn.Size = New System.Drawing.Size(202, 355)
+        Me.pnlKonfSygn.Size = New System.Drawing.Size(202, 394)
         Me.pnlKonfSygn.TabIndex = 1
         Me.pnlKonfSygn.Visible = False
+        '
+        'txtKonfSygnPredkosc
+        '
+        Me.txtKonfSygnPredkosc.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfSygnPredkosc.Location = New System.Drawing.Point(6, 174)
+        Me.txtKonfSygnPredkosc.Name = "txtKonfSygnPredkosc"
+        Me.txtKonfSygnPredkosc.Size = New System.Drawing.Size(193, 20)
+        Me.txtKonfSygnPredkosc.TabIndex = 10
+        '
+        'Label28
+        '
+        Me.Label28.AutoSize = True
+        Me.Label28.Location = New System.Drawing.Point(3, 158)
+        Me.Label28.Name = "Label28"
+        Me.Label28.Size = New System.Drawing.Size(195, 13)
+        Me.Label28.TabIndex = 9
+        Me.Label28.Text = "Prędkość maksymalna toru przyległego:"
         '
         'cboKonfSygnSygnNast
         '
@@ -374,7 +337,7 @@ Partial Class wndKonfiguratorStacji
         Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnCzer)
         Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnPomGor)
         Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnZiel)
-        Me.pnlKonfSygnSwiatla.Location = New System.Drawing.Point(0, 161)
+        Me.pnlKonfSygnSwiatla.Location = New System.Drawing.Point(0, 205)
         Me.pnlKonfSygnSwiatla.Name = "pnlKonfSygnSwiatla"
         Me.pnlKonfSygnSwiatla.Size = New System.Drawing.Size(202, 186)
         Me.pnlKonfSygnSwiatla.TabIndex = 6
@@ -514,6 +477,69 @@ Partial Class wndKonfiguratorStacji
         Me.Label17.TabIndex = 0
         Me.Label17.Text = "Adres:"
         '
+        'tabUstawienia
+        '
+        Me.tabUstawienia.Controls.Add(Me.tbpPulpit)
+        Me.tabUstawienia.Controls.Add(Me.tbpOdcinkiTorow)
+        Me.tabUstawienia.Controls.Add(Me.tbpLicznikiOsi)
+        Me.tabUstawienia.Controls.Add(Me.tbpLampy)
+        Me.tabUstawienia.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tabUstawienia.Location = New System.Drawing.Point(0, 0)
+        Me.tabUstawienia.Name = "tabUstawienia"
+        Me.tabUstawienia.SelectedIndex = 0
+        Me.tabUstawienia.Size = New System.Drawing.Size(214, 670)
+        Me.tabUstawienia.TabIndex = 0
+        '
+        'tbpPulpit
+        '
+        Me.tbpPulpit.Controls.Add(Me.splKartaPulpit)
+        Me.tbpPulpit.Location = New System.Drawing.Point(4, 22)
+        Me.tbpPulpit.Name = "tbpPulpit"
+        Me.tbpPulpit.Padding = New System.Windows.Forms.Padding(3)
+        Me.tbpPulpit.Size = New System.Drawing.Size(206, 644)
+        Me.tbpPulpit.TabIndex = 0
+        Me.tbpPulpit.Text = "Pulpit"
+        Me.tbpPulpit.UseVisualStyleBackColor = True
+        '
+        'splKartaPulpit
+        '
+        Me.splKartaPulpit.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.splKartaPulpit.Location = New System.Drawing.Point(3, 3)
+        Me.splKartaPulpit.Name = "splKartaPulpit"
+        Me.splKartaPulpit.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'splKartaPulpit.Panel1
+        '
+        Me.splKartaPulpit.Panel1.Controls.Add(Me.lvPulpitKostki)
+        '
+        'splKartaPulpit.Panel2
+        '
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygn)
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfTor)
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfPrzycisk)
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfRozjazd)
+        Me.splKartaPulpit.Size = New System.Drawing.Size(200, 638)
+        Me.splKartaPulpit.SplitterDistance = 319
+        Me.splKartaPulpit.TabIndex = 1
+        '
+        'lvPulpitKostki
+        '
+        Me.lvPulpitKostki.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lvPulpitKostki.HideSelection = False
+        Me.lvPulpitKostki.LargeImageList = Me.imlKostki
+        Me.lvPulpitKostki.Location = New System.Drawing.Point(0, 0)
+        Me.lvPulpitKostki.MultiSelect = False
+        Me.lvPulpitKostki.Name = "lvPulpitKostki"
+        Me.lvPulpitKostki.Size = New System.Drawing.Size(200, 319)
+        Me.lvPulpitKostki.TabIndex = 0
+        Me.lvPulpitKostki.UseCompatibleStateImageBehavior = False
+        '
+        'imlKostki
+        '
+        Me.imlKostki.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit
+        Me.imlKostki.ImageSize = New System.Drawing.Size(48, 48)
+        Me.imlKostki.TransparentColor = System.Drawing.Color.Transparent
+        '
         'pnlKonfTor
         '
         Me.pnlKonfTor.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
@@ -545,6 +571,90 @@ Partial Class wndKonfiguratorStacji
         Me.Label12.TabIndex = 0
         Me.Label12.Text = "Prędkość maksymalna:"
         '
+        'pnlKonfPrzycisk
+        '
+        Me.pnlKonfPrzycisk.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfPrzycisk.Controls.Add(Me.pnlKonfPrzyciskPredkosc)
+        Me.pnlKonfPrzycisk.Controls.Add(Me.cboKonfPrzyciskSygnalizator)
+        Me.pnlKonfPrzycisk.Controls.Add(Me.cboKonfPrzyciskTyp)
+        Me.pnlKonfPrzycisk.Controls.Add(Me.Label22)
+        Me.pnlKonfPrzycisk.Controls.Add(Me.Label21)
+        Me.pnlKonfPrzycisk.Location = New System.Drawing.Point(3, 22)
+        Me.pnlKonfPrzycisk.Name = "pnlKonfPrzycisk"
+        Me.pnlKonfPrzycisk.Size = New System.Drawing.Size(185, 133)
+        Me.pnlKonfPrzycisk.TabIndex = 1
+        Me.pnlKonfPrzycisk.Visible = False
+        '
+        'pnlKonfPrzyciskPredkosc
+        '
+        Me.pnlKonfPrzyciskPredkosc.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfPrzyciskPredkosc.Controls.Add(Me.txtKonfPrzyciskPredkosc)
+        Me.pnlKonfPrzyciskPredkosc.Controls.Add(Me.Label27)
+        Me.pnlKonfPrzyciskPredkosc.Location = New System.Drawing.Point(0, 83)
+        Me.pnlKonfPrzyciskPredkosc.Name = "pnlKonfPrzyciskPredkosc"
+        Me.pnlKonfPrzyciskPredkosc.Size = New System.Drawing.Size(185, 42)
+        Me.pnlKonfPrzyciskPredkosc.TabIndex = 7
+        '
+        'txtKonfPrzyciskPredkosc
+        '
+        Me.txtKonfPrzyciskPredkosc.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfPrzyciskPredkosc.Location = New System.Drawing.Point(6, 16)
+        Me.txtKonfPrzyciskPredkosc.Name = "txtKonfPrzyciskPredkosc"
+        Me.txtKonfPrzyciskPredkosc.Size = New System.Drawing.Size(176, 20)
+        Me.txtKonfPrzyciskPredkosc.TabIndex = 7
+        '
+        'Label27
+        '
+        Me.Label27.AutoSize = True
+        Me.Label27.Location = New System.Drawing.Point(3, 0)
+        Me.Label27.Name = "Label27"
+        Me.Label27.Size = New System.Drawing.Size(195, 13)
+        Me.Label27.TabIndex = 6
+        Me.Label27.Text = "Prędkość maksymalna toru przyległego:"
+        '
+        'cboKonfPrzyciskSygnalizator
+        '
+        Me.cboKonfPrzyciskSygnalizator.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfPrzyciskSygnalizator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfPrzyciskSygnalizator.FormattingEnabled = True
+        Me.cboKonfPrzyciskSygnalizator.Location = New System.Drawing.Point(6, 56)
+        Me.cboKonfPrzyciskSygnalizator.Name = "cboKonfPrzyciskSygnalizator"
+        Me.cboKonfPrzyciskSygnalizator.Size = New System.Drawing.Size(176, 21)
+        Me.cboKonfPrzyciskSygnalizator.TabIndex = 5
+        '
+        'cboKonfPrzyciskTyp
+        '
+        Me.cboKonfPrzyciskTyp.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfPrzyciskTyp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfPrzyciskTyp.FormattingEnabled = True
+        Me.cboKonfPrzyciskTyp.Location = New System.Drawing.Point(6, 16)
+        Me.cboKonfPrzyciskTyp.Name = "cboKonfPrzyciskTyp"
+        Me.cboKonfPrzyciskTyp.Size = New System.Drawing.Size(176, 21)
+        Me.cboKonfPrzyciskTyp.TabIndex = 4
+        '
+        'Label22
+        '
+        Me.Label22.AutoSize = True
+        Me.Label22.Location = New System.Drawing.Point(3, 40)
+        Me.Label22.Name = "Label22"
+        Me.Label22.Size = New System.Drawing.Size(119, 13)
+        Me.Label22.TabIndex = 1
+        Me.Label22.Text = "Powiązany sygnalizator:"
+        '
+        'Label21
+        '
+        Me.Label21.AutoSize = True
+        Me.Label21.Location = New System.Drawing.Point(3, 0)
+        Me.Label21.Name = "Label21"
+        Me.Label21.Size = New System.Drawing.Size(75, 13)
+        Me.Label21.TabIndex = 0
+        Me.Label21.Text = "Typ przycisku:"
+        '
         'pnlKonfRozjazd
         '
         Me.pnlKonfRozjazd.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
@@ -559,7 +669,7 @@ Partial Class wndKonfiguratorStacji
         Me.pnlKonfRozjazd.Controls.Add(Me.Label15)
         Me.pnlKonfRozjazd.Controls.Add(Me.Label14)
         Me.pnlKonfRozjazd.Controls.Add(Me.Label13)
-        Me.pnlKonfRozjazd.Location = New System.Drawing.Point(43, 34)
+        Me.pnlKonfRozjazd.Location = New System.Drawing.Point(26, 129)
         Me.pnlKonfRozjazd.Name = "pnlKonfRozjazd"
         Me.pnlKonfRozjazd.Size = New System.Drawing.Size(260, 337)
         Me.pnlKonfRozjazd.TabIndex = 1
@@ -838,60 +948,6 @@ Partial Class wndKonfiguratorStacji
         Me.Label13.Size = New System.Drawing.Size(37, 13)
         Me.Label13.TabIndex = 0
         Me.Label13.Text = "Adres:"
-        '
-        'pnlKonfPrzycisk
-        '
-        Me.pnlKonfPrzycisk.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.pnlKonfPrzycisk.Controls.Add(Me.cboKonfPrzyciskSygnalizator)
-        Me.pnlKonfPrzycisk.Controls.Add(Me.cboKonfPrzyciskTyp)
-        Me.pnlKonfPrzycisk.Controls.Add(Me.Label22)
-        Me.pnlKonfPrzycisk.Controls.Add(Me.Label21)
-        Me.pnlKonfPrzycisk.Location = New System.Drawing.Point(78, 18)
-        Me.pnlKonfPrzycisk.Name = "pnlKonfPrzycisk"
-        Me.pnlKonfPrzycisk.Size = New System.Drawing.Size(185, 105)
-        Me.pnlKonfPrzycisk.TabIndex = 1
-        Me.pnlKonfPrzycisk.Visible = False
-        '
-        'cboKonfPrzyciskSygnalizator
-        '
-        Me.cboKonfPrzyciskSygnalizator.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cboKonfPrzyciskSygnalizator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboKonfPrzyciskSygnalizator.FormattingEnabled = True
-        Me.cboKonfPrzyciskSygnalizator.Location = New System.Drawing.Point(6, 56)
-        Me.cboKonfPrzyciskSygnalizator.Name = "cboKonfPrzyciskSygnalizator"
-        Me.cboKonfPrzyciskSygnalizator.Size = New System.Drawing.Size(176, 21)
-        Me.cboKonfPrzyciskSygnalizator.TabIndex = 5
-        '
-        'cboKonfPrzyciskTyp
-        '
-        Me.cboKonfPrzyciskTyp.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cboKonfPrzyciskTyp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboKonfPrzyciskTyp.FormattingEnabled = True
-        Me.cboKonfPrzyciskTyp.Location = New System.Drawing.Point(6, 16)
-        Me.cboKonfPrzyciskTyp.Name = "cboKonfPrzyciskTyp"
-        Me.cboKonfPrzyciskTyp.Size = New System.Drawing.Size(176, 21)
-        Me.cboKonfPrzyciskTyp.TabIndex = 4
-        '
-        'Label22
-        '
-        Me.Label22.AutoSize = True
-        Me.Label22.Location = New System.Drawing.Point(3, 40)
-        Me.Label22.Name = "Label22"
-        Me.Label22.Size = New System.Drawing.Size(119, 13)
-        Me.Label22.TabIndex = 1
-        Me.Label22.Text = "Powiązany sygnalizator:"
-        '
-        'Label21
-        '
-        Me.Label21.AutoSize = True
-        Me.Label21.Location = New System.Drawing.Point(3, 0)
-        Me.Label21.Name = "Label21"
-        Me.Label21.Size = New System.Drawing.Size(75, 13)
-        Me.Label21.TabIndex = 0
-        Me.Label21.Text = "Typ przycisku:"
         '
         'tbpOdcinkiTorow
         '
@@ -1384,18 +1440,22 @@ Partial Class wndKonfiguratorStacji
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splOkno.ResumeLayout(False)
         Me.pnlPulpit.ResumeLayout(False)
+        Me.pnlKonfSygn.ResumeLayout(False)
+        Me.pnlKonfSygn.PerformLayout()
+        Me.pnlKonfSygnSwiatla.ResumeLayout(False)
+        Me.pnlKonfSygnSwiatla.PerformLayout()
         Me.tabUstawienia.ResumeLayout(False)
         Me.tbpPulpit.ResumeLayout(False)
         Me.splKartaPulpit.Panel1.ResumeLayout(False)
         Me.splKartaPulpit.Panel2.ResumeLayout(False)
         CType(Me.splKartaPulpit, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splKartaPulpit.ResumeLayout(False)
-        Me.pnlKonfSygn.ResumeLayout(False)
-        Me.pnlKonfSygn.PerformLayout()
-        Me.pnlKonfSygnSwiatla.ResumeLayout(False)
-        Me.pnlKonfSygnSwiatla.PerformLayout()
         Me.pnlKonfTor.ResumeLayout(False)
         Me.pnlKonfTor.PerformLayout()
+        Me.pnlKonfPrzycisk.ResumeLayout(False)
+        Me.pnlKonfPrzycisk.PerformLayout()
+        Me.pnlKonfPrzyciskPredkosc.ResumeLayout(False)
+        Me.pnlKonfPrzyciskPredkosc.PerformLayout()
         Me.pnlKonfRozjazd.ResumeLayout(False)
         Me.pnlKonfRozjazd.PerformLayout()
         Me.GroupBox3.ResumeLayout(False)
@@ -1408,8 +1468,6 @@ Partial Class wndKonfiguratorStacji
         Me.Panel2.PerformLayout()
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
-        Me.pnlKonfPrzycisk.ResumeLayout(False)
-        Me.pnlKonfPrzycisk.PerformLayout()
         Me.tbpOdcinkiTorow.ResumeLayout(False)
         Me.splKartaTory.Panel1.ResumeLayout(False)
         Me.splKartaTory.Panel2.ResumeLayout(False)
@@ -1552,4 +1610,9 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents ColumnHeader4 As ColumnHeader
     Friend WithEvents ColumnHeader5 As ColumnHeader
     Friend WithEvents ColumnHeader6 As ColumnHeader
+    Friend WithEvents txtKonfSygnPredkosc As TextBox
+    Friend WithEvents Label28 As Label
+    Friend WithEvents pnlKonfPrzyciskPredkosc As Panel
+    Friend WithEvents txtKonfPrzyciskPredkosc As TextBox
+    Friend WithEvents Label27 As Label
 End Class

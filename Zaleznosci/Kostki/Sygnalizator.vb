@@ -1,5 +1,5 @@
 ﻿Public MustInherit Class Sygnalizator
-    Inherits Kostka
+    Inherits Tor
     Public Property Adres As Integer
     Public Property Nazwa As String = ""
     Public Property OdcinekNastepujacy As OdcinekToru

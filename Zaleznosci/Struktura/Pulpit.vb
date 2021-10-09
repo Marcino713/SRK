@@ -85,8 +85,8 @@
     Public Sub UsunOdcinekToruZPowiazan(odcinek As OdcinekToru)
         For x As Integer = 0 To _Szerokosc - 1
             For y As Integer = 0 To _Wysokosc - 1
-                If TypeOf _Kostki(x, y) Is Tor Then
-                    Dim t As Tor = DirectCast(_Kostki(x, y), Tor)
+                If TypeOf _Kostki(x, y) Is ITor Then
+                    Dim t As ITor = DirectCast(_Kostki(x, y), ITor)
                     If t.NalezyDoOdcinka Is odcinek Then
                         t.NalezyDoOdcinka = Nothing
                     End If

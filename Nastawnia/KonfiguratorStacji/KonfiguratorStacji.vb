@@ -239,6 +239,10 @@
         DirectCast(ZaznaczonaKostka, Zaleznosci.SygnalizatorUzalezniony).SygnalizatorNastepny = DirectCast(el.Wartosc, Zaleznosci.Sygnalizator)
     End Sub
 
+    Private Sub txtKonfSygnPredkosc_TextChanged() Handles txtKonfSygnPredkosc.TextChanged
+        DirectCast(ZaznaczonaKostka, Zaleznosci.Sygnalizator).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfSygnPredkosc)
+    End Sub
+
     Private Sub cbKonfSygnZiel_CheckedChanged() Handles cbKonfSygnZiel.CheckedChanged
         UstawDostepneSwiatlo(cbKonfSygnZiel, Zaleznosci.DostepneSwiatlaEnum.Zielone)
     End Sub
@@ -327,6 +331,12 @@
                 prz.ObslugiwanySygnalizator = DirectCast(sygn, Zaleznosci.Sygnalizator)
 
         End Select
+    End Sub
+
+    Private Sub txtKonfPrzyciskPredkosc_TextChanged() Handles txtKonfPrzyciskPredkosc.TextChanged
+        If ZaznaczonaKostka.Typ = Zaleznosci.TypKostki.PrzyciskTor Then
+            DirectCast(ZaznaczonaKostka, Zaleznosci.PrzyciskTor).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfPrzyciskPredkosc)
+        End If
     End Sub
 
 
@@ -425,6 +435,8 @@
             ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfSygnSygnNast, sygn_nast)
         End If
 
+        txtKonfSygnPredkosc.Text = sygn.PredkoscZasadnicza.ToString()
+
         If sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Then
             Dim sw As Zaleznosci.DostepneSwiatlaEnum = DirectCast(ZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny).DostepneSwiatla
             cbKonfSygnZiel.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.Zielone) <> 0
@@ -450,6 +462,7 @@
                 New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegow, "Zwolnienie przebiegów")
                 })
                 cboKonfPrzyciskTyp.SelectedIndex = prz.TypPrzycisku
+                pnlKonfPrzyciskPredkosc.Visible = False
 
             Case Zaleznosci.TypKostki.PrzyciskTor
                 Dim prz As Zaleznosci.PrzyciskTor = DirectCast(ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
@@ -459,6 +472,8 @@
                 New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.SygnalManewrowy, "Sygnał manewrowy na sygnalizatorze półsamoczynnym")
                 })
                 cboKonfPrzyciskTyp.SelectedIndex = prz.TypPrzycisku
+                pnlKonfPrzyciskPredkosc.Visible = True
+                txtKonfPrzyciskPredkosc.Text = prz.PredkoscZasadnicza.ToString()
 
         End Select
 
@@ -772,8 +787,8 @@
                 RysujPulpit()
 
             ElseIf e.KeyData = Keys.Delete
-                If TypeOf (ZaznaczonaKostka) Is Zaleznosci.Tor Then
-                    Dim tor As Zaleznosci.Tor = DirectCast(ZaznaczonaKostka, Zaleznosci.Tor)
+                If TypeOf (ZaznaczonaKostka) Is Zaleznosci.ITor Then
+                    Dim tor As Zaleznosci.ITor = DirectCast(ZaznaczonaKostka, Zaleznosci.ITor)
                     tor.NalezyDoOdcinka?.KostkiTory.Remove(tor)
                 End If
                 Pulpit.Kostki(p.X, p.Y) = Nothing
@@ -791,9 +806,9 @@
         If Konfiguracja.RysujOdcinki Then
             If CzyKostkaWZakresiePulpitu(p) Then
                 Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-                If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.Tor AndAlso Konfiguracja.ZaznaczonyOdcinek IsNot Nothing Then
+                If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.ITor AndAlso Konfiguracja.ZaznaczonyOdcinek IsNot Nothing Then
 
-                    Dim t As Zaleznosci.Tor = DirectCast(kostka, Zaleznosci.Tor)
+                    Dim t As Zaleznosci.ITor = DirectCast(kostka, Zaleznosci.ITor)
                     Dim nalezyDoTegoOdcinka As Boolean = t.NalezyDoOdcinka Is Konfiguracja.ZaznaczonyOdcinek
                     If t.NalezyDoOdcinka IsNot Nothing Then t.NalezyDoOdcinka.KostkiTory.Remove(t)
                     If nalezyDoTegoOdcinka Then

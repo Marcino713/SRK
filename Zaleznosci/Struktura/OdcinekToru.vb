@@ -3,8 +3,8 @@
     Public Property Nazwa As String = ""
     Public Property Opis As String = ""
 
-    Private _KostkiTory As New List(Of Tor)
-    Public ReadOnly Property KostkiTory As List(Of Tor)
+    Private _KostkiTory As New List(Of ITor)
+    Public ReadOnly Property KostkiTory As List(Of ITor)
         Get
             Return _KostkiTory
         End Get
