@@ -8,9 +8,11 @@
     Private Const SYGN_SLUP_SZER_MALA As Single = 0.05  'szerokosć słupa sygnalizatora w węższym miejscu
     Private Const SYGN_SLUP_DLUG As Single = 0.04       'długość poszczególnych segmentów słupa
     Private Const KIER_SZER As Single = 0.4
-    Private Const TEKST_POZ_X As Single = 0.4
-    Private Const TEKST_POZ_Y As Single = 0.1
+    Private Const TEKST_POZ_X_PRZYCISK As Single = 0.17 'dodatkowy margines dla tekstu obok przycisku
+    Private Const TEKST_POZ_X As Single = 0.1           'dodatkowy margines dla tekstu
+    Private Const TEKST_POZ_Y As Single = 0.12          'dodatkowy margines dla tekstu
     Private Const COS45 As Single = 0.707
+    Private Const KAT_PROSTY As Single = 90.0
 
     Public ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")        'tor przypisany do innego odcinka
     Public ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")       'tor przypisany do zaznaczonego odcinka
@@ -36,10 +38,15 @@
     Private ReadOnly PEDZEL_LAMPA_TLO As New SolidBrush(KolorRGB("#FFEA00"))
     Private ReadOnly PEDZEL_LAMPA_ZAZN As New SolidBrush(KolorRGB("#FF9500"))
 
-    Private ReadOnly CZCIONKA As New Font("Arial", 0.2)
+    Private ReadOnly CZCIONKA As New Font("Arial", 0.17)
+
+    Private Const NAZWA_SZ As String = "Sz"     'Sygnał zastępczy
+    Private Const NAZWA_ZW As String = "Zw"     'Zwolnienie przebiegów
+    Private Const NAZWA_M As String = "m"       'Sygnał manewrowy
 
     Private gr As Graphics
     Private pedzelToru As SolidBrush
+    Private obrot As Single
 
     Public Function Rysuj(pulpit As Zaleznosci.Pulpit, konfiguracja As KonfiguracjaRysowania) As Bitmap
         Dim poczx As Integer = 0
@@ -105,6 +112,7 @@
         gr.TranslateTransform(x + 0.5F, y + 0.5F)
         gr.RotateTransform(kostka.Obrot)
         gr.TranslateTransform(-0.5F, -0.5F)
+        obrot = kostka.Obrot
 
         Select Case kostka.Typ
             Case Zaleznosci.TypKostki.Tor
@@ -118,15 +126,15 @@
             Case Zaleznosci.TypKostki.RozjazdPrawo
                 RysujRozjazdPrawo(CType(kostka, Zaleznosci.RozjazdPrawo))
             Case Zaleznosci.TypKostki.SygnalizatorManewrowy
-                RysujSygnalizatorManewrowy()
+                RysujSygnalizatorManewrowy(CType(kostka, Zaleznosci.SygnalizatorManewrowy))
             Case Zaleznosci.TypKostki.SygnalizatorPolsamoczynny
-                RysujSygnalizatorPolsamoczynny()
+                RysujSygnalizatorPolsamoczynny(CType(kostka, Zaleznosci.SygnalizatorPolsamoczynny))
             Case Zaleznosci.TypKostki.SygnalizatorSamoczynny
-                RysujSygnalizatorSamoczynny()
+                RysujSygnalizatorSamoczynny(CType(kostka, Zaleznosci.SygnalizatorSamoczynny))
             Case Zaleznosci.TypKostki.Przycisk
-                RysujPrzycisk()
+                RysujPrzyciskZwykly(CType(kostka, Zaleznosci.Przycisk))
             Case Zaleznosci.TypKostki.PrzyciskTor
-                RysujPrzyciskTor()
+                RysujPrzyciskTor(CType(kostka, Zaleznosci.PrzyciskTor))
             Case Zaleznosci.TypKostki.Kierunek
                 RysujKierunek()
         End Select
@@ -156,46 +164,70 @@
         })
     End Sub
 
+    Private Sub RysujNazwe(nazwa As String, x As Single, y As Single)
+        Dim rect As New RectangleF(x, y, 1 - x, SYGN_POZ)
+        Dim transformacja As Drawing2D.Matrix = gr.Transform
+
+        If obrot >= 2 * KAT_PROSTY And obrot < 4 * KAT_PROSTY Then
+            Dim rozm As SizeF = gr.MeasureString(nazwa, CZCIONKA, New SizeF(rect.Width, rect.Height))
+            Dim x1 As Single = rect.X + rozm.Width / 2
+            Dim y1 As Single = rect.Y + rozm.Height / 2
+            gr.TranslateTransform(x1, y1)
+            gr.RotateTransform(2 * KAT_PROSTY)
+            gr.TranslateTransform(-x1, -y1)
+        End If
+
+        gr.DrawString(nazwa, CZCIONKA, PEDZEL_TEKST, rect)
+        gr.Transform = transformacja
+    End Sub
+
     Private Sub RysujRozjazdLewo(rozjazd As Zaleznosci.RozjazdLewo)
         RysujTor()
         RysujZakret()
         RysujPrzycisk()
-        gr.DrawString(rozjazd.Nazwa, CZCIONKA, PEDZEL_TEKST, TEKST_POZ_X, TEKST_POZ_Y)
+        RysujNazwe(rozjazd.Nazwa, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y)
     End Sub
 
     Private Sub RysujRozjazdPrawo(rozjazd As Zaleznosci.RozjazdPrawo)
         RysujTor()
         RysujZakretPrawo()
         RysujPrzycisk(2)
-        gr.DrawString(rozjazd.Nazwa, CZCIONKA, PEDZEL_TEKST, TEKST_POZ_X, TEKST_POZ_Y + 2 * SYGN_POZ)
+        RysujNazwe(rozjazd.Nazwa, SYGN_POZ + TEKST_POZ_X_PRZYCISK, 2 * SYGN_POZ + TEKST_POZ_Y)
     End Sub
 
-    Private Sub RysujSygnalizatorManewrowy()
+    Private Sub RysujNazweSygnalizatora(nazwa As String)
+        RysujNazwe(nazwa, TEKST_POZ_X, 2 * SYGN_POZ + TEKST_POZ_Y)
+    End Sub
+
+    Private Sub RysujSygnalizatorManewrowy(sygnalizator As Zaleznosci.SygnalizatorManewrowy)
         RysujTor()
-        gr.FillPie(PEDZEL_SYGN_TLO, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, 90, 180)
-        gr.FillPie(PEDZEL_SYGN_TLO, 2 * SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, 270, 180)
+        gr.FillPie(PEDZEL_SYGN_TLO, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, KAT_PROSTY, 2 * KAT_PROSTY)
+        gr.FillPie(PEDZEL_SYGN_TLO, 2 * SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, 3 * KAT_PROSTY, 2 * KAT_PROSTY)
         gr.FillRectangle(PEDZEL_SYGN_TLO, SYGN_POZ, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ, SYGN_TLO_SZER)
         gr.FillEllipse(PEDZEL_SYGN_NIEB_JASNY, SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
         gr.FillEllipse(PEDZEL_SYGN_BIAL_JASNY, 2 * SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
         RysujSlupSygnalizatora(2)
+        RysujNazweSygnalizatora(sygnalizator.Nazwa)
     End Sub
 
-    Private Sub RysujSygnalizatorPolsamoczynny()
+    Private Sub RysujSygnalizatorPolsamoczynny(sygnalizator As Zaleznosci.SygnalizatorPolsamoczynny)
         RysujTor()
-        gr.FillPie(PEDZEL_SYGN_TLO, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, 90, 180)
-        gr.FillPie(PEDZEL_SYGN_TLO, 3 * SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, 270, 180)
+        gr.FillPie(PEDZEL_SYGN_TLO, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, KAT_PROSTY, 2 * KAT_PROSTY)
+        gr.FillPie(PEDZEL_SYGN_TLO, 3 * SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, 3 * KAT_PROSTY, 2 * KAT_PROSTY)
         gr.FillRectangle(PEDZEL_SYGN_TLO, SYGN_POZ, SYGN_POZ - SYGN_TLO_SZER / 2, 2 * SYGN_POZ, SYGN_TLO_SZER)
         gr.FillEllipse(PEDZEL_SYGN_CZER_JASNY, SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
         gr.FillEllipse(PEDZEL_SYGN_ZIEL_JASNY, 2 * SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
         gr.FillEllipse(PEDZEL_SYGN_BIAL_JASNY, 3 * SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
         RysujSlupSygnalizatora(3)
+        RysujNazweSygnalizatora(sygnalizator.Nazwa)
     End Sub
 
-    Private Sub RysujSygnalizatorSamoczynny()
+    Private Sub RysujSygnalizatorSamoczynny(sygnalizator As Zaleznosci.SygnalizatorSamoczynny)
         RysujTor()
         gr.FillEllipse(PEDZEL_SYGN_TLO, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER)
         gr.FillEllipse(PEDZEL_SYGN_CZER_JASNY, SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
         RysujSlupSygnalizatora(1)
+        RysujNazweSygnalizatora(sygnalizator.Nazwa)
     End Sub
 
     Private Sub RysujPrzycisk(Optional poczy As Single = 0)
@@ -203,9 +235,24 @@
         gr.FillEllipse(PEDZEL_PRZYCISK, SYGN_POZ - SYGN_SZER / 2, poczy * SYGN_POZ + SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
     End Sub
 
-    Private Sub RysujPrzyciskTor()
+    Private Sub RysujPrzyciskZwykly(przycisk As Zaleznosci.Przycisk)
+        RysujPrzycisk()
+        Select Case przycisk.TypPrzycisku
+            Case Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy
+                RysujNazwe(NAZWA_SZ, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y)
+                RysujNazweSygnalizatora(przycisk.ObslugiwanySygnalizator?.Nazwa)
+            Case Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegow
+                RysujNazwe(NAZWA_ZW, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y)
+        End Select
+    End Sub
+
+    Private Sub RysujPrzyciskTor(przycisk As Zaleznosci.PrzyciskTor)
         RysujTor()
         RysujPrzycisk()
+        If przycisk.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy Or przycisk.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalManewrowy Then
+            RysujNazwe(NAZWA_M, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y)
+        End If
+        RysujNazweSygnalizatora(przycisk.ObslugiwanySygnalizator?.Nazwa)
     End Sub
 
     Private Sub RysujKierunek()

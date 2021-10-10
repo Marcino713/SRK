@@ -34,9 +34,9 @@
         Pulpit.Kostki(1, 2) = New Zaleznosci.TorKoniec
         Pulpit.Kostki(4, 3) = New Zaleznosci.RozjazdLewo() With {.Nazwa = "101", .Obrot = 90}
         Pulpit.Kostki(3, 3) = New Zaleznosci.RozjazdPrawo() With {.Nazwa = "102"}
-        Pulpit.Kostki(2, 3) = New Zaleznosci.SygnalizatorManewrowy
-        Pulpit.Kostki(1, 3) = New Zaleznosci.SygnalizatorPolsamoczynny
-        Pulpit.Kostki(0, 3) = New Zaleznosci.SygnalizatorSamoczynny
+        Pulpit.Kostki(2, 3) = New Zaleznosci.SygnalizatorManewrowy With {.Nazwa = "Tm1"}
+        Pulpit.Kostki(1, 3) = New Zaleznosci.SygnalizatorPolsamoczynny With {.Nazwa = "A1/2m"}
+        Pulpit.Kostki(0, 3) = New Zaleznosci.SygnalizatorSamoczynny With {.Nazwa = "179N"}
         Pulpit.Kostki(2, 5) = New Zaleznosci.Przycisk
         Pulpit.Kostki(1, 5) = New Zaleznosci.PrzyciskTor
         Pulpit.Kostki(0, 5) = New Zaleznosci.Kierunek
@@ -147,6 +147,7 @@
 
     Private Sub txtKonfRozjazdNazwa_TextChanged() Handles txtKonfRozjazdNazwa.TextChanged
         DirectCast(ZaznaczonaKostka, Zaleznosci.Rozjazd).Nazwa = txtKonfRozjazdNazwa.Text
+        RysujPulpit()
     End Sub
 
     Private Sub txtKonfRozjazdPredkZasad_TextChanged() Handles txtKonfRozjazdPredkZasad.TextChanged
@@ -225,6 +226,7 @@
 
     Private Sub txtKonfSygnNazwa_TextChanged() Handles txtKonfSygnNazwa.TextChanged
         DirectCast(ZaznaczonaKostka, Zaleznosci.Sygnalizator).Nazwa = txtKonfSygnNazwa.Text
+        RysujPulpit()
     End Sub
 
     Private Sub cboKonfSygnOdcinekNast_SelectedIndexChanged() Handles cboKonfSygnOdcinekNast.SelectedIndexChanged
@@ -315,6 +317,7 @@
         End If
 
         cboKonfPrzyciskSygnalizator.Enabled = aktywny
+        RysujPulpit()
     End Sub
 
     Private Sub cboKonfPrzyciskSygnalizator_SelectedIndexChanged() Handles cboKonfPrzyciskSygnalizator.SelectedIndexChanged
@@ -331,6 +334,8 @@
                 prz.ObslugiwanySygnalizator = DirectCast(sygn, Zaleznosci.Sygnalizator)
 
         End Select
+
+        RysujPulpit()
     End Sub
 
     Private Sub txtKonfPrzyciskPredkosc_TextChanged() Handles txtKonfPrzyciskPredkosc.TextChanged
