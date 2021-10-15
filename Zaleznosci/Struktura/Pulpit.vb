@@ -55,6 +55,13 @@
         End Get
     End Property
 
+    Private _LicznikiOsi As New List(Of ParaLicznikowOsi)
+    Public ReadOnly Property LicznikiOsi As List(Of ParaLicznikowOsi)
+        Get
+            Return _LicznikiOsi
+        End Get
+    End Property
+
     Public Sub New()
         Me.New(10, 10)
     End Sub
@@ -98,6 +105,12 @@
                 End If
             Next
         Next
+
+        Dim en As List(Of ParaLicznikowOsi).Enumerator = _LicznikiOsi.GetEnumerator
+        While en.MoveNext
+            If en.Current.Odcinek1 Is odcinek Then en.Current.Odcinek1 = Nothing
+            If en.Current.Odcinek2 Is odcinek Then en.Current.Odcinek2 = Nothing
+        End While
     End Sub
 
     Public Sub PowiekszPulpit(kierunek As KierunekEdycjiPulpitu, rozmiar As Integer)

@@ -14,6 +14,7 @@
     Private ZdarzeniaWlaczone As Boolean = True
     Private ZaznaczonaLampaNaLiscie As ListViewItem
     Private ZaznaczonyTorNaLiscie As ListViewItem
+    Private ZaznaczonyLicznikNaLiscie As ListViewItem
 
     Private Delegate Function SprawdzTypKostki(kostka As Zaleznosci.Kostka) As Boolean
     Private Delegate Function PobierzNazweKostki(kostka As Zaleznosci.Kostka) As String
@@ -44,11 +45,18 @@
         RysujPulpit()
 
         UstawAktywnoscPolLamp(False)
+        UstawAktywnoscPolLicznikow(False)
         UstawAktywnoscPolTorow(False)
 
         pnlTorTenOdcinek.BackColor = KOLOR_TOR_TEN_ODCINEK
         pnlTorInnyOdcinek.BackColor = KOLOR_TOR_PRZYPISANY
         pnlTorNieprzypisany.BackColor = KOLOR_TOR_NIEPRZYPISANY
+
+        pnlLicznik1.BackColor = KOLOR_TOR_TEN_ODCINEK
+        pnlLicznik2.BackColor = KOLOR_TOR_LICZNIK_ODCINEK_2
+
+        pnlLicznikTor1.BackColor = KOLOR_TOR_TEN_ODCINEK
+        pnlLicznikTor2.BackColor = KOLOR_TOR_LICZNIK_ODCINEK_2
     End Sub
 
     Private Sub wndKonfiguratorStacji_Resize() Handles Me.Resize
@@ -57,8 +65,13 @@
 
     Private Sub tabUstawienia_Selected() Handles tabUstawienia.Selected
         Konfiguracja.RysujLampy = tabUstawienia.SelectedTab Is tbpLampy
-        Konfiguracja.RysujOdcinki = tabUstawienia.SelectedTab Is tbpOdcinkiTorow
-        If tabUstawienia.SelectedTab Is tbpOdcinkiTorow Then OdswiezListeTorow()
+        Konfiguracja.RysujOdcinki = tabUstawienia.SelectedTab Is tbpTory
+        Konfiguracja.RysujLiczniki = tabUstawienia.SelectedTab Is tbpLiczniki
+        If tabUstawienia.SelectedTab Is tbpTory Then OdswiezListeTorow()
+        If tabUstawienia.SelectedTab Is tbpLiczniki Then
+            OdswiezListeLicznikow()
+            OdswiezListeTorowWLicznikach()
+        End If
         RysujPulpit()
     End Sub
 
@@ -86,7 +99,7 @@
         DodajKostkeDoListy(New Zaleznosci.Kierunek(), "Wjazd/wyjazd ze stacji", 10)
     End Sub
 
-#End Region
+#End Region 'Okno
 
 #Region "Menu"
 
@@ -121,7 +134,7 @@
         End If
     End Sub
 
-#End Region
+#End Region 'Menu
 
 #Region "Zakładka Pulpit"
 
@@ -566,7 +579,7 @@
         Next
     End Sub
 
-#End Region
+#End Region 'Zakładka Pulpit
 
 #Region "Zakładka Odcinki torów"
 
@@ -645,7 +658,7 @@
             Dim o As Zaleznosci.OdcinekToru = en.Current
             Dim lvi As New ListViewItem(New String() {o.Adres.ToString, o.Nazwa.ToString, o.KostkiTory.Count.ToString()})
             lvi.Tag = o
-            If en.Current Is odcinek Then
+            If o Is odcinek Then
                 lvi.Selected = True
                 ZaznaczonyTorNaLiscie = lvi
             End If
@@ -675,7 +688,187 @@
         Next
     End Sub
 
-#End Region
+#End Region 'Zakładka Odcinki torów
+
+#Region "Zakładka Liczniki osi"
+
+    Private Sub lvLiczniki_SelectedIndexChanged() Handles lvLiczniki.SelectedIndexChanged
+        ZdarzeniaWlaczone = False
+        ZaznaczonyLicznikNaLiscie = PobierzZaznaczonyElementNaLiscie(lvLiczniki)
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = PobierzZaznaczonyElement(Of Zaleznosci.ParaLicznikowOsi)(lvLiczniki)
+        If licznik Is Nothing Then
+            txtLicznik1Adres.Text = ""
+            txtLicznik1X.Text = ""
+            txtLicznik1Y.Text = ""
+            txtLicznik2Adres.Text = ""
+            txtLicznik2X.Text = ""
+            txtLicznik2Y.Text = ""
+            cboLicznikTor1.SelectedItem = Nothing
+            cboLicznikTor2.SelectedItem = Nothing
+            UstawAktywnoscPolLicznikow(False)
+        Else
+            txtLicznik1Adres.Text = licznik.Adres1.ToString
+            txtLicznik1X.Text = licznik.X1.ToString
+            txtLicznik1Y.Text = licznik.Y1.ToString
+            txtLicznik2Adres.Text = licznik.Adres2.ToString
+            txtLicznik2X.Text = licznik.X2.ToString
+            txtLicznik2Y.Text = licznik.Y2.ToString
+            ZaznaczElement(cboLicznikTor1, licznik.Odcinek1)
+            ZaznaczElement(cboLicznikTor2, licznik.Odcinek2)
+            UstawAktywnoscPolLicznikow(True)
+        End If
+        Konfiguracja.ZaznaczonyLicznik = licznik
+        ZdarzeniaWlaczone = True
+        RysujPulpit()
+    End Sub
+
+    Private Sub btnLicznikDodaj_Click() Handles btnLicznikDodaj.Click
+        Pulpit.LicznikiOsi.Add(New Zaleznosci.ParaLicznikowOsi())
+        OdswiezListeLicznikow()
+    End Sub
+
+    Private Sub btnLicznikUsun_Click() Handles btnLicznikUsun.Click
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        If licznik Is Nothing Then Exit Sub
+
+        If ZadajPytanie("Czy usunąć parę liczników osi dla torów """ & licznik.Odcinek1?.Nazwa & """ oraz """ & licznik.Odcinek2?.Nazwa & """?") = DialogResult.Yes Then
+            Pulpit.LicznikiOsi.Remove(licznik)
+            OdswiezListeLicznikow()
+        End If
+    End Sub
+
+    Private Sub txtLicznik1Adres_TextChanged() Handles txtLicznik1Adres.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        If licznik IsNot Nothing Then
+            licznik.Adres1 = PobierzLiczbeNieujemna(txtLicznik1Adres)
+            ZaznaczonyLicznikNaLiscie.SubItems(0).Text = licznik.Adres1.ToString
+        End If
+    End Sub
+
+    Private Sub txtLicznik1X_TextChanged() Handles txtLicznik1X.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        If licznik IsNot Nothing Then
+            licznik.X1 = PobierzLiczbeNieujemnaRzeczywista(txtLicznik1X)
+            RysujPulpit()
+        End If
+    End Sub
+
+    Private Sub txtLicznik1Y_TextChanged() Handles txtLicznik1Y.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        If licznik IsNot Nothing Then
+            licznik.Y1 = PobierzLiczbeNieujemnaRzeczywista(txtLicznik1Y)
+            RysujPulpit()
+        End If
+    End Sub
+
+    Private Sub txtLicznik2Adres_TextChanged() Handles txtLicznik2Adres.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        If licznik IsNot Nothing Then
+            licznik.Adres2 = PobierzLiczbeNieujemna(txtLicznik2Adres)
+            ZaznaczonyLicznikNaLiscie.SubItems(1).Text = licznik.Adres2.ToString
+        End If
+    End Sub
+
+    Private Sub txtLicznik2X_TextChanged() Handles txtLicznik2X.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        If licznik IsNot Nothing Then
+            licznik.X2 = PobierzLiczbeNieujemnaRzeczywista(txtLicznik2X)
+            RysujPulpit()
+        End If
+    End Sub
+
+    Private Sub txtLicznik2Y_TextChanged() Handles txtLicznik2Y.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        If licznik IsNot Nothing Then
+            licznik.Y2 = PobierzLiczbeNieujemnaRzeczywista(txtLicznik2Y)
+            RysujPulpit()
+        End If
+    End Sub
+
+    Private Sub cboLicznikTor1_SelectedIndexChanged() Handles cboLicznikTor1.SelectedIndexChanged
+        If cboLicznikTor1.SelectedItem Is Nothing Then Exit Sub
+        Dim tor As ObiektComboBox(Of Zaleznosci.OdcinekToru) = DirectCast(cboLicznikTor1.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru))
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        If licznik IsNot Nothing Then
+            licznik.Odcinek1 = tor.Wartosc
+            ZaznaczonyLicznikNaLiscie.SubItems(2).Text = licznik.Odcinek1?.Nazwa
+        End If
+        RysujPulpit()
+    End Sub
+
+    Private Sub cboLicznikTor2_SelectedIndexChanged() Handles cboLicznikTor2.SelectedIndexChanged
+        If cboLicznikTor2.SelectedItem Is Nothing Then Exit Sub
+        Dim tor As ObiektComboBox(Of Zaleznosci.OdcinekToru) = DirectCast(cboLicznikTor2.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru))
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        If licznik IsNot Nothing Then
+            licznik.Odcinek2 = tor.Wartosc
+            ZaznaczonyLicznikNaLiscie.SubItems(3).Text = licznik.Odcinek2?.Nazwa
+        End If
+        RysujPulpit()
+    End Sub
+
+    Private Sub UstawAktywnoscPolLicznikow(wlaczony As Boolean)
+        btnLicznikUsun.Enabled = wlaczony
+        txtLicznik1Adres.Enabled = wlaczony
+        txtLicznik1X.Enabled = wlaczony
+        txtLicznik1Y.Enabled = wlaczony
+        txtLicznik2Adres.Enabled = wlaczony
+        txtLicznik2X.Enabled = wlaczony
+        txtLicznik2Y.Enabled = wlaczony
+        cboLicznikTor1.Enabled = wlaczony
+        cboLicznikTor2.Enabled = wlaczony
+    End Sub
+
+    Private Sub OdswiezListeLicznikow()
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        lvLiczniki.Items.Clear()
+        ZaznaczonyLicznikNaLiscie = Nothing
+
+        Dim en As List(Of Zaleznosci.ParaLicznikowOsi).Enumerator = Pulpit.LicznikiOsi.GetEnumerator
+        While en.MoveNext
+            Dim l As Zaleznosci.ParaLicznikowOsi = en.Current
+            Dim lvi As New ListViewItem(New String() {l.Adres1.ToString, l.Adres2.ToString, l.Odcinek1?.Nazwa, l.Odcinek2?.Nazwa})
+            lvi.Tag = l
+            If l Is licznik Then
+                lvi.Selected = True
+                ZaznaczonyLicznikNaLiscie = lvi
+            End If
+            lvLiczniki.Items.Add(lvi)
+        End While
+
+        If ZaznaczonyLicznikNaLiscie Is Nothing Then
+            lvLiczniki_SelectedIndexChanged()
+        End If
+    End Sub
+
+    Private Sub OdswiezListeTorowWLicznikach()
+        OdswiezListeTorowWLicznikach(cboLicznikTor1, Konfiguracja.ZaznaczonyLicznik?.Odcinek1)
+        OdswiezListeTorowWLicznikach(cboLicznikTor2, Konfiguracja.ZaznaczonyLicznik?.Odcinek2)
+    End Sub
+
+    Private Sub OdswiezListeTorowWLicznikach(cbo As ComboBox, zaznaczony As Zaleznosci.OdcinekToru)
+        cbo.Items.Clear()
+        cbo.Items.Add(New ObiektComboBox(Of Zaleznosci.OdcinekToru)(Nothing, ""))
+        Dim en As IEnumerator(Of Zaleznosci.OdcinekToru) = Pulpit.OdcinkiTorow.OrderBy(Function(f As Zaleznosci.OdcinekToru) f.Nazwa).GetEnumerator()
+        While en.MoveNext
+            cbo.Items.Add(New ObiektComboBox(Of Zaleznosci.OdcinekToru)(en.Current, en.Current.Nazwa))
+        End While
+        ZaznaczElement(cbo, zaznaczony)
+    End Sub
+
+#End Region 'Zakładka Liczniki osi
 
 #Region "Zakładka Lampy"
 
@@ -756,7 +949,7 @@
             Dim l As Zaleznosci.Lampa = en.Current
             Dim lvi As New ListViewItem(New String() {l.Adres.ToString, l.X.ToString, l.Y.ToString})
             lvi.Tag = l
-            If en.Current Is lampa Then
+            If l Is lampa Then
                 lvi.Selected = True
                 ZaznaczonaLampaNaLiscie = lvi
             End If
@@ -777,7 +970,7 @@
         txtLampaY.Enabled = wlaczony
     End Sub
 
-#End Region
+#End Region 'Zakładka Lampy
 
 #Region "Pulpit"
 
@@ -827,20 +1020,8 @@
                 End If
             End If
 
-        Else
-            pctPulpit.Focus()
-            UkryjPaneleKonf()
-
+        ElseIf Konfiguracja.RysujLampy
             Dim l As Zaleznosci.Lampa = PobierzKliknietaLampe()
-            If CzyKostkaWZakresiePulpitu(p) AndAlso Pulpit.Kostki(p.X, p.Y) IsNot Nothing AndAlso l Is Nothing Then
-                Konfiguracja.ZaznaczX = p.X
-                Konfiguracja.ZaznaczY = p.Y
-                ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
-                PokazPanelKonf()
-            Else
-                Konfiguracja.WyczyscZaznaczenieKostki()
-                ZaznaczonaKostka = Nothing
-            End If
 
             If l IsNot Nothing Then
                 For i As Integer = 0 To lvLampy.Items.Count - 1
@@ -850,6 +1031,20 @@
                         Exit For
                     End If
                 Next
+            End If
+
+        ElseIf Not Konfiguracja.RysujLiczniki
+            pctPulpit.Focus()
+            UkryjPaneleKonf()
+
+            If CzyKostkaWZakresiePulpitu(p) AndAlso Pulpit.Kostki(p.X, p.Y) IsNot Nothing Then
+                Konfiguracja.ZaznaczX = p.X
+                Konfiguracja.ZaznaczY = p.Y
+                ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
+                PokazPanelKonf()
+            Else
+                Konfiguracja.WyczyscZaznaczenieKostki()
+                ZaznaczonaKostka = Nothing
             End If
 
         End If
@@ -955,7 +1150,7 @@
 
         Dim k As Point = pctPulpit.PointToClient(MousePosition)
         Dim s As PointF = New PointF(k.X / Konfiguracja.Skalowanie, k.Y / Konfiguracja.Skalowanie)
-        Dim pol As Single = Rysowanie.LAMPA_SZER / 2
+        Dim pol As Single = Rysowanie.KOLKO_SZER / 2
         Dim en As List(Of Zaleznosci.Lampa).Enumerator = Pulpit.Lampy.GetEnumerator
 
         While en.MoveNext
@@ -968,7 +1163,7 @@
         Return Nothing
     End Function
 
-#End Region
+#End Region 'Pulpit
 
 #Region "Reszta"
     Private Function PobierzZaznaczonyElementNaLiscie(lv As ListView) As ListViewItem
@@ -996,9 +1191,9 @@
         Return liczba
     End Function
 
-    Private Function PobierzLiczbeNieujemnaRzeczywista(pole As TextBox) As Double
-        Dim liczba As Double = 0.0
-        If Double.TryParse(pole.Text, liczba) Then
+    Private Function PobierzLiczbeNieujemnaRzeczywista(pole As TextBox) As Single
+        Dim liczba As Single = 0.0
+        If Single.TryParse(pole.Text, liczba) Then
             If liczba < 0.0 Then liczba = 0.0
         End If
 
@@ -1019,6 +1214,6 @@
         End Function
     End Class
 
-#End Region
+#End Region 'Reszta
 
 End Class

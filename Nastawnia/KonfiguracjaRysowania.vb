@@ -9,6 +9,8 @@
     Public ZaznaczonaLampa As Zaleznosci.Lampa
     Public RysujOdcinki As Boolean = False
     Public ZaznaczonyOdcinek As Zaleznosci.OdcinekToru
+    Public RysujLiczniki As Boolean = False
+    Public ZaznaczonyLicznik As Zaleznosci.ParaLicznikowOsi
 
     Public Sub WyczyscZaznaczenieKostki()
         ZaznaczX = -1

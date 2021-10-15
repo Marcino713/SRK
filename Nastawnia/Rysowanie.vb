@@ -1,5 +1,5 @@
 ﻿Public Module Rysowanie
-    Public Const LAMPA_SZER As Single = 0.25     'średnica lampy
+    Public Const KOLKO_SZER As Single = 0.25    'średnica kółka (lampy/licznika osi)
     Private Const TOR_SZEROKOSC As Single = 0.1 'szerokość toru na kostce
     Private Const SYGN_POZ As Single = 0.25     'wielokorotność stałej oznacza położenie środków kolejnych świateł sygnałów na osi X
     Private Const SYGN_SZER As Single = 0.18    'średnica sygnału
@@ -14,14 +14,16 @@
     Private Const COS45 As Single = 0.707
     Private Const KAT_PROSTY As Single = 90.0
 
-    Public ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")        'tor przypisany do innego odcinka
-    Public ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")       'tor przypisany do zaznaczonego odcinka
-    Public ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")     'tor nieprzypisany do żadnego odcinka
+    Public ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")          'tor przypisany do innego odcinka
+    Public ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")         'tor przypisany do zaznaczonego odcinka
+    Public ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")       'tor nieprzypisany do żadnego odcinka
+    Public ReadOnly KOLOR_TOR_LICZNIK_ODCINEK_2 As Color = KolorRGB("#D11AFF")   'drugi odcinek obsługiwany przez parę liczników osi 1A29FF
 
     Private ReadOnly PEDZEL_KRAWEDZIE As New Pen(Color.White, 0)
     Private ReadOnly PEDZEL_TOR_WOLNY As New SolidBrush(KOLOR_TOR_PRZYPISANY)
     Private ReadOnly PEDZEL_TOR_TEN_ODCINEK As New SolidBrush(KOLOR_TOR_TEN_ODCINEK)
     Private ReadOnly PEDZEL_TOR_NIEPRZYPISANY As New SolidBrush(KOLOR_TOR_NIEPRZYPISANY)
+    Private ReadOnly PEDZEL_TOR_LICZNIK_ODCINEK_2 As New SolidBrush(KOLOR_TOR_LICZNIK_ODCINEK_2)
     Private ReadOnly PEDZEL_SYGN_CZER As New SolidBrush(KolorRGB("#800000"))
     Private ReadOnly PEDZEL_SYGN_CZER_JASNY As New SolidBrush(KolorRGB("#FF0000"))
     Private ReadOnly PEDZEL_SYGN_ZIEL As New SolidBrush(KolorRGB("#008000"))
@@ -57,7 +59,8 @@
         gr.Clear(konfiguracja.KolorKostki)
         pedzelToru = PEDZEL_TOR_WOLNY
 
-        If (Not konfiguracja.RysujOdcinki) And konfiguracja.ZaznaczX >= 0 And konfiguracja.ZaznaczX < pulpit.Szerokosc And konfiguracja.ZaznaczY >= 0 And konfiguracja.ZaznaczY < pulpit.Wysokosc Then
+        'Rysuj zaznaczenie kostki i kostkę przeciąganą
+        If (Not konfiguracja.RysujOdcinki) And (Not konfiguracja.RysujLiczniki) And (Not konfiguracja.RysujLampy) And konfiguracja.ZaznaczX >= 0 And konfiguracja.ZaznaczX < pulpit.Szerokosc And konfiguracja.ZaznaczY >= 0 And konfiguracja.ZaznaczY < pulpit.Wysokosc Then
             gr.ScaleTransform(konfiguracja.Skalowanie, konfiguracja.Skalowanie)
             gr.FillRectangle(PEDZEL_ZAZN_KOSTKA, konfiguracja.ZaznaczX, konfiguracja.ZaznaczY, 1, 1)
             If konfiguracja.PrzesuwanaKostka IsNot Nothing Then RysujKostke(konfiguracja.ZaznaczX, konfiguracja.ZaznaczY, konfiguracja.Skalowanie, konfiguracja.PrzesuwanaKostka)
@@ -75,12 +78,14 @@
             Next
         End If
 
+        'Rysuj kostki
         For x As Integer = 0 To pulpit.Szerokosc - 1
             For y As Integer = 0 To pulpit.Wysokosc - 1
                 Dim k As Zaleznosci.Kostka = pulpit.Kostki(x, y)
                 If k Is Nothing Then Continue For
 
                 If konfiguracja.RysujOdcinki Then UstawKolorToru(k, konfiguracja.ZaznaczonyOdcinek)
+                If konfiguracja.RysujLiczniki Then UstawKolorToruDlaLicznika(k, konfiguracja.ZaznaczonyLicznik)
                 RysujKostke(x, y, konfiguracja.Skalowanie, k)
             Next
         Next
@@ -89,18 +94,16 @@
             Dim en As List(Of Zaleznosci.Lampa).Enumerator = pulpit.Lampy.GetEnumerator
             While en.MoveNext
                 Dim l As Zaleznosci.Lampa = en.Current
-                gr.ResetTransform()
-                gr.ScaleTransform(konfiguracja.Skalowanie, konfiguracja.Skalowanie)
-                gr.TranslateTransform(CSng(l.X - LAMPA_SZER / 2), CSng(l.Y - LAMPA_SZER / 2))
-
-                Dim pedzel As SolidBrush
-                If l Is konfiguracja.ZaznaczonaLampa Then
-                    pedzel = PEDZEL_LAMPA_ZAZN
-                Else
-                    pedzel = PEDZEL_LAMPA_TLO
-                End If
-                gr.FillEllipse(pedzel, 0, 0, LAMPA_SZER, LAMPA_SZER)
+                RysujKolko(If(l Is konfiguracja.ZaznaczonaLampa, PEDZEL_LAMPA_ZAZN, PEDZEL_LAMPA_TLO), konfiguracja.Skalowanie, l.X, l.Y)
             End While
+        End If
+
+        If konfiguracja.RysujLiczniki Then
+            Dim l As Zaleznosci.ParaLicznikowOsi = konfiguracja.ZaznaczonyLicznik
+            If l IsNot Nothing Then
+                RysujKolko(PEDZEL_TOR_TEN_ODCINEK, konfiguracja.Skalowanie, l.X1, l.Y1)
+                RysujKolko(PEDZEL_TOR_LICZNIK_ODCINEK_2, konfiguracja.Skalowanie, l.X2, l.Y2)
+            End If
         End If
 
         Return img
@@ -284,6 +287,13 @@
         gr.DrawLine(PEDZEL_SYGN_KRAWEDZ, x1, y3, x1, y2)
     End Sub
 
+    Private Sub RysujKolko(pedzel As Brush, skalowanie As Single, x As Single, y As Single)
+        gr.ResetTransform()
+        gr.ScaleTransform(skalowanie, skalowanie)
+        gr.TranslateTransform(x - KOLKO_SZER / 2.0F, y - KOLKO_SZER / 2.0F)
+        gr.FillEllipse(pedzel, 0, 0, KOLKO_SZER, KOLKO_SZER)
+    End Sub
+
     Private Sub UstawKolorToru(k As Zaleznosci.Kostka, zazn As Zaleznosci.OdcinekToru)
         If TypeOf k Is Zaleznosci.ITor Then
             Dim t As Zaleznosci.ITor = DirectCast(k, Zaleznosci.ITor)
@@ -296,6 +306,22 @@
             End If
         Else
             pedzelToru = PEDZEL_TOR_WOLNY
+        End If
+    End Sub
+
+    Private Sub UstawKolorToruDlaLicznika(k As Zaleznosci.Kostka, zazn As Zaleznosci.ParaLicznikowOsi)
+        pedzelToru = PEDZEL_TOR_WOLNY
+        If zazn Is Nothing Then Exit Sub
+
+        If TypeOf k Is Zaleznosci.ITor Then
+            Dim t As Zaleznosci.ITor = DirectCast(k, Zaleznosci.ITor)
+            If t.NalezyDoOdcinka IsNot Nothing Then
+                If t.NalezyDoOdcinka Is zazn.Odcinek1 Then
+                    pedzelToru = PEDZEL_TOR_TEN_ODCINEK
+                ElseIf t.NalezyDoOdcinka Is zazn.Odcinek2
+                    pedzelToru = PEDZEL_TOR_LICZNIK_ODCINEK_2
+                End If
+            End If
         End If
     End Sub
 End Module
