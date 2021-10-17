@@ -163,6 +163,9 @@ Partial Class wndKonfiguratorStacji
         Me.btnLampaDodaj = New System.Windows.Forms.Button()
         Me.pnlLicznik1 = New System.Windows.Forms.Panel()
         Me.pnlLicznik2 = New System.Windows.Forms.Panel()
+        Me.pnlKonfNapis = New System.Windows.Forms.Panel()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.txtKonfNapisTekst = New System.Windows.Forms.TextBox()
         Me.mnuMenu.SuspendLayout()
         CType(Me.pctPulpit, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -207,6 +210,7 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaLampy.Panel1.SuspendLayout()
         Me.splKartaLampy.Panel2.SuspendLayout()
         Me.splKartaLampy.SuspendLayout()
+        Me.pnlKonfNapis.SuspendLayout()
         Me.SuspendLayout()
         '
         'mnuMenu
@@ -327,6 +331,7 @@ Partial Class wndKonfiguratorStacji
         '
         'splKartaPulpit.Panel2
         '
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfNapis)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygn)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfTor)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfPrzycisk)
@@ -1618,6 +1623,36 @@ Partial Class wndKonfiguratorStacji
         Me.pnlLicznik2.Size = New System.Drawing.Size(13, 13)
         Me.pnlLicznik2.TabIndex = 11
         '
+        'pnlKonfNapis
+        '
+        Me.pnlKonfNapis.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfNapis.Controls.Add(Me.txtKonfNapisTekst)
+        Me.pnlKonfNapis.Controls.Add(Me.Label9)
+        Me.pnlKonfNapis.Location = New System.Drawing.Point(9, 214)
+        Me.pnlKonfNapis.Name = "pnlKonfNapis"
+        Me.pnlKonfNapis.Size = New System.Drawing.Size(144, 45)
+        Me.pnlKonfNapis.TabIndex = 1
+        Me.pnlKonfNapis.Visible = False
+        '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Location = New System.Drawing.Point(3, 0)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(37, 13)
+        Me.Label9.TabIndex = 0
+        Me.Label9.Text = "Tekst:"
+        '
+        'txtKonfNapisTekst
+        '
+        Me.txtKonfNapisTekst.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfNapisTekst.Location = New System.Drawing.Point(6, 16)
+        Me.txtKonfNapisTekst.Name = "txtKonfNapisTekst"
+        Me.txtKonfNapisTekst.Size = New System.Drawing.Size(135, 20)
+        Me.txtKonfNapisTekst.TabIndex = 1
+        '
         'wndKonfiguratorStacji
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1689,6 +1724,8 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaLampy.Panel2.PerformLayout()
         CType(Me.splKartaLampy, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splKartaLampy.ResumeLayout(False)
+        Me.pnlKonfNapis.ResumeLayout(False)
+        Me.pnlKonfNapis.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1834,4 +1871,7 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents ColumnHeader10 As ColumnHeader
     Friend WithEvents pnlLicznik2 As Panel
     Friend WithEvents pnlLicznik1 As Panel
+    Friend WithEvents pnlKonfNapis As Panel
+    Friend WithEvents txtKonfNapisTekst As TextBox
+    Friend WithEvents Label9 As Label
 End Class

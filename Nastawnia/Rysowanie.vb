@@ -1,8 +1,10 @@
 ﻿Public Module Rysowanie
-    Public Const KOLKO_SZER As Single = 0.25    'średnica kółka (lampy/licznika osi)
-    Private Const TOR_SZEROKOSC As Single = 0.1 'szerokość toru na kostce
-    Private Const SYGN_POZ As Single = 0.25     'wielokorotność stałej oznacza położenie środków kolejnych świateł sygnałów na osi X
-    Private Const SYGN_SZER As Single = 0.18    'średnica sygnału
+    Public Const KOLKO_SZER As Single = 0.25            'średnica kółka (lampy/licznika osi)
+    Private Const KOLKO_TEKST_SZER As Single = 0.12     'średnica kółka obok tekstu
+    Private Const KOLKO_TEKST_POZ As Single = 0.1       'położenie kółka obok tekstu
+    Private Const TOR_SZEROKOSC As Single = 0.1         'szerokość toru na kostce
+    Private Const SYGN_POZ As Single = 0.25             'wielokorotność stałej oznacza położenie środków kolejnych świateł sygnałów na osi X
+    Private Const SYGN_SZER As Single = 0.18            'średnica sygnału
     Private Const SYGN_TLO_SZER As Single = 0.28        'średnica okręgu stanowiącego tło sygnału
     Private Const SYGN_SLUP_SZER_DUZA As Single = 0.15  'szerokość słupa sygnalizatora w szerszym miejscu
     Private Const SYGN_SLUP_SZER_MALA As Single = 0.05  'szerokosć słupa sygnalizatora w węższym miejscu
@@ -11,6 +13,8 @@
     Private Const TEKST_POZ_X_PRZYCISK As Single = 0.17 'dodatkowy margines dla tekstu obok przycisku
     Private Const TEKST_POZ_X As Single = 0.1           'dodatkowy margines dla tekstu
     Private Const TEKST_POZ_Y As Single = 0.12          'dodatkowy margines dla tekstu
+    Private Const TEKST_NAPIS_POZ As Single = 0.12      'pozycja tekstu w kostce z napisem
+    Private Const TEKST_WYS As Single = 0.8             'wysokość tekstu w kostce z napisem
     Private Const COS45 As Single = 0.707
     Private Const KAT_PROSTY As Single = 90.0
 
@@ -39,6 +43,7 @@
     Private ReadOnly PEDZEL_ZAZN_KOSTKA As New SolidBrush(KolorRGB("#009DFF"))
     Private ReadOnly PEDZEL_LAMPA_TLO As New SolidBrush(KolorRGB("#FFEA00"))
     Private ReadOnly PEDZEL_LAMPA_ZAZN As New SolidBrush(KolorRGB("#FF9500"))
+    Private ReadOnly PEDZEL_KOLKO_TEKST As New SolidBrush(KolorRGB("#FF1A71"))
 
     Private ReadOnly CZCIONKA As New Font("Arial", 0.17)
 
@@ -140,6 +145,8 @@
                 RysujPrzyciskTor(CType(kostka, Zaleznosci.PrzyciskTor))
             Case Zaleznosci.TypKostki.Kierunek
                 RysujKierunek()
+            Case Zaleznosci.TypKostki.Napis
+                RysujKostkeNapis(CType(kostka, Zaleznosci.Napis))
         End Select
     End Sub
 
@@ -167,8 +174,8 @@
         })
     End Sub
 
-    Private Sub RysujNazwe(nazwa As String, x As Single, y As Single)
-        Dim rect As New RectangleF(x, y, 1 - x, SYGN_POZ)
+    Private Sub RysujNazwe(nazwa As String, x As Single, y As Single, Optional wys As Single = SYGN_POZ)
+        Dim rect As New RectangleF(x, y, 1 - x, wys)
         Dim transformacja As Drawing2D.Matrix = gr.Transform
 
         If obrot >= 2 * KAT_PROSTY And obrot < 4 * KAT_PROSTY Then
@@ -265,6 +272,12 @@
         New PointF(0.5 + KIER_SZER / 2, 0.5 + KIER_SZER / 2)
         })
         RysujPrzycisk()
+    End Sub
+
+    Private Sub RysujKostkeNapis(napis As Zaleznosci.Napis)
+        Dim poz As Single = KOLKO_TEKST_POZ - KOLKO_TEKST_SZER / 2.0F
+        gr.FillEllipse(PEDZEL_KOLKO_TEKST, poz, poz, KOLKO_TEKST_SZER, KOLKO_TEKST_SZER)
+        RysujNazwe(napis.Tekst, TEKST_NAPIS_POZ, TEKST_NAPIS_POZ, TEKST_WYS)
     End Sub
 
     Private Sub RysujSlupSygnalizatora(poczx As Single)

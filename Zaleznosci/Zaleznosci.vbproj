@@ -71,6 +71,7 @@
     <Compile Include="Kostki\ITor.vb" />
     <Compile Include="Kostki\Kierunek.vb" />
     <Compile Include="Kostki\Kostka.vb" />
+    <Compile Include="Kostki\Napis.vb" />
     <Compile Include="Kostki\Przycisk.vb" />
     <Compile Include="Kostki\PrzyciskTor.vb" />
     <Compile Include="Kostki\Sygnalizator.vb" />

@@ -20,4 +20,5 @@ Public Enum TypKostki
     Przycisk
     PrzyciskTor
     Kierunek
+    Napis
 End Enum

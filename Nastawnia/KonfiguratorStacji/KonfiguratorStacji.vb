@@ -22,7 +22,7 @@
 #Region "Okno"
 
     Private Sub wndKonfiguratorStacji_Load() Handles Me.Load
-        PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygn, pnlKonfTor}
+        PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygn, pnlKonfTor, pnlKonfNapis}
         For i As Integer = 0 To PaneleKonfKostek.Length - 1
             PaneleKonfKostek(i).Width = splKartaPulpit.Panel2.Width
             PaneleKonfKostek(i).Location = New Point(0, 0)
@@ -38,6 +38,7 @@
         Pulpit.Kostki(2, 3) = New Zaleznosci.SygnalizatorManewrowy With {.Nazwa = "Tm1"}
         Pulpit.Kostki(1, 3) = New Zaleznosci.SygnalizatorPolsamoczynny With {.Nazwa = "A1/2m"}
         Pulpit.Kostki(0, 3) = New Zaleznosci.SygnalizatorSamoczynny With {.Nazwa = "179N"}
+        Pulpit.Kostki(4, 5) = New Zaleznosci.Napis With {.Tekst = "To jest tekst"}
         Pulpit.Kostki(2, 5) = New Zaleznosci.Przycisk
         Pulpit.Kostki(1, 5) = New Zaleznosci.PrzyciskTor
         Pulpit.Kostki(0, 5) = New Zaleznosci.Kierunek
@@ -75,28 +76,29 @@
         RysujPulpit()
     End Sub
 
-    Private Sub DodajKostkeDoListy(kostka As Zaleznosci.Kostka, nazwa As String, ix As Integer)
+    Private Sub DodajKostkeDoListy(kostka As Zaleznosci.Kostka, nazwa As String)
         Static Dim konf As New KonfiguracjaRysowania() With {.Skalowanie = 47, .RysujKrawedzieKostek = False}
         Dim pulpit As New Zaleznosci.Pulpit(1, 1)
         pulpit.Kostki(0, 0) = kostka
         imlKostki.Images.Add(Rysuj(pulpit, konf))
-        Dim lvi As New ListViewItem(nazwa, ix)
+        Dim lvi As New ListViewItem(nazwa, imlKostki.Images.Count - 1)
         lvi.Tag = kostka.GetType()
         lvPulpitKostki.Items.Add(lvi)
     End Sub
 
     Private Sub UtworzListeKostek()
-        DodajKostkeDoListy(New Zaleznosci.Tor(), "Tor", 0)
-        DodajKostkeDoListy(New Zaleznosci.TorKoniec(), "Koniec toru", 1)
-        DodajKostkeDoListy(New Zaleznosci.Zakret(), "Zakręt", 2)
-        DodajKostkeDoListy(New Zaleznosci.RozjazdLewo(), "Rozjazd lewy", 3)
-        DodajKostkeDoListy(New Zaleznosci.RozjazdPrawo(), "Rozjazd prawy", 4)
-        DodajKostkeDoListy(New Zaleznosci.SygnalizatorManewrowy(), "Sygnalizator manewrowy", 5)
-        DodajKostkeDoListy(New Zaleznosci.SygnalizatorPolsamoczynny(), "Sygnalizator półsamoczynny", 6)
-        DodajKostkeDoListy(New Zaleznosci.SygnalizatorSamoczynny(), "Sygnalizator samoczynny", 7)
-        DodajKostkeDoListy(New Zaleznosci.Przycisk(), "Przycisk", 8)
-        DodajKostkeDoListy(New Zaleznosci.PrzyciskTor(), "Przycisk z torem", 9)
-        DodajKostkeDoListy(New Zaleznosci.Kierunek(), "Wjazd/wyjazd ze stacji", 10)
+        DodajKostkeDoListy(New Zaleznosci.Tor(), "Tor")
+        DodajKostkeDoListy(New Zaleznosci.TorKoniec(), "Koniec toru")
+        DodajKostkeDoListy(New Zaleznosci.Zakret(), "Zakręt")
+        DodajKostkeDoListy(New Zaleznosci.RozjazdLewo(), "Rozjazd lewy")
+        DodajKostkeDoListy(New Zaleznosci.RozjazdPrawo(), "Rozjazd prawy")
+        DodajKostkeDoListy(New Zaleznosci.SygnalizatorManewrowy(), "Sygnalizator manewrowy")
+        DodajKostkeDoListy(New Zaleznosci.SygnalizatorPolsamoczynny(), "Sygnalizator półsamoczynny")
+        DodajKostkeDoListy(New Zaleznosci.SygnalizatorSamoczynny(), "Sygnalizator samoczynny")
+        DodajKostkeDoListy(New Zaleznosci.Przycisk(), "Przycisk")
+        DodajKostkeDoListy(New Zaleznosci.PrzyciskTor(), "Przycisk z torem")
+        DodajKostkeDoListy(New Zaleznosci.Kierunek(), "Wjazd/wyjazd ze stacji")
+        DodajKostkeDoListy(New Zaleznosci.Napis(), "Napis")
     End Sub
 
 #End Region 'Okno
@@ -358,6 +360,13 @@
     End Sub
 
 
+    'Napis
+    Private Sub txtKonfNapisTekst_TextChanged() Handles txtKonfNapisTekst.TextChanged
+        DirectCast(ZaznaczonaKostka, Zaleznosci.Napis).Tekst = txtKonfNapisTekst.Text
+        RysujPulpit()
+    End Sub
+
+
     'Wyświetlanie paneli
     Private Sub UkryjPaneleKonf()
         For i As Integer = 0 To PaneleKonfKostek.Length - 1
@@ -375,6 +384,8 @@
                 PokazKonfSygn()
             Case Zaleznosci.TypKostki.Przycisk, Zaleznosci.TypKostki.PrzyciskTor
                 PokazKonfPrzycisk()
+            Case Zaleznosci.TypKostki.Napis
+                PokazKonfNapis()
         End Select
     End Sub
 
@@ -496,6 +507,13 @@
         End Select
 
         pnlKonfPrzycisk.Visible = True
+    End Sub
+
+    Private Sub PokazKonfNapis()
+        Dim napis As Zaleznosci.Napis = DirectCast(ZaznaczonaKostka, Zaleznosci.Napis)
+
+        txtKonfNapisTekst.Text = napis.Tekst
+        pnlKonfNapis.Visible = True
     End Sub
 
     'Inne
