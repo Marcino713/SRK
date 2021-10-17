@@ -22,7 +22,7 @@
 #Region "Okno"
 
     Private Sub wndKonfiguratorStacji_Load() Handles Me.Load
-        PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygn, pnlKonfTor, pnlKonfNapis}
+        PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygn, pnlKonfTor, pnlKonfNapis, pnlKonfKier}
         For i As Integer = 0 To PaneleKonfKostek.Length - 1
             PaneleKonfKostek(i).Width = splKartaPulpit.Panel2.Width
             PaneleKonfKostek(i).Location = New Point(0, 0)
@@ -367,6 +367,24 @@
     End Sub
 
 
+    'Kierunek
+    Private Sub txtKonfKierPredkosc_TextChanged() Handles txtKonfKierPredkosc.TextChanged
+        DirectCast(ZaznaczonaKostka, Zaleznosci.Kierunek).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfKierPredkosc)
+    End Sub
+
+    Private Sub rbKonfKierZasadniczy_CheckedChanged() Handles rbKonfKierZasadniczy.CheckedChanged
+        If rbKonfKierZasadniczy.Checked Then
+            DirectCast(ZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWlaczany = Zaleznosci.KierunekWlaczanyEnum.Zasadniczy
+        End If
+    End Sub
+
+    Private Sub rbKonfKierPrzeciwny_CheckedChanged() Handles rbKonfKierPrzeciwny.CheckedChanged
+        If rbKonfKierPrzeciwny.Checked Then
+            DirectCast(ZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWlaczany = Zaleznosci.KierunekWlaczanyEnum.Przeciwny
+        End If
+    End Sub
+
+
     'Wyświetlanie paneli
     Private Sub UkryjPaneleKonf()
         For i As Integer = 0 To PaneleKonfKostek.Length - 1
@@ -386,6 +404,8 @@
                 PokazKonfPrzycisk()
             Case Zaleznosci.TypKostki.Napis
                 PokazKonfNapis()
+            Case Zaleznosci.TypKostki.Kierunek
+                PokazKonfKier()
         End Select
     End Sub
 
@@ -514,6 +534,19 @@
 
         txtKonfNapisTekst.Text = napis.Tekst
         pnlKonfNapis.Visible = True
+    End Sub
+
+    Private Sub PokazKonfKier()
+        Dim kierunek As Zaleznosci.Kierunek = DirectCast(ZaznaczonaKostka, Zaleznosci.Kierunek)
+
+        txtKonfKierPredkosc.Text = kierunek.PredkoscZasadnicza.ToString
+        If kierunek.KierunekWlaczany = Zaleznosci.KierunekWlaczanyEnum.Zasadniczy Then
+            rbKonfKierZasadniczy.Checked = True
+        Else
+            rbKonfKierPrzeciwny.Checked = True
+        End If
+
+        pnlKonfKier.Visible = True
     End Sub
 
     'Inne
@@ -1010,6 +1043,8 @@
                 Pulpit.Kostki(p.X, p.Y) = Nothing
                 Pulpit.UsunKostkeZPowiazan(ZaznaczonaKostka)
                 Konfiguracja.WyczyscZaznaczenieKostki()
+                ZaznaczonaKostka = Nothing
+                UkryjPaneleKonf()
                 RysujPulpit()
             End If
 

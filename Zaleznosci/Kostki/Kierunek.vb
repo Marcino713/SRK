@@ -1,5 +1,5 @@
 ﻿Public Class Kierunek
-    Inherits Kostka
+    Inherits Tor
     Public Property KierunekWlaczany As KierunekWlaczanyEnum
     Public Sub New()
         MyBase.New(TypKostki.Kierunek)

@@ -266,7 +266,7 @@
     End Sub
 
     Private Sub RysujKierunek()
-        gr.FillPolygon(PEDZEL_TOR_WOLNY, New PointF() {
+        gr.FillPolygon(pedzelToru, New PointF() {
         New PointF(0.5 + KIER_SZER / 2, 0.5 - KIER_SZER / 2),
         New PointF(0.5 - KIER_SZER / 2, 0.5),
         New PointF(0.5 + KIER_SZER / 2, 0.5 + KIER_SZER / 2)
