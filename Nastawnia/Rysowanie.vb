@@ -23,7 +23,7 @@
     Public ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")       'tor nieprzypisany do żadnego odcinka
     Public ReadOnly KOLOR_TOR_LICZNIK_ODCINEK_2 As Color = KolorRGB("#D11AFF")   'drugi odcinek obsługiwany przez parę liczników osi 1A29FF
 
-    Private ReadOnly PEDZEL_KRAWEDZIE As New Pen(Color.White, 0)
+    Private ReadOnly PEDZEL_KRAWEDZIE As New Pen(Color.White, 0.02)
     Private ReadOnly PEDZEL_TOR_WOLNY As New SolidBrush(KOLOR_TOR_PRZYPISANY)
     Private ReadOnly PEDZEL_TOR_TEN_ODCINEK As New SolidBrush(KOLOR_TOR_TEN_ODCINEK)
     Private ReadOnly PEDZEL_TOR_NIEPRZYPISANY As New SolidBrush(KOLOR_TOR_NIEPRZYPISANY)
@@ -37,7 +37,7 @@
     Private ReadOnly PEDZEL_SYGN_BIAL As New SolidBrush(KolorRGB("#CCCCCC"))
     Private ReadOnly PEDZEL_SYGN_BIAL_JASNY As New SolidBrush(KolorRGB("#FFFFFF"))
     Private ReadOnly PEDZEL_SYGN_TLO As New SolidBrush(KolorRGB("#808080"))
-    Private ReadOnly PEDZEL_SYGN_KRAWEDZ As New Pen(KolorRGB("#000000"), 0)
+    Private ReadOnly PEDZEL_SYGN_KRAWEDZ As New Pen(KolorRGB("#000000"), 0.01)
     Private ReadOnly PEDZEL_PRZYCISK As New SolidBrush(KolorRGB("#000000"))
     Private ReadOnly PEDZEL_TEKST As New SolidBrush(KolorRGB("#000000"))
     Private ReadOnly PEDZEL_ZAZN_KOSTKA As New SolidBrush(KolorRGB("#009DFF"))

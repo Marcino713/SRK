@@ -37,6 +37,12 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaPulpit = New System.Windows.Forms.SplitContainer()
         Me.lvPulpitKostki = New System.Windows.Forms.ListView()
         Me.imlKostki = New System.Windows.Forms.ImageList(Me.components)
+        Me.pnlKonfKier = New System.Windows.Forms.Panel()
+        Me.rbKonfKierPrzeciwny = New System.Windows.Forms.RadioButton()
+        Me.rbKonfKierZasadniczy = New System.Windows.Forms.RadioButton()
+        Me.Label35 = New System.Windows.Forms.Label()
+        Me.txtKonfKierPredkosc = New System.Windows.Forms.TextBox()
+        Me.Label34 = New System.Windows.Forms.Label()
         Me.pnlKonfNapis = New System.Windows.Forms.Panel()
         Me.txtKonfNapisTekst = New System.Windows.Forms.TextBox()
         Me.Label9 = New System.Windows.Forms.Label()
@@ -104,6 +110,8 @@ Partial Class wndKonfiguratorStacji
         Me.ColumnHeader4 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader5 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader6 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ctxSortowanie = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.ctxSortuj = New System.Windows.Forms.ToolStripMenuItem()
         Me.txtTorAdres = New System.Windows.Forms.TextBox()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.pnlTorLegenda = New System.Windows.Forms.Panel()
@@ -166,12 +174,6 @@ Partial Class wndKonfiguratorStacji
         Me.Label24 = New System.Windows.Forms.Label()
         Me.btnLampaUsun = New System.Windows.Forms.Button()
         Me.btnLampaDodaj = New System.Windows.Forms.Button()
-        Me.pnlKonfKier = New System.Windows.Forms.Panel()
-        Me.Label34 = New System.Windows.Forms.Label()
-        Me.txtKonfKierPredkosc = New System.Windows.Forms.TextBox()
-        Me.Label35 = New System.Windows.Forms.Label()
-        Me.rbKonfKierZasadniczy = New System.Windows.Forms.RadioButton()
-        Me.rbKonfKierPrzeciwny = New System.Windows.Forms.RadioButton()
         Me.mnuMenu.SuspendLayout()
         CType(Me.pctPulpit, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -185,6 +187,7 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaPulpit.Panel1.SuspendLayout()
         Me.splKartaPulpit.Panel2.SuspendLayout()
         Me.splKartaPulpit.SuspendLayout()
+        Me.pnlKonfKier.SuspendLayout()
         Me.pnlKonfNapis.SuspendLayout()
         Me.pnlKonfSygn.SuspendLayout()
         Me.pnlKonfSygnSwiatla.SuspendLayout()
@@ -203,6 +206,7 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaTory.Panel1.SuspendLayout()
         Me.splKartaTory.Panel2.SuspendLayout()
         Me.splKartaTory.SuspendLayout()
+        Me.ctxSortowanie.SuspendLayout()
         Me.pnlTorLegenda.SuspendLayout()
         Me.tbpLiczniki.SuspendLayout()
         CType(Me.splKartaLiczniki, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -217,7 +221,6 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaLampy.Panel1.SuspendLayout()
         Me.splKartaLampy.Panel2.SuspendLayout()
         Me.splKartaLampy.SuspendLayout()
-        Me.pnlKonfKier.SuspendLayout()
         Me.SuspendLayout()
         '
         'mnuMenu
@@ -365,6 +368,70 @@ Partial Class wndKonfiguratorStacji
         Me.imlKostki.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit
         Me.imlKostki.ImageSize = New System.Drawing.Size(48, 48)
         Me.imlKostki.TransparentColor = System.Drawing.Color.Transparent
+        '
+        'pnlKonfKier
+        '
+        Me.pnlKonfKier.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfKier.Controls.Add(Me.rbKonfKierPrzeciwny)
+        Me.pnlKonfKier.Controls.Add(Me.rbKonfKierZasadniczy)
+        Me.pnlKonfKier.Controls.Add(Me.Label35)
+        Me.pnlKonfKier.Controls.Add(Me.txtKonfKierPredkosc)
+        Me.pnlKonfKier.Controls.Add(Me.Label34)
+        Me.pnlKonfKier.Location = New System.Drawing.Point(9, 288)
+        Me.pnlKonfKier.Name = "pnlKonfKier"
+        Me.pnlKonfKier.Size = New System.Drawing.Size(167, 81)
+        Me.pnlKonfKier.TabIndex = 1
+        Me.pnlKonfKier.Visible = False
+        '
+        'rbKonfKierPrzeciwny
+        '
+        Me.rbKonfKierPrzeciwny.AutoSize = True
+        Me.rbKonfKierPrzeciwny.Location = New System.Drawing.Point(91, 55)
+        Me.rbKonfKierPrzeciwny.Name = "rbKonfKierPrzeciwny"
+        Me.rbKonfKierPrzeciwny.Size = New System.Drawing.Size(73, 17)
+        Me.rbKonfKierPrzeciwny.TabIndex = 4
+        Me.rbKonfKierPrzeciwny.TabStop = True
+        Me.rbKonfKierPrzeciwny.Text = "Przeciwny"
+        Me.rbKonfKierPrzeciwny.UseVisualStyleBackColor = True
+        '
+        'rbKonfKierZasadniczy
+        '
+        Me.rbKonfKierZasadniczy.AutoSize = True
+        Me.rbKonfKierZasadniczy.Location = New System.Drawing.Point(6, 55)
+        Me.rbKonfKierZasadniczy.Name = "rbKonfKierZasadniczy"
+        Me.rbKonfKierZasadniczy.Size = New System.Drawing.Size(79, 17)
+        Me.rbKonfKierZasadniczy.TabIndex = 3
+        Me.rbKonfKierZasadniczy.TabStop = True
+        Me.rbKonfKierZasadniczy.Text = "Zasadniczy"
+        Me.rbKonfKierZasadniczy.UseVisualStyleBackColor = True
+        '
+        'Label35
+        '
+        Me.Label35.AutoSize = True
+        Me.Label35.Location = New System.Drawing.Point(3, 39)
+        Me.Label35.Name = "Label35"
+        Me.Label35.Size = New System.Drawing.Size(102, 13)
+        Me.Label35.TabIndex = 2
+        Me.Label35.Text = "Kierunek ustawiany:"
+        '
+        'txtKonfKierPredkosc
+        '
+        Me.txtKonfKierPredkosc.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfKierPredkosc.Location = New System.Drawing.Point(6, 16)
+        Me.txtKonfKierPredkosc.Name = "txtKonfKierPredkosc"
+        Me.txtKonfKierPredkosc.Size = New System.Drawing.Size(158, 20)
+        Me.txtKonfKierPredkosc.TabIndex = 1
+        '
+        'Label34
+        '
+        Me.Label34.AutoSize = True
+        Me.Label34.Location = New System.Drawing.Point(3, 0)
+        Me.Label34.Name = "Label34"
+        Me.Label34.Size = New System.Drawing.Size(116, 13)
+        Me.Label34.TabIndex = 0
+        Me.Label34.Text = "Prędkość maksymalna:"
         '
         'pnlKonfNapis
         '
@@ -1058,6 +1125,7 @@ Partial Class wndKonfiguratorStacji
         'lvTory
         '
         Me.lvTory.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader4, Me.ColumnHeader5, Me.ColumnHeader6})
+        Me.lvTory.ContextMenuStrip = Me.ctxSortowanie
         Me.lvTory.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lvTory.FullRowSelect = True
         Me.lvTory.HideSelection = False
@@ -1079,6 +1147,18 @@ Partial Class wndKonfiguratorStacji
         'ColumnHeader6
         '
         Me.ColumnHeader6.Text = "Kostki"
+        '
+        'ctxSortowanie
+        '
+        Me.ctxSortowanie.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ctxSortuj})
+        Me.ctxSortowanie.Name = "ctxOdcinki"
+        Me.ctxSortowanie.Size = New System.Drawing.Size(153, 48)
+        '
+        'ctxSortuj
+        '
+        Me.ctxSortuj.Name = "ctxSortuj"
+        Me.ctxSortuj.Size = New System.Drawing.Size(152, 22)
+        Me.ctxSortuj.Text = "Sortuj"
         '
         'txtTorAdres
         '
@@ -1263,6 +1343,7 @@ Partial Class wndKonfiguratorStacji
         'lvLiczniki
         '
         Me.lvLiczniki.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader7, Me.ColumnHeader8, Me.ColumnHeader9, Me.ColumnHeader10})
+        Me.lvLiczniki.ContextMenuStrip = Me.ctxSortowanie
         Me.lvLiczniki.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lvLiczniki.FullRowSelect = True
         Me.lvLiczniki.HideSelection = False
@@ -1566,6 +1647,7 @@ Partial Class wndKonfiguratorStacji
         'lvLampy
         '
         Me.lvLampy.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3})
+        Me.lvLampy.ContextMenuStrip = Me.ctxSortowanie
         Me.lvLampy.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lvLampy.FullRowSelect = True
         Me.lvLampy.HideSelection = False
@@ -1661,70 +1743,6 @@ Partial Class wndKonfiguratorStacji
         Me.btnLampaDodaj.Text = "Dodaj"
         Me.btnLampaDodaj.UseVisualStyleBackColor = True
         '
-        'pnlKonfKier
-        '
-        Me.pnlKonfKier.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.pnlKonfKier.Controls.Add(Me.rbKonfKierPrzeciwny)
-        Me.pnlKonfKier.Controls.Add(Me.rbKonfKierZasadniczy)
-        Me.pnlKonfKier.Controls.Add(Me.Label35)
-        Me.pnlKonfKier.Controls.Add(Me.txtKonfKierPredkosc)
-        Me.pnlKonfKier.Controls.Add(Me.Label34)
-        Me.pnlKonfKier.Location = New System.Drawing.Point(9, 288)
-        Me.pnlKonfKier.Name = "pnlKonfKier"
-        Me.pnlKonfKier.Size = New System.Drawing.Size(167, 81)
-        Me.pnlKonfKier.TabIndex = 1
-        Me.pnlKonfKier.Visible = False
-        '
-        'Label34
-        '
-        Me.Label34.AutoSize = True
-        Me.Label34.Location = New System.Drawing.Point(3, 0)
-        Me.Label34.Name = "Label34"
-        Me.Label34.Size = New System.Drawing.Size(116, 13)
-        Me.Label34.TabIndex = 0
-        Me.Label34.Text = "Prędkość maksymalna:"
-        '
-        'txtKonfKierPredkosc
-        '
-        Me.txtKonfKierPredkosc.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtKonfKierPredkosc.Location = New System.Drawing.Point(6, 16)
-        Me.txtKonfKierPredkosc.Name = "txtKonfKierPredkosc"
-        Me.txtKonfKierPredkosc.Size = New System.Drawing.Size(158, 20)
-        Me.txtKonfKierPredkosc.TabIndex = 1
-        '
-        'Label35
-        '
-        Me.Label35.AutoSize = True
-        Me.Label35.Location = New System.Drawing.Point(3, 39)
-        Me.Label35.Name = "Label35"
-        Me.Label35.Size = New System.Drawing.Size(102, 13)
-        Me.Label35.TabIndex = 2
-        Me.Label35.Text = "Kierunek ustawiany:"
-        '
-        'rbKonfKierZasadniczy
-        '
-        Me.rbKonfKierZasadniczy.AutoSize = True
-        Me.rbKonfKierZasadniczy.Location = New System.Drawing.Point(6, 55)
-        Me.rbKonfKierZasadniczy.Name = "rbKonfKierZasadniczy"
-        Me.rbKonfKierZasadniczy.Size = New System.Drawing.Size(79, 17)
-        Me.rbKonfKierZasadniczy.TabIndex = 3
-        Me.rbKonfKierZasadniczy.TabStop = True
-        Me.rbKonfKierZasadniczy.Text = "Zasadniczy"
-        Me.rbKonfKierZasadniczy.UseVisualStyleBackColor = True
-        '
-        'rbKonfKierPrzeciwny
-        '
-        Me.rbKonfKierPrzeciwny.AutoSize = True
-        Me.rbKonfKierPrzeciwny.Location = New System.Drawing.Point(91, 55)
-        Me.rbKonfKierPrzeciwny.Name = "rbKonfKierPrzeciwny"
-        Me.rbKonfKierPrzeciwny.Size = New System.Drawing.Size(73, 17)
-        Me.rbKonfKierPrzeciwny.TabIndex = 4
-        Me.rbKonfKierPrzeciwny.TabStop = True
-        Me.rbKonfKierPrzeciwny.Text = "Przeciwny"
-        Me.rbKonfKierPrzeciwny.UseVisualStyleBackColor = True
-        '
         'wndKonfiguratorStacji
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1749,6 +1767,8 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaPulpit.Panel2.ResumeLayout(False)
         CType(Me.splKartaPulpit, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splKartaPulpit.ResumeLayout(False)
+        Me.pnlKonfKier.ResumeLayout(False)
+        Me.pnlKonfKier.PerformLayout()
         Me.pnlKonfNapis.ResumeLayout(False)
         Me.pnlKonfNapis.PerformLayout()
         Me.pnlKonfSygn.ResumeLayout(False)
@@ -1779,6 +1799,7 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaTory.Panel2.PerformLayout()
         CType(Me.splKartaTory, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splKartaTory.ResumeLayout(False)
+        Me.ctxSortowanie.ResumeLayout(False)
         Me.pnlTorLegenda.ResumeLayout(False)
         Me.pnlTorLegenda.PerformLayout()
         Me.tbpLiczniki.ResumeLayout(False)
@@ -1798,8 +1819,6 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaLampy.Panel2.PerformLayout()
         CType(Me.splKartaLampy, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splKartaLampy.ResumeLayout(False)
-        Me.pnlKonfKier.ResumeLayout(False)
-        Me.pnlKonfKier.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1954,4 +1973,6 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents Label35 As Label
     Friend WithEvents txtKonfKierPredkosc As TextBox
     Friend WithEvents Label34 As Label
+    Friend WithEvents ctxSortowanie As ContextMenuStrip
+    Friend WithEvents ctxSortuj As ToolStripMenuItem
 End Class

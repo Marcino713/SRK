@@ -68,6 +68,7 @@
         Konfiguracja.RysujLampy = tabUstawienia.SelectedTab Is tbpLampy
         Konfiguracja.RysujOdcinki = tabUstawienia.SelectedTab Is tbpTory
         Konfiguracja.RysujLiczniki = tabUstawienia.SelectedTab Is tbpLiczniki
+        If tabUstawienia.SelectedTab Is tbpPulpit Then PokazKonfSygnTory()
         If tabUstawienia.SelectedTab Is tbpTory Then OdswiezListeTorow()
         If tabUstawienia.SelectedTab Is tbpLiczniki Then
             OdswiezListeLicznikow()
@@ -133,6 +134,22 @@
         If wnd.ShowDialog = DialogResult.OK Then
             Pulpit.Adres = wnd.Adres
             Pulpit.Nazwa = wnd.Nazwa
+        End If
+    End Sub
+
+    Private Sub ctxSortuj_Click() Handles ctxSortuj.Click
+        If tabUstawienia.SelectedTab Is tbpTory Then
+            Pulpit.SortujOdcinkiNazwaRosnaco()
+            OdswiezListeTorow()
+
+        ElseIf tabUstawienia.SelectedTab Is tbpLiczniki
+            Pulpit.SortujLicznikiAdres1Rosnaco()
+            OdswiezListeLicznikow()
+
+        ElseIf tabUstawienia.SelectedTab Is tbpLampy
+            Pulpit.SortujLampyAdresRosnaco()
+            OdswiezListeLamp()
+
         End If
     End Sub
 
@@ -459,6 +476,18 @@
         pnlKonfRozjazd.Visible = True
     End Sub
 
+    Private Sub PokazKonfSygnTory()
+        Dim sygn As Zaleznosci.Sygnalizator = TryCast(ZaznaczonaKostka, Zaleznosci.Sygnalizator)
+        If sygn Is Nothing Then Exit Sub
+
+        cboKonfSygnOdcinekNast.Items.Clear()
+        Dim en As IEnumerator(Of Zaleznosci.OdcinekToru) = Pulpit.OdcinkiTorow.OrderBy(Function(t As Zaleznosci.OdcinekToru) t.Nazwa).GetEnumerator()
+        Do While en.MoveNext()
+            cboKonfSygnOdcinekNast.Items.Add(New ObiektComboBox(Of Zaleznosci.OdcinekToru)(en.Current, en.Current.Nazwa))
+        Loop
+        ZaznaczElement(cboKonfSygnOdcinekNast, sygn.OdcinekNastepujacy)
+    End Sub
+
     Private Sub PokazKonfSygn()
         Dim sygn As Zaleznosci.Sygnalizator = DirectCast(ZaznaczonaKostka, Zaleznosci.Sygnalizator)
         txtKonfSygnAdres.Text = sygn.Adres.ToString
@@ -466,12 +495,7 @@
         cboKonfSygnSygnNast.Enabled = (sygn.Typ <> Zaleznosci.TypKostki.SygnalizatorManewrowy)
         pnlKonfSygnSwiatla.Visible = (sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny)
 
-        cboKonfSygnOdcinekNast.Items.Clear()
-        Dim en As List(Of Zaleznosci.OdcinekToru).Enumerator = Pulpit.OdcinkiTorow.GetEnumerator()
-        Do While en.MoveNext()
-            cboKonfSygnOdcinekNast.Items.Add(New ObiektComboBox(Of Zaleznosci.OdcinekToru)(en.Current, en.Current.Nazwa))
-        Loop
-        ZaznaczElement(cboKonfSygnOdcinekNast, sygn.OdcinekNastepujacy)
+        PokazKonfSygnTory()
 
         cboKonfSygnSygnNast.Items.Clear()
         Dim sygn_nast As Zaleznosci.Sygnalizator = Nothing
@@ -1266,6 +1290,7 @@
             Return Tekst
         End Function
     End Class
+
 
 #End Region 'Reszta
 

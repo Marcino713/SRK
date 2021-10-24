@@ -47,6 +47,9 @@
             Return _Lampy
         End Get
     End Property
+    Public Sub SortujLampyAdresRosnaco()
+        _Lampy = _Lampy.OrderBy(Function(l As Lampa) l.Adres).ToList()
+    End Sub
 
     Private _Odcinki As New List(Of OdcinekToru)
     Public ReadOnly Property OdcinkiTorow As List(Of OdcinekToru)
@@ -54,6 +57,9 @@
             Return _Odcinki
         End Get
     End Property
+    Public Sub SortujOdcinkiNazwaRosnaco()
+        _Odcinki = _Odcinki.OrderBy(Function(o As OdcinekToru) o.Nazwa).ToList
+    End Sub
 
     Private _LicznikiOsi As New List(Of ParaLicznikowOsi)
     Public ReadOnly Property LicznikiOsi As List(Of ParaLicznikowOsi)
@@ -61,6 +67,9 @@
             Return _LicznikiOsi
         End Get
     End Property
+    Public Sub SortujLicznikiAdres1Rosnaco()
+        _LicznikiOsi = _LicznikiOsi.OrderBy(Function(l As ParaLicznikowOsi) l.Adres1).ToList
+    End Sub
 
     Public Sub New()
         Me.New(10, 10)
