@@ -54,7 +54,7 @@ Partial Class wndEdytorPowierzchni
         Me.rbLewo.Location = New System.Drawing.Point(170, 19)
         Me.rbLewo.Name = "rbLewo"
         Me.rbLewo.Size = New System.Drawing.Size(51, 17)
-        Me.rbLewo.TabIndex = 3
+        Me.rbLewo.TabIndex = 5
         Me.rbLewo.TabStop = True
         Me.rbLewo.Text = "Lewo"
         Me.rbLewo.UseVisualStyleBackColor = True
@@ -65,7 +65,7 @@ Partial Class wndEdytorPowierzchni
         Me.rbDol.Location = New System.Drawing.Point(121, 19)
         Me.rbDol.Name = "rbDol"
         Me.rbDol.Size = New System.Drawing.Size(43, 17)
-        Me.rbDol.TabIndex = 2
+        Me.rbDol.TabIndex = 4
         Me.rbDol.TabStop = True
         Me.rbDol.Text = "Dół"
         Me.rbDol.UseVisualStyleBackColor = True
@@ -76,7 +76,7 @@ Partial Class wndEdytorPowierzchni
         Me.rbPrawo.Location = New System.Drawing.Point(60, 19)
         Me.rbPrawo.Name = "rbPrawo"
         Me.rbPrawo.Size = New System.Drawing.Size(55, 17)
-        Me.rbPrawo.TabIndex = 1
+        Me.rbPrawo.TabIndex = 3
         Me.rbPrawo.TabStop = True
         Me.rbPrawo.Text = "Prawo"
         Me.rbPrawo.UseVisualStyleBackColor = True
@@ -88,7 +88,7 @@ Partial Class wndEdytorPowierzchni
         Me.rbGora.Location = New System.Drawing.Point(6, 19)
         Me.rbGora.Name = "rbGora"
         Me.rbGora.Size = New System.Drawing.Size(48, 17)
-        Me.rbGora.TabIndex = 0
+        Me.rbGora.TabIndex = 2
         Me.rbGora.TabStop = True
         Me.rbGora.Text = "Góra"
         Me.rbGora.UseVisualStyleBackColor = True
@@ -104,19 +104,19 @@ Partial Class wndEdytorPowierzchni
         '
         'btnOK
         '
-        Me.btnOK.Location = New System.Drawing.Point(84, 90)
+        Me.btnOK.Location = New System.Drawing.Point(96, 90)
         Me.btnOK.Name = "btnOK"
-        Me.btnOK.Size = New System.Drawing.Size(75, 23)
-        Me.btnOK.TabIndex = 4
+        Me.btnOK.Size = New System.Drawing.Size(69, 23)
+        Me.btnOK.TabIndex = 7
         Me.btnOK.Text = "OK"
         Me.btnOK.UseVisualStyleBackColor = True
         '
         'btnAnuluj
         '
-        Me.btnAnuluj.Location = New System.Drawing.Point(165, 90)
+        Me.btnAnuluj.Location = New System.Drawing.Point(172, 90)
         Me.btnAnuluj.Name = "btnAnuluj"
-        Me.btnAnuluj.Size = New System.Drawing.Size(75, 23)
-        Me.btnAnuluj.TabIndex = 5
+        Me.btnAnuluj.Size = New System.Drawing.Size(69, 23)
+        Me.btnAnuluj.TabIndex = 8
         Me.btnAnuluj.Text = "Anuluj"
         Me.btnAnuluj.UseVisualStyleBackColor = True
         '

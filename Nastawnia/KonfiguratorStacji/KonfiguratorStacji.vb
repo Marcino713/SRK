@@ -1198,6 +1198,10 @@
         RysujPulpit()
     End Sub
 
+    Private Sub pnlPulpit_Resize() Handles pnlPulpit.Resize
+        RysujPulpit()
+    End Sub
+
     Private Sub RysujPulpit()
         Dim img As Image = pctPulpit.Image
         Dim obr As Image = Rysuj(Pulpit, Konfiguracja)
@@ -1278,7 +1282,6 @@
     End Function
 
 
-
     Private Class ObiektComboBox(Of T)
         Public Wartosc As T
         Public Tekst As String
@@ -1290,7 +1293,6 @@
             Return Tekst
         End Function
     End Class
-
 
 #End Region 'Reszta
 
