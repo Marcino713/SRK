@@ -1,4 +1,6 @@
 ﻿Public Module Narzedzia
+    Public Const DATA_FORMAT As String = "d.MM.yyyy H:mm"
+
     Public Sub PokazBlad(Komunikat As String)
         MessageBox.Show(Komunikat, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error)
     End Sub

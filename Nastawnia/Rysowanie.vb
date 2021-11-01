@@ -3,6 +3,9 @@
     Private Const KOLKO_TEKST_SZER As Single = 0.12     'średnica kółka obok tekstu
     Private Const KOLKO_TEKST_POZ As Single = 0.1       'położenie kółka obok tekstu
     Private Const TOR_SZEROKOSC As Single = 0.1         'szerokość toru na kostce
+    Private Const TOR_KONC_DLUGOSC As Single = 0.35     'długość toru na kostce z końcem
+    Private Const TOR_KONC_KONCOWKI As Single = 0.15    'odelgłość środków końcówek toru od środka toru
+    Private Const TOR_KONC_KONCOWKI_DL As Single = 0.1  'długość końcówek toru
     Private Const SYGN_POZ As Single = 0.25             'wielokorotność stałej oznacza położenie środków kolejnych świateł sygnałów na osi X
     Private Const SYGN_SZER As Single = 0.18            'średnica sygnału
     Private Const SYGN_TLO_SZER As Single = 0.28        'średnica okręgu stanowiącego tło sygnału
@@ -17,6 +20,8 @@
     Private Const TEKST_WYS As Single = 0.8             'wysokość tekstu w kostce z napisem
     Private Const COS45 As Single = 0.707
     Private Const KAT_PROSTY As Single = 90.0
+    Private Const POL As Single = 0.5F
+    Private Const CWIERC As Single = 0.25F
 
     Public ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")          'tor przypisany do innego odcinka
     Public ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")         'tor przypisany do zaznaczonego odcinka
@@ -65,7 +70,7 @@
         pedzelToru = PEDZEL_TOR_WOLNY
 
         'Rysuj zaznaczenie kostki i kostkę przeciąganą
-        If (Not konfiguracja.RysujOdcinki) And (Not konfiguracja.RysujLiczniki) And (Not konfiguracja.RysujLampy) And konfiguracja.ZaznaczX >= 0 And konfiguracja.ZaznaczX < pulpit.Szerokosc And konfiguracja.ZaznaczY >= 0 And konfiguracja.ZaznaczY < pulpit.Wysokosc Then
+        If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Nic And konfiguracja.ZaznaczX >= 0 And konfiguracja.ZaznaczX < pulpit.Szerokosc And konfiguracja.ZaznaczY >= 0 And konfiguracja.ZaznaczY < pulpit.Wysokosc Then
             gr.ScaleTransform(konfiguracja.Skalowanie, konfiguracja.Skalowanie)
             gr.FillRectangle(PEDZEL_ZAZN_KOSTKA, konfiguracja.ZaznaczX, konfiguracja.ZaznaczY, 1, 1)
             If konfiguracja.PrzesuwanaKostka IsNot Nothing Then RysujKostke(konfiguracja.ZaznaczX, konfiguracja.ZaznaczY, konfiguracja.Skalowanie, konfiguracja.PrzesuwanaKostka)
@@ -89,13 +94,13 @@
                 Dim k As Zaleznosci.Kostka = pulpit.Kostki(x, y)
                 If k Is Nothing Then Continue For
 
-                If konfiguracja.RysujOdcinki Then UstawKolorToru(k, konfiguracja.ZaznaczonyOdcinek)
-                If konfiguracja.RysujLiczniki Then UstawKolorToruDlaLicznika(k, konfiguracja.ZaznaczonyLicznik)
+                If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Tory Then UstawKolorToru(k, konfiguracja.ZaznaczonyOdcinek)
+                If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Then UstawKolorToruDlaLicznika(k, konfiguracja.ZaznaczonyLicznik)
                 RysujKostke(x, y, konfiguracja.Skalowanie, k)
             Next
         Next
 
-        If konfiguracja.RysujLampy Then
+        If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then
             Dim en As List(Of Zaleznosci.Lampa).Enumerator = pulpit.Lampy.GetEnumerator
             While en.MoveNext
                 Dim l As Zaleznosci.Lampa = en.Current
@@ -103,7 +108,7 @@
             End While
         End If
 
-        If konfiguracja.RysujLiczniki Then
+        If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Then
             Dim l As Zaleznosci.ParaLicznikowOsi = konfiguracja.ZaznaczonyLicznik
             If l IsNot Nothing Then
                 RysujKolko(PEDZEL_TOR_TEN_ODCINEK, konfiguracja.Skalowanie, l.X1, l.Y1)
@@ -117,16 +122,15 @@
     Private Sub RysujKostke(x As Integer, y As Integer, skalowanie As Single, kostka As Zaleznosci.Kostka)
         gr.ResetTransform()
         gr.ScaleTransform(skalowanie, skalowanie)
-        gr.TranslateTransform(x + 0.5F, y + 0.5F)
-        gr.RotateTransform(kostka.Obrot)
-        gr.TranslateTransform(-0.5F, -0.5F)
+        gr.TranslateTransform(x, y)
+        Obroc(POL, POL, kostka.Obrot)
         obrot = kostka.Obrot
 
         Select Case kostka.Typ
             Case Zaleznosci.TypKostki.Tor
                 RysujTor()
             Case Zaleznosci.TypKostki.TorKoniec
-                RysujTor(0.5)
+                RysujKoniecToru()
             Case Zaleznosci.TypKostki.Zakret
                 RysujZakret()
             Case Zaleznosci.TypKostki.RozjazdLewo
@@ -150,27 +154,24 @@
         End Select
     End Sub
 
-    Private Sub RysujTor(Optional Dlugosc As Single = 1)
-        gr.FillRectangle(pedzelToru, 0, 0.5 - TOR_SZEROKOSC / 2, Dlugosc, TOR_SZEROKOSC)
+    Private Sub RysujTor(Optional dlugosc As Single = 1.0F)
+        gr.FillRectangle(pedzelToru, 0, POL - TOR_SZEROKOSC / 2, dlugosc, TOR_SZEROKOSC)
+    End Sub
+
+    Private Sub RysujKoniecToru()
+        RysujTor(TOR_KONC_DLUGOSC)
+        gr.FillRectangle(pedzelToru, TOR_KONC_DLUGOSC - TOR_KONC_KONCOWKI_DL, POL - TOR_KONC_KONCOWKI - TOR_SZEROKOSC / 2, TOR_KONC_KONCOWKI_DL, TOR_SZEROKOSC)     'góra
+        gr.FillRectangle(pedzelToru, TOR_KONC_DLUGOSC - TOR_KONC_KONCOWKI_DL, POL + TOR_KONC_KONCOWKI - TOR_SZEROKOSC / 2, TOR_KONC_KONCOWKI_DL, TOR_SZEROKOSC)     'dół
+        gr.FillRectangle(pedzelToru, TOR_KONC_DLUGOSC, POL - TOR_KONC_KONCOWKI - TOR_SZEROKOSC / 2, TOR_SZEROKOSC, 2 * TOR_KONC_KONCOWKI + TOR_SZEROKOSC)           'koniec
     End Sub
 
     Private Sub RysujZakret()
         Dim szer As Single = TOR_SZEROKOSC / COS45
         gr.FillPolygon(pedzelToru, {
-        New PointF(1, 0.5F - szer / 2),
-        New PointF(1, 0.5F + szer / 2),
-        New PointF(0.5F + szer / 2, 1),
-        New PointF(0.5F - szer / 2, 1)
-        })
-    End Sub
-
-    Private Sub RysujZakretPrawo()
-        Dim szer As Single = TOR_SZEROKOSC / COS45
-        gr.FillPolygon(pedzelToru, {
-        New PointF(1, 0.5F - szer / 2),
-        New PointF(0.5F + szer / 2, 0),
-        New PointF(0.5F - szer / 2, 0),
-        New PointF(1, 0.5F + szer / 2)
+        New PointF(1, POL - szer / 2),
+        New PointF(1, POL + szer / 2),
+        New PointF(POL + szer / 2, 1),
+        New PointF(POL - szer / 2, 1)
         })
     End Sub
 
@@ -182,9 +183,7 @@
             Dim rozm As SizeF = gr.MeasureString(nazwa, CZCIONKA, New SizeF(rect.Width, rect.Height))
             Dim x1 As Single = rect.X + rozm.Width / 2
             Dim y1 As Single = rect.Y + rozm.Height / 2
-            gr.TranslateTransform(x1, y1)
-            gr.RotateTransform(2 * KAT_PROSTY)
-            gr.TranslateTransform(-x1, -y1)
+            Obroc(x1, y1, 2 * KAT_PROSTY)
         End If
 
         gr.DrawString(nazwa, CZCIONKA, PEDZEL_TEKST, rect)
@@ -192,15 +191,18 @@
     End Sub
 
     Private Sub RysujRozjazdLewo(rozjazd As Zaleznosci.RozjazdLewo)
-        RysujTor()
         RysujZakret()
+        RysujTor()
         RysujPrzycisk()
         RysujNazwe(rozjazd.Nazwa, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y)
     End Sub
 
     Private Sub RysujRozjazdPrawo(rozjazd As Zaleznosci.RozjazdPrawo)
+        Dim transformacja As Drawing2D.Matrix = gr.Transform
+        Obroc(POL, POL, -KAT_PROSTY)
+        RysujZakret()
+        gr.Transform = transformacja
         RysujTor()
-        RysujZakretPrawo()
         RysujPrzycisk(2)
         RysujNazwe(rozjazd.Nazwa, SYGN_POZ + TEKST_POZ_X_PRZYCISK, 2 * SYGN_POZ + TEKST_POZ_Y)
     End Sub
@@ -267,9 +269,9 @@
 
     Private Sub RysujKierunek()
         gr.FillPolygon(pedzelToru, New PointF() {
-        New PointF(0.5 + KIER_SZER / 2, 0.5 - KIER_SZER / 2),
-        New PointF(0.5 - KIER_SZER / 2, 0.5),
-        New PointF(0.5 + KIER_SZER / 2, 0.5 + KIER_SZER / 2)
+        New PointF(POL + KIER_SZER / 2, POL - KIER_SZER / 2),
+        New PointF(POL - KIER_SZER / 2, POL),
+        New PointF(POL + KIER_SZER / 2, POL + KIER_SZER / 2)
         })
         RysujPrzycisk()
     End Sub
@@ -307,9 +309,15 @@
         gr.FillEllipse(pedzel, 0, 0, KOLKO_SZER, KOLKO_SZER)
     End Sub
 
+    Private Sub Obroc(srodekX As Single, srodekY As Single, kat As Single)
+        gr.TranslateTransform(srodekX, srodekY)
+        gr.RotateTransform(kat)
+        gr.TranslateTransform(-srodekX, -srodekY)
+    End Sub
+
     Private Sub UstawKolorToru(k As Zaleznosci.Kostka, zazn As Zaleznosci.OdcinekToru)
-        If TypeOf k Is Zaleznosci.ITor Then
-            Dim t As Zaleznosci.ITor = DirectCast(k, Zaleznosci.ITor)
+        If TypeOf k Is Zaleznosci.Tor Then
+            Dim t As Zaleznosci.Tor = DirectCast(k, Zaleznosci.Tor)
             If t.NalezyDoOdcinka Is zazn And zazn IsNot Nothing Then
                 pedzelToru = PEDZEL_TOR_TEN_ODCINEK
             ElseIf t.NalezyDoOdcinka IsNot Nothing
@@ -326,8 +334,8 @@
         pedzelToru = PEDZEL_TOR_WOLNY
         If zazn Is Nothing Then Exit Sub
 
-        If TypeOf k Is Zaleznosci.ITor Then
-            Dim t As Zaleznosci.ITor = DirectCast(k, Zaleznosci.ITor)
+        If TypeOf k Is Zaleznosci.Tor Then
+            Dim t As Zaleznosci.Tor = DirectCast(k, Zaleznosci.Tor)
             If t.NalezyDoOdcinka IsNot Nothing Then
                 If t.NalezyDoOdcinka Is zazn.Odcinek1 Then
                     pedzelToru = PEDZEL_TOR_TEN_ODCINEK

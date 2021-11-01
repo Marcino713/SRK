@@ -1,10 +1,11 @@
 ﻿Public Class wndNazwaStacji
     Public Adres As Integer = 0
     Public Nazwa As String = ""
-    Public Sub New(AdresStacji As Integer, NazwaStacji As String)
+    Public Sub New(AdresStacji As Integer, NazwaStacji As String, DataUtworzenia As Date)
         InitializeComponent()
         txtAdres.Text = AdresStacji.ToString
         txtNazwa.Text = NazwaStacji
+        lblDataUtworzenia.Text = DataUtworzenia.ToString(DATA_FORMAT)
     End Sub
 
     Private Sub btnOK_Click() Handles btnOK.Click

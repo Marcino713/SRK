@@ -5,11 +5,9 @@
     Public ZaznaczX As Integer = -1
     Public ZaznaczY As Integer = -1
     Public PrzesuwanaKostka As Zaleznosci.Kostka
-    Public RysujLampy As Boolean = False
+    Public DodatkoweObiekty As RysujDodatkoweObiekty
     Public ZaznaczonaLampa As Zaleznosci.Lampa
-    Public RysujOdcinki As Boolean = False
     Public ZaznaczonyOdcinek As Zaleznosci.OdcinekToru
-    Public RysujLiczniki As Boolean = False
     Public ZaznaczonyLicznik As Zaleznosci.ParaLicznikowOsi
 
     Public Sub WyczyscZaznaczenieKostki()
@@ -18,3 +16,10 @@
         PrzesuwanaKostka = Nothing
     End Sub
 End Class
+
+Public Enum RysujDodatkoweObiekty
+    Nic
+    Lampy
+    Tory
+    Liczniki
+End Enum

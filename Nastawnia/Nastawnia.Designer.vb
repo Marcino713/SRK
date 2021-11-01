@@ -24,7 +24,7 @@ Partial Class wndNastawnia
     Private Sub InitializeComponent()
         Me.mnuMenu = New System.Windows.Forms.MenuStrip()
         Me.mnuNarzedzia = New System.Windows.Forms.ToolStripMenuItem()
-        Me.KonfiguratorStacjiToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuKonfiguratorStacji = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuMenu.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -39,16 +39,16 @@ Partial Class wndNastawnia
         '
         'mnuNarzedzia
         '
-        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.KonfiguratorStacjiToolStripMenuItem})
+        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuKonfiguratorStacji})
         Me.mnuNarzedzia.Name = "mnuNarzedzia"
         Me.mnuNarzedzia.Size = New System.Drawing.Size(70, 20)
         Me.mnuNarzedzia.Text = "Narzędzia"
         '
-        'KonfiguratorStacjiToolStripMenuItem
+        'mnuKonfiguratorStacji
         '
-        Me.KonfiguratorStacjiToolStripMenuItem.Name = "KonfiguratorStacjiToolStripMenuItem"
-        Me.KonfiguratorStacjiToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.KonfiguratorStacjiToolStripMenuItem.Text = "Konfigurator stacji..."
+        Me.mnuKonfiguratorStacji.Name = "mnuKonfiguratorStacji"
+        Me.mnuKonfiguratorStacji.Size = New System.Drawing.Size(180, 22)
+        Me.mnuKonfiguratorStacji.Text = "Konfigurator stacji..."
         '
         'wndNastawnia
         '
@@ -68,5 +68,5 @@ Partial Class wndNastawnia
 
     Friend WithEvents mnuMenu As MenuStrip
     Friend WithEvents mnuNarzedzia As ToolStripMenuItem
-    Friend WithEvents KonfiguratorStacjiToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents mnuKonfiguratorStacji As ToolStripMenuItem
 End Class

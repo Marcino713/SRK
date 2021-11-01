@@ -7,4 +7,9 @@
     Public Property Y2 As Single
     Public Property Odcinek1 As OdcinekToru
     Public Property Odcinek2 As OdcinekToru
+
+    Friend Sub UsunOdcinekToruZPowiazan(odcinek As OdcinekToru)
+        If Odcinek1 Is odcinek Then Odcinek1 = Nothing
+        If Odcinek2 Is odcinek Then Odcinek2 = Nothing
+    End Sub
 End Class

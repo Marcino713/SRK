@@ -1,16 +1,13 @@
 ﻿Public Class PrzyciskTor
-    Inherits Kostka
-    Implements ITor
+    Inherits Tor
 
     Public Property TypPrzycisku As TypPrzyciskuTorEnum
     Public Property ObslugiwanySygnalizator As Sygnalizator
-    Public Property PredkoscZasadnicza As Integer Implements ITor.PredkoscZasadnicza
-    Public Property NalezyDoOdcinka As OdcinekToru Implements ITor.NalezyDoOdcinka
 
     Public Sub New()
         MyBase.New(TypKostki.PrzyciskTor)
     End Sub
-    Public Overrides Sub UsunPowiazanie(kostka As Kostka)
+    Protected Friend Overrides Sub UsunPowiazanie(kostka As Kostka)
         If ObslugiwanySygnalizator Is kostka Then ObslugiwanySygnalizator = Nothing
     End Sub
 End Class

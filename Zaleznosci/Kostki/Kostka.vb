@@ -4,7 +4,9 @@
     Public Sub New(typ As TypKostki)
         Me.Typ = typ
     End Sub
-    Public Overridable Sub UsunPowiazanie(kostka As Kostka)
+    Protected Friend Overridable Sub UsunPowiazanie(kostka As Kostka)
+    End Sub
+    Protected Friend Overridable Sub UsunOdcinekToruZPowiazan(odcinek As OdcinekToru)
     End Sub
 End Class
 

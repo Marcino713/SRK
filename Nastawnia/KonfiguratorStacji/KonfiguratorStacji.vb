@@ -1,4 +1,5 @@
 ﻿Public Class wndKonfiguratorStacji
+    Private ReadOnly NAZWA_OKNA As String
     Private Const SKALOWANIE_ZMIANA As Single = 0.05
     Private Const SKALOWANIE_MIN As Single = 30
     Private Const SKALOWANIE_MAX As Single = 200
@@ -20,6 +21,11 @@
     Private Delegate Function PobierzNazweKostki(kostka As Zaleznosci.Kostka) As String
 
 #Region "Okno"
+
+    Public Sub New()
+        InitializeComponent()
+        NAZWA_OKNA = Text
+    End Sub
 
     Private Sub wndKonfiguratorStacji_Load() Handles Me.Load
         PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygn, pnlKonfTor, pnlKonfNapis, pnlKonfKier}
@@ -65,14 +71,21 @@
     End Sub
 
     Private Sub tabUstawienia_Selected() Handles tabUstawienia.Selected
-        Konfiguracja.RysujLampy = tabUstawienia.SelectedTab Is tbpLampy
-        Konfiguracja.RysujOdcinki = tabUstawienia.SelectedTab Is tbpTory
-        Konfiguracja.RysujLiczniki = tabUstawienia.SelectedTab Is tbpLiczniki
-        If tabUstawienia.SelectedTab Is tbpPulpit Then PokazKonfSygnTory()
-        If tabUstawienia.SelectedTab Is tbpTory Then OdswiezListeTorow()
+        If tabUstawienia.SelectedTab Is tbpPulpit Then
+            Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Nic
+            PokazKonfSygnTory()
+        End If
+        If tabUstawienia.SelectedTab Is tbpTory Then
+            Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Tory
+            OdswiezListeTorow()
+        End If
         If tabUstawienia.SelectedTab Is tbpLiczniki Then
+            Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Liczniki
             OdswiezListeLicznikow()
             OdswiezListeTorowWLicznikach()
+        End If
+        If tabUstawienia.SelectedTab Is tbpLampy Then
+            Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Lampy
         End If
         RysujPulpit()
     End Sub
@@ -102,23 +115,33 @@
         DodajKostkeDoListy(New Zaleznosci.Napis(), "Napis")
     End Sub
 
+    Private Sub UstawTytulOkna()
+        If Pulpit.Nazwa = "" Then
+            Text = NAZWA_OKNA
+        Else
+            Text = NAZWA_OKNA & " - " & Pulpit.Nazwa
+        End If
+    End Sub
+
 #End Region 'Okno
 
 #Region "Menu"
 
     Private Sub mnuDodajKostki_Click() Handles mnuDodajKostki.Click
-        Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Dodaj)
+        Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Dodaj, Pulpit.Szerokosc, Pulpit.Wysokosc)
         If wnd.ShowDialog = DialogResult.OK Then
             Pulpit.PowiekszPulpit(wnd.KierunekEdycji, wnd.LiczbaKostek)
+            UsunZaznaczenieKostki()
             RysujPulpit()
         End If
     End Sub
 
     Private Sub mnuUsunKostki_Click() Handles mnuUsunKostki.Click
-        Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Usun)
-        If (wnd.ShowDialog = DialogResult.OK) Then
+        Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Usun, Pulpit.Szerokosc, Pulpit.Wysokosc)
+        If wnd.ShowDialog = DialogResult.OK Then
             Try
                 If Pulpit.PomniejszPulpit(wnd.KierunekEdycji, wnd.LiczbaKostek) Then
+                    UsunZaznaczenieKostki()
                     RysujPulpit()
                 Else
                     PokazBlad("Nie udało się usunąć kostek - w wybranym zakresie usuwania pulpit nie jest pusty.")
@@ -130,10 +153,11 @@
     End Sub
 
     Private Sub mnuNazwa_Click() Handles mnuNazwa.Click
-        Dim wnd As New wndNazwaStacji(Pulpit.Adres, Pulpit.Nazwa)
+        Dim wnd As New wndNazwaStacji(Pulpit.Adres, Pulpit.Nazwa, Pulpit.DataUtworzenia)
         If wnd.ShowDialog = DialogResult.OK Then
             Pulpit.Adres = wnd.Adres
             Pulpit.Nazwa = wnd.Nazwa
+            UstawTytulOkna()
         End If
     End Sub
 
@@ -640,20 +664,6 @@
         Return kostki.OrderBy(Function(k As ObiektComboBox(Of Zaleznosci.Kostka)) nazwa(k.Wartosc)).ToArray()
     End Function
 
-    Private Sub ZaznaczElement(Of T As Class)(cbo As ComboBox, el As T)
-        If el Is Nothing Then
-            cbo.SelectedItem = Nothing
-            Exit Sub
-        End If
-
-        For i As Integer = 0 To cbo.Items.Count - 1
-            If DirectCast(cbo.Items(i), ObiektComboBox(Of T)).Wartosc Is el Then
-                cbo.SelectedIndex = i
-                Exit Sub
-            End If
-        Next
-    End Sub
-
 #End Region 'Zakładka Pulpit
 
 #Region "Zakładka Odcinki torów"
@@ -1060,15 +1070,13 @@
                 RysujPulpit()
 
             ElseIf e.KeyData = Keys.Delete
-                If TypeOf (ZaznaczonaKostka) Is Zaleznosci.ITor Then
-                    Dim tor As Zaleznosci.ITor = DirectCast(ZaznaczonaKostka, Zaleznosci.ITor)
+                If TypeOf (ZaznaczonaKostka) Is Zaleznosci.Tor Then
+                    Dim tor As Zaleznosci.Tor = DirectCast(ZaznaczonaKostka, Zaleznosci.Tor)
                     tor.NalezyDoOdcinka?.KostkiTory.Remove(tor)
                 End If
                 Pulpit.Kostki(p.X, p.Y) = Nothing
                 Pulpit.UsunKostkeZPowiazan(ZaznaczonaKostka)
-                Konfiguracja.WyczyscZaznaczenieKostki()
-                ZaznaczonaKostka = Nothing
-                UkryjPaneleKonf()
+                UsunZaznaczenieKostki()
                 RysujPulpit()
             End If
 
@@ -1078,12 +1086,12 @@
     Private Sub pctPulpit_Click() Handles pctPulpit.Click
         Dim p As Point = PobierzKliknieteWspolrzedneKostki()
 
-        If Konfiguracja.RysujOdcinki Then
+        If Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Tory Then
             If CzyKostkaWZakresiePulpitu(p) Then
                 Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-                If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.ITor AndAlso Konfiguracja.ZaznaczonyOdcinek IsNot Nothing Then
+                If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.Tor AndAlso Konfiguracja.ZaznaczonyOdcinek IsNot Nothing Then
 
-                    Dim t As Zaleznosci.ITor = DirectCast(kostka, Zaleznosci.ITor)
+                    Dim t As Zaleznosci.Tor = DirectCast(kostka, Zaleznosci.Tor)
                     Dim nalezyDoTegoOdcinka As Boolean = t.NalezyDoOdcinka Is Konfiguracja.ZaznaczonyOdcinek
                     If t.NalezyDoOdcinka IsNot Nothing Then t.NalezyDoOdcinka.KostkiTory.Remove(t)
                     If nalezyDoTegoOdcinka Then
@@ -1097,7 +1105,7 @@
                 End If
             End If
 
-        ElseIf Konfiguracja.RysujLampy
+        ElseIf Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Lampy
             Dim l As Zaleznosci.Lampa = PobierzKliknietaLampe()
 
             If l IsNot Nothing Then
@@ -1110,7 +1118,7 @@
                 Next
             End If
 
-        ElseIf Not Konfiguracja.RysujLiczniki
+        ElseIf Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Nic
             pctPulpit.Focus()
             UkryjPaneleKonf()
 
@@ -1227,7 +1235,7 @@
     End Function
 
     Private Function PobierzKliknietaLampe() As Zaleznosci.Lampa
-        If Not Konfiguracja.RysujLampy Then Return Nothing
+        If Not Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then Return Nothing
 
         Dim k As Point = pctPulpit.PointToClient(MousePosition)
         Dim s As PointF = New PointF(k.X / Konfiguracja.Skalowanie, k.Y / Konfiguracja.Skalowanie)
@@ -1247,6 +1255,27 @@
 #End Region 'Pulpit
 
 #Region "Reszta"
+
+    Private Sub UsunZaznaczenieKostki()
+        UkryjPaneleKonf()
+        Konfiguracja.WyczyscZaznaczenieKostki()
+        ZaznaczonaKostka = Nothing
+    End Sub
+
+    Private Sub ZaznaczElement(Of T As Class)(cbo As ComboBox, el As T)
+        If el Is Nothing Then
+            cbo.SelectedItem = Nothing
+            Exit Sub
+        End If
+
+        For i As Integer = 0 To cbo.Items.Count - 1
+            If DirectCast(cbo.Items(i), ObiektComboBox(Of T)).Wartosc Is el Then
+                cbo.SelectedIndex = i
+                Exit Sub
+            End If
+        Next
+    End Sub
+
     Private Function PobierzZaznaczonyElementNaLiscie(lv As ListView) As ListViewItem
         If lv.SelectedItems Is Nothing OrElse lv.SelectedItems.Count = 0 Then
             Return Nothing

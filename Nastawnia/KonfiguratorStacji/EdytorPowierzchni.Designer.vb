@@ -55,7 +55,6 @@ Partial Class wndEdytorPowierzchni
         Me.rbLewo.Name = "rbLewo"
         Me.rbLewo.Size = New System.Drawing.Size(51, 17)
         Me.rbLewo.TabIndex = 5
-        Me.rbLewo.TabStop = True
         Me.rbLewo.Text = "Lewo"
         Me.rbLewo.UseVisualStyleBackColor = True
         '
@@ -66,7 +65,6 @@ Partial Class wndEdytorPowierzchni
         Me.rbDol.Name = "rbDol"
         Me.rbDol.Size = New System.Drawing.Size(43, 17)
         Me.rbDol.TabIndex = 4
-        Me.rbDol.TabStop = True
         Me.rbDol.Text = "Dół"
         Me.rbDol.UseVisualStyleBackColor = True
         '
@@ -77,19 +75,16 @@ Partial Class wndEdytorPowierzchni
         Me.rbPrawo.Name = "rbPrawo"
         Me.rbPrawo.Size = New System.Drawing.Size(55, 17)
         Me.rbPrawo.TabIndex = 3
-        Me.rbPrawo.TabStop = True
         Me.rbPrawo.Text = "Prawo"
         Me.rbPrawo.UseVisualStyleBackColor = True
         '
         'rbGora
         '
         Me.rbGora.AutoSize = True
-        Me.rbGora.Checked = True
         Me.rbGora.Location = New System.Drawing.Point(6, 19)
         Me.rbGora.Name = "rbGora"
         Me.rbGora.Size = New System.Drawing.Size(48, 17)
         Me.rbGora.TabIndex = 2
-        Me.rbGora.TabStop = True
         Me.rbGora.Text = "Góra"
         Me.rbGora.UseVisualStyleBackColor = True
         '

@@ -1,6 +1,7 @@
 ﻿Public Class Pulpit
     Public Const NAGLOWEK As String = "STAC"
     Public Shared ReadOnly ObslugiwaneWersje As New Dictionary(Of Integer, Integer) From {{0, 1}}
+    Public Const ROZMIAR_DOMYSLNY As Integer = 10
 
     Private _WersjaGlowna As UShort
     Public ReadOnly Property WersjaGlowna As UShort
@@ -17,7 +18,7 @@
     End Property
 
     Public Property Nazwa As String = ""
-    Public Property Adres As Integer
+    Public Property Adres As Integer = 0
     Public ReadOnly Property DataUtworzenia As Date
 
     Private _Szerokosc As Integer
@@ -72,7 +73,7 @@
     End Sub
 
     Public Sub New()
-        Me.New(10, 10)
+        Me.New(ROZMIAR_DOMYSLNY, ROZMIAR_DOMYSLNY)
     End Sub
 
     Public Sub New(szer As Integer, wys As Integer)
@@ -101,24 +102,13 @@
     Public Sub UsunOdcinekToruZPowiazan(odcinek As OdcinekToru)
         For x As Integer = 0 To _Szerokosc - 1
             For y As Integer = 0 To _Wysokosc - 1
-                If TypeOf _Kostki(x, y) Is ITor Then
-                    Dim t As ITor = DirectCast(_Kostki(x, y), ITor)
-                    If t.NalezyDoOdcinka Is odcinek Then
-                        t.NalezyDoOdcinka = Nothing
-                    End If
-                ElseIf TypeOf (_Kostki(x, y)) Is Sygnalizator
-                    Dim s As Sygnalizator = DirectCast(_Kostki(x, y), Sygnalizator)
-                    If s.OdcinekNastepujacy Is odcinek Then
-                        s.OdcinekNastepujacy = Nothing
-                    End If
-                End If
+                If _Kostki(x, y) IsNot Nothing Then _Kostki(x, y).UsunOdcinekToruZPowiazan(odcinek)
             Next
         Next
 
         Dim en As List(Of ParaLicznikowOsi).Enumerator = _LicznikiOsi.GetEnumerator
         While en.MoveNext
-            If en.Current.Odcinek1 Is odcinek Then en.Current.Odcinek1 = Nothing
-            If en.Current.Odcinek2 Is odcinek Then en.Current.Odcinek2 = Nothing
+            en.Current.UsunOdcinekToruZPowiazan(odcinek)
         End While
     End Sub
 
@@ -155,11 +145,11 @@
             Throw New ArgumentException("Rozmiar nie może być ujemny.")
         End If
 
-        If (kierunek = KierunekEdycjiPulpitu.Lewo Or kierunek = KierunekEdycjiPulpitu.Prawo) And rozmiar >= Szerokosc Then
+        If (kierunek = KierunekEdycjiPulpitu.Lewo Or kierunek = KierunekEdycjiPulpitu.Prawo) And rozmiar >= _Szerokosc Then
             Throw New ArgumentException("Rozmiar musi być mniejszy niż szerokość pulpitu.")
         End If
 
-        If (kierunek = KierunekEdycjiPulpitu.Gora Or kierunek = KierunekEdycjiPulpitu.Dol) And rozmiar >= Wysokosc Then
+        If (kierunek = KierunekEdycjiPulpitu.Gora Or kierunek = KierunekEdycjiPulpitu.Dol) And rozmiar >= _Wysokosc Then
             Throw New ArgumentException("Rozmiar musi być mniejszy niż wysokość pulpitu.")
         End If
 
@@ -170,20 +160,22 @@
         Dim koncy As Integer = _Wysokosc - 1
         Dim przesx As Integer = 0
         Dim przesy As Integer = 0
+        Dim wysnowa As Integer = _Wysokosc
+        Dim szernowa As Integer = _Szerokosc
 
         Select Case kierunek
             Case KierunekEdycjiPulpitu.Gora
-                _Wysokosc -= rozmiar
+                wysnowa -= rozmiar
                 koncy = rozmiar - 1
                 przesy = rozmiar
             Case KierunekEdycjiPulpitu.Prawo
-                _Szerokosc -= rozmiar
-                poczx = _Szerokosc
+                szernowa -= rozmiar
+                poczx = szernowa
             Case KierunekEdycjiPulpitu.Dol
-                _Wysokosc -= rozmiar
-                poczy = _Wysokosc
+                wysnowa -= rozmiar
+                poczy = wysnowa
             Case KierunekEdycjiPulpitu.Lewo
-                _Szerokosc -= rozmiar
+                szernowa -= rozmiar
                 koncx = rozmiar - 1
                 przesx = rozmiar
         End Select
@@ -202,6 +194,9 @@
         If Not puste Then Return False
 
         'Usuń komórki
+        _Szerokosc = szernowa
+        _Wysokosc = wysnowa
+
         Dim tab(_Szerokosc - 1, _Wysokosc - 1) As Kostka
 
         For x As Integer = 0 To _Szerokosc - 1

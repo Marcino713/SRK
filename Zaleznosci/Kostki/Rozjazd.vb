@@ -4,7 +4,7 @@
 
     Public Property PredkoscBoczna As Integer
     Public Property Nazwa As String = ""
-    Public Property Adres As Integer
+    Public Property Adres As Integer = 0
     Public Property ZaleznosciJesliWprost As KonfiguracjaRozjazduZaleznego()
     Public Property ZaleznosciJesliBok As KonfiguracjaRozjazduZaleznego()
     Public Sub New(typ As TypKostki)
@@ -13,7 +13,7 @@
         ZaleznosciJesliBok = PobierzDomyslnaKonfiguracje(LICZBA_ROZJAZDOW_ZALEZNYCH)
     End Sub
 
-    Public Overrides Sub UsunPowiazanie(kostka As Kostka)
+    Protected Friend Overrides Sub UsunPowiazanie(kostka As Kostka)
         For i As Integer = 0 To ZaleznosciJesliWprost.Length - 1
             If ZaleznosciJesliWprost(i).RozjazdZalezny Is kostka Then ZaleznosciJesliWprost(i).RozjazdZalezny = Nothing
         Next

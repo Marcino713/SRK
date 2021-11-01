@@ -3,4 +3,9 @@
         Dim wnd As New wndKonfiguratorStacji()
         wnd.Show()
     End Sub
+
+    Private Sub mnuKonfiguratorStacji_Click() Handles mnuKonfiguratorStacji.Click
+        Dim wnd As New wndKonfiguratorStacji()
+        wnd.Show()
+    End Sub
 End Class
