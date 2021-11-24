@@ -5,6 +5,10 @@
         MessageBox.Show(Komunikat, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error)
     End Sub
 
+    Public Sub PokazKomunikat(Komunikat As String)
+        MessageBox.Show(Komunikat, "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    End Sub
+
     Public Function ZadajPytanie(Pytanie As String) As DialogResult
         Return MessageBox.Show(Pytanie, "Pytanie", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
     End Function

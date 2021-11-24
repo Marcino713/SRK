@@ -1,5 +1,6 @@
 ﻿Public Class wndKonfiguratorStacji
     Private ReadOnly NAZWA_OKNA As String
+    Private Const FILTR_PLIKU As String = Zaleznosci.Pulpit.OPIS_PLIKU & "|*" & Zaleznosci.Pulpit.ROZSZERZENIE_PLIKU
     Private Const SKALOWANIE_ZMIANA As Single = 0.05
     Private Const SKALOWANIE_MIN As Single = 30
     Private Const SKALOWANIE_MAX As Single = 200
@@ -35,20 +36,6 @@
         Next
 
         UtworzListeKostek()
-
-        Pulpit.Kostki(4, 2) = New Zaleznosci.Tor
-        Pulpit.Kostki(3, 2) = New Zaleznosci.Zakret
-        Pulpit.Kostki(1, 2) = New Zaleznosci.TorKoniec
-        Pulpit.Kostki(4, 3) = New Zaleznosci.RozjazdLewo() With {.Nazwa = "101", .Obrot = 90}
-        Pulpit.Kostki(3, 3) = New Zaleznosci.RozjazdPrawo() With {.Nazwa = "102"}
-        Pulpit.Kostki(2, 3) = New Zaleznosci.SygnalizatorManewrowy With {.Nazwa = "Tm1"}
-        Pulpit.Kostki(1, 3) = New Zaleznosci.SygnalizatorPolsamoczynny With {.Nazwa = "A1/2m"}
-        Pulpit.Kostki(0, 3) = New Zaleznosci.SygnalizatorSamoczynny With {.Nazwa = "179N"}
-        Pulpit.Kostki(4, 5) = New Zaleznosci.Napis With {.Tekst = "To jest tekst"}
-        Pulpit.Kostki(2, 5) = New Zaleznosci.Przycisk
-        Pulpit.Kostki(1, 5) = New Zaleznosci.PrzyciskTor
-        Pulpit.Kostki(0, 5) = New Zaleznosci.Kierunek
-
         RysujPulpit()
 
         UstawAktywnoscPolLamp(False)
@@ -64,6 +51,10 @@
 
         pnlLicznikTor1.BackColor = KOLOR_TOR_TEN_ODCINEK
         pnlLicznikTor2.BackColor = KOLOR_TOR_LICZNIK_ODCINEK_2
+    End Sub
+
+    Private Sub wndKonfiguratorStacji_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        e.Cancel = Not PrzetworzPorzucaniePliku()
     End Sub
 
     Private Sub wndKonfiguratorStacji_Resize() Handles Me.Resize
@@ -123,9 +114,100 @@
         End If
     End Sub
 
+    Private Sub CzyscDane(Optional nowyPulpit As Zaleznosci.Pulpit = Nothing)
+        UsunZaznaczenieKostki()
+        Konfiguracja = New KonfiguracjaRysowania
+        Pulpit = If(nowyPulpit Is Nothing, New Zaleznosci.Pulpit, nowyPulpit)
+
+        OdswiezListeTorow()
+        OdswiezListeLicznikow()
+        OdswiezListeTorowWLicznikach()
+        OdswiezListeLamp()
+
+        pctPulpit.Location = New Point(0, 0)
+    End Sub
+
+    Private Function Zapisz(nowyPlik As Boolean) As Boolean
+        Const BLAD As String = "Nie udało się zapisać pliku."
+        Const DOBRZE As String = "Plik został zapisany."
+
+        If Pulpit.SciezkaPliku = "" Or nowyPlik Then
+            Dim dlg As New SaveFileDialog
+            dlg.Filter = FILTR_PLIKU
+            If dlg.ShowDialog = DialogResult.OK Then
+                If Not Pulpit.Zapisz(dlg.FileName) Then
+                    PokazBlad(BLAD)
+                    Return False
+                Else
+                    PokazKomunikat(DOBRZE)
+                    Return True
+                End If
+            Else
+                Return False
+            End If
+        End If
+
+        If Not Pulpit.Zapisz() Then
+            PokazBlad(BLAD)
+            Return False
+        Else
+            PokazKomunikat(DOBRZE)
+            Return True
+        End If
+    End Function
+
+    ''' <summary>
+    ''' Pyta użytkownika o zapisanie pliku, ewentualnie zapisuje i zwraca wartość określającą, czy można przejść do następnego kroku (np. wczytania pliku)
+    ''' </summary>
+    ''' <returns></returns>
+    Private Function PrzetworzPorzucaniePliku() As Boolean
+        Dim wynik As DialogResult = MessageBox.Show("Zapisać plik?", "Zapisywanie istniejącego pliku", MessageBoxButtons.YesNoCancel)
+
+        If wynik = DialogResult.Yes Then Return Zapisz(False)
+
+        If wynik = DialogResult.Cancel Then
+            Return False
+        Else
+            Return True
+        End If
+    End Function
+
 #End Region 'Okno
 
 #Region "Menu"
+
+    Private Sub mnuNowy_Click() Handles mnuNowy.Click
+        If PrzetworzPorzucaniePliku() Then
+            CzyscDane()
+            RysujPulpit()
+            UstawTytulOkna()
+        End If
+    End Sub
+
+    Private Sub mnuOtworz_Click() Handles mnuOtworz.Click
+        If PrzetworzPorzucaniePliku() Then
+            Dim dlg As New OpenFileDialog
+            dlg.Filter = FILTR_PLIKU
+            If dlg.ShowDialog = DialogResult.OK Then
+                Dim pulpitNowy As Zaleznosci.Pulpit = Zaleznosci.Pulpit.Otworz(dlg.FileName)
+                If pulpitNowy IsNot Nothing Then
+                    CzyscDane(pulpitNowy)
+                    RysujPulpit()
+                    UstawTytulOkna()
+                Else
+                    PokazBlad("Nie udało się otworzyć pliku.")
+                End If
+            End If
+        End If
+    End Sub
+
+    Private Sub mnuZapisz_Click() Handles mnuZapisz.Click
+        Zapisz(False)
+    End Sub
+
+    Private Sub mnuZapiszJako_Click() Handles mnuZapiszJako.Click
+        Zapisz(True)
+    End Sub
 
     Private Sub mnuDodajKostki_Click() Handles mnuDodajKostki.Click
         Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Dodaj, Pulpit.Szerokosc, Pulpit.Wysokosc)
@@ -198,7 +280,7 @@
 
     'Rozjazd
     Private Sub txtKonfRozjazdAdres_TextChanged() Handles txtKonfRozjazdAdres.TextChanged
-        DirectCast(ZaznaczonaKostka, Zaleznosci.Rozjazd).Adres = PobierzLiczbeNieujemna(txtKonfRozjazdAdres)
+        DirectCast(ZaznaczonaKostka, Zaleznosci.Rozjazd).Adres = PobierzKrotkaLiczbeNieujemna(txtKonfRozjazdAdres)
     End Sub
 
     Private Sub txtKonfRozjazdNazwa_TextChanged() Handles txtKonfRozjazdNazwa.TextChanged
@@ -277,7 +359,7 @@
 
     'Sygnalizacja
     Private Sub txtKonfSygnAdres_TextChanged() Handles txtKonfSygnAdres.TextChanged
-        DirectCast(ZaznaczonaKostka, Zaleznosci.Sygnalizator).Adres = PobierzLiczbeNieujemna(txtKonfSygnAdres)
+        DirectCast(ZaznaczonaKostka, Zaleznosci.Sygnalizator).Adres = PobierzKrotkaLiczbeNieujemna(txtKonfSygnAdres)
     End Sub
 
     Private Sub txtKonfSygnNazwa_TextChanged() Handles txtKonfSygnNazwa.TextChanged
@@ -709,7 +791,7 @@
 
         Dim tor As Zaleznosci.OdcinekToru = Konfiguracja.ZaznaczonyOdcinek
         If tor IsNot Nothing Then
-            tor.Adres = PobierzLiczbeNieujemna(txtTorAdres)
+            tor.Adres = PobierzKrotkaLiczbeNieujemna(txtTorAdres)
             ZaznaczonyTorNaLiscie.SubItems(0).Text = tor.Adres.ToString
         End If
     End Sub
@@ -827,7 +909,7 @@
 
         Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
         If licznik IsNot Nothing Then
-            licznik.Adres1 = PobierzLiczbeNieujemna(txtLicznik1Adres)
+            licznik.Adres1 = PobierzKrotkaLiczbeNieujemna(txtLicznik1Adres)
             ZaznaczonyLicznikNaLiscie.SubItems(0).Text = licznik.Adres1.ToString
         End If
     End Sub
@@ -857,7 +939,7 @@
 
         Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
         If licznik IsNot Nothing Then
-            licznik.Adres2 = PobierzLiczbeNieujemna(txtLicznik2Adres)
+            licznik.Adres2 = PobierzKrotkaLiczbeNieujemna(txtLicznik2Adres)
             ZaznaczonyLicznikNaLiscie.SubItems(1).Text = licznik.Adres2.ToString
         End If
     End Sub
@@ -997,7 +1079,7 @@
 
         Dim lampa As Zaleznosci.Lampa = Konfiguracja.ZaznaczonaLampa
         If lampa IsNot Nothing Then
-            lampa.Adres = PobierzLiczbeNieujemna(txtLampaAdres)
+            lampa.Adres = PobierzKrotkaLiczbeNieujemna(txtLampaAdres)
             ZaznaczonaLampaNaLiscie.SubItems(0).Text = lampa.Adres.ToString
         End If
     End Sub
@@ -1299,6 +1381,15 @@
         End If
 
         Return liczba
+    End Function
+
+    Private Function PobierzKrotkaLiczbeNieujemna(pole As TextBox) As UShort
+        Dim liczba As Integer = PobierzLiczbeNieujemna(pole)
+        If liczba >= UShort.MinValue And liczba <= UShort.MaxValue Then
+            Return Convert.ToUInt16(liczba)
+        Else
+            Return 0
+        End If
     End Function
 
     Private Function PobierzLiczbeNieujemnaRzeczywista(pole As TextBox) As Single

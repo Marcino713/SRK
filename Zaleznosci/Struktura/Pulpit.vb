@@ -1,25 +1,28 @@
 ﻿Public Class Pulpit
-    Public Const NAGLOWEK As String = "STAC"
-    Public Shared ReadOnly ObslugiwaneWersje As New Dictionary(Of Integer, Integer) From {{0, 1}}
+    Public Shared ReadOnly ObslugiwaneWersje As WersjaPliku() = {New WersjaPliku(0, 1)}
+    Public Const ROZSZERZENIE_PLIKU As String = ".stacja"
+    Public Const OPIS_PLIKU As String = "Schemat posterunku ruchu"
     Public Const ROZMIAR_DOMYSLNY As Integer = 10
+    Private Const NAGLOWEK As String = "STAC"
 
-    Private _WersjaGlowna As UShort
-    Public ReadOnly Property WersjaGlowna As UShort
-        Get
-            Return _WersjaGlowna
-        End Get
-    End Property
+    Public ReadOnly Property Wersja As New WersjaPliku(0, 1)
 
-    Private _WersjaBoczna As UShort
-    Public ReadOnly Property WersjaBoczna As UShort
+    Private _SciezkaPliku As String = ""
+    Public ReadOnly Property SciezkaPliku As String
         Get
-            Return _WersjaBoczna
+            Return _SciezkaPliku
         End Get
     End Property
 
     Public Property Nazwa As String = ""
-    Public Property Adres As Integer = 0
+    Public Property Adres As UShort = 0
+
+    Private _DataUtworzenia As Date
     Public ReadOnly Property DataUtworzenia As Date
+        Get
+            Return _DataUtworzenia
+        End Get
+    End Property
 
     Private _Szerokosc As Integer
     Public ReadOnly Property Szerokosc As Integer
@@ -80,16 +83,181 @@
         _Szerokosc = szer
         _Wysokosc = wys
         ReDim _Kostki(_Szerokosc - 1, _Wysokosc - 1)
-        DataUtworzenia = Now
+        _DataUtworzenia = Now
     End Sub
 
-    Public Sub Zapisz(Strumien As BinaryWriter)
+    Public Sub New(wersja As WersjaPliku, szer As Integer, wys As Integer)
+        Me.New(szer, wys)
 
+        Dim znaleziono As Boolean = False
+        For i As Integer = 0 To ObslugiwaneWersje.Length - 1
+            If ObslugiwaneWersje(i) = wersja Then
+                znaleziono = True
+                Exit For
+            End If
+        Next
+
+        If Not znaleziono Then Throw New OtwieraniePlikuException("Wersja pliku jest nieobsługiwana.")
+
+        Me.Wersja = wersja
     End Sub
 
-    Public Sub Otworz(Strumien As BinaryReader)
+    Public Function Zapisz() As Boolean
+        Return Zapisz(SciezkaPliku)
+    End Function
 
+    Public Function Zapisz(sciezka As String) As Boolean
+        _SciezkaPliku = sciezka
+
+        Try
+            Return _Zapisz()
+        Catch
+            Return False
+        End Try
+    End Function
+
+    Private Function _Zapisz() As Boolean
+        Dim konf As New KonfiguracjaZapisu
+        Dim ix As Integer = 1
+
+        For x As Integer = 0 To _Szerokosc - 1
+            For y As Integer = 0 To _Wysokosc - 1
+                If _Kostki(x, y) IsNot Nothing Then
+                    konf.Kostki.Add(_Kostki(x, y), ix)
+                    ix += 1
+                End If
+            Next
+        Next
+
+        ix = 1
+        For Each o As OdcinekToru In _Odcinki
+            konf.OdcinkiTorow.Add(o, ix)
+            ix += 1
+        Next
+
+        Using fs As New FileStream(_SciezkaPliku, FileMode.OpenOrCreate, FileAccess.Write)
+            Using bw As New BinaryWriter(fs)
+
+                'Nagłówek
+                bw.Write(PobierzBajty(NAGLOWEK))
+                bw.Write(Wersja.WersjaGlowna)
+                bw.Write(Wersja.WersjaBoczna)
+                bw.Write(CType(_Szerokosc, UShort))
+                bw.Write(CType(_Wysokosc, UShort))
+
+                'Informacje o posterunku
+                bw.Write(DataUtworzenia.ToBinary)
+                bw.Write(Adres)
+                ZapiszTekst(bw, Nazwa)
+
+                'Pulpit
+                For x As Integer = 0 To _Szerokosc - 1
+                    For y As Integer = 0 To _Wysokosc - 1
+                        If _Kostki(x, y) IsNot Nothing Then
+                            konf.X = CType(x, UShort)
+                            konf.Y = CType(y, UShort)
+                            ZapiszObiekt(bw, _Kostki(x, y), TypObiektuPliku.KOSTKA, konf)
+                        End If
+                    Next
+                Next
+
+                'Inne obiekty
+                ZapiszObiekty(bw, _Odcinki, TypObiektuPliku.ODCINEK_TORU, konf)
+                ZapiszObiekty(bw, _LicznikiOsi, TypObiektuPliku.LICZNIK_OSI, konf)
+                ZapiszObiekty(bw, _Lampy, TypObiektuPliku.LAMPA, konf)
+
+            End Using
+        End Using
+        Return True
+    End Function
+
+    Private Sub ZapiszObiekt(bw As BinaryWriter, obiekt As IObiektPliku, typ As UShort, konf As KonfiguracjaZapisu)
+        Dim dane As Byte() = obiekt.Zapisz(konf)
+        bw.Write(typ)
+        bw.Write(CType(dane.Length, UShort))
+        bw.Write(dane)
     End Sub
+
+    Private Sub ZapiszObiekty(bw As BinaryWriter, obiekty As IEnumerable(Of IObiektPliku), typ As UShort, konf As KonfiguracjaZapisu)
+        For Each o As IObiektPliku In obiekty
+            ZapiszObiekt(bw, o, typ, konf)
+        Next
+    End Sub
+
+
+    Public Shared Function Otworz(sciezka As String) As Pulpit
+        Try
+            Return _Otworz(sciezka)
+        Catch
+            Return Nothing
+        End Try
+    End Function
+
+    Private Shared Function _Otworz(sciezka As String) As Pulpit
+        Dim p As Pulpit
+        Dim konf As New KonfiguracjaOdczytu
+        Dim segmenty As New List(Of SegmentPliku)
+        konf.Kostki.Add(PUSTE_ODWOLANIE, Nothing)
+        konf.OdcinkiTorow.Add(PUSTE_ODWOLANIE, Nothing)
+
+        Using fs As New FileStream(sciezka, FileMode.Open, FileAccess.Read)
+            Using br As New BinaryReader(fs)
+                Dim b As Byte()
+
+                'Nagłówek
+                b = br.ReadBytes(NAGLOWEK.Length)
+                If PobierzTekst(b) <> NAGLOWEK Then
+                    Throw New OtwieraniePlikuException("Niepoprawny typ pliku.")
+                End If
+
+                Dim wersja_glowna As UShort = br.ReadUInt16
+                Dim wersja_boczna As UShort = br.ReadUInt16
+                Dim szer As UShort = br.ReadUInt16
+                Dim wys As UShort = br.ReadUInt16
+                p = New Pulpit(New WersjaPliku(wersja_glowna, wersja_boczna), szer, wys)
+                p._SciezkaPliku = sciezka
+
+                'Informacje o posterunku
+                Dim data As Long = br.ReadInt64
+                p._DataUtworzenia = Date.FromBinary(data)
+                p.Adres = br.ReadUInt16
+                p.Nazwa = OdczytajTekst(br)
+
+                'Pulpit
+                Do Until fs.Position >= fs.Length
+                    Dim seg As SegmentPliku = UtworzObiekt(br, konf)
+                    If seg.Obiekt IsNot Nothing Then segmenty.Add(seg)
+                Loop
+
+            End Using
+        End Using
+
+        For Each s As SegmentPliku In segmenty
+            s.Obiekt.Otworz(s.Dane, konf, p)
+        Next
+
+        Return p
+    End Function
+
+    Private Shared Function UtworzObiekt(br As BinaryReader, konf As KonfiguracjaOdczytu) As SegmentPliku
+        Dim typ As UShort = br.ReadUInt16
+        Dim ile As UShort = br.ReadUInt16
+        Dim b As Byte() = br.ReadBytes(ile)
+        Dim ob As IObiektPliku = Nothing
+
+        Select Case typ
+            Case TypObiektuPliku.KOSTKA
+                ob = Kostka.UtworzObiekt(b, konf)
+            Case TypObiektuPliku.ODCINEK_TORU
+                ob = OdcinekToru.UtworzObiekt(b, konf)
+            Case TypObiektuPliku.LICZNIK_OSI
+                ob = ParaLicznikowOsi.UtworzObiekt(b, konf)
+            Case TypObiektuPliku.LAMPA
+                ob = Lampa.UtworzObiekt(b, konf)
+        End Select
+
+        Return New SegmentPliku() With {.Dane = b, .Obiekt = ob}
+    End Function
 
     Public Sub UsunKostkeZPowiazan(kostka As Kostka)
         For x As Integer = 0 To _Szerokosc - 1

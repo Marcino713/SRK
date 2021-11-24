@@ -1,5 +1,5 @@
 ﻿Public Class wndNazwaStacji
-    Public Adres As Integer = 0
+    Public Adres As UShort = 0
     Public Nazwa As String = ""
     Public Sub New(AdresStacji As Integer, NazwaStacji As String, DataUtworzenia As Date)
         InitializeComponent()
@@ -14,12 +14,7 @@
             Exit Sub
         End If
 
-        If Not Integer.TryParse(txtAdres.Text, Adres) Then
-            PokazBlad("Adres posterunku musi być liczbą.")
-            Exit Sub
-        End If
-
-        If Adres < 0 Then
+        If Not UShort.TryParse(txtAdres.Text, Adres) Then
             PokazBlad("Adres posterunku musi być liczbą dodatnią.")
             Exit Sub
         End If

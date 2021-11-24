@@ -68,6 +68,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ObslugaPlikow\IObiektPliku.vb" />
     <Compile Include="Kostki\Kierunek.vb" />
     <Compile Include="Kostki\Kostka.vb" />
     <Compile Include="Kostki\Napis.vb" />
@@ -99,10 +100,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Narzedzia.vb" />
+    <Compile Include="ObslugaPlikow\KonfiguracjaOdczytu.vb" />
+    <Compile Include="ObslugaPlikow\KonfiguracjaZapisu.vb" />
+    <Compile Include="ObslugaPlikow\OtwieraniePlikuException.vb" />
+    <Compile Include="ObslugaPlikow\SegmentPliku.vb" />
+    <Compile Include="ObslugaPlikow\WersjaPliku.vb" />
     <Compile Include="Struktura\Lampa.vb" />
     <Compile Include="Struktura\ParaLicznikowOsi.vb" />
     <Compile Include="Struktura\OdcinekToru.vb" />
     <Compile Include="Struktura\Pulpit.vb" />
+    <Compile Include="ObslugaPlikow\TypObiektuPliku.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -123,6 +131,7 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

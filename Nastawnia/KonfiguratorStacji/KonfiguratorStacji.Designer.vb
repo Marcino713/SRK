@@ -25,9 +25,14 @@ Partial Class wndKonfiguratorStacji
         Me.components = New System.ComponentModel.Container()
         Me.mnuMenu = New System.Windows.Forms.MenuStrip()
         Me.mnuNarzedzia = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuNowy = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuOtworz = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuZapisz = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuZapiszJako = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuDodajKostki = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuUsunKostki = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuNazwa = New System.Windows.Forms.ToolStripMenuItem()
         Me.pctPulpit = New System.Windows.Forms.PictureBox()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
@@ -234,10 +239,42 @@ Partial Class wndKonfiguratorStacji
         '
         'mnuNarzedzia
         '
-        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuDodajKostki, Me.mnuUsunKostki, Me.ToolStripSeparator1, Me.mnuNazwa})
+        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuNowy, Me.mnuOtworz, Me.mnuZapisz, Me.mnuZapiszJako, Me.ToolStripSeparator1, Me.mnuDodajKostki, Me.mnuUsunKostki, Me.ToolStripSeparator2, Me.mnuNazwa})
         Me.mnuNarzedzia.Name = "mnuNarzedzia"
         Me.mnuNarzedzia.Size = New System.Drawing.Size(70, 20)
         Me.mnuNarzedzia.Text = "Narzędzia"
+        '
+        'mnuNowy
+        '
+        Me.mnuNowy.Name = "mnuNowy"
+        Me.mnuNowy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
+        Me.mnuNowy.Size = New System.Drawing.Size(216, 22)
+        Me.mnuNowy.Text = "Nowy..."
+        '
+        'mnuOtworz
+        '
+        Me.mnuOtworz.Name = "mnuOtworz"
+        Me.mnuOtworz.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
+        Me.mnuOtworz.Size = New System.Drawing.Size(216, 22)
+        Me.mnuOtworz.Text = "Otwórz..."
+        '
+        'mnuZapisz
+        '
+        Me.mnuZapisz.Name = "mnuZapisz"
+        Me.mnuZapisz.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.S), System.Windows.Forms.Keys)
+        Me.mnuZapisz.Size = New System.Drawing.Size(216, 22)
+        Me.mnuZapisz.Text = "Zapisz..."
+        '
+        'mnuZapiszJako
+        '
+        Me.mnuZapiszJako.Name = "mnuZapiszJako"
+        Me.mnuZapiszJako.Size = New System.Drawing.Size(216, 22)
+        Me.mnuZapiszJako.Text = "Zapisz jako..."
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(213, 6)
         '
         'mnuDodajKostki
         '
@@ -251,10 +288,10 @@ Partial Class wndKonfiguratorStacji
         Me.mnuUsunKostki.Size = New System.Drawing.Size(216, 22)
         Me.mnuUsunKostki.Text = "Usuń kostki..."
         '
-        'ToolStripSeparator1
+        'ToolStripSeparator2
         '
-        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(213, 6)
+        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(213, 6)
         '
         'mnuNazwa
         '
@@ -1975,4 +2012,9 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents Label34 As Label
     Friend WithEvents ctxSortowanie As ContextMenuStrip
     Friend WithEvents ctxSortuj As ToolStripMenuItem
+    Friend WithEvents mnuNowy As ToolStripMenuItem
+    Friend WithEvents mnuOtworz As ToolStripMenuItem
+    Friend WithEvents mnuZapisz As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
+    Friend WithEvents mnuZapiszJako As ToolStripMenuItem
 End Class
