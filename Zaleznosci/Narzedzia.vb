@@ -1,6 +1,7 @@
 ﻿Friend Module Narzedzia
     Friend Const PUSTE_ODWOLANIE As Integer = -1
     Private ReadOnly Kodowanie As New Text.UTF8Encoding
+    Private FunkcjaSkrotu As Security.Cryptography.SHA1 = Security.Cryptography.SHA1.Create()
 
     Friend Function PobierzBajty(tekst As String) As Byte()
         If tekst Is Nothing Then tekst = ""
@@ -30,6 +31,20 @@
             liczba = liczba Or (CType(b(pocz + i), Integer) << i * 8)
         Next
         Return liczba
+    End Function
+
+    Friend Function ObliczSkrot(dane As Byte()) As Byte()
+        Return FunkcjaSkrotu.ComputeHash(dane)
+    End Function
+
+    Friend Function CzyRowne(dane1 As Byte(), dane2 As Byte()) As Boolean
+        If dane1.Length <> dane2.Length Then Return False
+
+        For i As Integer = 0 To dane1.Length - 1
+            If dane1(i) <> dane2(i) Then Return False
+        Next
+
+        Return True
     End Function
 
 End Module

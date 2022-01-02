@@ -25,6 +25,9 @@ Partial Class wndNastawnia
         Me.mnuMenu = New System.Windows.Forms.MenuStrip()
         Me.mnuNarzedzia = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuKonfiguratorStacji = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.mnuNowePolaczenia = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuOtworzPolaczenia = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuMenu.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -39,7 +42,7 @@ Partial Class wndNastawnia
         '
         'mnuNarzedzia
         '
-        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuKonfiguratorStacji})
+        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuKonfiguratorStacji, Me.ToolStripSeparator1, Me.mnuNowePolaczenia, Me.mnuOtworzPolaczenia})
         Me.mnuNarzedzia.Name = "mnuNarzedzia"
         Me.mnuNarzedzia.Size = New System.Drawing.Size(70, 20)
         Me.mnuNarzedzia.Text = "Narzędzia"
@@ -47,8 +50,25 @@ Partial Class wndNastawnia
         'mnuKonfiguratorStacji
         '
         Me.mnuKonfiguratorStacji.Name = "mnuKonfiguratorStacji"
-        Me.mnuKonfiguratorStacji.Size = New System.Drawing.Size(180, 22)
+        Me.mnuKonfiguratorStacji.Size = New System.Drawing.Size(193, 22)
         Me.mnuKonfiguratorStacji.Text = "Konfigurator stacji..."
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(190, 6)
+        '
+        'mnuNowePolaczenia
+        '
+        Me.mnuNowePolaczenia.Name = "mnuNowePolaczenia"
+        Me.mnuNowePolaczenia.Size = New System.Drawing.Size(193, 22)
+        Me.mnuNowePolaczenia.Text = "Nowy plik połączeń..."
+        '
+        'mnuOtworzPolaczenia
+        '
+        Me.mnuOtworzPolaczenia.Name = "mnuOtworzPolaczenia"
+        Me.mnuOtworzPolaczenia.Size = New System.Drawing.Size(193, 22)
+        Me.mnuOtworzPolaczenia.Text = "Otwórz plik połączeń..."
         '
         'wndNastawnia
         '
@@ -69,4 +89,7 @@ Partial Class wndNastawnia
     Friend WithEvents mnuMenu As MenuStrip
     Friend WithEvents mnuNarzedzia As ToolStripMenuItem
     Friend WithEvents mnuKonfiguratorStacji As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
+    Friend WithEvents mnuNowePolaczenia As ToolStripMenuItem
+    Friend WithEvents mnuOtworzPolaczenia As ToolStripMenuItem
 End Class

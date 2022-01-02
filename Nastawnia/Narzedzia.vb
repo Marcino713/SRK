@@ -24,4 +24,25 @@
             Integer.Parse(wartosc(5) & wartosc(6), Globalization.NumberStyles.HexNumber)
             )
     End Function
+
+    Friend Function PobierzZaznaczonyElement(Of T)(lv As ListView) As T
+        If lv.SelectedItems Is Nothing OrElse lv.SelectedItems.Count = 0 Then
+            Return Nothing
+        Else
+            Return DirectCast(lv.SelectedItems(0).Tag, T)
+        End If
+    End Function
+
+    Friend Class ObiektComboBox(Of T)
+        Public Property Wartosc As T
+        Public Property Tekst As String
+        Public Sub New(el As T, napis As String)
+            Wartosc = el
+            Tekst = napis
+        End Sub
+        Public Overrides Function ToString() As String
+            Return Tekst
+        End Function
+    End Class
+
 End Module

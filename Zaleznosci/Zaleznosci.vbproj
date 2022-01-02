@@ -68,6 +68,13 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LaczenieStacji\IObiektPlikuPolaczen.vb" />
+    <Compile Include="LaczenieStacji\KonfiguracjaOdczytuPolaczen.vb" />
+    <Compile Include="LaczenieStacji\LaczoneOdcinkiTorow.vb" />
+    <Compile Include="LaczenieStacji\LaczonyPlikStacji.vb" />
+    <Compile Include="LaczenieStacji\PolaczeniaStacji.vb" />
+    <Compile Include="LaczenieStacji\SegmentPlikuPolaczen.vb" />
+    <Compile Include="LaczenieStacji\TypObiektuPlikuPolaczen.vb" />
     <Compile Include="ObslugaPlikow\IObiektPliku.vb" />
     <Compile Include="Kostki\Kierunek.vb" />
     <Compile Include="Kostki\Kostka.vb" />

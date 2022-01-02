@@ -89,6 +89,18 @@
     <Compile Include="KonfiguratorStacji\NazwaStacji.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="LaczenieStacji\DodawaniePolaczenia.Designer.vb">
+      <DependentUpon>DodawaniePolaczenia.vb</DependentUpon>
+    </Compile>
+    <Compile Include="LaczenieStacji\DodawaniePolaczenia.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LaczenieStacji\KonfiguratorPolaczen.Designer.vb">
+      <DependentUpon>KonfiguratorPolaczen.vb</DependentUpon>
+    </Compile>
+    <Compile Include="LaczenieStacji\KonfiguratorPolaczen.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Narzedzia.vb" />
     <Compile Include="Nastawnia.vb">
       <SubType>Form</SubType>
@@ -129,6 +141,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="KonfiguratorStacji\NazwaStacji.resx">
       <DependentUpon>NazwaStacji.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LaczenieStacji\DodawaniePolaczenia.resx">
+      <DependentUpon>DodawaniePolaczenia.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LaczenieStacji\KonfiguratorPolaczen.resx">
+      <DependentUpon>KonfiguratorPolaczen.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Nastawnia.resx">
       <DependentUpon>Nastawnia.vb</DependentUpon>

@@ -1167,6 +1167,7 @@ Partial Class wndKonfiguratorStacji
         Me.lvTory.FullRowSelect = True
         Me.lvTory.HideSelection = False
         Me.lvTory.Location = New System.Drawing.Point(0, 0)
+        Me.lvTory.MultiSelect = False
         Me.lvTory.Name = "lvTory"
         Me.lvTory.Size = New System.Drawing.Size(200, 250)
         Me.lvTory.TabIndex = 0
@@ -1385,6 +1386,7 @@ Partial Class wndKonfiguratorStacji
         Me.lvLiczniki.FullRowSelect = True
         Me.lvLiczniki.HideSelection = False
         Me.lvLiczniki.Location = New System.Drawing.Point(0, 0)
+        Me.lvLiczniki.MultiSelect = False
         Me.lvLiczniki.Name = "lvLiczniki"
         Me.lvLiczniki.Size = New System.Drawing.Size(200, 250)
         Me.lvLiczniki.TabIndex = 0

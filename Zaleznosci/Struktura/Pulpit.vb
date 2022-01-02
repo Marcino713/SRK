@@ -135,7 +135,7 @@
             ix += 1
         Next
 
-        Using fs As New FileStream(_SciezkaPliku, FileMode.OpenOrCreate, FileAccess.Write)
+        Using fs As New FileStream(_SciezkaPliku, FileMode.Create, FileAccess.Write)
             Using bw As New BinaryWriter(fs)
 
                 'Nagłówek

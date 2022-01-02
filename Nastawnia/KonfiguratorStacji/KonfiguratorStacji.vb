@@ -1366,14 +1366,6 @@
         End If
     End Function
 
-    Private Function PobierzZaznaczonyElement(Of T)(lv As ListView) As T
-        If lv.SelectedItems Is Nothing OrElse lv.SelectedItems.Count = 0 Then
-            Return Nothing
-        Else
-            Return DirectCast(lv.SelectedItems(0).Tag, T)
-        End If
-    End Function
-
     Private Function PobierzLiczbeNieujemna(pole As TextBox) As Integer
         Dim liczba As Integer = 0
         If Integer.TryParse(pole.Text, liczba) Then
@@ -1401,18 +1393,6 @@
         Return liczba
     End Function
 
-
-    Private Class ObiektComboBox(Of T)
-        Public Wartosc As T
-        Public Tekst As String
-        Public Sub New(el As T, napis As String)
-            Wartosc = el
-            Tekst = napis
-        End Sub
-        Public Overrides Function ToString() As String
-            Return Tekst
-        End Function
-    End Class
 
 #End Region 'Reszta
 
