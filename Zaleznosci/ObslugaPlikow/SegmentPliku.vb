@@ -1,4 +1,4 @@
-﻿Friend Class SegmentPliku
+﻿Friend Class SegmentPliku(Of T)
     Friend Dane As Byte()
-    Friend Obiekt As IObiektPliku
+    Friend Obiekt As T
 End Class

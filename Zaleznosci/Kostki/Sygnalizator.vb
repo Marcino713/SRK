@@ -1,4 +1,6 @@
-﻿Public MustInherit Class Sygnalizator
+﻿Imports Zaleznosci.PlikiPulpitu
+
+Public MustInherit Class Sygnalizator
     Inherits Tor
     Public Property Adres As UShort = 0
     Public Property Nazwa As String = ""

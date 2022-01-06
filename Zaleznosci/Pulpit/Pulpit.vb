@@ -1,4 +1,8 @@
-﻿Public Class Pulpit
+﻿Imports Zaleznosci.PlikiPulpitu
+Imports SegmPliku = Zaleznosci.SegmentPliku(Of Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu))
+Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
+
+Public Class Pulpit
     Public Shared ReadOnly ObslugiwaneWersje As WersjaPliku() = {New WersjaPliku(0, 1)}
     Public Const ROZSZERZENIE_PLIKU As String = ".stacja"
     Public Const OPIS_PLIKU As String = "Schemat posterunku ruchu"
@@ -51,6 +55,7 @@
             Return _Lampy
         End Get
     End Property
+
     Public Sub SortujLampyAdresRosnaco()
         _Lampy = _Lampy.OrderBy(Function(l As Lampa) l.Adres).ToList()
     End Sub
@@ -61,6 +66,7 @@
             Return _Odcinki
         End Get
     End Property
+
     Public Sub SortujOdcinkiNazwaRosnaco()
         _Odcinki = _Odcinki.OrderBy(Function(o As OdcinekToru) o.Nazwa).ToList
     End Sub
@@ -71,6 +77,7 @@
             Return _LicznikiOsi
         End Get
     End Property
+
     Public Sub SortujLicznikiAdres1Rosnaco()
         _LicznikiOsi = _LicznikiOsi.OrderBy(Function(l As ParaLicznikowOsi) l.Adres1).ToList
     End Sub
@@ -89,15 +96,7 @@
     Public Sub New(wersja As WersjaPliku, szer As Integer, wys As Integer)
         Me.New(szer, wys)
 
-        Dim znaleziono As Boolean = False
-        For i As Integer = 0 To ObslugiwaneWersje.Length - 1
-            If ObslugiwaneWersje(i) = wersja Then
-                znaleziono = True
-                Exit For
-            End If
-        Next
-
-        If Not znaleziono Then Throw New OtwieraniePlikuException("Wersja pliku jest nieobsługiwana.")
+        If Not wersja.CzyObslugiwana(ObslugiwaneWersje) Then Throw New OtwieraniePlikuException("Wersja pliku jest nieobsługiwana.")
 
         Me.Wersja = wersja
     End Sub
@@ -171,19 +170,18 @@
         Return True
     End Function
 
-    Private Sub ZapiszObiekt(bw As BinaryWriter, obiekt As IObiektPliku, typ As UShort, konf As KonfiguracjaZapisu)
+    Private Sub ZapiszObiekt(bw As BinaryWriter, obiekt As IObiektPlikuTyp, typ As UShort, konf As KonfiguracjaZapisu)
         Dim dane As Byte() = obiekt.Zapisz(konf)
         bw.Write(typ)
         bw.Write(CType(dane.Length, UShort))
         bw.Write(dane)
     End Sub
 
-    Private Sub ZapiszObiekty(bw As BinaryWriter, obiekty As IEnumerable(Of IObiektPliku), typ As UShort, konf As KonfiguracjaZapisu)
-        For Each o As IObiektPliku In obiekty
+    Private Sub ZapiszObiekty(bw As BinaryWriter, obiekty As IEnumerable(Of IObiektPlikuTyp), typ As UShort, konf As KonfiguracjaZapisu)
+        For Each o As IObiektPlikuTyp In obiekty
             ZapiszObiekt(bw, o, typ, konf)
         Next
     End Sub
-
 
     Public Shared Function Otworz(sciezka As String) As Pulpit
         Try
@@ -196,7 +194,7 @@
     Private Shared Function _Otworz(sciezka As String) As Pulpit
         Dim p As Pulpit
         Dim konf As New KonfiguracjaOdczytu
-        Dim segmenty As New List(Of SegmentPliku)
+        Dim segmenty As New List(Of SegmPliku)
         konf.Kostki.Add(PUSTE_ODWOLANIE, Nothing)
         konf.OdcinkiTorow.Add(PUSTE_ODWOLANIE, Nothing)
 
@@ -216,6 +214,7 @@
                 Dim wys As UShort = br.ReadUInt16
                 p = New Pulpit(New WersjaPliku(wersja_glowna, wersja_boczna), szer, wys)
                 p._SciezkaPliku = sciezka
+                konf.Pulpit = p
 
                 'Informacje o posterunku
                 Dim data As Long = br.ReadInt64
@@ -225,25 +224,25 @@
 
                 'Pulpit
                 Do Until fs.Position >= fs.Length
-                    Dim seg As SegmentPliku = UtworzObiekt(br, konf)
+                    Dim seg As SegmPliku = UtworzObiekt(br, konf)
                     If seg.Obiekt IsNot Nothing Then segmenty.Add(seg)
                 Loop
 
             End Using
         End Using
 
-        For Each s As SegmentPliku In segmenty
-            s.Obiekt.Otworz(s.Dane, konf, p)
+        For Each s As SegmPliku In segmenty
+            s.Obiekt.Otworz(s.Dane, konf)
         Next
 
         Return p
     End Function
 
-    Private Shared Function UtworzObiekt(br As BinaryReader, konf As KonfiguracjaOdczytu) As SegmentPliku
+    Private Shared Function UtworzObiekt(br As BinaryReader, konf As KonfiguracjaOdczytu) As SegmPliku
         Dim typ As UShort = br.ReadUInt16
         Dim ile As UShort = br.ReadUInt16
         Dim b As Byte() = br.ReadBytes(ile)
-        Dim ob As IObiektPliku = Nothing
+        Dim ob As IObiektPlikuTyp = Nothing
 
         Select Case typ
             Case TypObiektuPliku.KOSTKA
@@ -256,7 +255,7 @@
                 ob = Lampa.UtworzObiekt(b, konf)
         End Select
 
-        Return New SegmentPliku() With {.Dane = b, .Obiekt = ob}
+        Return New SegmPliku() With {.Dane = b, .Obiekt = ob}
     End Function
 
     Public Sub UsunKostkeZPowiazan(kostka As Kostka)

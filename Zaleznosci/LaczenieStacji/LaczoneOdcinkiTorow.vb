@@ -1,5 +1,8 @@
-﻿Public Class LaczoneOdcinkiTorow
-    Implements IObiektPlikuPolaczen
+﻿Imports Zaleznosci.PlikiPolaczen
+Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPolaczen.KonfiguracjaZapisu, Zaleznosci.PlikiPolaczen.KonfiguracjaOdczytu)
+
+Public Class LaczoneOdcinkiTorow
+    Implements IObiektPlikuTyp
 
     Public Property Posterunek1 As LaczonyPlikStacji
     Public Property Tor1 As OdcinekToru
@@ -7,12 +10,12 @@
     Public Property Tor2 As OdcinekToru
     Public Property Uwagi As UwagiLaczonegoOdcinkaTorow = UwagiLaczonegoOdcinkaTorow.OK
 
-    Friend Function Zapisz(uzytePliki As Dictionary(Of LaczonyPlikStacji, Integer)) As Byte() Implements IObiektPlikuPolaczen.Zapisz
+    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
         Using ms As New MemoryStream()
             Using bw As New BinaryWriter(ms)
-                bw.Write(PobierzIdPliku(Posterunek1, uzytePliki))
+                bw.Write(PobierzIdPliku(Posterunek1, konf.UzytePliki))
                 ZapiszTekst(bw, Tor1.Nazwa)
-                bw.Write(PobierzIdPliku(Posterunek2, uzytePliki))
+                bw.Write(PobierzIdPliku(Posterunek2, konf.UzytePliki))
                 ZapiszTekst(bw, Tor2.Nazwa)
                 Return ms.ToArray
             End Using
@@ -28,11 +31,11 @@
         Return id
     End Function
 
-    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytuPolaczen) As IObiektPlikuPolaczen
+    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPlikuTyp
         Return New LaczoneOdcinkiTorow
     End Function
 
-    Friend Sub Otworz(dane As Byte(), konf As KonfiguracjaOdczytuPolaczen, polaczenia As PolaczeniaStacji) Implements IObiektPlikuPolaczen.Otworz
+    Friend Sub Otworz(dane As Byte(), konf As KonfiguracjaOdczytu) Implements IObiektPlikuTyp.Otworz
         Dim Tor1Istnieje As Boolean
         Dim Tor2Istnieje As Boolean
 
@@ -61,7 +64,7 @@
             Uwagi = UwagiLaczonegoOdcinkaTorow.BrakToru2
         End If
 
-        polaczenia.LaczaneTory.Add(Me)
+        konf.Polaczenia.LaczaneTory.Add(Me)
     End Sub
 
     Private Function PobierzTor(nazwa As String, posterunek As LaczonyPlikStacji, ByRef tor As OdcinekToru) As Boolean
@@ -83,6 +86,7 @@
             Return True
         End If
     End Function
+
 End Class
 
 Public Enum UwagiLaczonegoOdcinkaTorow

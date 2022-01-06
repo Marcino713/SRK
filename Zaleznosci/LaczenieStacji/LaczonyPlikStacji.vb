@@ -1,5 +1,8 @@
-﻿Public Class LaczonyPlikStacji
-    Implements IObiektPlikuPolaczen
+﻿Imports Zaleznosci.PlikiPolaczen
+Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPolaczen.KonfiguracjaZapisu, Zaleznosci.PlikiPolaczen.KonfiguracjaOdczytu)
+
+Public Class LaczonyPlikStacji
+    Implements IObiektPlikuTyp
 
     Public Property NazwaPliku As String = ""
     Public Property NazwaPosterunku As String = ""
@@ -46,9 +49,9 @@
         Return dostepneTory.OrderBy(Function(t As OdcinekToru) t.Nazwa).ToArray()
     End Function
 
-    Friend Function Zapisz(uzytePliki As Dictionary(Of LaczonyPlikStacji, Integer)) As Byte() Implements IObiektPlikuPolaczen.Zapisz
+    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
         Dim id As Integer
-        If Not uzytePliki.TryGetValue(Me, id) Then Return Nothing
+        If Not konf.UzytePliki.TryGetValue(Me, id) Then Return Nothing
 
         Using ms As New MemoryStream
             Using bw As New BinaryWriter(ms)
@@ -61,7 +64,7 @@
         End Using
     End Function
 
-    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytuPolaczen) As IObiektPlikuPolaczen
+    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPlikuTyp
         Dim id As Integer
         Dim plik As New LaczonyPlikStacji
 
@@ -87,9 +90,10 @@
         Return plik
     End Function
 
-    Friend Sub Otworz(dane As Byte(), konf As KonfiguracjaOdczytuPolaczen, polaczenia As PolaczeniaStacji) Implements IObiektPlikuPolaczen.Otworz
-        polaczenia.LaczanePliki.Add(Me)
+    Friend Sub Otworz(dane As Byte(), konf As KonfiguracjaOdczytu) Implements IObiektPlikuTyp.Otworz
+        konf.Polaczenia.LaczanePliki.Add(Me)
     End Sub
+
 End Class
 
 Public Enum UwagiLaczanegoPlikuStacji

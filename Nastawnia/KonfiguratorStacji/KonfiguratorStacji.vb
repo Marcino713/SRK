@@ -128,30 +128,30 @@
     End Sub
 
     Private Function Zapisz(nowyPlik As Boolean) As Boolean
-        Const BLAD As String = "Nie udało się zapisać pliku."
-        Const DOBRZE As String = "Plik został zapisany."
+        Dim nowaSciezka As String = Nothing
+        Dim wynik As Boolean
 
         If Pulpit.SciezkaPliku = "" Or nowyPlik Then
             Dim dlg As New SaveFileDialog
             dlg.Filter = FILTR_PLIKU
             If dlg.ShowDialog = DialogResult.OK Then
-                If Not Pulpit.Zapisz(dlg.FileName) Then
-                    PokazBlad(BLAD)
-                    Return False
-                Else
-                    PokazKomunikat(DOBRZE)
-                    Return True
-                End If
+                nowaSciezka = dlg.FileName
             Else
                 Return False
             End If
         End If
 
-        If Not Pulpit.Zapisz() Then
-            PokazBlad(BLAD)
+        If nowaSciezka IsNot Nothing Then
+            wynik = Pulpit.Zapisz(nowaSciezka)
+        Else
+            wynik = Pulpit.Zapisz()
+        End If
+
+        If Not wynik Then
+            PokazBlad("Nie udało się zapisać pliku.")
             Return False
         Else
-            PokazKomunikat(DOBRZE)
+            PokazKomunikat("Plik został zapisany.")
             Return True
         End If
     End Function
@@ -159,9 +159,8 @@
     ''' <summary>
     ''' Pyta użytkownika o zapisanie pliku, ewentualnie zapisuje i zwraca wartość określającą, czy można przejść do następnego kroku (np. wczytania pliku)
     ''' </summary>
-    ''' <returns></returns>
     Private Function PrzetworzPorzucaniePliku() As Boolean
-        Dim wynik As DialogResult = MessageBox.Show("Zapisać plik?", "Zapisywanie istniejącego pliku", MessageBoxButtons.YesNoCancel)
+        Dim wynik As DialogResult = ZadajPytanieTrzyodpowiedziowe("Zapisać plik?")
 
         If wynik = DialogResult.Yes Then Return Zapisz(False)
 
@@ -1392,7 +1391,6 @@
 
         Return liczba
     End Function
-
 
 #End Region 'Reszta
 

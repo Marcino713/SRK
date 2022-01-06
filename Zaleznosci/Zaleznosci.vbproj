@@ -68,13 +68,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LaczenieStacji\IObiektPlikuPolaczen.vb" />
-    <Compile Include="LaczenieStacji\KonfiguracjaOdczytuPolaczen.vb" />
+    <Compile Include="PlikiPolaczen\KonfiguracjaOdczytu.vb" />
     <Compile Include="LaczenieStacji\LaczoneOdcinkiTorow.vb" />
     <Compile Include="LaczenieStacji\LaczonyPlikStacji.vb" />
     <Compile Include="LaczenieStacji\PolaczeniaStacji.vb" />
-    <Compile Include="LaczenieStacji\SegmentPlikuPolaczen.vb" />
-    <Compile Include="LaczenieStacji\TypObiektuPlikuPolaczen.vb" />
+    <Compile Include="PlikiPolaczen\KonfiguracjaZapisu.vb" />
+    <Compile Include="PlikiPolaczen\TypObiektuPliku.vb" />
     <Compile Include="ObslugaPlikow\IObiektPliku.vb" />
     <Compile Include="Kostki\Kierunek.vb" />
     <Compile Include="Kostki\Kostka.vb" />
@@ -108,16 +107,16 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Narzedzia.vb" />
-    <Compile Include="ObslugaPlikow\KonfiguracjaOdczytu.vb" />
-    <Compile Include="ObslugaPlikow\KonfiguracjaZapisu.vb" />
+    <Compile Include="PlikiPulpitu\KonfiguracjaOdczytu.vb" />
+    <Compile Include="PlikiPulpitu\KonfiguracjaZapisu.vb" />
     <Compile Include="ObslugaPlikow\OtwieraniePlikuException.vb" />
     <Compile Include="ObslugaPlikow\SegmentPliku.vb" />
     <Compile Include="ObslugaPlikow\WersjaPliku.vb" />
-    <Compile Include="Struktura\Lampa.vb" />
-    <Compile Include="Struktura\ParaLicznikowOsi.vb" />
-    <Compile Include="Struktura\OdcinekToru.vb" />
-    <Compile Include="Struktura\Pulpit.vb" />
-    <Compile Include="ObslugaPlikow\TypObiektuPliku.vb" />
+    <Compile Include="Pulpit\Lampa.vb" />
+    <Compile Include="Pulpit\ParaLicznikowOsi.vb" />
+    <Compile Include="Pulpit\OdcinekToru.vb" />
+    <Compile Include="Pulpit\Pulpit.vb" />
+    <Compile Include="PlikiPulpitu\TypObiektuPliku.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">

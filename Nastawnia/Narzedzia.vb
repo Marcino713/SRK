@@ -13,6 +13,10 @@
         Return MessageBox.Show(Pytanie, "Pytanie", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
     End Function
 
+    Public Function ZadajPytanieTrzyodpowiedziowe(Pytanie As String) As DialogResult
+        Return MessageBox.Show(Pytanie, "Pytanie", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
+    End Function
+
     Public Function KolorRGB(wartosc As String) As Color
         If wartosc.Length <> 7 Then
             Throw New ArgumentException("Wartość koloru musi być siedmioznakowym ciagiem.")

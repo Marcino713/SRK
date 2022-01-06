@@ -1,5 +1,8 @@
-﻿Public Class ParaLicznikowOsi
-    Implements IObiektPliku
+﻿Imports Zaleznosci.PlikiPulpitu
+Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
+
+Public Class ParaLicznikowOsi
+    Implements IObiektPlikuTyp
 
     Public Property Adres1 As UShort
     Public Property Adres2 As UShort
@@ -15,7 +18,7 @@
         If Odcinek2 Is odcinek Then Odcinek2 = Nothing
     End Sub
 
-    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPliku.Zapisz
+    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
         Using ms As New MemoryStream
             Using bw As New BinaryWriter(ms)
                 bw.Write(Adres1)
@@ -31,11 +34,11 @@
         End Using
     End Function
 
-    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPliku
+    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPlikuTyp
         Return New ParaLicznikowOsi
     End Function
 
-    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytu, p As Pulpit) Implements IObiektPliku.Otworz
+    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytu) Implements IObiektPlikuTyp.Otworz
         Using ms As New MemoryStream(dane)
             Using br As New BinaryReader(ms)
                 Dim id As Integer
@@ -52,6 +55,7 @@
                 Odcinek2 = konf.OdcinkiTorow(id)
             End Using
         End Using
-        p.LicznikiOsi.Add(Me)
+
+        konf.Pulpit.LicznikiOsi.Add(Me)
     End Sub
 End Class

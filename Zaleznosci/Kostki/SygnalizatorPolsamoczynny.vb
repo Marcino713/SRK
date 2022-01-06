@@ -1,4 +1,6 @@
-﻿Public Class SygnalizatorPolsamoczynny
+﻿Imports Zaleznosci.PlikiPulpitu
+
+Public Class SygnalizatorPolsamoczynny
     Inherits SygnalizatorUzalezniony
 
     Public Property DostepneSwiatla As DostepneSwiatlaEnum

@@ -1,4 +1,6 @@
-﻿Public Class Napis
+﻿Imports Zaleznosci.PlikiPulpitu
+
+Public Class Napis
     Inherits Kostka
 
     Public Property Tekst As String = ""

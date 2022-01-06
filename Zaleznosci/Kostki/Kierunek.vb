@@ -1,4 +1,6 @@
-﻿Public Class Kierunek
+﻿Imports Zaleznosci.PlikiPulpitu
+
+Public Class Kierunek
     Inherits Tor
     Public Property KierunekWlaczany As KierunekWlaczanyEnum
 

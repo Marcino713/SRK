@@ -15,4 +15,11 @@
         Return Not w1 = w2
     End Operator
 
+    Public Function CzyObslugiwana(dostepneWersje As WersjaPliku()) As Boolean
+        For i As Integer = 0 To dostepneWersje.Length - 1
+            If dostepneWersje(i) = Me Then Return True
+        Next
+
+        Return False
+    End Function
 End Class

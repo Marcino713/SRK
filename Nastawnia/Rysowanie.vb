@@ -12,7 +12,7 @@
     Private Const SYGN_SLUP_SZER_DUZA As Single = 0.15  'szerokość słupa sygnalizatora w szerszym miejscu
     Private Const SYGN_SLUP_SZER_MALA As Single = 0.05  'szerokosć słupa sygnalizatora w węższym miejscu
     Private Const SYGN_SLUP_DLUG As Single = 0.04       'długość poszczególnych segmentów słupa
-    Private Const KIER_SZER As Single = 0.4
+    Private Const KIER_SZER As Single = 0.4             'rozmiar strzałki na przycisku kierunku
     Private Const TEKST_POZ_X_PRZYCISK As Single = 0.17 'dodatkowy margines dla tekstu obok przycisku
     Private Const TEKST_POZ_X As Single = 0.1           'dodatkowy margines dla tekstu
     Private Const TEKST_POZ_Y As Single = 0.12          'dodatkowy margines dla tekstu

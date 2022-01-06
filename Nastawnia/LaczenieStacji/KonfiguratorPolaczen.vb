@@ -153,7 +153,7 @@ Public Class wndKonfiguratorPolaczen
     ''' Pyta użytkownika o zapisanie pliku, ewentualnie zapisuje i zwraca wartość określającą, czy można zamknąć okno konfiguratora
     ''' </summary>
     Private Function PrzetworzPorzuceniePliku() As Boolean
-        Dim wynik As DialogResult = MessageBox.Show("Zapisać plik?", "Zapisywanie istniejącego pliku", MessageBoxButtons.YesNoCancel)
+        Dim wynik As DialogResult = ZadajPytanieTrzyodpowiedziowe("Zapisać plik?")
 
         If wynik = DialogResult.Yes Then Return ZapiszPolaczenia()
 

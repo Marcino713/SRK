@@ -1,5 +1,8 @@
-﻿Public MustInherit Class Kostka
-    Implements IObiektPliku
+﻿Imports Zaleznosci.PlikiPulpitu
+Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
+
+Public MustInherit Class Kostka
+    Implements IObiektPlikuTyp
 
     Public ReadOnly Property Typ As TypKostki
     Public Property Obrot As Integer
@@ -16,7 +19,7 @@
 
     Friend MustOverride Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
 
-    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPliku.Zapisz
+    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
         Using ms As New MemoryStream
             Using bw As New BinaryWriter(ms)
                 bw.Write(CType(Typ, UShort))
@@ -30,7 +33,7 @@
         End Using
     End Function
 
-    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPliku
+    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPlikuTyp
         Dim typ As TypKostki = CType(PobierzInt32(dane, 0, 2), TypKostki)
         Dim id As Integer = PobierzInt32(dane, 2, 4)
         Dim k As Kostka = Nothing
@@ -68,7 +71,7 @@
 
     Friend MustOverride Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
 
-    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytu, p As Pulpit) Implements IObiektPliku.Otworz
+    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytu) Implements IObiektPlikuTyp.Otworz
         Dim x As UShort
         Dim y As UShort
         Using ms As New MemoryStream(dane)
@@ -80,7 +83,7 @@
                 OtworzKostke(br, konf)
             End Using
         End Using
-        p.Kostki(x, y) = Me
+        konf.Pulpit.Kostki(x, y) = Me
     End Sub
 End Class
 

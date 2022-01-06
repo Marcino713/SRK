@@ -1,4 +1,6 @@
-﻿Public MustInherit Class Rozjazd
+﻿Imports Zaleznosci.PlikiPulpitu
+
+Public MustInherit Class Rozjazd
     Inherits Tor
     Private Const LICZBA_ROZJAZDOW_ZALEZNYCH As Integer = 2
 

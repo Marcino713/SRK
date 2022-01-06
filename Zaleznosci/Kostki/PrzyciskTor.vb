@@ -1,4 +1,6 @@
-﻿Public Class PrzyciskTor
+﻿Imports Zaleznosci.PlikiPulpitu
+
+Public Class PrzyciskTor
     Inherits Tor
 
     Public Property TypPrzycisku As TypPrzyciskuTorEnum

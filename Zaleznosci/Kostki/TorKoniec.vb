@@ -1,4 +1,6 @@
-﻿Public Class TorKoniec
+﻿Imports Zaleznosci.PlikiPulpitu
+
+Public Class TorKoniec
     Inherits Kostka
 
     Public Sub New()

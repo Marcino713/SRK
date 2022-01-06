@@ -1,4 +1,6 @@
-﻿Public Class Przycisk
+﻿Imports Zaleznosci.PlikiPulpitu
+
+Public Class Przycisk
     Inherits Kostka
 
     Public Property TypPrzycisku As TypPrzyciskuEnum

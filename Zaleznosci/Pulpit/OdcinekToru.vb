@@ -1,5 +1,8 @@
-﻿Public Class OdcinekToru
-    Implements IObiektPliku
+﻿Imports Zaleznosci.PlikiPulpitu
+Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
+
+Public Class OdcinekToru
+    Implements IObiektPlikuTyp
 
     Public Property Adres As UShort = 0
     Public Property Nazwa As String = ""
@@ -15,7 +18,7 @@
     Public Event ZajetoOdcinek()
     Public Event ZwolnionoOdcinek()
 
-    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPliku.Zapisz
+    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
         Using ms As New MemoryStream
             Using bw As New BinaryWriter(ms)
                 bw.Write(konf.OdcinkiTorow(Me))
@@ -27,14 +30,14 @@
         End Using
     End Function
 
-    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPliku
+    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPlikuTyp
         Dim id As Integer = PobierzInt32(dane, 0, 4)
         Dim odc As New OdcinekToru
         konf.OdcinkiTorow.Add(id, odc)
         Return odc
     End Function
 
-    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytu, p As Pulpit) Implements IObiektPliku.Otworz
+    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytu) Implements IObiektPlikuTyp.Otworz
         Using ms As New MemoryStream(dane)
             Using br As New BinaryReader(ms)
                 ms.Seek(4, SeekOrigin.Begin)
@@ -43,6 +46,6 @@
                 Opis = OdczytajTekst(br)
             End Using
         End Using
-        p.OdcinkiTorow.Add(Me)
+        konf.Pulpit.OdcinkiTorow.Add(Me)
     End Sub
 End Class

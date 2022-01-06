@@ -1,4 +1,8 @@
-﻿Public Class PolaczeniaStacji
+﻿Imports Zaleznosci.PlikiPolaczen
+Imports SegmPliku = Zaleznosci.SegmentPliku(Of Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPolaczen.KonfiguracjaZapisu, Zaleznosci.PlikiPolaczen.KonfiguracjaOdczytu))
+Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPolaczen.KonfiguracjaZapisu, Zaleznosci.PlikiPolaczen.KonfiguracjaOdczytu)
+
+Public Class PolaczeniaStacji
     Public Shared ReadOnly ObslugiwaneWersje As WersjaPliku() = {New WersjaPliku(0, 1)}
     Public Const ROZSZERZENIE_PLIKU As String = ".pol"
     Public Const OPIS_PLIKU As String = "Połączenia posterunków ruchu"
@@ -39,15 +43,7 @@
     End Sub
 
     Private Sub New(wersja As WersjaPliku)
-        Dim znaleziono As Boolean = False
-        For i As Integer = 0 To ObslugiwaneWersje.Length - 1
-            If ObslugiwaneWersje(i) = wersja Then
-                znaleziono = True
-                Exit For
-            End If
-        Next
-
-        If Not znaleziono Then Throw New OtwieraniePlikuException("Wersja pliku jest nieobsługiwana.")
+        If Not wersja.CzyObslugiwana(ObslugiwaneWersje) Then Throw New OtwieraniePlikuException("Wersja pliku jest nieobsługiwana.")
 
         Me.Wersja = wersja
     End Sub
@@ -131,7 +127,7 @@
     End Function
 
     Private Function _Zapisz() As Boolean
-        Dim uzytePliki As New Dictionary(Of LaczonyPlikStacji, Integer)
+        Dim konf As New KonfiguracjaZapisu
 
         Using fs As New FileStream(_SciezkaPliku, FileMode.Create, FileAccess.Write)
             Using bw As New BinaryWriter(fs)
@@ -140,17 +136,17 @@
                 bw.Write(Wersja.WersjaBoczna)
                 bw.Write(DataUtworzenia.ToBinary)
 
-                ZapiszObiekty(bw, _LaczaneTory, TypObiektuPlikuPolaczen.LACZONE_TORY, uzytePliki)
-                ZapiszObiekty(bw, _LaczanePliki, TypObiektuPlikuPolaczen.LACZONE_PLIKI, uzytePliki)
+                ZapiszObiekty(bw, _LaczaneTory, TypObiektuPliku.LACZONE_TORY, konf)
+                ZapiszObiekty(bw, _LaczanePliki, TypObiektuPliku.LACZONE_PLIKI, konf)
             End Using
         End Using
 
         Return True
     End Function
 
-    Private Sub ZapiszObiekty(bw As BinaryWriter, obiekty As IEnumerable(Of IObiektPlikuPolaczen), typ As UShort, uzytePliki As Dictionary(Of LaczonyPlikStacji, Integer))
-        For Each o As IObiektPlikuPolaczen In obiekty
-            Dim b As Byte() = o.Zapisz(uzytePliki)
+    Private Sub ZapiszObiekty(bw As BinaryWriter, obiekty As IEnumerable(Of IObiektPlikuTyp), typ As UShort, konf As KonfiguracjaZapisu)
+        For Each o As IObiektPlikuTyp In obiekty
+            Dim b As Byte() = o.Zapisz(konf)
             If b IsNot Nothing Then
                 bw.Write(typ)
                 bw.Write(CType(b.Length, UShort))
@@ -161,9 +157,8 @@
 
     Private Shared Function _Otworz(sciezka As String) As PolaczeniaStacji
         Dim p As PolaczeniaStacji
-        Dim segmenty As New List(Of SegmentPlikuPolaczen)
-        Dim konf As New KonfiguracjaOdczytuPolaczen
-        konf.PlikiStacji = New Dictionary(Of Integer, LaczonyPlikStacji)
+        Dim segmenty As New List(Of SegmPliku)
+        Dim konf As New KonfiguracjaOdczytu
         konf.SciezkaFolderu = Path.GetDirectoryName(sciezka)
         If Not konf.SciezkaFolderu.EndsWith(Path.DirectorySeparatorChar) Then konf.SciezkaFolderu &= Path.DirectorySeparatorChar
 
@@ -181,36 +176,37 @@
                 p = New PolaczeniaStacji(New WersjaPliku(wersja_glowna, wersja_boczna))
                 p._SciezkaPliku = sciezka
                 p._DataUtworzenia = Date.FromBinary(br.ReadInt64)
+                konf.Polaczenia = p
 
                 Do Until fs.Position >= fs.Length
-                    Dim seg As SegmentPlikuPolaczen = UtworzObiekt(br, konf)
+                    Dim seg As SegmPliku = UtworzObiekt(br, konf)
                     If seg.Obiekt IsNot Nothing Then segmenty.Add(seg)
                 Loop
 
             End Using
         End Using
 
-        For Each s As SegmentPlikuPolaczen In segmenty
-            s.Obiekt.Otworz(s.Dane, konf, p)
+        For Each s As SegmPliku In segmenty
+            s.Obiekt.Otworz(s.Dane, konf)
         Next
 
         Return p
     End Function
 
-    Private Shared Function UtworzObiekt(br As BinaryReader, konf As KonfiguracjaOdczytuPolaczen) As SegmentPlikuPolaczen
+    Private Shared Function UtworzObiekt(br As BinaryReader, konf As KonfiguracjaOdczytu) As SegmPliku
         Dim typ As UShort = br.ReadUInt16
         Dim ile As UShort = br.ReadUInt16
         Dim b As Byte() = br.ReadBytes(ile)
-        Dim ob As IObiektPlikuPolaczen = Nothing
+        Dim ob As IObiektPlikuTyp = Nothing
 
         Select Case typ
-            Case TypObiektuPlikuPolaczen.LACZONE_TORY
+            Case TypObiektuPliku.LACZONE_TORY
                 ob = LaczoneOdcinkiTorow.UtworzObiekt(b, konf)
-            Case TypObiektuPlikuPolaczen.LACZONE_PLIKI
+            Case TypObiektuPliku.LACZONE_PLIKI
                 ob = LaczonyPlikStacji.UtworzObiekt(b, konf)
         End Select
 
-        Return New SegmentPlikuPolaczen() With {.Dane = b, .Obiekt = ob}
+        Return New SegmPliku() With {.Dane = b, .Obiekt = ob}
     End Function
 
     Private Sub SortujPosterunki()
