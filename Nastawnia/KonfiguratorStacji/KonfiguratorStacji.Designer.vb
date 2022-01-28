@@ -179,6 +179,7 @@ Partial Class wndKonfiguratorStacji
         Me.Label24 = New System.Windows.Forms.Label()
         Me.btnLampaUsun = New System.Windows.Forms.Button()
         Me.btnLampaDodaj = New System.Windows.Forms.Button()
+        Me.Label36 = New System.Windows.Forms.Label()
         Me.mnuMenu.SuspendLayout()
         CType(Me.pctPulpit, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -307,7 +308,7 @@ Partial Class wndKonfiguratorStacji
         Me.pctPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
         Me.pctPulpit.Location = New System.Drawing.Point(0, 0)
         Me.pctPulpit.Name = "pctPulpit"
-        Me.pctPulpit.Size = New System.Drawing.Size(788, 670)
+        Me.pctPulpit.Size = New System.Drawing.Size(788, 645)
         Me.pctPulpit.TabIndex = 0
         Me.pctPulpit.TabStop = False
         '
@@ -319,6 +320,7 @@ Partial Class wndKonfiguratorStacji
         '
         'splOkno.Panel1
         '
+        Me.splOkno.Panel1.Controls.Add(Me.Label36)
         Me.splOkno.Panel1.Controls.Add(Me.pnlPulpit)
         '
         'splOkno.Panel2
@@ -331,12 +333,14 @@ Partial Class wndKonfiguratorStacji
         'pnlPulpit
         '
         Me.pnlPulpit.AllowDrop = True
+        Me.pnlPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.pnlPulpit.Controls.Add(Me.pctPulpit)
         Me.pnlPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
-        Me.pnlPulpit.Dock = System.Windows.Forms.DockStyle.Fill
         Me.pnlPulpit.Location = New System.Drawing.Point(0, 0)
         Me.pnlPulpit.Name = "pnlPulpit"
-        Me.pnlPulpit.Size = New System.Drawing.Size(788, 670)
+        Me.pnlPulpit.Size = New System.Drawing.Size(788, 645)
         Me.pnlPulpit.TabIndex = 2
         '
         'tabUstawienia
@@ -1782,6 +1786,17 @@ Partial Class wndKonfiguratorStacji
         Me.btnLampaDodaj.Text = "Dodaj"
         Me.btnLampaDodaj.UseVisualStyleBackColor = True
         '
+        'Label36
+        '
+        Me.Label36.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.Label36.AutoSize = True
+        Me.Label36.Location = New System.Drawing.Point(12, 648)
+        Me.Label36.Name = "Label36"
+        Me.Label36.Size = New System.Drawing.Size(468, 13)
+        Me.Label36.TabIndex = 3
+        Me.Label36.Text = "R - obróc kostkę; Delete - usuń kostkę; przytrzymanie Shift i przeciągnięcie mysz" &
+    "y- przesuń kostkę"
+        '
         'wndKonfiguratorStacji
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1796,6 +1811,7 @@ Partial Class wndKonfiguratorStacji
         Me.mnuMenu.PerformLayout()
         CType(Me.pctPulpit, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splOkno.Panel1.ResumeLayout(False)
+        Me.splOkno.Panel1.PerformLayout()
         Me.splOkno.Panel2.ResumeLayout(False)
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splOkno.ResumeLayout(False)
@@ -2019,4 +2035,5 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents mnuZapisz As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
     Friend WithEvents mnuZapiszJako As ToolStripMenuItem
+    Friend WithEvents Label36 As Label
 End Class

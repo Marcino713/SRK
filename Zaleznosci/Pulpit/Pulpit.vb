@@ -258,15 +258,23 @@ Public Class Pulpit
         Return New SegmPliku() With {.Dane = b, .Obiekt = ob}
     End Function
 
-    Public Sub UsunKostkeZPowiazan(kostka As Kostka)
+    Public Sub UsunKostke(kostka As Kostka)
+        If TypeOf kostka Is Tor Then
+            Dim tor As Tor = DirectCast(kostka, Tor)
+            tor.NalezyDoOdcinka?.KostkiTory.Remove(tor)
+        End If
+
         For x As Integer = 0 To _Szerokosc - 1
             For y As Integer = 0 To _Wysokosc - 1
                 If _Kostki(x, y) IsNot Nothing Then _Kostki(x, y).UsunPowiazanie(kostka)
+                If _Kostki(x, y) Is kostka Then _Kostki(x, y) = Nothing
             Next
         Next
     End Sub
 
-    Public Sub UsunOdcinekToruZPowiazan(odcinek As OdcinekToru)
+    Public Sub UsunOdcinekToru(odcinek As OdcinekToru)
+        OdcinkiTorow.Remove(odcinek)
+
         For x As Integer = 0 To _Szerokosc - 1
             For y As Integer = 0 To _Wysokosc - 1
                 If _Kostki(x, y) IsNot Nothing Then _Kostki(x, y).UsunOdcinekToruZPowiazan(odcinek)

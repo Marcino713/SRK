@@ -27,6 +27,7 @@
     Public ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")         'tor przypisany do zaznaczonego odcinka
     Public ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")       'tor nieprzypisany do żadnego odcinka
     Public ReadOnly KOLOR_TOR_LICZNIK_ODCINEK_2 As Color = KolorRGB("#D11AFF")   'drugi odcinek obsługiwany przez parę liczników osi 1A29FF
+    Private ReadOnly KOLOR_KOSTKI As Color = KolorRGB("#99FFCC")
 
     Private ReadOnly PEDZEL_KRAWEDZIE As New Pen(Color.White, 0.02)
     Private ReadOnly PEDZEL_TOR_WOLNY As New SolidBrush(KOLOR_TOR_PRZYPISANY)
@@ -61,21 +62,10 @@
     Private obrot As Single
 
     Public Function Rysuj(pulpit As Zaleznosci.Pulpit, konfiguracja As KonfiguracjaRysowania) As Bitmap
-        Dim poczx As Integer = 0
-        Dim poczy As Integer = 0
-
         Dim img As New Bitmap(CInt(pulpit.Szerokosc * konfiguracja.Skalowanie) + 1, CInt(pulpit.Wysokosc * konfiguracja.Skalowanie) + 1)
         gr = Graphics.FromImage(img)
-        gr.Clear(konfiguracja.KolorKostki)
+        gr.Clear(KOLOR_KOSTKI)
         pedzelToru = PEDZEL_TOR_WOLNY
-
-        'Rysuj zaznaczenie kostki i kostkę przeciąganą
-        If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Nic And konfiguracja.ZaznaczX >= 0 And konfiguracja.ZaznaczX < pulpit.Szerokosc And konfiguracja.ZaznaczY >= 0 And konfiguracja.ZaznaczY < pulpit.Wysokosc Then
-            gr.ScaleTransform(konfiguracja.Skalowanie, konfiguracja.Skalowanie)
-            gr.FillRectangle(PEDZEL_ZAZN_KOSTKA, konfiguracja.ZaznaczX, konfiguracja.ZaznaczY, 1, 1)
-            If konfiguracja.PrzesuwanaKostka IsNot Nothing Then RysujKostke(konfiguracja.ZaznaczX, konfiguracja.ZaznaczY, konfiguracja.Skalowanie, konfiguracja.PrzesuwanaKostka)
-            gr.ResetTransform()
-        End If
 
         If konfiguracja.RysujKrawedzieKostek Then
             gr.ScaleTransform(konfiguracja.Skalowanie, konfiguracja.Skalowanie)
@@ -83,6 +73,7 @@
             For x As Integer = 0 To pulpit.Szerokosc
                 gr.DrawLine(PEDZEL_KRAWEDZIE, x, 0, x, pulpit.Wysokosc)
             Next
+
             For y As Integer = 0 To pulpit.Wysokosc
                 gr.DrawLine(PEDZEL_KRAWEDZIE, 0, y, pulpit.Szerokosc, y)
             Next
@@ -96,7 +87,8 @@
 
                 If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Tory Then UstawKolorToru(k, konfiguracja.ZaznaczonyOdcinek)
                 If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Then UstawKolorToruDlaLicznika(k, konfiguracja.ZaznaczonyLicznik)
-                RysujKostke(x, y, konfiguracja.Skalowanie, k)
+                Dim zazn As Boolean = konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Nic AndAlso k Is konfiguracja.ZaznaczonaKostka
+                RysujKostke(x, y, konfiguracja.Skalowanie, k, zazn)
             Next
         Next
 
@@ -119,12 +111,14 @@
         Return img
     End Function
 
-    Private Sub RysujKostke(x As Integer, y As Integer, skalowanie As Single, kostka As Zaleznosci.Kostka)
+    Private Sub RysujKostke(x As Integer, y As Integer, skalowanie As Single, kostka As Zaleznosci.Kostka, zaznaczona As Boolean)
         gr.ResetTransform()
         gr.ScaleTransform(skalowanie, skalowanie)
         gr.TranslateTransform(x, y)
         Obroc(POL, POL, kostka.Obrot)
         obrot = kostka.Obrot
+
+        If zaznaczona Then gr.FillRectangle(PEDZEL_ZAZN_KOSTKA, 0, 0, 1, 1)
 
         Select Case kostka.Typ
             Case Zaleznosci.TypKostki.Tor
