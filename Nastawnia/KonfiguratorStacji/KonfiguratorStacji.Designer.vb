@@ -34,9 +34,8 @@ Partial Class wndKonfiguratorStacji
         Me.mnuUsunKostki = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuNazwa = New System.Windows.Forms.ToolStripMenuItem()
-        Me.pctPulpit = New System.Windows.Forms.PictureBox()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
-        Me.pnlPulpit = New System.Windows.Forms.Panel()
+        Me.Label36 = New System.Windows.Forms.Label()
         Me.tabUstawienia = New System.Windows.Forms.TabControl()
         Me.tbpPulpit = New System.Windows.Forms.TabPage()
         Me.splKartaPulpit = New System.Windows.Forms.SplitContainer()
@@ -179,14 +178,12 @@ Partial Class wndKonfiguratorStacji
         Me.Label24 = New System.Windows.Forms.Label()
         Me.btnLampaUsun = New System.Windows.Forms.Button()
         Me.btnLampaDodaj = New System.Windows.Forms.Button()
-        Me.Label36 = New System.Windows.Forms.Label()
+        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
         Me.mnuMenu.SuspendLayout()
-        CType(Me.pctPulpit, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
         Me.splOkno.Panel2.SuspendLayout()
         Me.splOkno.SuspendLayout()
-        Me.pnlPulpit.SuspendLayout()
         Me.tabUstawienia.SuspendLayout()
         Me.tbpPulpit.SuspendLayout()
         CType(Me.splKartaPulpit, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -300,18 +297,6 @@ Partial Class wndKonfiguratorStacji
         Me.mnuNazwa.Size = New System.Drawing.Size(216, 22)
         Me.mnuNazwa.Text = "Zmień nazwę posterunku..."
         '
-        'pctPulpit
-        '
-        Me.pctPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.pctPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
-        Me.pctPulpit.Location = New System.Drawing.Point(0, 0)
-        Me.pctPulpit.Name = "pctPulpit"
-        Me.pctPulpit.Size = New System.Drawing.Size(788, 645)
-        Me.pctPulpit.TabIndex = 0
-        Me.pctPulpit.TabStop = False
-        '
         'splOkno
         '
         Me.splOkno.Dock = System.Windows.Forms.DockStyle.Fill
@@ -320,8 +305,8 @@ Partial Class wndKonfiguratorStacji
         '
         'splOkno.Panel1
         '
+        Me.splOkno.Panel1.Controls.Add(Me.plpPulpit)
         Me.splOkno.Panel1.Controls.Add(Me.Label36)
-        Me.splOkno.Panel1.Controls.Add(Me.pnlPulpit)
         '
         'splOkno.Panel2
         '
@@ -330,18 +315,16 @@ Partial Class wndKonfiguratorStacji
         Me.splOkno.SplitterDistance = 788
         Me.splOkno.TabIndex = 1
         '
-        'pnlPulpit
+        'Label36
         '
-        Me.pnlPulpit.AllowDrop = True
-        Me.pnlPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.pnlPulpit.Controls.Add(Me.pctPulpit)
-        Me.pnlPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
-        Me.pnlPulpit.Location = New System.Drawing.Point(0, 0)
-        Me.pnlPulpit.Name = "pnlPulpit"
-        Me.pnlPulpit.Size = New System.Drawing.Size(788, 645)
-        Me.pnlPulpit.TabIndex = 2
+        Me.Label36.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.Label36.AutoSize = True
+        Me.Label36.Location = New System.Drawing.Point(12, 648)
+        Me.Label36.Name = "Label36"
+        Me.Label36.Size = New System.Drawing.Size(468, 13)
+        Me.Label36.TabIndex = 3
+        Me.Label36.Text = "R - obróc kostkę; Delete - usuń kostkę; przytrzymanie Shift i przeciągnięcie mysz" &
+    "y- przesuń kostkę"
         '
         'tabUstawienia
         '
@@ -1786,16 +1769,19 @@ Partial Class wndKonfiguratorStacji
         Me.btnLampaDodaj.Text = "Dodaj"
         Me.btnLampaDodaj.UseVisualStyleBackColor = True
         '
-        'Label36
+        'plpPulpit
         '
-        Me.Label36.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.Label36.AutoSize = True
-        Me.Label36.Location = New System.Drawing.Point(12, 648)
-        Me.Label36.Name = "Label36"
-        Me.Label36.Size = New System.Drawing.Size(468, 13)
-        Me.Label36.TabIndex = 3
-        Me.Label36.Text = "R - obróc kostkę; Delete - usuń kostkę; przytrzymanie Shift i przeciągnięcie mysz" &
-    "y- przesuń kostkę"
+        Me.plpPulpit.AllowDrop = True
+        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
+        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
+        Me.plpPulpit.Name = "plpPulpit"
+        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
+        Me.plpPulpit.Size = New System.Drawing.Size(785, 645)
+        Me.plpPulpit.TabIndex = 4
+        Me.plpPulpit.TrybProjektowy = True
         '
         'wndKonfiguratorStacji
         '
@@ -1809,13 +1795,11 @@ Partial Class wndKonfiguratorStacji
         Me.Text = "Konfigurator posterunku ruchu"
         Me.mnuMenu.ResumeLayout(False)
         Me.mnuMenu.PerformLayout()
-        CType(Me.pctPulpit, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splOkno.Panel1.ResumeLayout(False)
         Me.splOkno.Panel1.PerformLayout()
         Me.splOkno.Panel2.ResumeLayout(False)
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splOkno.ResumeLayout(False)
-        Me.pnlPulpit.ResumeLayout(False)
         Me.tabUstawienia.ResumeLayout(False)
         Me.tbpPulpit.ResumeLayout(False)
         Me.splKartaPulpit.Panel1.ResumeLayout(False)
@@ -1883,9 +1867,7 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents mnuNarzedzia As ToolStripMenuItem
     Friend WithEvents mnuDodajKostki As ToolStripMenuItem
     Friend WithEvents mnuUsunKostki As ToolStripMenuItem
-    Friend WithEvents pctPulpit As PictureBox
     Friend WithEvents splOkno As SplitContainer
-    Friend WithEvents pnlPulpit As Panel
     Friend WithEvents lvPulpitKostki As ListView
     Friend WithEvents imlKostki As ImageList
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
@@ -2036,4 +2018,5 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
     Friend WithEvents mnuZapiszJako As ToolStripMenuItem
     Friend WithEvents Label36 As Label
+    Friend WithEvents plpPulpit As PulpitSterowniczy
 End Class

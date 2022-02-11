@@ -76,7 +76,8 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KonfiguracjaRysowania.vb" />
+    <Compile Include="PulpitSterowniczy\Dodatki.vb" />
+    <Compile Include="PulpitSterowniczy\RysujDodatkoweObiekty.vb" />
     <Compile Include="KonfiguratorStacji\EdytorPowierzchni.Designer.vb">
       <DependentUpon>EdytorPowierzchni.vb</DependentUpon>
     </Compile>
@@ -130,7 +131,15 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Rysowanie.vb" />
+    <Compile Include="PulpitSterowniczy\IRysownik.vb" />
+    <Compile Include="PulpitSterowniczy\PulpitSterowniczy.Designer.vb">
+      <DependentUpon>PulpitSterowniczy.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PulpitSterowniczy\PulpitSterowniczy.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyGDI.vb" />
+    <Compile Include="PulpitSterowniczy\TypRysownika.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="KonfiguratorStacji\EdytorPowierzchni.resx">
@@ -156,6 +165,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PulpitSterowniczy\PulpitSterowniczy.resx">
+      <DependentUpon>PulpitSterowniczy.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

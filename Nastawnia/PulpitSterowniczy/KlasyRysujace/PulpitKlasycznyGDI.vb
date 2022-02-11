@@ -1,5 +1,7 @@
-﻿Public Module Rysowanie
-    Public Const KOLKO_SZER As Single = 0.25            'średnica kółka (lampy/licznika osi)
+﻿Friend Class PulpitKlasycznyGDI
+    Implements IRysownik
+
+    Private Const KOLKO_SZER As Single = 0.25            'średnica kółka (lampy/licznika osi)
     Private Const KOLKO_TEKST_SZER As Single = 0.12     'średnica kółka obok tekstu
     Private Const KOLKO_TEKST_POZ As Single = 0.1       'położenie kółka obok tekstu
     Private Const TOR_SZEROKOSC As Single = 0.1         'szerokość toru na kostce
@@ -23,12 +25,12 @@
     Private Const POL As Single = 0.5F
     Private Const CWIERC As Single = 0.25F
 
-    Public ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")          'tor przypisany do innego odcinka
-    Public ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")         'tor przypisany do zaznaczonego odcinka
-    Public ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")       'tor nieprzypisany do żadnego odcinka
-    Public ReadOnly KOLOR_TOR_LICZNIK_ODCINEK_2 As Color = KolorRGB("#D11AFF")   'drugi odcinek obsługiwany przez parę liczników osi 1A29FF
-    Private ReadOnly KOLOR_KOSTKI As Color = KolorRGB("#99FFCC")
+    Private ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")          'tor przypisany do innego odcinka
+    Private ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")         'tor przypisany do zaznaczonego odcinka
+    Private ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")       'tor nieprzypisany do żadnego odcinka
+    Private ReadOnly KOLOR_TOR_LICZNIK_ODCINEK_2 As Color = KolorRGB("#D11AFF")   'drugi odcinek obsługiwany przez parę liczników osi 1A29FF
 
+    Private ReadOnly PEDZEL_TLO_KOSTKI As New SolidBrush(KolorRGB("#99FFCC"))
     Private ReadOnly PEDZEL_KRAWEDZIE As New Pen(Color.White, 0.02)
     Private ReadOnly PEDZEL_TOR_WOLNY As New SolidBrush(KOLOR_TOR_PRZYPISANY)
     Private ReadOnly PEDZEL_TOR_TEN_ODCINEK As New SolidBrush(KOLOR_TOR_TEN_ODCINEK)
@@ -60,59 +62,95 @@
     Private gr As Graphics
     Private pedzelToru As SolidBrush
     Private obrot As Single
+    Private poczatkowaTransformacja As Drawing2D.Matrix
 
-    Public Function Rysuj(pulpit As Zaleznosci.Pulpit, konfiguracja As KonfiguracjaRysowania) As Bitmap
-        Dim img As New Bitmap(CInt(pulpit.Szerokosc * konfiguracja.Skalowanie) + 1, CInt(pulpit.Wysokosc * konfiguracja.Skalowanie) + 1)
-        gr = Graphics.FromImage(img)
-        gr.Clear(KOLOR_KOSTKI)
+    Private ReadOnly Property IRysownik_KOLKO_SZER As Single Implements IRysownik.KOLKO_SZER
+        Get
+            Return KOLKO_SZER
+        End Get
+    End Property
+
+    Private ReadOnly Property IRysownik_KOLOR_TOR_TEN_ODCINEK As Color Implements IRysownik.KOLOR_TOR_TEN_ODCINEK
+        Get
+            Return KOLOR_TOR_TEN_ODCINEK
+        End Get
+    End Property
+
+    Private ReadOnly Property IRysownik_KOLOR_TOR_PRZYPISANY As Color Implements IRysownik.KOLOR_TOR_PRZYPISANY
+        Get
+            Return KOLOR_TOR_PRZYPISANY
+        End Get
+    End Property
+
+    Private ReadOnly Property IRysownik_KOLOR_TOR_NIEPRZYPISANY As Color Implements IRysownik.KOLOR_TOR_NIEPRZYPISANY
+        Get
+            Return KOLOR_TOR_NIEPRZYPISANY
+        End Get
+    End Property
+
+    Private ReadOnly Property IRysownik_KOLOR_TOR_LICZNIK_ODCINEK_2 As Color Implements IRysownik.KOLOR_TOR_LICZNIK_ODCINEK_2
+        Get
+            Return KOLOR_TOR_LICZNIK_ODCINEK_2
+        End Get
+    End Property
+
+    Friend Sub Rysuj(ps As PulpitSterowniczy, grp As Graphics) Implements IRysownik.Rysuj
+        gr = grp
+        gr.Clear(ps.BackColor)
+
+        If ps.Pulpit Is Nothing Then Exit Sub
+
+        gr.ResetTransform()
+        gr.TranslateTransform(ps.Przesuniecie.X, ps.Przesuniecie.Y)
+        poczatkowaTransformacja = gr.Transform
+        gr.FillRectangle(PEDZEL_TLO_KOSTKI, New Rectangle(0, 0, ps.SzerokoscPulpitu, ps.WysokoscPulpitu))
+
         pedzelToru = PEDZEL_TOR_WOLNY
 
-        If konfiguracja.RysujKrawedzieKostek Then
-            gr.ScaleTransform(konfiguracja.Skalowanie, konfiguracja.Skalowanie)
+        If ps.RysujKrawedzieKostek Then
+            gr.ScaleTransform(ps.Skalowanie, ps.Skalowanie)
 
-            For x As Integer = 0 To pulpit.Szerokosc
-                gr.DrawLine(PEDZEL_KRAWEDZIE, x, 0, x, pulpit.Wysokosc)
+            For x As Integer = 0 To ps.Pulpit.Szerokosc
+                gr.DrawLine(PEDZEL_KRAWEDZIE, x, 0, x, ps.Pulpit.Wysokosc)
             Next
 
-            For y As Integer = 0 To pulpit.Wysokosc
-                gr.DrawLine(PEDZEL_KRAWEDZIE, 0, y, pulpit.Szerokosc, y)
+            For y As Integer = 0 To ps.Pulpit.Wysokosc
+                gr.DrawLine(PEDZEL_KRAWEDZIE, 0, y, ps.Pulpit.Szerokosc, y)
             Next
         End If
 
         'Rysuj kostki
-        For x As Integer = 0 To pulpit.Szerokosc - 1
-            For y As Integer = 0 To pulpit.Wysokosc - 1
-                Dim k As Zaleznosci.Kostka = pulpit.Kostki(x, y)
+        For x As Integer = 0 To ps.Pulpit.Szerokosc - 1
+            For y As Integer = 0 To ps.Pulpit.Wysokosc - 1
+                Dim k As Zaleznosci.Kostka = ps.Pulpit.Kostki(x, y)
                 If k Is Nothing Then Continue For
 
-                If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Tory Then UstawKolorToru(k, konfiguracja.ZaznaczonyOdcinek)
-                If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Then UstawKolorToruDlaLicznika(k, konfiguracja.ZaznaczonyLicznik)
-                Dim zazn As Boolean = konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Nic AndAlso k Is konfiguracja.ZaznaczonaKostka
-                RysujKostke(x, y, konfiguracja.Skalowanie, k, zazn)
+                If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Tory Then UstawKolorToru(k, ps.projZaznaczonyOdcinek)
+                If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Then UstawKolorToruDlaLicznika(k, ps.projZaznaczonyLicznik)
+                Dim zazn As Boolean = ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic AndAlso k Is ps.projZaznaczonaKostka
+                RysujKostke(x, y, ps.Skalowanie, k, zazn)
             Next
         Next
 
-        If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then
-            Dim en As List(Of Zaleznosci.Lampa).Enumerator = pulpit.Lampy.GetEnumerator
+        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then
+            Dim en As List(Of Zaleznosci.Lampa).Enumerator = ps.Pulpit.Lampy.GetEnumerator
             While en.MoveNext
                 Dim l As Zaleznosci.Lampa = en.Current
-                RysujKolko(If(l Is konfiguracja.ZaznaczonaLampa, PEDZEL_LAMPA_ZAZN, PEDZEL_LAMPA_TLO), konfiguracja.Skalowanie, l.X, l.Y)
+                RysujKolko(If(l Is ps.projZaznaczonaLampa, PEDZEL_LAMPA_ZAZN, PEDZEL_LAMPA_TLO), ps.Skalowanie, l.X, l.Y)
             End While
         End If
 
-        If konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Then
-            Dim l As Zaleznosci.ParaLicznikowOsi = konfiguracja.ZaznaczonyLicznik
+        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Then
+            Dim l As Zaleznosci.ParaLicznikowOsi = ps.projZaznaczonyLicznik
             If l IsNot Nothing Then
-                RysujKolko(PEDZEL_TOR_TEN_ODCINEK, konfiguracja.Skalowanie, l.X1, l.Y1)
-                RysujKolko(PEDZEL_TOR_LICZNIK_ODCINEK_2, konfiguracja.Skalowanie, l.X2, l.Y2)
+                RysujKolko(PEDZEL_TOR_TEN_ODCINEK, ps.Skalowanie, l.X1, l.Y1)
+                RysujKolko(PEDZEL_TOR_LICZNIK_ODCINEK_2, ps.Skalowanie, l.X2, l.Y2)
             End If
         End If
-
-        Return img
-    End Function
+    End Sub
 
     Private Sub RysujKostke(x As Integer, y As Integer, skalowanie As Single, kostka As Zaleznosci.Kostka, zaznaczona As Boolean)
-        gr.ResetTransform()
+        gr.Transform = poczatkowaTransformacja
         gr.ScaleTransform(skalowanie, skalowanie)
         gr.TranslateTransform(x, y)
         Obroc(POL, POL, kostka.Obrot)
@@ -297,7 +335,7 @@
     End Sub
 
     Private Sub RysujKolko(pedzel As Brush, skalowanie As Single, x As Single, y As Single)
-        gr.ResetTransform()
+        gr.Transform = poczatkowaTransformacja
         gr.ScaleTransform(skalowanie, skalowanie)
         gr.TranslateTransform(x - KOLKO_SZER / 2.0F, y - KOLKO_SZER / 2.0F)
         gr.FillEllipse(pedzel, 0, 0, KOLKO_SZER, KOLKO_SZER)
@@ -339,4 +377,5 @@
             End If
         End If
     End Sub
-End Module
+
+End Class

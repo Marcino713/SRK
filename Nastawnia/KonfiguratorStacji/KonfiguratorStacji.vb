@@ -1,24 +1,13 @@
 ﻿Public Class wndKonfiguratorStacji
     Private ReadOnly NAZWA_OKNA As String
     Private Const FILTR_PLIKU As String = Zaleznosci.Pulpit.OPIS_PLIKU & "|*" & Zaleznosci.Pulpit.ROZSZERZENIE_PLIKU
-    Private Const SKALOWANIE_ZMIANA As Single = 0.05
-    Private Const SKALOWANIE_MIN As Single = 30
-    Private Const SKALOWANIE_MAX As Single = 200
-    Private Const ZWIEKSZ_OBROT As Integer = 90
-    Private Const KAT_PELNY As Integer = 360
+    Private Const ROZMIAR_KOSTKI_LISTA As Integer = 48
 
-    Private Konfiguracja As New KonfiguracjaRysowania
-    Private Pulpit As New Zaleznosci.Pulpit
-    Private PoprzedniPunkt As New Point(-1, -1)
-    Private LokalizacjaPulpitu As New Point(-1, -1)
     Private PaneleKonfKostek As Panel()
     Private ZdarzeniaWlaczone As Boolean = True
     Private ZaznaczonaLampaNaLiscie As ListViewItem
     Private ZaznaczonyOdcinekNaLiscie As ListViewItem
     Private ZaznaczonyLicznikNaLiscie As ListViewItem
-    Private AkceptowaniePrzeciagania As DragDropEffects
-    Private PoprzLokalizacjaKostki As New Point(-1, -1)
-    Private PierwszaObslugaPrzeciagania As Boolean = True
 
     Private Delegate Function SprawdzTypKostki(kostka As Zaleznosci.Kostka) As Boolean
     Private Delegate Function PobierzNazweKostki(kostka As Zaleznosci.Kostka) As String
@@ -38,56 +27,51 @@
         Next
 
         UtworzListeKostek()
-        RysujPulpit()
 
         UstawAktywnoscPolLamp(False)
         UstawAktywnoscPolLicznikow(False)
         UstawAktywnoscPolTorow(False)
 
-        pnlTorTenOdcinek.BackColor = KOLOR_TOR_TEN_ODCINEK
-        pnlTorInnyOdcinek.BackColor = KOLOR_TOR_PRZYPISANY
-        pnlTorNieprzypisany.BackColor = KOLOR_TOR_NIEPRZYPISANY
+        pnlTorTenOdcinek.BackColor = plpPulpit.Rysownik.KOLOR_TOR_TEN_ODCINEK
+        pnlTorInnyOdcinek.BackColor = plpPulpit.Rysownik.KOLOR_TOR_PRZYPISANY
+        pnlTorNieprzypisany.BackColor = plpPulpit.Rysownik.KOLOR_TOR_NIEPRZYPISANY
 
-        pnlLicznik1.BackColor = KOLOR_TOR_TEN_ODCINEK
-        pnlLicznik2.BackColor = KOLOR_TOR_LICZNIK_ODCINEK_2
+        pnlLicznik1.BackColor = plpPulpit.Rysownik.KOLOR_TOR_TEN_ODCINEK
+        pnlLicznik2.BackColor = plpPulpit.Rysownik.KOLOR_TOR_LICZNIK_ODCINEK_2
 
-        pnlLicznikTor1.BackColor = KOLOR_TOR_TEN_ODCINEK
-        pnlLicznikTor2.BackColor = KOLOR_TOR_LICZNIK_ODCINEK_2
+        pnlLicznikTor1.BackColor = plpPulpit.Rysownik.KOLOR_TOR_TEN_ODCINEK
+        pnlLicznikTor2.BackColor = plpPulpit.Rysownik.KOLOR_TOR_LICZNIK_ODCINEK_2
     End Sub
 
     Private Sub wndKonfiguratorStacji_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         e.Cancel = Not PrzetworzPorzucaniePliku()
     End Sub
 
-    Private Sub wndKonfiguratorStacji_Resize() Handles Me.Resize
-        RysujPulpit()
-    End Sub
-
     Private Sub tabUstawienia_Selected() Handles tabUstawienia.Selected
         If tabUstawienia.SelectedTab Is tbpPulpit Then
-            Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Nic
+            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
             PokazKonfSygnTory()
         End If
         If tabUstawienia.SelectedTab Is tbpTory Then
-            Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Tory
+            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Tory
             OdswiezListeTorow()
         End If
         If tabUstawienia.SelectedTab Is tbpLiczniki Then
-            Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Liczniki
+            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki
             OdswiezListeLicznikow()
             OdswiezListeTorowWLicznikach()
         End If
         If tabUstawienia.SelectedTab Is tbpLampy Then
-            Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Lampy
+            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy
         End If
-        RysujPulpit()
     End Sub
 
     Private Sub DodajKostkeDoListy(kostka As Zaleznosci.Kostka, nazwa As String)
-        Static Dim konf As New KonfiguracjaRysowania() With {.Skalowanie = 47, .RysujKrawedzieKostek = False}
-        Dim pulpit As New Zaleznosci.Pulpit(1, 1)
-        pulpit.Kostki(0, 0) = kostka
-        imlKostki.Images.Add(Rysuj(pulpit, konf))
+        Dim p As New PulpitSterowniczy With {.Skalowanie = ROZMIAR_KOSTKI_LISTA - 1, .RysujKrawedzieKostek = False, .TypRysownika = TypRysownika.KlasycznyGDI}
+        p.Pulpit.Kostki(0, 0) = kostka
+        Dim bm As New Bitmap(ROZMIAR_KOSTKI_LISTA, ROZMIAR_KOSTKI_LISTA)
+        p.DrawToBitmap(bm, New Rectangle(0, 0, ROZMIAR_KOSTKI_LISTA, ROZMIAR_KOSTKI_LISTA))
+        imlKostki.Images.Add(bm)
         Dim lvi As New ListViewItem(nazwa, imlKostki.Images.Count - 1)
         lvi.Tag = kostka.GetType()
         lvPulpitKostki.Items.Add(lvi)
@@ -109,31 +93,26 @@
     End Sub
 
     Private Sub UstawTytulOkna()
-        If Pulpit.Nazwa = "" Then
+        If plpPulpit.Pulpit.Nazwa = "" Then
             Text = NAZWA_OKNA
         Else
-            Text = NAZWA_OKNA & " - " & Pulpit.Nazwa
+            Text = NAZWA_OKNA & " - " & plpPulpit.Pulpit.Nazwa
         End If
     End Sub
 
     Private Sub CzyscDane(Optional nowyPulpit As Zaleznosci.Pulpit = Nothing)
-        Konfiguracja = New KonfiguracjaRysowania
-        Pulpit = If(nowyPulpit Is Nothing, New Zaleznosci.Pulpit, nowyPulpit)
-
-        UkryjPaneleKonf()
+        plpPulpit.Czysc(nowyPulpit)
         OdswiezListeTorow()
         OdswiezListeLicznikow()
         OdswiezListeTorowWLicznikach()
         OdswiezListeLamp()
-
-        pctPulpit.Location = New Point(0, 0)
     End Sub
 
     Private Function Zapisz(nowyPlik As Boolean) As Boolean
         Dim nowaSciezka As String = Nothing
         Dim wynik As Boolean
 
-        If Pulpit.SciezkaPliku = "" Or nowyPlik Then
+        If plpPulpit.Pulpit.SciezkaPliku = "" Or nowyPlik Then
             Dim dlg As New SaveFileDialog
             dlg.Filter = FILTR_PLIKU
             If dlg.ShowDialog = DialogResult.OK Then
@@ -144,9 +123,9 @@
         End If
 
         If nowaSciezka IsNot Nothing Then
-            wynik = Pulpit.Zapisz(nowaSciezka)
+            wynik = plpPulpit.Pulpit.Zapisz(nowaSciezka)
         Else
-            wynik = Pulpit.Zapisz()
+            wynik = plpPulpit.Pulpit.Zapisz()
         End If
 
         If Not wynik Then
@@ -180,7 +159,6 @@
     Private Sub mnuNowy_Click() Handles mnuNowy.Click
         If PrzetworzPorzucaniePliku() Then
             CzyscDane()
-            RysujPulpit()
             UstawTytulOkna()
         End If
     End Sub
@@ -193,7 +171,6 @@
                 Dim pulpitNowy As Zaleznosci.Pulpit = Zaleznosci.Pulpit.Otworz(dlg.FileName)
                 If pulpitNowy IsNot Nothing Then
                     CzyscDane(pulpitNowy)
-                    RysujPulpit()
                     UstawTytulOkna()
                 Else
                     PokazBlad("Nie udało się otworzyć pliku.")
@@ -211,19 +188,19 @@
     End Sub
 
     Private Sub mnuDodajKostki_Click() Handles mnuDodajKostki.Click
-        Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Dodaj, Pulpit.Szerokosc, Pulpit.Wysokosc)
+        Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Dodaj, plpPulpit.Pulpit.Szerokosc, plpPulpit.Pulpit.Wysokosc)
         If wnd.ShowDialog = DialogResult.OK Then
-            Pulpit.PowiekszPulpit(wnd.KierunekEdycji, wnd.LiczbaKostek)
-            UsunZaznaczenieKostki()
+            plpPulpit.Pulpit.PowiekszPulpit(wnd.KierunekEdycji, wnd.LiczbaKostek)
+            plpPulpit.projZaznaczonaKostka = Nothing
         End If
     End Sub
 
     Private Sub mnuUsunKostki_Click() Handles mnuUsunKostki.Click
-        Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Usun, Pulpit.Szerokosc, Pulpit.Wysokosc)
+        Dim wnd As New wndEdytorPowierzchni(wndEdytorPowierzchni.TypEdycji.Usun, plpPulpit.Pulpit.Szerokosc, plpPulpit.Pulpit.Wysokosc)
         If wnd.ShowDialog = DialogResult.OK Then
             Try
-                If Pulpit.PomniejszPulpit(wnd.KierunekEdycji, wnd.LiczbaKostek) Then
-                    UsunZaznaczenieKostki()
+                If plpPulpit.Pulpit.PomniejszPulpit(wnd.KierunekEdycji, wnd.LiczbaKostek) Then
+                    plpPulpit.projZaznaczonaKostka = Nothing
                 Else
                     PokazBlad("Nie udało się usunąć kostek - w wybranym zakresie usuwania pulpit nie jest pusty.")
                 End If
@@ -234,25 +211,25 @@
     End Sub
 
     Private Sub mnuNazwa_Click() Handles mnuNazwa.Click
-        Dim wnd As New wndNazwaStacji(Pulpit.Adres, Pulpit.Nazwa, Pulpit.DataUtworzenia)
+        Dim wnd As New wndNazwaStacji(plpPulpit.Pulpit.Adres, plpPulpit.Pulpit.Nazwa, plpPulpit.Pulpit.DataUtworzenia)
         If wnd.ShowDialog = DialogResult.OK Then
-            Pulpit.Adres = wnd.Adres
-            Pulpit.Nazwa = wnd.Nazwa
+            plpPulpit.Pulpit.Adres = wnd.Adres
+            plpPulpit.Pulpit.Nazwa = wnd.Nazwa
             UstawTytulOkna()
         End If
     End Sub
 
     Private Sub ctxSortuj_Click() Handles ctxSortuj.Click
         If tabUstawienia.SelectedTab Is tbpTory Then
-            Pulpit.SortujOdcinkiNazwaRosnaco()
+            plpPulpit.Pulpit.SortujOdcinkiNazwaRosnaco()
             OdswiezListeTorow()
 
         ElseIf tabUstawienia.SelectedTab Is tbpLiczniki
-            Pulpit.SortujLicznikiAdres1Rosnaco()
+            plpPulpit.Pulpit.SortujLicznikiAdres1Rosnaco()
             OdswiezListeLicznikow()
 
         ElseIf tabUstawienia.SelectedTab Is tbpLampy
-            Pulpit.SortujLampyAdresRosnaco()
+            plpPulpit.Pulpit.SortujLampyAdresRosnaco()
             OdswiezListeLamp()
 
         End If
@@ -266,8 +243,6 @@
         Dim lvi As ListViewItem = lvPulpitKostki.GetItemAt(e.X, e.Y)
         If lvi IsNot Nothing Then
             lvi.Selected = True
-            AkceptowaniePrzeciagania = DragDropEffects.None
-            PierwszaObslugaPrzeciagania = True
             DoDragDrop(Activator.CreateInstance(DirectCast(lvi.Tag, Type)), DragDropEffects.Copy)
         End If
     End Sub
@@ -275,113 +250,113 @@
 
     'Tor
     Private Sub txtKonfTorPredkosc_TextChanged() Handles txtKonfTorPredkosc.TextChanged
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Tor).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfTorPredkosc)
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Tor).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfTorPredkosc)
     End Sub
 
 
     'Rozjazd
     Private Sub txtKonfRozjazdAdres_TextChanged() Handles txtKonfRozjazdAdres.TextChanged
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).Adres = PobierzKrotkaLiczbeNieujemna(txtKonfRozjazdAdres)
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).Adres = PobierzKrotkaLiczbeNieujemna(txtKonfRozjazdAdres)
     End Sub
 
     Private Sub txtKonfRozjazdNazwa_TextChanged() Handles txtKonfRozjazdNazwa.TextChanged
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).Nazwa = txtKonfRozjazdNazwa.Text
-        RysujPulpit()
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).Nazwa = txtKonfRozjazdNazwa.Text
+        plpPulpit.Invalidate()
     End Sub
 
     Private Sub txtKonfRozjazdPredkZasad_TextChanged() Handles txtKonfRozjazdPredkZasad.TextChanged
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfRozjazdPredkZasad)
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfRozjazdPredkZasad)
     End Sub
 
     Private Sub txtKonfRozjazdPredkBoczna_TextChanged() Handles txtKonfRozjazdPredkBoczna.TextChanged
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).PredkoscBoczna = PobierzLiczbeNieujemna(txtKonfRozjazdPredkBoczna)
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).PredkoscBoczna = PobierzLiczbeNieujemna(txtKonfRozjazdPredkBoczna)
     End Sub
 
     Private Sub cboKonfRozjazdWprost1_SelectedIndexChanged() Handles cboKonfRozjazdWprost1.SelectedIndexChanged
         Dim roz As Zaleznosci.Rozjazd = Nothing
         If PrzetworzZaznaczenieRozjazduZaleznego(cboKonfRozjazdWprost1, rbKonfRozjazdWprost1Plus, rbKonfRozjazdWprost1Minus, roz) Then
-            DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(0).RozjazdZalezny = roz
+            DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(0).RozjazdZalezny = roz
         End If
     End Sub
 
     Private Sub cboKonfRozjazdWprost2_SelectedIndexChanged() Handles cboKonfRozjazdWprost2.SelectedIndexChanged
         Dim roz As Zaleznosci.Rozjazd = Nothing
         If PrzetworzZaznaczenieRozjazduZaleznego(cboKonfRozjazdWprost2, rbKonfRozjazdWprost2Plus, rbKonfRozjazdWprost2Minus, roz) Then
-            DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(1).RozjazdZalezny = roz
+            DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(1).RozjazdZalezny = roz
         End If
     End Sub
 
     Private Sub cboKonfRozjazdBok1_SelectedIndexChanged() Handles cboKonfRozjazdBok1.SelectedIndexChanged
         Dim roz As Zaleznosci.Rozjazd = Nothing
         If PrzetworzZaznaczenieRozjazduZaleznego(cboKonfRozjazdBok1, rbKonfRozjazdBok1Plus, rbKonfRozjazdBok1Minus, roz) Then
-            DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(0).RozjazdZalezny = roz
+            DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(0).RozjazdZalezny = roz
         End If
     End Sub
 
     Private Sub cboKonfRozjazdBok2_SelectedIndexChanged() Handles cboKonfRozjazdBok2.SelectedIndexChanged
         Dim roz As Zaleznosci.Rozjazd = Nothing
         If PrzetworzZaznaczenieRozjazduZaleznego(cboKonfRozjazdBok2, rbKonfRozjazdBok2Plus, rbKonfRozjazdBok2Minus, roz) Then
-            DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(1).RozjazdZalezny = roz
+            DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(1).RozjazdZalezny = roz
         End If
     End Sub
 
     Private Sub rbKonfRozjazdWprost1Plus_CheckedChanged() Handles rbKonfRozjazdWprost1Plus.CheckedChanged
-        If rbKonfRozjazdWprost1Plus.Checked Then DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(0).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Wprost
+        If rbKonfRozjazdWprost1Plus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(0).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Wprost
     End Sub
 
     Private Sub rbKonfRozjazdWprost1Minus_CheckedChanged() Handles rbKonfRozjazdWprost1Minus.CheckedChanged
-        If rbKonfRozjazdWprost1Minus.Checked Then DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(0).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Bok
+        If rbKonfRozjazdWprost1Minus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(0).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Bok
     End Sub
 
     Private Sub rbKonfRozjazdWprost2Plus_CheckedChanged() Handles rbKonfRozjazdWprost2Plus.CheckedChanged
-        If rbKonfRozjazdWprost2Plus.Checked Then DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(1).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Wprost
+        If rbKonfRozjazdWprost2Plus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(1).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Wprost
     End Sub
 
     Private Sub rbKonfRozjazdWprost2Minus_CheckedChanged() Handles rbKonfRozjazdWprost2Minus.CheckedChanged
-        If rbKonfRozjazdWprost2Minus.Checked Then DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(1).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Bok
+        If rbKonfRozjazdWprost2Minus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(1).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Bok
     End Sub
 
     Private Sub rbKonfRozjazdBok1Plus_CheckedChanged() Handles rbKonfRozjazdBok1Plus.CheckedChanged
-        If rbKonfRozjazdBok1Plus.Checked Then DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(0).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Wprost
+        If rbKonfRozjazdBok1Plus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(0).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Wprost
     End Sub
 
     Private Sub rbKonfRozjazdBok1Minus_CheckedChanged() Handles rbKonfRozjazdBok1Minus.CheckedChanged
-        If rbKonfRozjazdBok1Minus.Checked Then DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(0).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Bok
+        If rbKonfRozjazdBok1Minus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(0).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Bok
     End Sub
 
     Private Sub rbKonfRozjazdBok2Plus_CheckedChanged() Handles rbKonfRozjazdBok2Plus.CheckedChanged
-        If rbKonfRozjazdBok2Plus.Checked Then DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(1).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Wprost
+        If rbKonfRozjazdBok2Plus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(1).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Wprost
     End Sub
 
     Private Sub rbKonfRozjazdBok2Minus_CheckedChanged() Handles rbKonfRozjazdBok2Minus.CheckedChanged
-        If rbKonfRozjazdBok2Minus.Checked Then DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(1).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Bok
+        If rbKonfRozjazdBok2Minus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(1).Konfiguracja = Zaleznosci.UstawienieRozjazduZaleznegoEnum.Bok
     End Sub
 
 
     'Sygnalizacja
     Private Sub txtKonfSygnAdres_TextChanged() Handles txtKonfSygnAdres.TextChanged
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Sygnalizator).Adres = PobierzKrotkaLiczbeNieujemna(txtKonfSygnAdres)
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Sygnalizator).Adres = PobierzKrotkaLiczbeNieujemna(txtKonfSygnAdres)
     End Sub
 
     Private Sub txtKonfSygnNazwa_TextChanged() Handles txtKonfSygnNazwa.TextChanged
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Sygnalizator).Nazwa = txtKonfSygnNazwa.Text
-        RysujPulpit()
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Sygnalizator).Nazwa = txtKonfSygnNazwa.Text
+        plpPulpit.Invalidate()
     End Sub
 
     Private Sub cboKonfSygnOdcinekNast_SelectedIndexChanged() Handles cboKonfSygnOdcinekNast.SelectedIndexChanged
         If cboKonfSygnOdcinekNast.SelectedItem Is Nothing Then Exit Sub
         Dim el As ObiektComboBox(Of Zaleznosci.OdcinekToru) = DirectCast(cboKonfSygnOdcinekNast.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru))
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Sygnalizator).OdcinekNastepujacy = el.Wartosc
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Sygnalizator).OdcinekNastepujacy = el.Wartosc
     End Sub
 
     Private Sub cboKonfSygnSygnNast_SelectedIndexChanged() Handles cboKonfSygnSygnNast.SelectedIndexChanged
         If cboKonfSygnSygnNast.SelectedItem Is Nothing Then Exit Sub
         Dim el As ObiektComboBox(Of Zaleznosci.Kostka) = DirectCast(cboKonfSygnSygnNast.SelectedItem, ObiektComboBox(Of Zaleznosci.Kostka))
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.SygnalizatorUzalezniony).SygnalizatorNastepny = DirectCast(el.Wartosc, Zaleznosci.Sygnalizator)
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorUzalezniony).SygnalizatorNastepny = DirectCast(el.Wartosc, Zaleznosci.Sygnalizator)
     End Sub
 
     Private Sub txtKonfSygnPredkosc_TextChanged() Handles txtKonfSygnPredkosc.TextChanged
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Sygnalizator).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfSygnPredkosc)
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Sygnalizator).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfSygnPredkosc)
     End Sub
 
     Private Sub cbKonfSygnZiel_CheckedChanged() Handles cbKonfSygnZiel.CheckedChanged
@@ -423,10 +398,10 @@
         Else
             aktywny = True
 
-            Select Case Konfiguracja.ZaznaczonaKostka.Typ
+            Select Case plpPulpit.projZaznaczonaKostka.Typ
                 Case Zaleznosci.TypKostki.Przycisk
                     Dim typ As Zaleznosci.TypPrzyciskuEnum = DirectCast(el, ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)).Wartosc
-                    Dim prz As Zaleznosci.Przycisk = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Przycisk)
+                    Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Przycisk)
                     prz.TypPrzycisku = typ
                     If typ = Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegow Then aktywny = False
                     cboKonfPrzyciskSygnalizator.Items.Clear()
@@ -435,7 +410,7 @@
 
                 Case Zaleznosci.TypKostki.PrzyciskTor
                     Dim typ As Zaleznosci.TypPrzyciskuTorEnum = DirectCast(el, ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)).Wartosc
-                    Dim prz As Zaleznosci.PrzyciskTor = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
+                    Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.PrzyciskTor)
                     If (prz.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy And (typ = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorPolsamoczynny Or typ = Zaleznosci.TypPrzyciskuTorEnum.SygnalManewrowy)) Or
                             ((prz.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorPolsamoczynny Or prz.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalManewrowy) And typ = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy) Then
                         prz.ObslugiwanySygnalizator = Nothing
@@ -456,55 +431,55 @@
         End If
 
         cboKonfPrzyciskSygnalizator.Enabled = aktywny
-        RysujPulpit()
+        plpPulpit.Invalidate()
     End Sub
 
     Private Sub cboKonfPrzyciskSygnalizator_SelectedIndexChanged() Handles cboKonfPrzyciskSygnalizator.SelectedIndexChanged
         If cboKonfPrzyciskSygnalizator.SelectedItem Is Nothing Then Exit Sub
 
         Dim sygn As Zaleznosci.Kostka = DirectCast(cboKonfPrzyciskSygnalizator.SelectedItem, ObiektComboBox(Of Zaleznosci.Kostka)).Wartosc
-        Select Case Konfiguracja.ZaznaczonaKostka.Typ
+        Select Case plpPulpit.projZaznaczonaKostka.Typ
             Case Zaleznosci.TypKostki.Przycisk
-                Dim prz As Zaleznosci.Przycisk = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Przycisk)
+                Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Przycisk)
                 prz.ObslugiwanySygnalizator = DirectCast(sygn, Zaleznosci.SygnalizatorPolsamoczynny)
 
             Case Zaleznosci.TypKostki.PrzyciskTor
-                Dim prz As Zaleznosci.PrzyciskTor = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
+                Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.PrzyciskTor)
                 prz.ObslugiwanySygnalizator = DirectCast(sygn, Zaleznosci.Sygnalizator)
 
         End Select
 
-        RysujPulpit()
+        plpPulpit.Invalidate()
     End Sub
 
     Private Sub txtKonfPrzyciskPredkosc_TextChanged() Handles txtKonfPrzyciskPredkosc.TextChanged
-        If Konfiguracja.ZaznaczonaKostka.Typ = Zaleznosci.TypKostki.PrzyciskTor Then
-            DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.PrzyciskTor).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfPrzyciskPredkosc)
+        If plpPulpit.projZaznaczonaKostka.Typ = Zaleznosci.TypKostki.PrzyciskTor Then
+            DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.PrzyciskTor).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfPrzyciskPredkosc)
         End If
     End Sub
 
 
     'Napis
     Private Sub txtKonfNapisTekst_TextChanged() Handles txtKonfNapisTekst.TextChanged
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Napis).Tekst = txtKonfNapisTekst.Text
-        RysujPulpit()
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Napis).Tekst = txtKonfNapisTekst.Text
+        plpPulpit.Invalidate()
     End Sub
 
 
     'Kierunek
     Private Sub txtKonfKierPredkosc_TextChanged() Handles txtKonfKierPredkosc.TextChanged
-        DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Kierunek).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfKierPredkosc)
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Kierunek).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfKierPredkosc)
     End Sub
 
     Private Sub rbKonfKierZasadniczy_CheckedChanged() Handles rbKonfKierZasadniczy.CheckedChanged
         If rbKonfKierZasadniczy.Checked Then
-            DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWlaczany = Zaleznosci.KierunekWlaczanyEnum.Zasadniczy
+            DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWlaczany = Zaleznosci.KierunekWlaczanyEnum.Zasadniczy
         End If
     End Sub
 
     Private Sub rbKonfKierPrzeciwny_CheckedChanged() Handles rbKonfKierPrzeciwny.CheckedChanged
         If rbKonfKierPrzeciwny.Checked Then
-            DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWlaczany = Zaleznosci.KierunekWlaczanyEnum.Przeciwny
+            DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWlaczany = Zaleznosci.KierunekWlaczanyEnum.Przeciwny
         End If
     End Sub
 
@@ -517,7 +492,7 @@
     End Sub
 
     Private Sub PokazPanelKonf()
-        Select Case Konfiguracja.ZaznaczonaKostka.Typ
+        Select Case plpPulpit.projZaznaczonaKostka.Typ
             Case Zaleznosci.TypKostki.Tor, Zaleznosci.TypKostki.Zakret
                 PokazKonfTor()
             Case Zaleznosci.TypKostki.RozjazdLewo, Zaleznosci.TypKostki.RozjazdPrawo
@@ -534,14 +509,14 @@
     End Sub
 
     Private Sub PokazKonfTor()
-        Dim tor As Zaleznosci.Tor = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Tor)
+        Dim tor As Zaleznosci.Tor = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Tor)
 
         txtKonfTorPredkosc.Text = tor.PredkoscZasadnicza.ToString()
         pnlKonfTor.Visible = True
     End Sub
 
     Private Sub PokazKonfRozjazd()
-        Dim roz As Zaleznosci.Rozjazd = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Rozjazd)
+        Dim roz As Zaleznosci.Rozjazd = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd)
         txtKonfRozjazdAdres.Text = roz.Adres.ToString
         txtKonfRozjazdNazwa.Text = roz.Nazwa
         txtKonfRozjazdPredkZasad.Text = roz.PredkoscZasadnicza.ToString
@@ -584,11 +559,11 @@
     End Sub
 
     Private Sub PokazKonfSygnTory()
-        Dim sygn As Zaleznosci.Sygnalizator = TryCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Sygnalizator)
+        Dim sygn As Zaleznosci.Sygnalizator = TryCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Sygnalizator)
         If sygn Is Nothing Then Exit Sub
 
         cboKonfSygnOdcinekNast.Items.Clear()
-        Dim en As IEnumerator(Of Zaleznosci.OdcinekToru) = Pulpit.OdcinkiTorow.OrderBy(Function(t As Zaleznosci.OdcinekToru) t.Nazwa).GetEnumerator()
+        Dim en As IEnumerator(Of Zaleznosci.OdcinekToru) = plpPulpit.Pulpit.OdcinkiTorow.OrderBy(Function(t As Zaleznosci.OdcinekToru) t.Nazwa).GetEnumerator()
         Do While en.MoveNext()
             cboKonfSygnOdcinekNast.Items.Add(New ObiektComboBox(Of Zaleznosci.OdcinekToru)(en.Current, en.Current.Nazwa))
         Loop
@@ -596,7 +571,7 @@
     End Sub
 
     Private Sub PokazKonfSygn()
-        Dim sygn As Zaleznosci.Sygnalizator = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Sygnalizator)
+        Dim sygn As Zaleznosci.Sygnalizator = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Sygnalizator)
         txtKonfSygnAdres.Text = sygn.Adres.ToString
         txtKonfSygnNazwa.Text = sygn.Nazwa.ToString
         cboKonfSygnSygnNast.Enabled = (sygn.Typ <> Zaleznosci.TypKostki.SygnalizatorManewrowy)
@@ -618,7 +593,7 @@
         txtKonfSygnPredkosc.Text = sygn.PredkoscZasadnicza.ToString()
 
         If sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Then
-            Dim sw As Zaleznosci.DostepneSwiatlaEnum = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny).DostepneSwiatla
+            Dim sw As Zaleznosci.DostepneSwiatlaEnum = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny).DostepneSwiatla
             cbKonfSygnZiel.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.Zielone) <> 0
             cbKonfSygnPomGor.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.PomaranczoweGora) <> 0
             cbKonfSygnCzer.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.Czerwone) <> 0
@@ -634,9 +609,9 @@
     Private Sub PokazKonfPrzycisk()
         cboKonfPrzyciskTyp.Items.Clear()
 
-        Select Case Konfiguracja.ZaznaczonaKostka.Typ
+        Select Case plpPulpit.projZaznaczonaKostka.Typ
             Case Zaleznosci.TypKostki.Przycisk
-                Dim prz As Zaleznosci.Przycisk = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Przycisk)
+                Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Przycisk)
                 cboKonfPrzyciskTyp.Items.AddRange({
                 New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy, "Sygnał zastępczy"),
                 New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegow, "Zwolnienie przebiegów")
@@ -645,7 +620,7 @@
                 pnlKonfPrzyciskPredkosc.Visible = False
 
             Case Zaleznosci.TypKostki.PrzyciskTor
-                Dim prz As Zaleznosci.PrzyciskTor = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
+                Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.PrzyciskTor)
                 cboKonfPrzyciskTyp.Items.AddRange({
                 New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorPolsamoczynny, "Sygnalizator półsamoczynny"),
                 New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy, "Sygnalizator manewrowy"),
@@ -661,14 +636,14 @@
     End Sub
 
     Private Sub PokazKonfNapis()
-        Dim napis As Zaleznosci.Napis = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Napis)
+        Dim napis As Zaleznosci.Napis = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Napis)
 
         txtKonfNapisTekst.Text = napis.Tekst
         pnlKonfNapis.Visible = True
     End Sub
 
     Private Sub PokazKonfKier()
-        Dim kierunek As Zaleznosci.Kierunek = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.Kierunek)
+        Dim kierunek As Zaleznosci.Kierunek = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Kierunek)
 
         txtKonfKierPredkosc.Text = kierunek.PredkoscZasadnicza.ToString
         If kierunek.KierunekWlaczany = Zaleznosci.KierunekWlaczanyEnum.Zasadniczy Then
@@ -708,7 +683,7 @@
     End Function
 
     Private Sub UstawDostepneSwiatlo(cb As CheckBox, kolor As Zaleznosci.DostepneSwiatlaEnum)
-        Dim sygn As Zaleznosci.SygnalizatorPolsamoczynny = DirectCast(Konfiguracja.ZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny)
+        Dim sygn As Zaleznosci.SygnalizatorPolsamoczynny = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny)
         If cb.Checked Then
             sygn.DostepneSwiatla = sygn.DostepneSwiatla Or kolor
         Else
@@ -735,10 +710,10 @@
     Private Function PobierzElementyDoComboBox(sprawdzanie As SprawdzTypKostki, nazwa As PobierzNazweKostki) As ObiektComboBox(Of Zaleznosci.Kostka)()
         Dim kostki As New List(Of ObiektComboBox(Of Zaleznosci.Kostka))
 
-        For x As Integer = 0 To Pulpit.Szerokosc - 1
-            For y As Integer = 0 To Pulpit.Wysokosc - 1
-                Dim k As Zaleznosci.Kostka = Pulpit.Kostki(x, y)
-                If k IsNot Nothing AndAlso sprawdzanie(k) AndAlso k IsNot Konfiguracja.ZaznaczonaKostka Then
+        For x As Integer = 0 To plpPulpit.Pulpit.Szerokosc - 1
+            For y As Integer = 0 To plpPulpit.Pulpit.Wysokosc - 1
+                Dim k As Zaleznosci.Kostka = plpPulpit.Pulpit.Kostki(x, y)
+                If k IsNot Nothing AndAlso sprawdzanie(k) AndAlso k IsNot plpPulpit.projZaznaczonaKostka Then
                     kostki.Add(New ObiektComboBox(Of Zaleznosci.Kostka)(k, nazwa(k)))
                 End If
             Next
@@ -766,22 +741,21 @@
             txtTorOpis.Text = odcinek.Opis.ToString
             UstawAktywnoscPolTorow(True)
         End If
-        Konfiguracja.ZaznaczonyOdcinek = odcinek
-        RysujPulpit()
+        plpPulpit.projZaznaczonyOdcinek = odcinek
         ZdarzeniaWlaczone = True
     End Sub
 
     Private Sub btnTorDodaj_Click() Handles btnTorDodaj.Click
-        Pulpit.OdcinkiTorow.Add(New Zaleznosci.OdcinekToru)
+        plpPulpit.Pulpit.OdcinkiTorow.Add(New Zaleznosci.OdcinekToru)
         OdswiezListeTorow()
     End Sub
 
     Private Sub btnTorUsun_Click() Handles btnTorUsun.Click
-        Dim odcinek As Zaleznosci.OdcinekToru = Konfiguracja.ZaznaczonyOdcinek
+        Dim odcinek As Zaleznosci.OdcinekToru = plpPulpit.projZaznaczonyOdcinek
         If odcinek Is Nothing Then Exit Sub
 
         If ZadajPytanie("Czy usunąć odcinek torów o nazwie " & odcinek.Nazwa & "?") = DialogResult.Yes Then
-            Pulpit.UsunOdcinekToru(odcinek)
+            plpPulpit.Pulpit.UsunOdcinekToru(odcinek)
             OdswiezListeTorow()
         End If
     End Sub
@@ -789,7 +763,7 @@
     Private Sub txtTorAdres_TextChanged() Handles txtTorAdres.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim tor As Zaleznosci.OdcinekToru = Konfiguracja.ZaznaczonyOdcinek
+        Dim tor As Zaleznosci.OdcinekToru = plpPulpit.projZaznaczonyOdcinek
         If tor IsNot Nothing Then
             tor.Adres = PobierzKrotkaLiczbeNieujemna(txtTorAdres)
             ZaznaczonyOdcinekNaLiscie.SubItems(0).Text = tor.Adres.ToString
@@ -799,7 +773,7 @@
     Private Sub txtTorNazwa_TextChanged() Handles txtTorNazwa.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim tor As Zaleznosci.OdcinekToru = Konfiguracja.ZaznaczonyOdcinek
+        Dim tor As Zaleznosci.OdcinekToru = plpPulpit.projZaznaczonyOdcinek
         If tor IsNot Nothing Then
             tor.Nazwa = txtTorNazwa.Text
             ZaznaczonyOdcinekNaLiscie.SubItems(1).Text = tor.Nazwa
@@ -809,18 +783,18 @@
     Private Sub txtTorOpis_TextChanged() Handles txtTorOpis.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim tor As Zaleznosci.OdcinekToru = Konfiguracja.ZaznaczonyOdcinek
+        Dim tor As Zaleznosci.OdcinekToru = plpPulpit.projZaznaczonyOdcinek
         If tor IsNot Nothing Then
             tor.Opis = txtTorOpis.Text
         End If
     End Sub
 
     Private Sub OdswiezListeTorow()
-        Dim odcinek As Zaleznosci.OdcinekToru = Konfiguracja.ZaznaczonyOdcinek
+        Dim odcinek As Zaleznosci.OdcinekToru = plpPulpit.projZaznaczonyOdcinek
         lvTory.Items.Clear()
         ZaznaczonyOdcinekNaLiscie = Nothing
 
-        Dim en As List(Of Zaleznosci.OdcinekToru).Enumerator = Pulpit.OdcinkiTorow.GetEnumerator
+        Dim en As List(Of Zaleznosci.OdcinekToru).Enumerator = plpPulpit.Pulpit.OdcinkiTorow.GetEnumerator
         While en.MoveNext
             Dim o As Zaleznosci.OdcinekToru = en.Current
             Dim lvi As New ListViewItem(New String() {o.Adres.ToString, o.Nazwa.ToString, o.KostkiTory.Count.ToString()})
@@ -832,11 +806,7 @@
             lvTory.Items.Add(lvi)
         End While
 
-        If ZaznaczonyOdcinekNaLiscie Is Nothing Then
-            lvTory_SelectedIndexChanged()
-        End If
-
-        RysujPulpit()
+        If ZaznaczonyOdcinekNaLiscie Is Nothing Then lvTory_SelectedIndexChanged()
     End Sub
 
     Private Sub UstawAktywnoscPolTorow(wlaczony As Boolean)
@@ -884,22 +854,21 @@
             ZaznaczElement(cboLicznikTor2, licznik.Odcinek2)
             UstawAktywnoscPolLicznikow(True)
         End If
-        Konfiguracja.ZaznaczonyLicznik = licznik
+        plpPulpit.projZaznaczonyLicznik = licznik
         ZdarzeniaWlaczone = True
-        RysujPulpit()
     End Sub
 
     Private Sub btnLicznikDodaj_Click() Handles btnLicznikDodaj.Click
-        Pulpit.LicznikiOsi.Add(New Zaleznosci.ParaLicznikowOsi())
+        plpPulpit.Pulpit.LicznikiOsi.Add(New Zaleznosci.ParaLicznikowOsi())
         OdswiezListeLicznikow()
     End Sub
 
     Private Sub btnLicznikUsun_Click() Handles btnLicznikUsun.Click
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik Is Nothing Then Exit Sub
 
         If ZadajPytanie("Czy usunąć parę liczników osi dla torów """ & licznik.Odcinek1?.Nazwa & """ oraz """ & licznik.Odcinek2?.Nazwa & """?") = DialogResult.Yes Then
-            Pulpit.LicznikiOsi.Remove(licznik)
+            plpPulpit.Pulpit.LicznikiOsi.Remove(licznik)
             OdswiezListeLicznikow()
         End If
     End Sub
@@ -907,7 +876,7 @@
     Private Sub txtLicznik1Adres_TextChanged() Handles txtLicznik1Adres.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
             licznik.Adres1 = PobierzKrotkaLiczbeNieujemna(txtLicznik1Adres)
             ZaznaczonyLicznikNaLiscie.SubItems(0).Text = licznik.Adres1.ToString
@@ -917,27 +886,27 @@
     Private Sub txtLicznik1X_TextChanged() Handles txtLicznik1X.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
             licznik.X1 = PobierzLiczbeNieujemnaRzeczywista(txtLicznik1X)
-            RysujPulpit()
+            plpPulpit.Invalidate()
         End If
     End Sub
 
     Private Sub txtLicznik1Y_TextChanged() Handles txtLicznik1Y.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
             licznik.Y1 = PobierzLiczbeNieujemnaRzeczywista(txtLicznik1Y)
-            RysujPulpit()
+            plpPulpit.Invalidate()
         End If
     End Sub
 
     Private Sub txtLicznik2Adres_TextChanged() Handles txtLicznik2Adres.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
             licznik.Adres2 = PobierzKrotkaLiczbeNieujemna(txtLicznik2Adres)
             ZaznaczonyLicznikNaLiscie.SubItems(1).Text = licznik.Adres2.ToString
@@ -947,43 +916,43 @@
     Private Sub txtLicznik2X_TextChanged() Handles txtLicznik2X.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
             licznik.X2 = PobierzLiczbeNieujemnaRzeczywista(txtLicznik2X)
-            RysujPulpit()
+            plpPulpit.Invalidate()
         End If
     End Sub
 
     Private Sub txtLicznik2Y_TextChanged() Handles txtLicznik2Y.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
             licznik.Y2 = PobierzLiczbeNieujemnaRzeczywista(txtLicznik2Y)
-            RysujPulpit()
+            plpPulpit.Invalidate()
         End If
     End Sub
 
     Private Sub cboLicznikTor1_SelectedIndexChanged() Handles cboLicznikTor1.SelectedIndexChanged
         If cboLicznikTor1.SelectedItem Is Nothing Then Exit Sub
         Dim tor As ObiektComboBox(Of Zaleznosci.OdcinekToru) = DirectCast(cboLicznikTor1.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru))
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
             licznik.Odcinek1 = tor.Wartosc
             ZaznaczonyLicznikNaLiscie.SubItems(2).Text = licznik.Odcinek1?.Nazwa
         End If
-        RysujPulpit()
+        plpPulpit.Invalidate()
     End Sub
 
     Private Sub cboLicznikTor2_SelectedIndexChanged() Handles cboLicznikTor2.SelectedIndexChanged
         If cboLicznikTor2.SelectedItem Is Nothing Then Exit Sub
         Dim tor As ObiektComboBox(Of Zaleznosci.OdcinekToru) = DirectCast(cboLicznikTor2.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru))
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
             licznik.Odcinek2 = tor.Wartosc
             ZaznaczonyLicznikNaLiscie.SubItems(3).Text = licznik.Odcinek2?.Nazwa
         End If
-        RysujPulpit()
+        plpPulpit.Invalidate()
     End Sub
 
     Private Sub UstawAktywnoscPolLicznikow(wlaczony As Boolean)
@@ -999,11 +968,11 @@
     End Sub
 
     Private Sub OdswiezListeLicznikow()
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = Konfiguracja.ZaznaczonyLicznik
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         lvLiczniki.Items.Clear()
         ZaznaczonyLicznikNaLiscie = Nothing
 
-        Dim en As List(Of Zaleznosci.ParaLicznikowOsi).Enumerator = Pulpit.LicznikiOsi.GetEnumerator
+        Dim en As List(Of Zaleznosci.ParaLicznikowOsi).Enumerator = plpPulpit.Pulpit.LicznikiOsi.GetEnumerator
         While en.MoveNext
             Dim l As Zaleznosci.ParaLicznikowOsi = en.Current
             Dim lvi As New ListViewItem(New String() {l.Adres1.ToString, l.Adres2.ToString, l.Odcinek1?.Nazwa, l.Odcinek2?.Nazwa})
@@ -1015,20 +984,18 @@
             lvLiczniki.Items.Add(lvi)
         End While
 
-        If ZaznaczonyLicznikNaLiscie Is Nothing Then
-            lvLiczniki_SelectedIndexChanged()
-        End If
+        If ZaznaczonyLicznikNaLiscie Is Nothing Then lvLiczniki_SelectedIndexChanged()
     End Sub
 
     Private Sub OdswiezListeTorowWLicznikach()
-        OdswiezListeTorowWLicznikach(cboLicznikTor1, Konfiguracja.ZaznaczonyLicznik?.Odcinek1)
-        OdswiezListeTorowWLicznikach(cboLicznikTor2, Konfiguracja.ZaznaczonyLicznik?.Odcinek2)
+        OdswiezListeTorowWLicznikach(cboLicznikTor1, plpPulpit.projZaznaczonyLicznik?.Odcinek1)
+        OdswiezListeTorowWLicznikach(cboLicznikTor2, plpPulpit.projZaznaczonyLicznik?.Odcinek2)
     End Sub
 
     Private Sub OdswiezListeTorowWLicznikach(cbo As ComboBox, zaznaczony As Zaleznosci.OdcinekToru)
         cbo.Items.Clear()
         cbo.Items.Add(New ObiektComboBox(Of Zaleznosci.OdcinekToru)(Nothing, ""))
-        Dim en As IEnumerator(Of Zaleznosci.OdcinekToru) = Pulpit.OdcinkiTorow.OrderBy(Function(f As Zaleznosci.OdcinekToru) f.Nazwa).GetEnumerator()
+        Dim en As IEnumerator(Of Zaleznosci.OdcinekToru) = plpPulpit.Pulpit.OdcinkiTorow.OrderBy(Function(f As Zaleznosci.OdcinekToru) f.Nazwa).GetEnumerator()
         While en.MoveNext
             cbo.Items.Add(New ObiektComboBox(Of Zaleznosci.OdcinekToru)(en.Current, en.Current.Nazwa))
         End While
@@ -1054,22 +1021,21 @@
             txtLampaY.Text = lampa.Y.ToString
             UstawAktywnoscPolLamp(True)
         End If
-        Konfiguracja.ZaznaczonaLampa = lampa
-        RysujPulpit()
+        plpPulpit.projZaznaczonaLampa = lampa
         ZdarzeniaWlaczone = True
     End Sub
 
     Private Sub btnLampaDodaj_Click() Handles btnLampaDodaj.Click
-        Pulpit.Lampy.Add(New Zaleznosci.Lampa())
+        plpPulpit.Pulpit.Lampy.Add(New Zaleznosci.Lampa())
         OdswiezListeLamp()
     End Sub
 
     Private Sub btnLampaUsun_Click() Handles btnLampaUsun.Click
-        Dim lampa As Zaleznosci.Lampa = Konfiguracja.ZaznaczonaLampa
+        Dim lampa As Zaleznosci.Lampa = plpPulpit.projZaznaczonaLampa
         If lampa Is Nothing Then Exit Sub
 
         If ZadajPytanie("Czy usunąć lampę o adresie " & lampa.Adres.ToString & "?") = DialogResult.Yes Then
-            Pulpit.Lampy.Remove(lampa)
+            plpPulpit.Pulpit.Lampy.Remove(lampa)
             OdswiezListeLamp()
         End If
     End Sub
@@ -1077,7 +1043,7 @@
     Private Sub txtLampaAdres_TextChanged() Handles txtLampaAdres.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim lampa As Zaleznosci.Lampa = Konfiguracja.ZaznaczonaLampa
+        Dim lampa As Zaleznosci.Lampa = plpPulpit.projZaznaczonaLampa
         If lampa IsNot Nothing Then
             lampa.Adres = PobierzKrotkaLiczbeNieujemna(txtLampaAdres)
             ZaznaczonaLampaNaLiscie.SubItems(0).Text = lampa.Adres.ToString
@@ -1087,31 +1053,31 @@
     Private Sub txtLampaX_TextChanged() Handles txtLampaX.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim lampa As Zaleznosci.Lampa = Konfiguracja.ZaznaczonaLampa
+        Dim lampa As Zaleznosci.Lampa = plpPulpit.projZaznaczonaLampa
         If lampa IsNot Nothing Then
             lampa.X = PobierzLiczbeNieujemnaRzeczywista(txtLampaX)
             ZaznaczonaLampaNaLiscie.SubItems(1).Text = lampa.X.ToString
         End If
-        RysujPulpit()
+        plpPulpit.Invalidate()
     End Sub
 
     Private Sub txtLampaY_TextChanged() Handles txtLampaY.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim lampa As Zaleznosci.Lampa = Konfiguracja.ZaznaczonaLampa
+        Dim lampa As Zaleznosci.Lampa = plpPulpit.projZaznaczonaLampa
         If lampa IsNot Nothing Then
             lampa.Y = PobierzLiczbeNieujemnaRzeczywista(txtLampaY)
             ZaznaczonaLampaNaLiscie.SubItems(2).Text = lampa.Y.ToString
         End If
-        RysujPulpit()
+        plpPulpit.Invalidate()
     End Sub
 
     Private Sub OdswiezListeLamp()
-        Dim lampa As Zaleznosci.Lampa = Konfiguracja.ZaznaczonaLampa
+        Dim lampa As Zaleznosci.Lampa = plpPulpit.projZaznaczonaLampa
         lvLampy.Items.Clear()
         ZaznaczonaLampaNaLiscie = Nothing
 
-        Dim en As List(Of Zaleznosci.Lampa).Enumerator = Pulpit.Lampy.GetEnumerator
+        Dim en As List(Of Zaleznosci.Lampa).Enumerator = plpPulpit.Pulpit.Lampy.GetEnumerator
         While en.MoveNext
             Dim l As Zaleznosci.Lampa = en.Current
             Dim lvi As New ListViewItem(New String() {l.Adres.ToString, l.X.ToString, l.Y.ToString})
@@ -1123,11 +1089,7 @@
             lvLampy.Items.Add(lvi)
         End While
 
-        If ZaznaczonaLampaNaLiscie Is Nothing Then
-            lvLampy_SelectedIndexChanged()
-        End If
-
-        RysujPulpit()
+        If ZaznaczonaLampaNaLiscie Is Nothing Then lvLampy_SelectedIndexChanged()
     End Sub
 
     Private Sub UstawAktywnoscPolLamp(wlaczony As Boolean)
@@ -1141,211 +1103,34 @@
 
 #Region "Pulpit"
 
-    Private Sub pctPulpit_KeyDown(sender As Object, e As KeyEventArgs) Handles pctPulpit.KeyDown
-        If Konfiguracja.ZaznaczonaKostka IsNot Nothing Then
-
-            If e.KeyData = Keys.R Then
-                Dim obrot As Integer = Konfiguracja.ZaznaczonaKostka.Obrot
-                obrot = (obrot + ZWIEKSZ_OBROT) Mod KAT_PELNY
-                Konfiguracja.ZaznaczonaKostka.Obrot = obrot
-                RysujPulpit()
-
-            ElseIf e.KeyData = Keys.Delete
-                Pulpit.UsunKostke(Konfiguracja.ZaznaczonaKostka)
-                UsunZaznaczenieKostki()
-            End If
-
-        End If
+    Private Sub plpPulpit_projZmianaZaznaczeniaKostki(kostka As Zaleznosci.Kostka) Handles plpPulpit.projZmianaZaznaczeniaKostki
+        UkryjPaneleKonf()
+        If kostka IsNot Nothing Then PokazPanelKonf()
     End Sub
 
-    Private Sub pctPulpit_Click() Handles pctPulpit.Click
-        Dim p As Point = PobierzKliknieteWspolrzedneKostki()
+    Private Sub plpPulpit_projZmianaZaznaczeniaLampy(lampa As Zaleznosci.Lampa) Handles plpPulpit.projZmianaZaznaczeniaLampy
+        If Not ZdarzeniaWlaczone Then Exit Sub
 
-        If Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Tory Then
-            If CzyKostkaWZakresiePulpitu(p) Then
-                Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-                If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.Tor AndAlso Konfiguracja.ZaznaczonyOdcinek IsNot Nothing Then
+        lvLampy.SelectedItems.Clear()
 
-                    Dim t As Zaleznosci.Tor = DirectCast(kostka, Zaleznosci.Tor)
-                    Dim nalezyDoTegoOdcinka As Boolean = t.NalezyDoOdcinka Is Konfiguracja.ZaznaczonyOdcinek
-                    If t.NalezyDoOdcinka IsNot Nothing Then t.NalezyDoOdcinka.KostkiTory.Remove(t)
-                    If nalezyDoTegoOdcinka Then
-                        t.NalezyDoOdcinka = Nothing
-                    Else
-                        t.NalezyDoOdcinka = Konfiguracja.ZaznaczonyOdcinek
-                        Konfiguracja.ZaznaczonyOdcinek.KostkiTory.Add(t)
-                    End If
-                    OdswiezLiczbePrzypisanychKostekTorow()
-
+        If lampa IsNot Nothing Then
+            For i As Integer = 0 To lvLampy.Items.Count - 1
+                Dim lvi As ListViewItem = lvLampy.Items(i)
+                If DirectCast(lvi.Tag, Zaleznosci.Lampa) Is lampa Then
+                    lvi.Selected = True
+                    Exit For
                 End If
-            End If
-
-        ElseIf Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Lampy
-            Dim l As Zaleznosci.Lampa = PobierzKliknietaLampe()
-
-            If l IsNot Nothing Then
-                For i As Integer = 0 To lvLampy.Items.Count - 1
-                    Dim lvi As ListViewItem = lvLampy.Items(i)
-                    If DirectCast(lvi.Tag, Zaleznosci.Lampa) Is l Then
-                        lvi.Selected = True
-                        Exit For
-                    End If
-                Next
-            End If
-
-        ElseIf Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Nic
-            pctPulpit.Focus()
-            UkryjPaneleKonf()
-
-            If CzyKostkaNiepusta(p) Then
-                Konfiguracja.ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
-                PokazPanelKonf()
-            Else
-                Konfiguracja.ZaznaczonaKostka = Nothing
-            End If
-
-        End If
-
-        RysujPulpit()
-    End Sub
-
-    Private Sub pctPulpit_MouseWheel(sender As Object, e As MouseEventArgs) Handles pctPulpit.MouseWheel, pnlPulpit.MouseWheel
-        Dim sk As Single = Konfiguracja.Skalowanie + e.Delta * SKALOWANIE_ZMIANA
-        If sk < SKALOWANIE_MIN Then sk = SKALOWANIE_MIN
-        If sk > SKALOWANIE_MAX Then sk = SKALOWANIE_MAX
-
-        Konfiguracja.Skalowanie = sk
-        Dim poz As Point = pctPulpit.PointToClient(MousePosition)
-        Dim wspx As Double = poz.X / pctPulpit.Size.Width
-        Dim wspy As Double = poz.Y / pctPulpit.Size.Height
-        RysujPulpit()
-
-        Dim nowy As New Point(CInt(wspx * pctPulpit.Width), CInt(wspy * pctPulpit.Height))
-        Dim p As Point = pctPulpit.PointToClient(MousePosition)
-        pctPulpit.Location = New Point(pctPulpit.Location.X + p.X - nowy.X, pctPulpit.Location.Y + p.Y - nowy.Y)
-    End Sub
-
-    Private Sub pnlPulpit_MouseMove(sender As Object, e As MouseEventArgs) Handles pnlPulpit.MouseMove, pctPulpit.MouseMove
-        If e.Button = MouseButtons.Left Then
-            If PoprzedniPunkt.X <> -1 Then
-                Dim zm As Point = pnlPulpit.PointToClient(MousePosition)
-                Dim zmX As Integer = zm.X - PoprzedniPunkt.X
-                Dim zmY As Integer = zm.Y - PoprzedniPunkt.Y
-                pctPulpit.Location = New Point(LokalizacjaPulpitu.X + zmX, LokalizacjaPulpitu.Y + zmY)
-            End If
+            Next
         End If
     End Sub
 
-    Private Sub pnlPulpit_MouseUp() Handles pnlPulpit.MouseUp, pctPulpit.MouseUp
-        PoprzedniPunkt.X = -1
-        PoprzedniPunkt.Y = -1
+    Private Sub plpPulpit_projZmianaPrzypisaniaToruDoOdcinka() Handles plpPulpit.projZmianaPrzypisaniaToruDoOdcinka
+        OdswiezLiczbePrzypisanychKostekTorow()
     End Sub
-
-    Private Sub pnlPulpit_MouseDown(sender As Object, e As MouseEventArgs) Handles pnlPulpit.MouseDown, pctPulpit.MouseDown
-        If Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Nic And ((ModifierKeys And Keys.Shift) <> 0) Then      'Przesuń kostkę
-            Dim p As Point = PobierzKliknieteWspolrzedneKostki()
-            If CzyKostkaNiepusta(p) Then
-                AkceptowaniePrzeciagania = DragDropEffects.All
-                PierwszaObslugaPrzeciagania = True
-                DoDragDrop(Pulpit.Kostki(p.X, p.Y), DragDropEffects.Move)
-            End If
-        Else        'Przesuń cały pulpit
-            PoprzedniPunkt = pnlPulpit.PointToClient(MousePosition)
-            LokalizacjaPulpitu.X = pctPulpit.Location.X
-            LokalizacjaPulpitu.Y = pctPulpit.Location.Y
-        End If
-    End Sub
-
-    Private Sub pnlPulpit_DragOver(sender As Object, e As DragEventArgs) Handles pnlPulpit.DragOver
-        If Not e.Data.GetFormats()(0).StartsWith("Zaleznosci.") Then
-            e.Effect = DragDropEffects.None
-            Exit Sub
-        End If
-
-        Dim p As Point = PobierzKliknieteWspolrzedneKostki()
-
-        If CzyKostkaWZakresiePulpitu(p) AndAlso (
-            (PierwszaObslugaPrzeciagania AndAlso (Pulpit.Kostki(p.X, p.Y) Is Nothing Or Pulpit.Kostki(p.X, p.Y) Is PobierzDodawanaKostke(e))) Or
-            (p <> PoprzLokalizacjaKostki AndAlso Pulpit.Kostki(p.X, p.Y) Is Nothing)
-            ) Then
-
-            If PierwszaObslugaPrzeciagania Then
-                AkceptowaniePrzeciagania = DragDropEffects.All
-                Konfiguracja.ZaznaczonaKostka = PobierzDodawanaKostke(e)
-                UkryjPaneleKonf()
-                PokazPanelKonf()
-                PierwszaObslugaPrzeciagania = False
-            Else
-                Pulpit.Kostki(PoprzLokalizacjaKostki.X, PoprzLokalizacjaKostki.Y) = Nothing
-            End If
-
-            Pulpit.Kostki(p.X, p.Y) = Konfiguracja.ZaznaczonaKostka
-            PoprzLokalizacjaKostki = p
-            RysujPulpit()
-        End If
-
-        e.Effect = AkceptowaniePrzeciagania
-    End Sub
-
-    Private Sub pnlPulpit_Resize() Handles pnlPulpit.Resize
-        RysujPulpit()
-    End Sub
-
-    Private Sub RysujPulpit()
-        Dim img As Image = pctPulpit.Image
-        Dim obr As Image = Rysuj(Pulpit, Konfiguracja)
-        pctPulpit.Image = obr
-        pctPulpit.Size = obr.Size
-        img?.Dispose()
-    End Sub
-
-    Private Function PobierzDodawanaKostke(e As DragEventArgs) As Zaleznosci.Kostka
-        Return DirectCast(e.Data.GetData(e.Data.GetFormats()(0)), Zaleznosci.Kostka)
-    End Function
-
-    Private Function CzyKostkaWZakresiePulpitu(wspolrzedne As Point) As Boolean
-        Return wspolrzedne.X >= 0 And wspolrzedne.X < Pulpit.Szerokosc And wspolrzedne.Y >= 0 And wspolrzedne.Y < Pulpit.Wysokosc
-    End Function
-
-    Private Function CzyKostkaNiepusta(wspolrzedne As Point) As Boolean
-        Return CzyKostkaWZakresiePulpitu(wspolrzedne) AndAlso Pulpit.Kostki(wspolrzedne.X, wspolrzedne.Y) IsNot Nothing
-    End Function
-
-    Private Function PobierzKliknieteWspolrzedneKostki() As Point
-        Dim k As Point = pctPulpit.PointToClient(MousePosition)
-        Return New Point(
-        CInt(k.X / Konfiguracja.Skalowanie - 0.5),
-        CInt(k.Y / Konfiguracja.Skalowanie - 0.5)
-        )
-    End Function
-
-    Private Function PobierzKliknietaLampe() As Zaleznosci.Lampa
-        If Not Konfiguracja.DodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then Return Nothing
-
-        Dim k As Point = pctPulpit.PointToClient(MousePosition)
-        Dim s As PointF = New PointF(k.X / Konfiguracja.Skalowanie, k.Y / Konfiguracja.Skalowanie)
-        Dim pol As Single = Rysowanie.KOLKO_SZER / 2
-        Dim en As List(Of Zaleznosci.Lampa).Enumerator = Pulpit.Lampy.GetEnumerator
-
-        While en.MoveNext
-            Dim l As Zaleznosci.Lampa = en.Current
-            If (s.X <= l.X + pol) And (s.X >= l.X - pol) And (s.Y <= l.Y + pol) And (s.Y >= l.Y - pol) Then
-                Return l
-            End If
-        End While
-
-        Return Nothing
-    End Function
 
 #End Region 'Pulpit
 
 #Region "Reszta"
-
-    Private Sub UsunZaznaczenieKostki()
-        UkryjPaneleKonf()
-        Konfiguracja.ZaznaczonaKostka = Nothing
-        RysujPulpit()
-    End Sub
 
     Private Sub ZaznaczElement(Of T As Class)(cbo As ComboBox, el As T)
         If el Is Nothing Then
