@@ -1,6 +1,15 @@
 ﻿Public Class wndNastawnia
     Private Const FILTR_PLIKU As String = Zaleznosci.PolaczeniaStacji.OPIS_PLIKU & "|*" & Zaleznosci.PolaczeniaStacji.ROZSZERZENIE_PLIKU
 
+    Private Sub mnuPolaczZSerwerem_Click() Handles mnuPolaczZSerwerem.Click
+
+    End Sub
+
+    Private Sub mnuZarzadzajSerwerem_Click() Handles mnuZarzadzajSerwerem.Click
+        Dim wnd As New SerwerSterujacy.wndOknoGlowne
+        wnd.Show()
+    End Sub
+
     Private Sub mnuKonfiguratorStacji_Click() Handles mnuKonfiguratorStacji.Click
         Dim wnd As New wndKonfiguratorStacji()
         wnd.Show()
@@ -28,4 +37,5 @@
             End If
         End If
     End Sub
+
 End Class

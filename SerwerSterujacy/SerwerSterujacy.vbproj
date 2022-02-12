@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EA5AAC55-F6D7-4D41-BB57-003BDF66DEFD}</ProjectGuid>
+    <ProjectGuid>{DB38CD60-7AFC-4062-9289-D2E73682F056}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>Nastawnia.My.MyApplication</StartupObject>
-    <RootNamespace>Nastawnia</RootNamespace>
-    <AssemblyName>Nastawnia</AssemblyName>
+    <StartupObject>SerwerSterujacy.My.MyApplication</StartupObject>
+    <RootNamespace>SerwerSterujacy</RootNamespace>
+    <AssemblyName>SerwerSterujacy</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -21,7 +21,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>Nastawnia.xml</DocumentationFile>
+    <DocumentationFile>SerwerSterujacy.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -33,7 +33,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>Nastawnia.xml</DocumentationFile>
+    <DocumentationFile>SerwerSterujacy.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -76,44 +76,11 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PulpitSterowniczy\Dodatki.vb" />
-    <Compile Include="PulpitSterowniczy\RysujDodatkoweObiekty.vb" />
-    <Compile Include="KonfiguratorStacji\EdytorPowierzchni.Designer.vb">
-      <DependentUpon>EdytorPowierzchni.vb</DependentUpon>
-    </Compile>
-    <Compile Include="KonfiguratorStacji\EdytorPowierzchni.vb">
+    <Compile Include="OknoGlowne.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="KonfiguratorStacji\NazwaStacji.Designer.vb">
-      <DependentUpon>NazwaStacji.vb</DependentUpon>
-    </Compile>
-    <Compile Include="KonfiguratorStacji\NazwaStacji.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LaczenieStacji\DodawaniePolaczenia.Designer.vb">
-      <DependentUpon>DodawaniePolaczenia.vb</DependentUpon>
-    </Compile>
-    <Compile Include="LaczenieStacji\DodawaniePolaczenia.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LaczenieStacji\KonfiguratorPolaczen.Designer.vb">
-      <DependentUpon>KonfiguratorPolaczen.vb</DependentUpon>
-    </Compile>
-    <Compile Include="LaczenieStacji\KonfiguratorPolaczen.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Narzedzia.vb" />
-    <Compile Include="Nastawnia.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Nastawnia.Designer.vb">
-      <DependentUpon>Nastawnia.vb</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="KonfiguratorStacji\KonfiguratorStacji.Designer.vb">
-      <DependentUpon>KonfiguratorStacji.vb</DependentUpon>
-    </Compile>
-    <Compile Include="KonfiguratorStacji\KonfiguratorStacji.vb">
+    <Compile Include="OknoGlowne.Designer.vb">
+      <DependentUpon>OknoGlowne.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -131,43 +98,16 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="PulpitSterowniczy\IRysownik.vb" />
-    <Compile Include="PulpitSterowniczy\PulpitSterowniczy.Designer.vb">
-      <DependentUpon>PulpitSterowniczy.vb</DependentUpon>
-    </Compile>
-    <Compile Include="PulpitSterowniczy\PulpitSterowniczy.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyGDI.vb" />
-    <Compile Include="PulpitSterowniczy\TypRysownika.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="KonfiguratorStacji\EdytorPowierzchni.resx">
-      <DependentUpon>EdytorPowierzchni.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="KonfiguratorStacji\KonfiguratorStacji.resx">
-      <DependentUpon>KonfiguratorStacji.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="KonfiguratorStacji\NazwaStacji.resx">
-      <DependentUpon>NazwaStacji.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LaczenieStacji\DodawaniePolaczenia.resx">
-      <DependentUpon>DodawaniePolaczenia.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LaczenieStacji\KonfiguratorPolaczen.resx">
-      <DependentUpon>KonfiguratorPolaczen.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Nastawnia.resx">
-      <DependentUpon>Nastawnia.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PulpitSterowniczy\PulpitSterowniczy.resx">
-      <DependentUpon>PulpitSterowniczy.vb</DependentUpon>
+    <EmbeddedResource Include="OknoGlowne.resx">
+      <DependentUpon>OknoGlowne.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -181,16 +121,6 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SerwerSterujacy\SerwerSterujacy.vbproj">
-      <Project>{db38cd60-7afc-4062-9289-d2e73682f056}</Project>
-      <Name>SerwerSterujacy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Zaleznosci\Zaleznosci.vbproj">
-      <Project>{d13b5d10-865e-4724-b791-13137e8bd9d6}</Project>
-      <Name>Zaleznosci</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

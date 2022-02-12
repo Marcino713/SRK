@@ -28,6 +28,9 @@ Partial Class wndNastawnia
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuNowePolaczenia = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuOtworzPolaczenia = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
+        Me.mnuPolaczZSerwerem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuZarzadzajSerwerem = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuMenu.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -42,7 +45,7 @@ Partial Class wndNastawnia
         '
         'mnuNarzedzia
         '
-        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuKonfiguratorStacji, Me.ToolStripSeparator1, Me.mnuNowePolaczenia, Me.mnuOtworzPolaczenia})
+        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPolaczZSerwerem, Me.mnuZarzadzajSerwerem, Me.ToolStripSeparator2, Me.mnuKonfiguratorStacji, Me.ToolStripSeparator1, Me.mnuNowePolaczenia, Me.mnuOtworzPolaczenia})
         Me.mnuNarzedzia.Name = "mnuNarzedzia"
         Me.mnuNarzedzia.Size = New System.Drawing.Size(70, 20)
         Me.mnuNarzedzia.Text = "Narzędzia"
@@ -70,6 +73,23 @@ Partial Class wndNastawnia
         Me.mnuOtworzPolaczenia.Size = New System.Drawing.Size(193, 22)
         Me.mnuOtworzPolaczenia.Text = "Otwórz plik połączeń..."
         '
+        'ToolStripSeparator2
+        '
+        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(190, 6)
+        '
+        'mnuPolaczZSerwerem
+        '
+        Me.mnuPolaczZSerwerem.Name = "mnuPolaczZSerwerem"
+        Me.mnuPolaczZSerwerem.Size = New System.Drawing.Size(193, 22)
+        Me.mnuPolaczZSerwerem.Text = "Połącz z serwerem..."
+        '
+        'mnuZarzadzajSerwerem
+        '
+        Me.mnuZarzadzajSerwerem.Name = "mnuZarzadzajSerwerem"
+        Me.mnuZarzadzajSerwerem.Size = New System.Drawing.Size(193, 22)
+        Me.mnuZarzadzajSerwerem.Text = "Zarządzaj serwerem..."
+        '
         'wndNastawnia
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -92,4 +112,7 @@ Partial Class wndNastawnia
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
     Friend WithEvents mnuNowePolaczenia As ToolStripMenuItem
     Friend WithEvents mnuOtworzPolaczenia As ToolStripMenuItem
+    Friend WithEvents mnuPolaczZSerwerem As ToolStripMenuItem
+    Friend WithEvents mnuZarzadzajSerwerem As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
 End Class
