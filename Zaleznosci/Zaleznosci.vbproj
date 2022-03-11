@@ -49,6 +49,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -68,6 +69,38 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Komunikaty\Informacja.vb" />
+    <Compile Include="ObslugaKomunikatow\Komunikat.vb" />
+    <Compile Include="Komunikaty\ZakonczDzialanieKlienta.vb" />
+    <Compile Include="Komunikaty\ZakonczonoDzialanieSerwera.vb" />
+    <Compile Include="Komunikaty\NadanoNumerPociagu.vb" />
+    <Compile Include="Komunikaty\Nieuwierzytelniono.vb" />
+    <Compile Include="ObslugaKomunikatow\TypKomunikatu.vb" />
+    <Compile Include="Komunikaty\ZakonczonoSesjeKlienta.vb" />
+    <Compile Include="Komunikaty\UstawZwrotnice.vb" />
+    <Compile Include="Komunikaty\ZmienionoKierunek.vb" />
+    <Compile Include="Komunikaty\ZmienionoPredkoscPociagu.vb" />
+    <Compile Include="Komunikaty\UstawKierunek.vb" />
+    <Compile Include="Komunikaty\UstawPredkoscPociagu.vb" />
+    <Compile Include="Komunikaty\UstawStanSygnalizatora.vb" />
+    <Compile Include="Komunikaty\ZazadanoUstawieniaKierunku.vb" />
+    <Compile Include="Komunikaty\ZmienionoJasnoscLamp.vb" />
+    <Compile Include="Komunikaty\ZmienionoPredkoscMaksymalna.vb" />
+    <Compile Include="Komunikaty\ZmienionoStanSygnalizatora.vb" />
+    <Compile Include="Komunikaty\ZwolnijPrzebiegi.vb" />
+    <Compile Include="Komunikaty\UstawPoczatkowaZajetoscToru.vb" />
+    <Compile Include="Komunikaty\UwierzytelnijSie.vb" />
+    <Compile Include="Komunikaty\UstawJasnoscLamp.vb" />
+    <Compile Include="Komunikaty\UwierzytelnionoPoprawnie.vb" />
+    <Compile Include="Komunikaty\WybierzPosterunek.vb" />
+    <Compile Include="Komunikaty\WybranoPosterunek.vb" />
+    <Compile Include="Komunikaty\ZmienionoStanZwrotnicy.vb" />
+    <Compile Include="Komunikaty\ZmienionoStanToru.vb" />
+    <Compile Include="ObslugaTCP\PolaczenieTCP.vb" />
+    <Compile Include="ObslugaTCP\KlientTCP.vb" />
+    <Compile Include="ObslugaTCP\PrzetwOdebrKomunikatu.vb" />
+    <Compile Include="ObslugaTCP\SerwerTCP.vb" />
+    <Compile Include="ObslugaTCP\ZarzadzanieTCP.vb" />
     <Compile Include="PlikiPolaczen\KonfiguracjaOdczytu.vb" />
     <Compile Include="LaczenieStacji\LaczoneOdcinkiTorow.vb" />
     <Compile Include="LaczenieStacji\LaczonyPlikStacji.vb" />
@@ -111,12 +144,13 @@
     <Compile Include="PlikiPulpitu\KonfiguracjaZapisu.vb" />
     <Compile Include="ObslugaPlikow\OtwieraniePlikuException.vb" />
     <Compile Include="ObslugaPlikow\SegmentPliku.vb" />
-    <Compile Include="ObslugaPlikow\WersjaPliku.vb" />
+    <Compile Include="WersjaPliku.vb" />
     <Compile Include="Pulpit\Lampa.vb" />
     <Compile Include="Pulpit\ParaLicznikowOsi.vb" />
     <Compile Include="Pulpit\OdcinekToru.vb" />
     <Compile Include="Pulpit\Pulpit.vb" />
     <Compile Include="PlikiPulpitu\TypObiektuPliku.vb" />
+    <Compile Include="Punkt.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">

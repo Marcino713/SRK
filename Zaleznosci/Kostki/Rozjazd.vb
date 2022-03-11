@@ -60,7 +60,7 @@ Public MustInherit Class Rozjazd
             Dim zal As New KonfiguracjaRozjazduZaleznego
             Dim id As Integer = br.ReadInt32
             zal.RozjazdZalezny = CType(konf.Kostki(id), Rozjazd)
-            zal.Konfiguracja = CType(br.ReadByte, UstawienieRozjazduZaleznegoEnum)
+            zal.Konfiguracja = CType(br.ReadByte, UstawienieRozjazduEnum)
             zaleznosci(i) = zal
         Next
         Return zaleznosci
@@ -78,10 +78,10 @@ End Class
 
 Public Class KonfiguracjaRozjazduZaleznego
     Public RozjazdZalezny As Rozjazd
-    Public Konfiguracja As UstawienieRozjazduZaleznegoEnum
+    Public Konfiguracja As UstawienieRozjazduEnum
 End Class
 
-Public Enum UstawienieRozjazduZaleznegoEnum
+Public Enum UstawienieRozjazduEnum
     Wprost
     Bok
 End Enum
