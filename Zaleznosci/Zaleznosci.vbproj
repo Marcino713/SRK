@@ -49,6 +49,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -69,6 +70,8 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Komunikaty\DHInicjalizuj.vb" />
+    <Compile Include="Komunikaty\DHZainicjalizowano.vb" />
     <Compile Include="Komunikaty\Informacja.vb" />
     <Compile Include="ObslugaKomunikatow\Komunikat.vb" />
     <Compile Include="Komunikaty\ZakonczDzialanieKlienta.vb" />
@@ -96,10 +99,12 @@
     <Compile Include="Komunikaty\WybranoPosterunek.vb" />
     <Compile Include="Komunikaty\ZmienionoStanZwrotnicy.vb" />
     <Compile Include="Komunikaty\ZmienionoStanToru.vb" />
+    <Compile Include="ObslugaTCP\KlientDaneDH.vb" />
     <Compile Include="ObslugaTCP\PolaczenieTCP.vb" />
     <Compile Include="ObslugaTCP\KlientTCP.vb" />
     <Compile Include="ObslugaTCP\PrzetwOdebrKomunikatu.vb" />
     <Compile Include="ObslugaTCP\SerwerTCP.vb" />
+    <Compile Include="ObslugaTCP\StanPolaczenia.vb" />
     <Compile Include="ObslugaTCP\ZarzadzanieTCP.vb" />
     <Compile Include="PlikiPolaczen\KonfiguracjaOdczytu.vb" />
     <Compile Include="LaczenieStacji\LaczoneOdcinkiTorow.vb" />

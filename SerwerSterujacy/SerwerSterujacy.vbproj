@@ -122,6 +122,12 @@
     </None>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Zaleznosci\Zaleznosci.vbproj">
+      <Project>{d13b5d10-865e-4724-b791-13137e8bd9d6}</Project>
+      <Name>Zaleznosci</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

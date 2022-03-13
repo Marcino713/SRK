@@ -1,4 +1,6 @@
 ﻿Friend Class TypKomunikatu
+    Friend Const DH_INICJALIZUJ As UShort = 1
+    Friend Const DH_ZAINICJALIZOWANO As UShort = 2
     Friend Const UWIERZYTELNIJ_SIE As UShort = 4
     Friend Const UWIERZYTELNIONO_POPRAWNIE As UShort = 5
     Friend Const NIEUWIERZYTELNIONO As UShort = 6
@@ -24,4 +26,8 @@
     Friend Const ZAKONCZ_DZIALANIE_KLIENTA As UShort = 26
     Friend Const ZAKONCZONO_DZIALANIE_SERWERA As UShort = 27
     Friend Const ZAKONCZONO_SESJE_KLIENTA As UShort = 28
+
+    Friend Shared Function CzyKomunikatDH(typ As UShort) As Boolean
+        Return typ = DH_INICJALIZUJ Or typ = DH_ZAINICJALIZOWANO
+    End Function
 End Class

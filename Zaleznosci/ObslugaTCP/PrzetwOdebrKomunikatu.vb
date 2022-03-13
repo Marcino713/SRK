@@ -9,4 +9,4 @@
 End Class
 
 Friend Delegate Function TworzenieKomunikatu(br As BinaryReader) As Komunikat
-Friend Delegate Sub ZglaszanieZdarzenia(post As UShort, kom As Komunikat)
+Friend Delegate Sub ZglaszanieZdarzenia(pol As PolaczenieTCP, kom As Komunikat)

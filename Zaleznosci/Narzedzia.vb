@@ -1,20 +1,24 @@
-﻿Friend Module Narzedzia
+﻿Imports System.Numerics
+
+Friend Module Narzedzia
     Friend Const PUSTE_ODWOLANIE As Integer = -1
-    Private ReadOnly Kodowanie As New Text.UTF8Encoding
+    Private Const LICZBA_BAJTOW_DUZEJ_LICZBY As Integer = 150
+    Private ReadOnly KODOWANIE As New Text.UTF8Encoding
+    Private rnd As New Random
     Private FunkcjaSkrotu As Security.Cryptography.SHA1 = Security.Cryptography.SHA1.Create()
 
     Friend Function PobierzBajty(tekst As String) As Byte()
         If tekst Is Nothing Then tekst = ""
-        Return Kodowanie.GetBytes(tekst)
+        Return KODOWANIE.GetBytes(tekst)
     End Function
 
     Friend Function PobierzTekst(bajty As Byte()) As String
-        Return Kodowanie.GetString(bajty)
+        Return KODOWANIE.GetString(bajty)
     End Function
 
     Friend Sub ZapiszTekst(bw As BinaryWriter, tekst As String)
         If tekst Is Nothing Then tekst = ""
-        Dim b As Byte() = Kodowanie.GetBytes(tekst)
+        Dim b As Byte() = KODOWANIE.GetBytes(tekst)
         bw.Write(CType(b.Length, UShort))
         bw.Write(b)
     End Sub
@@ -22,7 +26,7 @@
     Friend Function OdczytajTekst(br As BinaryReader) As String
         Dim ile As UShort = br.ReadUInt16
         Dim b As Byte() = br.ReadBytes(ile)
-        Return Kodowanie.GetString(b)
+        Return KODOWANIE.GetString(b)
     End Function
 
     Friend Function PobierzInt32(b As Byte(), pocz As Integer, liczba_bajtow As Integer) As Integer
@@ -45,6 +49,12 @@
         Next
 
         Return True
+    End Function
+
+    Friend Function PobierzDuzaLiczbe() As BigInteger
+        Dim b(LICZBA_BAJTOW_DUZEJ_LICZBY - 1) As Byte
+        rnd.NextBytes(b)
+        Return BigInteger.Abs(New BigInteger(b))
     End Function
 
 End Module

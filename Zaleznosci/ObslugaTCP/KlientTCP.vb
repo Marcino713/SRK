@@ -1,5 +1,6 @@
 ﻿Imports System.Net
 Imports System.Net.Sockets
+Imports System.Numerics
 Imports System.Threading
 
 Public Class KlientTCP
@@ -9,6 +10,7 @@ Public Class KlientTCP
     Private AdresIP As String
     Private Port As UShort
     Private Haslo As String
+    Private DaneDH As KlientDaneDH
 
     Public Event BladPolaczenia()
     Public Event OdebranoInformacje(kom As Informacja)
@@ -28,79 +30,84 @@ Public Class KlientTCP
     Public Event OdebranoZmienionoStanZwrotnicy(kom As ZmienionoStanZwrotnicy)
 
     Public Sub New()
+        DaneFabrykiObiektow.Add(TypKomunikatu.DH_ZAINICJALIZOWANO, New PrzetwOdebrKomunikatu(
+            AddressOf DHZainicjalizowano.Otworz,
+            AddressOf PrzetworzDH
+        ))
+
         DaneFabrykiObiektow.Add(TypKomunikatu.INFORMACJA, New PrzetwOdebrKomunikatu(
             AddressOf Informacja.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoInformacje(CType(kom, Informacja))
+            Sub(pol, kom) RaiseEvent OdebranoInformacje(CType(kom, Informacja))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZAKONCZONO_DZIALANIE_SERWERA, New PrzetwOdebrKomunikatu(
             AddressOf ZakonczonoDzialanieSerwera.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoZakonczonoDzialanieSerwera(CType(kom, ZakonczonoDzialanieSerwera))
+            Sub(pol, kom) RaiseEvent OdebranoZakonczonoDzialanieSerwera(CType(kom, ZakonczonoDzialanieSerwera))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.NADANO_NUMER_POCIAGU, New PrzetwOdebrKomunikatu(
             AddressOf NadanoNumerPociagu.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoNadanoNumerPociagu(CType(kom, NadanoNumerPociagu))
+            Sub(pol, kom) RaiseEvent OdebranoNadanoNumerPociagu(CType(kom, NadanoNumerPociagu))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.NIEUWIERZYTELNIONO, New PrzetwOdebrKomunikatu(
             AddressOf Nieuwierzytelniono.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoNieuwierzytelniono(CType(kom, Nieuwierzytelniono))
+            Sub(pol, kom) RaiseEvent OdebranoNieuwierzytelniono(CType(kom, Nieuwierzytelniono))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.UWIERZYTELNIONO_POPRAWNIE, New PrzetwOdebrKomunikatu(
             AddressOf UwierzytelnionoPoprawnie.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoUwierzytelnionoPoprawnie(CType(kom, UwierzytelnionoPoprawnie))
+            Sub(pol, kom) RaiseEvent OdebranoUwierzytelnionoPoprawnie(CType(kom, UwierzytelnionoPoprawnie))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.WYBRANO_POSTERUNEK, New PrzetwOdebrKomunikatu(
             AddressOf WybranoPosterunek.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoWybranoPosterunek(CType(kom, WybranoPosterunek))
+            Sub(pol, kom) RaiseEvent OdebranoWybranoPosterunek(CType(kom, WybranoPosterunek))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZAKONCZONO_SESJE_KLIENTA, New PrzetwOdebrKomunikatu(
             AddressOf ZakonczonoSesjeKlienta.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoZakonczonoSesjeKlienta(CType(kom, ZakonczonoSesjeKlienta))
+            Sub(pol, kom) RaiseEvent OdebranoZakonczonoSesjeKlienta(CType(kom, ZakonczonoSesjeKlienta))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZAZADANO_USTAWIENIA_KIERUNKU, New PrzetwOdebrKomunikatu(
             AddressOf ZazadanoUstawieniaKierunku.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoZazadanoUstawieniaKierunku(CType(kom, ZazadanoUstawieniaKierunku))
+            Sub(pol, kom) RaiseEvent OdebranoZazadanoUstawieniaKierunku(CType(kom, ZazadanoUstawieniaKierunku))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_JASNOSC_LAMP, New PrzetwOdebrKomunikatu(
             AddressOf ZmienionoJasnoscLamp.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoZmienionoJasnoscLamp(CType(kom, ZmienionoJasnoscLamp))
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoJasnoscLamp(CType(kom, ZmienionoJasnoscLamp))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_KIERUNEK, New PrzetwOdebrKomunikatu(
             AddressOf ZmienionoKierunek.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoZmienionoKierunek(CType(kom, ZmienionoKierunek))
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoKierunek(CType(kom, ZmienionoKierunek))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_PREDKOSC_MAKSYMALNA, New PrzetwOdebrKomunikatu(
             AddressOf ZmienionoPredkoscMaksymalna.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoZmienionoPredkoscMaksymalna(CType(kom, ZmienionoPredkoscMaksymalna))
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoPredkoscMaksymalna(CType(kom, ZmienionoPredkoscMaksymalna))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_PREDKOSC_POCIAGU, New PrzetwOdebrKomunikatu(
             AddressOf ZmienionoPredkoscPociagu.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoZmienionoPredkoscPociagu(CType(kom, ZmienionoPredkoscPociagu))
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoPredkoscPociagu(CType(kom, ZmienionoPredkoscPociagu))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_STAN_SYGNALIZATORA, New PrzetwOdebrKomunikatu(
             AddressOf ZmienionoStanSygnalizatora.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoZmienionoStanSygnalizatora(CType(kom, ZmienionoStanSygnalizatora))
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoStanSygnalizatora(CType(kom, ZmienionoStanSygnalizatora))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_STAN_TORU, New PrzetwOdebrKomunikatu(
             AddressOf ZmienionoStanToru.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoZmienionoStanToru(CType(kom, ZmienionoStanToru))
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoStanToru(CType(kom, ZmienionoStanToru))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_STAN_ZWROTNICY, New PrzetwOdebrKomunikatu(
             AddressOf ZmienionoStanZwrotnicy.Otworz,
-            Sub(post, kom) RaiseEvent OdebranoZmienionoStanZwrotnicy(CType(kom, ZmienionoStanZwrotnicy))
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoStanZwrotnicy(CType(kom, ZmienionoStanZwrotnicy))
         ))
     End Sub
 
@@ -164,9 +171,20 @@ Public Class KlientTCP
             Dim tcp As New TcpClient()
             tcp.Connect(New IPEndPoint(IPAddress.Parse(AdresIP), Port))
             Klient = New PolaczenieTCP(Me, tcp)
+
+            DaneDH = New KlientDaneDH()
+            Dim kom As DHInicjalizuj = DaneDH
+            Klient.WyslijKomunikat(kom)
         Catch
             RaiseEvent BladPolaczenia()
         End Try
+    End Sub
+
+    Private Sub PrzetworzDH(pol As PolaczenieTCP, kom As Komunikat)
+        Dim dh As DHZainicjalizowano = CType(kom, DHZainicjalizowano)
+        Dim klucz As BigInteger = BigInteger.ModPow(dh.LiczbaB, DaneDH.LiczbaPrywA, DaneDH.LiczbaP)
+        DaneDH = Nothing
+        Klient.InicjujAes(klucz.ToByteArray)
     End Sub
 
 End Class

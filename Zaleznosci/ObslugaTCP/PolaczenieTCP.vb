@@ -5,8 +5,16 @@ Imports System.Threading
 Public Class PolaczenieTCP
     Private Const ROZMIAR_BLOKU_AES As Integer = 16
 
+    Friend Property AdresStacji As UShort
+
+    Private _Stan As StanPolaczenia = StanPolaczenia.Otwarte
+    Friend ReadOnly Property Stan As StanPolaczenia
+        Get
+            Return _Stan
+        End Get
+    End Property
+
     Private tcp As ZarzadzanieTCP
-    Private AdresStacji As UShort
     Private Szyfrator As ICryptoTransform
     Private Deszyfrator As ICryptoTransform
     Private KlientTCP As TcpClient
@@ -32,10 +40,45 @@ Public Class PolaczenieTCP
         Strumien.Close()
     End Sub
 
+    Friend Sub InicjujAes(kluczDH As Byte())
+        If Szyfrator IsNot Nothing Or Deszyfrator IsNot Nothing Then Exit Sub
+
+        Dim ziarno As Integer = 0
+        Dim poz As Integer = 0
+        For i As Integer = 0 To kluczDH.Length - 1
+            ziarno = ziarno Xor (CType(kluczDH(i), Integer) << poz)
+            poz += 8
+            If poz >= 32 Then poz = 0
+        Next
+
+        Dim rnd As New Random(ziarno)
+        Dim iv(ROZMIAR_BLOKU_AES - 1) As Byte
+        Dim klucz(ROZMIAR_BLOKU_AES - 1) As Byte
+        rnd.NextBytes(iv)
+        rnd.NextBytes(klucz)
+
+        Dim a As Aes = Aes.Create()
+        a.IV = iv
+        a.Key = klucz
+        a.Mode = CipherMode.CBC
+        Szyfrator = a.CreateEncryptor()
+        Deszyfrator = a.CreateDecryptor()
+
+        _Stan = StanPolaczenia.UstalonoKluczSzyfrujacy
+    End Sub
+
     Friend Sub WyslijKomunikat(kom As Komunikat)
+        Dim szyfruj As Boolean = True
+
+        If TypKomunikatu.CzyKomunikatDH(kom.Typ) Then
+            szyfruj = False
+        ElseIf _Stan <> StanPolaczenia.UstalonoKluczSzyfrujacy Or Szyfrator Is Nothing
+            Exit Sub
+        End If
+
         SyncLock Me
             Dim b As Byte() = ZapiszKomunikat(kom)
-            PrzetworzAes(Szyfrator, b)
+            If szyfruj Then PrzetworzAes(Szyfrator, b)
 
             Try
                 bwTCP.Write(b.Length)
@@ -74,7 +117,7 @@ Public Class PolaczenieTCP
                 ile = brTCP.ReadInt32
                 b = brTCP.ReadBytes(ile)
 
-                PrzetworzAes(Deszyfrator, b)
+                If Deszyfrator IsNot Nothing Then PrzetworzAes(Deszyfrator, b)
                 OdczytajKomunikat(b)
             Catch
             End Try
@@ -93,22 +136,17 @@ Public Class PolaczenieTCP
 
         Dim typ As UShort = br.ReadUInt16
 
+        If _Stan <> StanPolaczenia.UstalonoKluczSzyfrujacy AndAlso Not TypKomunikatu.CzyKomunikatDH(typ) Then
+            Exit Sub
+        End If
+
         Dim metody As PrzetwOdebrKomunikatu = Nothing
         If tcp.DaneFabrykiObiektow.TryGetValue(typ, metody) Then
             If (Not metody.MetodaTworzaca.Equals(Nothing)) And (Not metody.MetodaZglaszajacaZdarzenie.Equals(Nothing)) Then
                 Dim kom As Komunikat = metody.MetodaTworzaca(br)
-                metody.MetodaZglaszajacaZdarzenie(AdresStacji, kom)
+                metody.MetodaZglaszajacaZdarzenie(Me, kom)
             End If
         End If
-    End Sub
-
-    Private Sub InicjujAes(klucz As Byte())
-        Dim a As Aes = Aes.Create()
-        a.Key = klucz
-        a.IV = klucz
-        a.Mode = CipherMode.CBC
-        Szyfrator = a.CreateEncryptor()
-        Deszyfrator = a.CreateDecryptor()
     End Sub
 
     Private Sub PrzetworzAes(obiekt As ICryptoTransform, dane As Byte())
