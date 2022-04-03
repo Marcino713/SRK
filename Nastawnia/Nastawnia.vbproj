@@ -140,6 +140,12 @@
     </Compile>
     <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyGDI.vb" />
     <Compile Include="PulpitSterowniczy\TypRysownika.vb" />
+    <Compile Include="WyborStacji.Designer.vb">
+      <DependentUpon>WyborStacji.vb</DependentUpon>
+    </Compile>
+    <Compile Include="WyborStacji.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="KonfiguratorStacji\EdytorPowierzchni.resx">
@@ -168,6 +174,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PulpitSterowniczy\PulpitSterowniczy.resx">
       <DependentUpon>PulpitSterowniczy.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WyborStacji.resx">
+      <DependentUpon>WyborStacji.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

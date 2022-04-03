@@ -22,16 +22,22 @@ Partial Class wndNastawnia
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim Pulpit1 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
         Me.mnuMenu = New System.Windows.Forms.MenuStrip()
         Me.mnuNarzedzia = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuPolaczZSerwerem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuRozlaczZSerwerem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuZarzadzajSerwerem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuKonfiguratorStacji = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuNowePolaczenia = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuOtworzPolaczenia = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
-        Me.mnuPolaczZSerwerem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuZarzadzajSerwerem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.stStan = New System.Windows.Forms.StatusStrip()
+        Me.tslStanPolaczenia = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
         Me.mnuMenu.SuspendLayout()
+        Me.stStan.SuspendLayout()
         Me.SuspendLayout()
         '
         'mnuMenu
@@ -45,10 +51,34 @@ Partial Class wndNastawnia
         '
         'mnuNarzedzia
         '
-        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPolaczZSerwerem, Me.mnuZarzadzajSerwerem, Me.ToolStripSeparator2, Me.mnuKonfiguratorStacji, Me.ToolStripSeparator1, Me.mnuNowePolaczenia, Me.mnuOtworzPolaczenia})
+        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPolaczZSerwerem, Me.mnuRozlaczZSerwerem, Me.mnuZarzadzajSerwerem, Me.ToolStripSeparator2, Me.mnuKonfiguratorStacji, Me.ToolStripSeparator1, Me.mnuNowePolaczenia, Me.mnuOtworzPolaczenia})
         Me.mnuNarzedzia.Name = "mnuNarzedzia"
         Me.mnuNarzedzia.Size = New System.Drawing.Size(70, 20)
         Me.mnuNarzedzia.Text = "Narzędzia"
+        '
+        'mnuPolaczZSerwerem
+        '
+        Me.mnuPolaczZSerwerem.Name = "mnuPolaczZSerwerem"
+        Me.mnuPolaczZSerwerem.Size = New System.Drawing.Size(193, 22)
+        Me.mnuPolaczZSerwerem.Text = "Połącz z serwerem..."
+        '
+        'mnuRozlaczZSerwerem
+        '
+        Me.mnuRozlaczZSerwerem.Enabled = False
+        Me.mnuRozlaczZSerwerem.Name = "mnuRozlaczZSerwerem"
+        Me.mnuRozlaczZSerwerem.Size = New System.Drawing.Size(193, 22)
+        Me.mnuRozlaczZSerwerem.Text = "Rozłącz..."
+        '
+        'mnuZarzadzajSerwerem
+        '
+        Me.mnuZarzadzajSerwerem.Name = "mnuZarzadzajSerwerem"
+        Me.mnuZarzadzajSerwerem.Size = New System.Drawing.Size(193, 22)
+        Me.mnuZarzadzajSerwerem.Text = "Zarządzaj serwerem..."
+        '
+        'ToolStripSeparator2
+        '
+        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(190, 6)
         '
         'mnuKonfiguratorStacji
         '
@@ -73,34 +103,57 @@ Partial Class wndNastawnia
         Me.mnuOtworzPolaczenia.Size = New System.Drawing.Size(193, 22)
         Me.mnuOtworzPolaczenia.Text = "Otwórz plik połączeń..."
         '
-        'ToolStripSeparator2
+        'stStan
         '
-        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(190, 6)
+        Me.stStan.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tslStanPolaczenia})
+        Me.stStan.Location = New System.Drawing.Point(0, 528)
+        Me.stStan.Name = "stStan"
+        Me.stStan.Size = New System.Drawing.Size(645, 22)
+        Me.stStan.TabIndex = 1
+        Me.stStan.Text = "StatusStrip1"
         '
-        'mnuPolaczZSerwerem
+        'tslStanPolaczenia
         '
-        Me.mnuPolaczZSerwerem.Name = "mnuPolaczZSerwerem"
-        Me.mnuPolaczZSerwerem.Size = New System.Drawing.Size(193, 22)
-        Me.mnuPolaczZSerwerem.Text = "Połącz z serwerem..."
+        Me.tslStanPolaczenia.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.tslStanPolaczenia.ForeColor = System.Drawing.Color.Red
+        Me.tslStanPolaczenia.Name = "tslStanPolaczenia"
+        Me.tslStanPolaczenia.Size = New System.Drawing.Size(95, 17)
+        Me.tslStanPolaczenia.Text = "Brak połączenia"
         '
-        'mnuZarzadzajSerwerem
+        'plpPulpit
         '
-        Me.mnuZarzadzajSerwerem.Name = "mnuZarzadzajSerwerem"
-        Me.mnuZarzadzajSerwerem.Size = New System.Drawing.Size(193, 22)
-        Me.mnuZarzadzajSerwerem.Text = "Zarządzaj serwerem..."
+        Me.plpPulpit.AllowDrop = True
+        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
+        Me.plpPulpit.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.plpPulpit.Location = New System.Drawing.Point(0, 24)
+        Me.plpPulpit.Name = "plpPulpit"
+        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projZaznaczonaKostka = Nothing
+        Me.plpPulpit.projZaznaczonaLampa = Nothing
+        Me.plpPulpit.projZaznaczonyLicznik = Nothing
+        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
+        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
+        Pulpit1.Adres = CType(0US, UShort)
+        Pulpit1.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit1
+        Me.plpPulpit.Size = New System.Drawing.Size(645, 504)
+        Me.plpPulpit.TabIndex = 2
         '
         'wndNastawnia
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(645, 550)
+        Me.Controls.Add(Me.plpPulpit)
+        Me.Controls.Add(Me.stStan)
         Me.Controls.Add(Me.mnuMenu)
         Me.MainMenuStrip = Me.mnuMenu
         Me.Name = "wndNastawnia"
         Me.Text = "Nastawnia"
         Me.mnuMenu.ResumeLayout(False)
         Me.mnuMenu.PerformLayout()
+        Me.stStan.ResumeLayout(False)
+        Me.stStan.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -115,4 +168,8 @@ Partial Class wndNastawnia
     Friend WithEvents mnuPolaczZSerwerem As ToolStripMenuItem
     Friend WithEvents mnuZarzadzajSerwerem As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
+    Friend WithEvents mnuRozlaczZSerwerem As ToolStripMenuItem
+    Friend WithEvents stStan As StatusStrip
+    Friend WithEvents tslStanPolaczenia As ToolStripStatusLabel
+    Friend WithEvents plpPulpit As PulpitSterowniczy
 End Class

@@ -1,4 +1,7 @@
 ﻿Public Enum StanPolaczenia
-    Otwarte
-    UstalonoKluczSzyfrujacy
+    UstalanieKluczaSzyfrujacego
+    UwierzytelnianieHaslem
+    WyborPosterunku
+    SterowanieRuchem
+    Rozlaczony
 End Enum

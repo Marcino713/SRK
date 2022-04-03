@@ -107,6 +107,7 @@ Public Class Pulpit
 
     Public Function Zapisz(sciezka As String) As Boolean
         _SciezkaPliku = sciezka
+        If sciezka Is Nothing Then Return False
 
         Try
             Return _Zapisz()
@@ -185,50 +186,61 @@ Public Class Pulpit
 
     Public Shared Function Otworz(sciezka As String) As Pulpit
         Try
-            Return _Otworz(sciezka)
+            Using fs As New FileStream(sciezka, FileMode.Open, FileAccess.Read)
+                Dim p As Pulpit = _Otworz(fs)
+                p._SciezkaPliku = sciezka
+                Return p
+            End Using
         Catch
             Return Nothing
         End Try
     End Function
 
-    Private Shared Function _Otworz(sciezka As String) As Pulpit
+    Public Shared Function Otworz(zawartosc As Byte()) As Pulpit
+        Try
+            Using ms As New MemoryStream(zawartosc)
+                Return _Otworz(ms)
+            End Using
+        Catch
+            Return Nothing
+        End Try
+    End Function
+
+    Private Shared Function _Otworz(str As Stream) As Pulpit
         Dim p As Pulpit
         Dim konf As New KonfiguracjaOdczytu
         Dim segmenty As New List(Of SegmPliku)
         konf.Kostki.Add(PUSTE_ODWOLANIE, Nothing)
         konf.OdcinkiTorow.Add(PUSTE_ODWOLANIE, Nothing)
 
-        Using fs As New FileStream(sciezka, FileMode.Open, FileAccess.Read)
-            Using br As New BinaryReader(fs)
-                Dim b As Byte()
+        Using br As New BinaryReader(str)
+            Dim b As Byte()
 
-                'Nagłówek
-                b = br.ReadBytes(NAGLOWEK.Length)
-                If PobierzTekst(b) <> NAGLOWEK Then
-                    Throw New OtwieraniePlikuException("Niepoprawny typ pliku.")
-                End If
+            'Nagłówek
+            b = br.ReadBytes(NAGLOWEK.Length)
+            If PobierzTekst(b) <> NAGLOWEK Then
+                Throw New OtwieraniePlikuException("Niepoprawny typ pliku.")
+            End If
 
-                Dim wersja_glowna As UShort = br.ReadUInt16
-                Dim wersja_boczna As UShort = br.ReadUInt16
-                Dim szer As UShort = br.ReadUInt16
-                Dim wys As UShort = br.ReadUInt16
-                p = New Pulpit(New WersjaPliku(wersja_glowna, wersja_boczna), szer, wys)
-                p._SciezkaPliku = sciezka
-                konf.Pulpit = p
+            Dim wersja_glowna As UShort = br.ReadUInt16
+            Dim wersja_boczna As UShort = br.ReadUInt16
+            Dim szer As UShort = br.ReadUInt16
+            Dim wys As UShort = br.ReadUInt16
+            p = New Pulpit(New WersjaPliku(wersja_glowna, wersja_boczna), szer, wys)
+            konf.Pulpit = p
 
-                'Informacje o posterunku
-                Dim data As Long = br.ReadInt64
-                p._DataUtworzenia = Date.FromBinary(data)
-                p.Adres = br.ReadUInt16
-                p.Nazwa = OdczytajTekst(br)
+            'Informacje o posterunku
+            Dim data As Long = br.ReadInt64
+            p._DataUtworzenia = Date.FromBinary(data)
+            p.Adres = br.ReadUInt16
+            p.Nazwa = OdczytajTekst(br)
 
-                'Pulpit
-                Do Until fs.Position >= fs.Length
-                    Dim seg As SegmPliku = UtworzObiekt(br, konf)
-                    If seg.Obiekt IsNot Nothing Then segmenty.Add(seg)
-                Loop
+            'Pulpit
+            Do Until str.Position >= str.Length
+                Dim seg As SegmPliku = UtworzObiekt(br, konf)
+                If seg.Obiekt IsNot Nothing Then segmenty.Add(seg)
+            Loop
 
-            End Using
         End Using
 
         For Each s As SegmPliku In segmenty

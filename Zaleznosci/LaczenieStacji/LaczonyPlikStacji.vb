@@ -9,16 +9,27 @@ Public Class LaczonyPlikStacji
     Public Property Uwagi As UwagiLaczanegoPlikuStacji = UwagiLaczanegoPlikuStacji.OK
     Public Property Skrot As Byte()
     Public Property OdcinkiTorow As OdcinekToru()
+    Public Property Adres As UShort
+
+    Private _ZawartoscPosterunku As Byte()
+    Public ReadOnly Property ZawartoscPosterunku As Byte()
+        Get
+            Return _ZawartoscPosterunku
+        End Get
+    End Property
 
     Public Shared Function WczytajPulpit(sciezka As String) As LaczonyPlikStacji
-        Dim zawartoscPulpitu As Pulpit = Pulpit.Otworz(sciezka)
+        Dim b As Byte() = File.ReadAllBytes(sciezka)
+        Dim zawartoscPulpitu As Pulpit = Pulpit.Otworz(b)
 
         If zawartoscPulpitu IsNot Nothing Then
             Return New LaczonyPlikStacji With {
                 .NazwaPliku = Path.GetFileName(sciezka),
                 .NazwaPosterunku = zawartoscPulpitu.Nazwa,
-                .Skrot = ObliczSkrot(File.ReadAllBytes(sciezka)),
-                .OdcinkiTorow = PobierzDostepneTory(zawartoscPulpitu.OdcinkiTorow)
+                .Skrot = ObliczSkrot(b),
+                .OdcinkiTorow = PobierzDostepneTory(zawartoscPulpitu.OdcinkiTorow),
+                .Adres = zawartoscPulpitu.Adres,
+                ._ZawartoscPosterunku = b
             }
         Else
             Return Nothing
@@ -77,11 +88,21 @@ Public Class LaczonyPlikStacji
             End Using
         End Using
 
-        Dim zawartoscPulpitu As Pulpit = Pulpit.Otworz(konf.SciezkaFolderu & plik.NazwaPliku)
+        Dim zawartoscPulpitu As Pulpit = Nothing
+        Dim pelnaSciezka As String = konf.SciezkaFolderu & plik.NazwaPliku
+        Dim b As Byte() = Nothing
+
+        If File.Exists(pelnaSciezka) Then
+            b = File.ReadAllBytes(pelnaSciezka)
+            zawartoscPulpitu = Pulpit.Otworz(b)
+        End If
+
         If zawartoscPulpitu Is Nothing Then
             plik.NazwaPosterunku = plik.NazwaPliku
             plik.OdcinkiTorow = New List(Of OdcinekToru)().ToArray
         Else
+            plik._ZawartoscPosterunku = b
+            plik.Adres = zawartoscPulpitu.Adres
             plik.NazwaPosterunku = zawartoscPulpitu.Nazwa
             plik.OdcinkiTorow = PobierzDostepneTory(zawartoscPulpitu.OdcinkiTorow)
         End If

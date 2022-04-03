@@ -100,10 +100,12 @@
     <Compile Include="Komunikaty\ZmienionoStanZwrotnicy.vb" />
     <Compile Include="Komunikaty\ZmienionoStanToru.vb" />
     <Compile Include="ObslugaTCP\KlientDaneDH.vb" />
+    <Compile Include="ObslugaTCP\ObslugiwanyPosterunek.vb" />
     <Compile Include="ObslugaTCP\PolaczenieTCP.vb" />
     <Compile Include="ObslugaTCP\KlientTCP.vb" />
     <Compile Include="ObslugaTCP\PrzetwOdebrKomunikatu.vb" />
     <Compile Include="ObslugaTCP\SerwerTCP.vb" />
+    <Compile Include="ObslugaTCP\StanObslugiwanegoPosterunku.vb" />
     <Compile Include="ObslugaTCP\StanPolaczenia.vb" />
     <Compile Include="ObslugaTCP\ZarzadzanieTCP.vb" />
     <Compile Include="PlikiPolaczen\KonfiguracjaOdczytu.vb" />

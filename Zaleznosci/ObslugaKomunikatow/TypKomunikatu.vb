@@ -30,4 +30,16 @@
     Friend Shared Function CzyKomunikatDH(typ As UShort) As Boolean
         Return typ = DH_INICJALIZUJ Or typ = DH_ZAINICJALIZOWANO
     End Function
+
+    Friend Shared Function CzyKomunikatUwierzytelniania(typ As UShort) As Boolean
+        Return typ = UWIERZYTELNIJ_SIE Or typ = UWIERZYTELNIONO_POPRAWNIE Or typ = NIEUWIERZYTELNIONO
+    End Function
+
+    Friend Shared Function CzyKomunikatWyboruPosterunku(typ As UShort) As Boolean
+        Return typ = WYBIERZ_POSTERUNEK Or typ = WYBRANO_POSTERUNEK
+    End Function
+
+    Friend Shared Function CzyKomunikatZakonczenia(typ As UShort) As Boolean
+        Return typ = ZAKONCZ_DZIALANIE_KLIENTA Or typ = ZAKONCZONO_DZIALANIE_SERWERA Or typ = ZAKONCZONO_SESJE_KLIENTA
+    End Function
 End Class

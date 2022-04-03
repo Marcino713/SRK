@@ -2,15 +2,30 @@
 Imports System.Security.Cryptography
 Imports System.Threading
 
-Public Class PolaczenieTCP
+Friend Class PolaczenieTCP
     Private Const ROZMIAR_BLOKU_AES As Integer = 16
+    Private Const CZEKANIE_ZAMKNIECIE_MS As Integer = 100
 
     Friend Property AdresStacji As UShort
 
-    Private _Stan As StanPolaczenia = StanPolaczenia.Otwarte
+    Private _Stan As StanPolaczenia = StanPolaczenia.UstalanieKluczaSzyfrujacego
     Friend ReadOnly Property Stan As StanPolaczenia
         Get
             Return _Stan
+        End Get
+    End Property
+
+    Private _CzasNawiazaniaPolaczenia As Date
+    Public ReadOnly Property CzasNawiazaniaPolaczenia As Date
+        Get
+            Return _CzasNawiazaniaPolaczenia
+        End Get
+    End Property
+
+    Private _OstatnieZapytanie As Date
+    Public ReadOnly Property OstatnieZapytanie As Date
+        Get
+            Return _OstatnieZapytanie
         End Get
     End Property
 
@@ -24,8 +39,13 @@ Public Class PolaczenieTCP
     Private rnd As New Random()
     Private WatekOdbierania As Thread
     Private Koniec As Boolean = False
+    Private ZgloszonoKoniecPolaczenia As Boolean = False
+    Private slockWyslijKomunikat As New Object
+    Private slockZglosKoniecPol As New Object
+    Private slockStanPolaczenia As New Object
 
     Friend Sub New(zarzTCP As ZarzadzanieTCP, klient As TcpClient)
+        _CzasNawiazaniaPolaczenia = Now
         tcp = zarzTCP
         KlientTCP = klient
         Strumien = KlientTCP.GetStream()
@@ -35,9 +55,31 @@ Public Class PolaczenieTCP
         WatekOdbierania.Start()
     End Sub
 
-    Friend Sub Zakoncz()
+    Friend Sub Zakoncz(czekaj As Boolean)
         Koniec = True
-        Strumien.Close()
+
+        SyncLock slockStanPolaczenia
+            If _Stan <> StanPolaczenia.Rozlaczony Then
+                _Stan = StanPolaczenia.Rozlaczony
+            Else
+                Exit Sub
+            End If
+        End SyncLock
+
+        Try
+            If czekaj Then
+                Strumien.Close(CZEKANIE_ZAMKNIECIE_MS)
+            Else
+                Strumien.Close()
+            End If
+        Catch
+        End Try
+
+        Try
+            KlientTCP.Close()
+        Catch
+        End Try
+
     End Sub
 
     Friend Sub InicjujAes(kluczDH As Byte())
@@ -61,29 +103,50 @@ Public Class PolaczenieTCP
         a.IV = iv
         a.Key = klucz
         a.Mode = CipherMode.CBC
+        a.Padding = PaddingMode.None
+
         Szyfrator = a.CreateEncryptor()
         Deszyfrator = a.CreateDecryptor()
 
-        _Stan = StanPolaczenia.UstalonoKluczSzyfrujacy
+        SyncLock slockStanPolaczenia
+            _Stan = StanPolaczenia.UwierzytelnianieHaslem
+        End SyncLock
+    End Sub
+
+    Friend Sub UstawStanWyborPosterunku()
+        SyncLock slockStanPolaczenia
+            If _Stan = StanPolaczenia.UwierzytelnianieHaslem Then _Stan = StanPolaczenia.WyborPosterunku
+        End SyncLock
+    End Sub
+
+    Friend Sub UstawStanSterowanieRuchem()
+        SyncLock slockStanPolaczenia
+            If _Stan = StanPolaczenia.WyborPosterunku Then _Stan = StanPolaczenia.SterowanieRuchem
+        End SyncLock
     End Sub
 
     Friend Sub WyslijKomunikat(kom As Komunikat)
+        SyncLock slockStanPolaczenia
+            If _Stan = StanPolaczenia.Rozlaczony Then Exit Sub
+        End SyncLock
+
         Dim szyfruj As Boolean = True
 
         If TypKomunikatu.CzyKomunikatDH(kom.Typ) Then
             szyfruj = False
-        ElseIf _Stan <> StanPolaczenia.UstalonoKluczSzyfrujacy Or Szyfrator Is Nothing
+        ElseIf Szyfrator Is Nothing
             Exit Sub
         End If
 
-        SyncLock Me
-            Dim b As Byte() = ZapiszKomunikat(kom)
-            If szyfruj Then PrzetworzAes(Szyfrator, b)
-
+        SyncLock slockWyslijKomunikat
             Try
+                Dim b As Byte() = ZapiszKomunikat(kom)
+                If szyfruj Then PrzetworzAes(Szyfrator, b)
+
                 bwTCP.Write(b.Length)
                 bwTCP.Write(b)
             Catch
+                ZglosKoniecPolaczenia()
             End Try
         End SyncLock
     End Sub
@@ -116,8 +179,14 @@ Public Class PolaczenieTCP
             Try
                 ile = brTCP.ReadInt32
                 b = brTCP.ReadBytes(ile)
-
+                _OstatnieZapytanie = Now
                 If Deszyfrator IsNot Nothing Then PrzetworzAes(Deszyfrator, b)
+            Catch
+                ZglosKoniecPolaczenia()
+                Exit Do
+            End Try
+
+            Try
                 OdczytajKomunikat(b)
             Catch
             End Try
@@ -136,9 +205,16 @@ Public Class PolaczenieTCP
 
         Dim typ As UShort = br.ReadUInt16
 
-        If _Stan <> StanPolaczenia.UstalonoKluczSzyfrujacy AndAlso Not TypKomunikatu.CzyKomunikatDH(typ) Then
-            Exit Sub
-        End If
+        SyncLock slockStanPolaczenia
+            If Not (
+            (_Stan = StanPolaczenia.UstalanieKluczaSzyfrujacego AndAlso TypKomunikatu.CzyKomunikatDH(typ)) Or
+            (_Stan = StanPolaczenia.UwierzytelnianieHaslem AndAlso TypKomunikatu.CzyKomunikatUwierzytelniania(typ)) Or
+            (_Stan = StanPolaczenia.WyborPosterunku AndAlso TypKomunikatu.CzyKomunikatWyboruPosterunku(typ)) Or
+            (_Stan <> StanPolaczenia.UstalanieKluczaSzyfrujacego AndAlso TypKomunikatu.CzyKomunikatZakonczenia(typ))
+            ) Then
+                Exit Sub
+            End If
+        End SyncLock
 
         Dim metody As PrzetwOdebrKomunikatu = Nothing
         If tcp.DaneFabrykiObiektow.TryGetValue(typ, metody) Then
@@ -156,5 +232,15 @@ Public Class PolaczenieTCP
             obiekt.TransformBlock(dane, poz, ROZMIAR_BLOKU_AES, dane, poz)
             poz += ROZMIAR_BLOKU_AES
         End While
+    End Sub
+
+    Private Sub ZglosKoniecPolaczenia()
+        SyncLock slockZglosKoniecPol
+            If ZgloszonoKoniecPolaczenia Then Exit Sub
+            ZgloszonoKoniecPolaczenia = True
+        End SyncLock
+
+        Zakoncz(False)
+        tcp.PrzetworzZakonczeniePolaczenia(Me)
     End Sub
 End Class

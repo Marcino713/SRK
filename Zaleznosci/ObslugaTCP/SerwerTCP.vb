@@ -7,15 +7,37 @@ Public Class SerwerTCP
     Inherits ZarzadzanieTCP
 
     Private ReadOnly MIN_LICZBA_PIERWSZA As New BigInteger(10000)
+    Private ReadOnly ZAMYKANIE_NIEAKTYWNYCH_CZAS_WYBOR_POSTERUNKU As TimeSpan = TimeSpan.FromMilliseconds(300000)
+    Private ReadOnly ZAMYKANIE_NIEAKTYWNYCH_CZAS_INICJALIZACJA As TimeSpan = TimeSpan.FromMilliseconds(30000)
+    Private ReadOnly ZAMYKANIE_NIEKATYWNYCH_SPANIE As TimeSpan = TimeSpan.FromMilliseconds(1000)
+    Private ReadOnly ZAMYKANIE_NIEAKTYWNYCH_LICZBA_OKRAZEN_PETLI As Integer = 30
 
-    Private KlienciPoAdresieStacji As New Dictionary(Of UShort, PolaczenieTCP)
+    Private _Uruchomiony As Boolean = False
+    Public ReadOnly Property Uruchomiony As Boolean
+        Get
+            Return _Uruchomiony
+        End Get
+    End Property
+
+    Public ReadOnly Property CzyWczytanoPosterunki As Boolean
+        Get
+            Return Posterunki IsNot Nothing AndAlso Posterunki.Length > 0
+        End Get
+    End Property
+
+    Private Posterunki As ObslugiwanyPosterunek()
+    Private KlienciPoAdresieStacji As New Dictionary(Of UShort, ObslugiwanyPosterunek)
     Private WszyscyKlienci As New List(Of PolaczenieTCP)
     Private Serwer As TcpListener
     Private WatekSerwera As Thread
+    Private WatekZamykaniaPolaczen As Thread
     Private Koniec As Boolean = False
     Private Haslo As String
+    Private slockRezerwacjaPosterunku As New Object
+    Private slockListaPolaczen As New Object
 
-    Public Event OdebranoZakonczDzialanieKlienta(post As UShort, kom As ZakonczDzialanieKlienta)
+    Public Event UniewaznionoListePosterunkow()
+    Public Event ZmianaCzasuPodlaczenia(post As String, dataPodlaczenia As String)
     Public Event OdebranoUstawJasnoscLamp(post As UShort, kom As UstawJasnoscLamp)
     Public Event OdebranoUstawKierunek(post As UShort, kom As UstawKierunek)
     Public Event OdebranoUstawPoczatkowaZajetoscToru(post As UShort, kom As UstawPoczatkowaZajetoscToru)
@@ -34,7 +56,7 @@ Public Class SerwerTCP
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZAKONCZ_DZIALANIE_KLIENTA, New PrzetwOdebrKomunikatu(
             AddressOf ZakonczDzialanieKlienta.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoZakonczDzialanieKlienta(pol.AdresStacji, CType(kom, ZakonczDzialanieKlienta))
+            AddressOf ZakDzialanieKlienta
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_JASNOSC_LAMP, New PrzetwOdebrKomunikatu(
@@ -69,12 +91,12 @@ Public Class SerwerTCP
 
         DaneFabrykiObiektow.Add(TypKomunikatu.UWIERZYTELNIJ_SIE, New PrzetwOdebrKomunikatu(
             AddressOf UwierzytelnijSie.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoUwierzytelnijSie(pol.AdresStacji, CType(kom, UwierzytelnijSie))
+            AddressOf UwierzytelnijIWyslijPosterunki
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.WYBIERZ_POSTERUNEK, New PrzetwOdebrKomunikatu(
             AddressOf WybierzPosterunek.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoWybierzPosterunek(pol.AdresStacji, CType(kom, WybierzPosterunek))
+            AddressOf ZerezerwujPosterunek
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZWOLNIJ_PRZEBIEGI, New PrzetwOdebrKomunikatu(
@@ -85,12 +107,6 @@ Public Class SerwerTCP
 
     Public Sub WyslijInformacje(post As UShort, kom As Informacja)
         WyslijDoKlienta(post, kom)
-    End Sub
-
-    Public Sub WyslijZakonczonoDzialanieSerwera(kom As ZakonczonoDzialanieSerwera)
-        For Each k As PolaczenieTCP In WszyscyKlienci
-            k.WyslijKomunikat(kom)
-        Next
     End Sub
 
     Public Sub WyslijNadanoNumerPociagu(post As UShort, kom As NadanoNumerPociagu)
@@ -145,7 +161,9 @@ Public Class SerwerTCP
         WyslijDoKlienta(post, kom)
     End Sub
 
-    Public Function UruchomSerwer(port As UShort, haslo As String) As Boolean
+    Public Function Uruchom(port As UShort, haslo As String) As Boolean
+        If Serwer IsNot Nothing Or _Uruchomiony Or Not CzyWczytanoPosterunki Then Return False
+
         Koniec = False
         Me.Haslo = haslo
 
@@ -158,14 +176,124 @@ Public Class SerwerTCP
 
         WatekSerwera = New Thread(AddressOf AkceptujPolaczenia)
         WatekSerwera.Start()
+        WatekZamykaniaPolaczen = New Thread(AddressOf ZamykajNieaktywnePolaczenia)
+        WatekZamykaniaPolaczen.Start()
+
+        _Uruchomiony = True
 
         Return True
     End Function
 
-    Public Sub Zakoncz()
+    Public Sub Zatrzymaj()
         Koniec = True
         Serwer?.Stop()
         Serwer = Nothing
+        WatekSerwera?.Join()
+
+        Dim kom As New ZakonczonoDzialanieSerwera() With {.Przyczyna = PrzyczynaZakonczeniaDzialaniaSerwera.ZatrzymanieSerwera}
+
+        Dim polaczenia As PolaczenieTCP()
+        SyncLock slockListaPolaczen
+            polaczenia = WszyscyKlienci.ToArray()
+            WszyscyKlienci.Clear()
+        End SyncLock
+
+        For Each k As PolaczenieTCP In polaczenia
+            If k.Stan = StanPolaczenia.UstalanieKluczaSzyfrujacego Or k.Stan = StanPolaczenia.UwierzytelnianieHaslem Then
+                k.Zakoncz(False)
+            Else
+                k.WyslijKomunikat(kom)
+                k.Zakoncz(True)
+            End If
+        Next
+
+        For Each obs As ObslugiwanyPosterunek In KlienciPoAdresieStacji.Values
+            obs.Polaczenie = Nothing
+        Next
+        RaiseEvent UniewaznionoListePosterunkow()
+
+        _Uruchomiony = False
+    End Sub
+
+    Public Function WczytajPolaczenie(SciezkaPliku As String) As Boolean
+        If Uruchomiony Then Return False
+
+        KlienciPoAdresieStacji = New Dictionary(Of UShort, ObslugiwanyPosterunek)
+        Dim PosterunkiLista As New List(Of ObslugiwanyPosterunek)
+
+        Dim polaczenia As PolaczeniaStacji = PolaczeniaStacji.OtworzPlik(SciezkaPliku, False)
+
+        If polaczenia IsNot Nothing Then
+            For Each pol As LaczonyPlikStacji In polaczenia.LaczanePliki
+                Dim obs As New ObslugiwanyPosterunek() With {
+                                       .NazwaPosterunku = pol.NazwaPosterunku,
+                                       .NazwaPliku = pol.NazwaPliku,
+                                       .Adres = pol.Adres,
+                                       .Zawartosc = pol.ZawartoscPosterunku}
+
+                KlienciPoAdresieStacji.Add(pol.Adres, obs)
+                PosterunkiLista.Add(obs)
+            Next
+
+        End If
+
+        Posterunki = PosterunkiLista.ToArray
+
+        RaiseEvent UniewaznionoListePosterunkow()
+        Return CzyWczytanoPosterunki
+    End Function
+
+    Public Sub ZakonczPolaczenie(adres As UShort)
+        Dim obs As ObslugiwanyPosterunek = Nothing
+        Dim pol As PolaczenieTCP = Nothing
+
+        SyncLock slockRezerwacjaPosterunku
+            If KlienciPoAdresieStacji.TryGetValue(adres, obs) Then
+                pol = obs.Polaczenie
+            End If
+        End SyncLock
+
+        If pol IsNot Nothing Then
+            Dim kom As New ZakonczonoSesjeKlienta() With {.Przyczyna = PrzyczynaZakonczeniaSesjiKlienta.RozlaczeniePrzezSerwer}
+            pol.WyslijKomunikat(kom)
+            pol.Zakoncz(True)
+        End If
+    End Sub
+
+    Public Function PobierzStanPolaczen() As StanObslugiwanegoPosterunku()
+        If Posterunki Is Nothing Then Return Nothing
+
+        Dim lista As New List(Of StanObslugiwanegoPosterunku)
+
+        For Each obs As ObslugiwanyPosterunek In Posterunki
+            Dim dataPodlaczenia As String = ""
+            Dim ostatnieZapytanie As String = ""
+
+            If obs.Polaczenie IsNot Nothing Then
+                dataPodlaczenia = obs.Polaczenie.CzasNawiazaniaPolaczenia.ToString(FORMAT_DATY)
+                ostatnieZapytanie = obs.Polaczenie.OstatnieZapytanie.ToString(FORMAT_DATY)
+            End If
+
+            lista.Add(New StanObslugiwanegoPosterunku With {
+                      .NazwaPosterunku = obs.NazwaPosterunku,
+                      .NazwaPliku = obs.NazwaPliku,
+                      .Adres = obs.Adres.ToString,
+                      .DataPodlaczenia = dataPodlaczenia,
+                      .OstatnieZapytanie = ostatnieZapytanie
+            })
+        Next
+
+        Return lista.ToArray()
+    End Function
+
+    Friend Overrides Sub PrzetworzZakonczeniePolaczenia(pol As PolaczenieTCP)
+        If Koniec Then Exit Sub
+
+        SyncLock slockListaPolaczen
+            WszyscyKlienci.Remove(pol)
+        End SyncLock
+
+        RozlaczPosterunek(pol.AdresStacji)
     End Sub
 
     Private Sub AkceptujPolaczenia()
@@ -173,17 +301,67 @@ Public Class SerwerTCP
             Try
                 Dim tcp As TcpClient = Serwer.AcceptTcpClient()
                 Dim klient As New PolaczenieTCP(Me, tcp)
-                WszyscyKlienci.Add(klient)
+
+                SyncLock slockListaPolaczen
+                    WszyscyKlienci.Add(klient)
+                End SyncLock
+            Catch
+            End Try
+        Loop
+    End Sub
+
+    Private Sub ZamykajNieaktywnePolaczenia()
+        Dim kom As New ZakonczonoSesjeKlienta() With {.Przyczyna = PrzyczynaZakonczeniaSesjiKlienta.PrzekroczenieCzasuOczekiwania}
+        Dim polaczeniaDoZamkniecia As List(Of PolaczenieTCP) = Nothing
+        Dim czas As Date
+        Dim ix As Integer
+
+        Do Until Koniec
+            Try
+                ix = 0
+                Do Until Koniec Or ix >= ZAMYKANIE_NIEAKTYWNYCH_LICZBA_OKRAZEN_PETLI
+                    Thread.Sleep(ZAMYKANIE_NIEKATYWNYCH_SPANIE)
+                    ix += 1
+                Loop
+                If Koniec Then Exit Do
+
+                polaczeniaDoZamkniecia = Nothing
+                czas = Now
+
+                SyncLock slockListaPolaczen
+                    For Each pol As PolaczenieTCP In WszyscyKlienci
+                        If _
+                          ((pol.Stan = StanPolaczenia.UstalanieKluczaSzyfrujacego Or pol.Stan = StanPolaczenia.UwierzytelnianieHaslem) And pol.OstatnieZapytanie + ZAMYKANIE_NIEAKTYWNYCH_CZAS_INICJALIZACJA < czas) Or
+                          (pol.Stan = StanPolaczenia.WyborPosterunku And pol.OstatnieZapytanie + ZAMYKANIE_NIEAKTYWNYCH_CZAS_WYBOR_POSTERUNKU < czas) Then
+                            If polaczeniaDoZamkniecia Is Nothing Then polaczeniaDoZamkniecia = New List(Of PolaczenieTCP)
+                            polaczeniaDoZamkniecia.Add(pol)
+                        End If
+                    Next
+                End SyncLock
+
+                If polaczeniaDoZamkniecia Is Nothing Then Continue Do
+
+                For Each pol As PolaczenieTCP In polaczeniaDoZamkniecia
+                    Dim czekaj As Boolean = False
+                    If pol.Stan = StanPolaczenia.WyborPosterunku Then
+                        pol.WyslijKomunikat(kom)
+                        czekaj = True
+                    End If
+                    pol.Zakoncz(czekaj)
+                Next
             Catch
             End Try
         Loop
     End Sub
 
     Private Sub WyslijDoKlienta(post As UShort, kom As Komunikat)
-        Dim pol As PolaczenieTCP = Nothing
-        If KlienciPoAdresieStacji.TryGetValue(post, pol) Then
-            pol.WyslijKomunikat(kom)
-        End If
+        Dim pol As ObslugiwanyPosterunek = Nothing
+
+        SyncLock slockRezerwacjaPosterunku
+            KlienciPoAdresieStacji.TryGetValue(post, pol)
+        End SyncLock
+
+        If pol IsNot Nothing Then pol.Polaczenie?.WyslijKomunikat(kom)
     End Sub
 
     Private Sub PrzetworzDH(pol As PolaczenieTCP, kom As Komunikat)
@@ -198,6 +376,66 @@ Public Class SerwerTCP
         pol.InicjujAes(klucz.ToByteArray)
 
         pol.WyslijKomunikat(dhOdp)
+    End Sub
+
+    Private Sub UwierzytelnijIWyslijPosterunki(pol As PolaczenieTCP, kom As Komunikat)
+        Dim uw As UwierzytelnijSie = CType(kom, UwierzytelnijSie)
+        If uw.Haslo = Haslo Then
+            pol.UstawStanWyborPosterunku()
+
+            Dim postLista As New List(Of DanePosterunku)
+            For Each op As ObslugiwanyPosterunek In Posterunki
+                postLista.Add(New DanePosterunku() With {.Adres = op.Adres, .Nazwa = op.NazwaPosterunku, .Stan = If(op.Polaczenie Is Nothing, StanPosterunku.Wolny, StanPosterunku.Zajety)})
+            Next
+            pol.WyslijKomunikat(New UwierzytelnionoPoprawnie() With {.Posterunki = postLista.ToArray})
+
+        Else
+            pol.WyslijKomunikat(New Nieuwierzytelniono())
+        End If
+    End Sub
+
+    Private Sub ZerezerwujPosterunek(pol As PolaczenieTCP, kom As Komunikat)
+        Dim k As WybierzPosterunek = CType(kom, WybierzPosterunek)
+        Dim obs As ObslugiwanyPosterunek = Nothing
+        Dim odp As Komunikat
+        Dim dataPodl As String = Nothing
+
+        SyncLock slockRezerwacjaPosterunku
+            If KlienciPoAdresieStacji.TryGetValue(k.Adres, obs) AndAlso obs.Polaczenie Is Nothing Then
+                obs.Polaczenie = pol
+                pol.AdresStacji = k.Adres
+                odp = New WybranoPosterunek() With {.Stan = StanUstawianegoPosterunku.WybranoPoprawnie, .ZawartoscPliku = obs.Zawartosc}
+                dataPodl = pol.CzasNawiazaniaPolaczenia.ToString(FORMAT_DATY)
+                pol.UstawStanSterowanieRuchem()
+            Else
+                odp = New WybranoPosterunek() With {.Stan = StanUstawianegoPosterunku.PosterunekZajety}
+            End If
+        End SyncLock
+
+        pol.WyslijKomunikat(odp)
+        If dataPodl IsNot Nothing Then
+            RaiseEvent ZmianaCzasuPodlaczenia(obs.Adres.ToString, dataPodl)
+        End If
+    End Sub
+
+    Private Sub RozlaczPosterunek(adres As UShort)
+        Dim obs As ObslugiwanyPosterunek = Nothing
+        Dim adr As String = Nothing
+
+        SyncLock slockRezerwacjaPosterunku
+            If KlienciPoAdresieStacji.TryGetValue(adres, obs) AndAlso obs.Polaczenie IsNot Nothing Then
+                obs.Polaczenie = Nothing
+                adr = adres.ToString
+            End If
+        End SyncLock
+
+        If adr IsNot Nothing Then RaiseEvent ZmianaCzasuPodlaczenia(adr, "")
+    End Sub
+
+    Private Sub ZakDzialanieKlienta(pol As PolaczenieTCP, kom As Komunikat)
+        RozlaczPosterunek(pol.AdresStacji)
+        pol.WyslijKomunikat(New ZakonczonoSesjeKlienta() With {.Przyczyna = PrzyczynaZakonczeniaSesjiKlienta.RozlaczenieKlienta})
+        pol.Zakoncz(True)
     End Sub
 
 End Class

@@ -48,10 +48,10 @@ Public Class PolaczeniaStacji
         Me.Wersja = wersja
     End Sub
 
-    Public Shared Function OtworzPlik(sciezkaPliku As String) As PolaczeniaStacji
+    Public Shared Function OtworzPlik(sciezkaPliku As String, Optional dodajNowePliki As Boolean = True) As PolaczeniaStacji
         Try
             Dim pol As PolaczeniaStacji = _Otworz(sciezkaPliku)
-            PorownajStacjeIPolacz(pol, pol.OtworzStacjeZFolderu(Path.GetDirectoryName(sciezkaPliku)))
+            PorownajStacjeIPolacz(pol, pol.OtworzStacjeZFolderu(Path.GetDirectoryName(sciezkaPliku)), dodajNowePliki)
             pol.SortujPosterunki()
             Return pol
         Catch
@@ -81,7 +81,7 @@ Public Class PolaczeniaStacji
         Return pliki
     End Function
 
-    Private Shared Sub PorownajStacjeIPolacz(plikPol As PolaczeniaStacji, plikiStacji As List(Of LaczonyPlikStacji))
+    Private Shared Sub PorownajStacjeIPolacz(plikPol As PolaczeniaStacji, plikiStacji As List(Of LaczonyPlikStacji), dodajNowePliki As Boolean)
         'Sprawdź, czy pliki stacji się zmieniły
         For Each pol As LaczonyPlikStacji In plikPol.LaczanePliki
             Dim dopasowanaStacja As LaczonyPlikStacji = ZnajdzIUsun(pol.NazwaPliku, plikiStacji)
@@ -98,9 +98,11 @@ Public Class PolaczeniaStacji
         Next
 
         'Dodaj nowe pliki z folderu do połączeń
-        For Each pol As LaczonyPlikStacji In plikiStacji
-            plikPol.LaczanePliki.Add(pol)
-        Next
+        If dodajNowePliki Then
+            For Each pol As LaczonyPlikStacji In plikiStacji
+                plikPol.LaczanePliki.Add(pol)
+            Next
+        End If
     End Sub
 
     Private Shared Function ZnajdzIUsun(nazwa As String, pliki As List(Of LaczonyPlikStacji)) As LaczonyPlikStacji

@@ -2,6 +2,7 @@
 
 Friend Module Narzedzia
     Friend Const PUSTE_ODWOLANIE As Integer = -1
+    Friend Const FORMAT_DATY As String = "d.MM.yyyy H:mm:ss"
     Private Const LICZBA_BAJTOW_DUZEJ_LICZBY As Integer = 150
     Private ReadOnly KODOWANIE As New Text.UTF8Encoding
     Private rnd As New Random

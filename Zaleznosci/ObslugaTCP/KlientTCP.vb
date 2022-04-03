@@ -6,13 +6,22 @@ Imports System.Threading
 Public Class KlientTCP
     Inherits ZarzadzanieTCP
 
+    Private _Uruchomiony As Boolean = False
+    Public ReadOnly Property Uruchomiony As Boolean
+        Get
+            Return _Uruchomiony
+        End Get
+    End Property
+
     Private Klient As PolaczenieTCP
     Private AdresIP As String
     Private Port As UShort
     Private Haslo As String
     Private DaneDH As KlientDaneDH
+    Private WatekNawiazywaniaPolaczenia As Thread
 
-    Public Event BladPolaczenia()
+    Public Event BladNawiazywaniaPolaczenia()
+    Public Event ZakonczonoPolaczenie()
     Public Event OdebranoInformacje(kom As Informacja)
     Public Event OdebranoZakonczonoDzialanieSerwera(kom As ZakonczonoDzialanieSerwera)
     Public Event OdebranoNadanoNumerPociagu(kom As NadanoNumerPociagu)
@@ -42,7 +51,7 @@ Public Class KlientTCP
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZAKONCZONO_DZIALANIE_SERWERA, New PrzetwOdebrKomunikatu(
             AddressOf ZakonczonoDzialanieSerwera.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoZakonczonoDzialanieSerwera(CType(kom, ZakonczonoDzialanieSerwera))
+            AddressOf ZakonczonoDzialSerwera
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.NADANO_NUMER_POCIAGU, New PrzetwOdebrKomunikatu(
@@ -57,17 +66,17 @@ Public Class KlientTCP
 
         DaneFabrykiObiektow.Add(TypKomunikatu.UWIERZYTELNIONO_POPRAWNIE, New PrzetwOdebrKomunikatu(
             AddressOf UwierzytelnionoPoprawnie.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoUwierzytelnionoPoprawnie(CType(kom, UwierzytelnionoPoprawnie))
+            AddressOf PoprUwierzytelniono
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.WYBRANO_POSTERUNEK, New PrzetwOdebrKomunikatu(
             AddressOf WybranoPosterunek.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoWybranoPosterunek(CType(kom, WybranoPosterunek))
+            AddressOf WybrPosterunek
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZAKONCZONO_SESJE_KLIENTA, New PrzetwOdebrKomunikatu(
             AddressOf ZakonczonoSesjeKlienta.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoZakonczonoSesjeKlienta(CType(kom, ZakonczonoSesjeKlienta))
+            AddressOf ZakSesjeKlienta
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZAZADANO_USTAWIENIA_KIERUNKU, New PrzetwOdebrKomunikatu(
@@ -156,14 +165,29 @@ Public Class KlientTCP
         Me.Port = Port
         Me.Haslo = Haslo
 
-        Dim t As New Thread(AddressOf PolaczZSerwerem)
-        t.Start()
+        WatekNawiazywaniaPolaczenia = New Thread(AddressOf PolaczZSerwerem)
+        WatekNawiazywaniaPolaczenia.Start()
     End Sub
 
-    Public Sub Zakoncz()
+    Public Sub Zakoncz(czekaj As Boolean)
+        If Not _Uruchomiony Then Exit Sub
+
         Dim k As PolaczenieTCP = Klient
         Klient = Nothing
-        k?.Zakoncz()
+        k?.Zakoncz(czekaj)
+
+        Try
+            WatekNawiazywaniaPolaczenia?.Abort()
+        Catch
+        End Try
+
+        _Uruchomiony = False
+    End Sub
+
+    Friend Overrides Sub PrzetworzZakonczeniePolaczenia(pol As PolaczenieTCP)
+        Klient = Nothing
+        _Uruchomiony = False
+        RaiseEvent ZakonczonoPolaczenie()
     End Sub
 
     Private Sub PolaczZSerwerem()
@@ -171,13 +195,17 @@ Public Class KlientTCP
             Dim tcp As New TcpClient()
             tcp.Connect(New IPEndPoint(IPAddress.Parse(AdresIP), Port))
             Klient = New PolaczenieTCP(Me, tcp)
+            _Uruchomiony = True
 
             DaneDH = New KlientDaneDH()
             Dim kom As DHInicjalizuj = DaneDH
             Klient.WyslijKomunikat(kom)
         Catch
-            RaiseEvent BladPolaczenia()
+            _Uruchomiony = False
+            RaiseEvent BladNawiazywaniaPolaczenia()
         End Try
+
+        WatekNawiazywaniaPolaczenia = Nothing
     End Sub
 
     Private Sub PrzetworzDH(pol As PolaczenieTCP, kom As Komunikat)
@@ -185,6 +213,35 @@ Public Class KlientTCP
         Dim klucz As BigInteger = BigInteger.ModPow(dh.LiczbaB, DaneDH.LiczbaPrywA, DaneDH.LiczbaP)
         DaneDH = Nothing
         Klient.InicjujAes(klucz.ToByteArray)
+
+        Klient.WyslijKomunikat(New UwierzytelnijSie() With {.Haslo = Haslo})
+    End Sub
+
+    Private Sub PoprUwierzytelniono(pol As PolaczenieTCP, kom As Komunikat)
+        pol.UstawStanWyborPosterunku()
+        RaiseEvent OdebranoUwierzytelnionoPoprawnie(CType(kom, UwierzytelnionoPoprawnie))
+    End Sub
+
+    Private Sub ZakonczonoDzialSerwera(pol As PolaczenieTCP, kom As Komunikat)
+        Klient = Nothing
+        pol.Zakoncz(False)
+        _Uruchomiony = False
+        RaiseEvent OdebranoZakonczonoDzialanieSerwera(CType(kom, ZakonczonoDzialanieSerwera))
+    End Sub
+
+    Private Sub WybrPosterunek(pol As PolaczenieTCP, kom As Komunikat)
+        Dim wybrPost As WybranoPosterunek = CType(kom, WybranoPosterunek)
+        If wybrPost.Stan = StanUstawianegoPosterunku.WybranoPoprawnie Then
+            pol.UstawStanSterowanieRuchem()
+        End If
+        RaiseEvent OdebranoWybranoPosterunek(wybrPost)
+    End Sub
+
+    Private Sub ZakSesjeKlienta(pol As PolaczenieTCP, kom As Komunikat)
+        Klient = Nothing
+        pol.Zakoncz(False)
+        _Uruchomiony = False
+        RaiseEvent OdebranoZakonczonoSesjeKlienta(CType(kom, ZakonczonoSesjeKlienta))
     End Sub
 
 End Class

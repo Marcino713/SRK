@@ -25,6 +25,19 @@
         End If
     End Function
 
+    Friend Function PrzyczynaZakonczeniaSesjiKlientaToString(przyczyna As Zaleznosci.PrzyczynaZakonczeniaSesjiKlienta) As String
+        Dim dodatek As String = ""
+
+        Select Case przyczyna
+            Case Zaleznosci.PrzyczynaZakonczeniaSesjiKlienta.RozlaczeniePrzezSerwer
+                dodatek = " przez serwer"
+            Case Zaleznosci.PrzyczynaZakonczeniaSesjiKlienta.PrzekroczenieCzasuOczekiwania
+                dodatek = " z powodu zbyt długiego czasu inicjalizacji"
+        End Select
+
+        Return "Połączenie zostało zamknięte" & dodatek & "."
+    End Function
+
     Friend Class ObiektComboBox(Of T)
         Public Property Wartosc As T
         Public Property Tekst As String
