@@ -81,7 +81,20 @@ Public Class SerwerTCP
 
         DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_STAN_SYGNALIZATORA, New PrzetwOdebrKomunikatu(
             AddressOf UstawStanSygnalizatora.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoUstawStanSygnalizatora(pol.AdresStacji, CType(kom, UstawStanSygnalizatora))
+            Sub(pol, kom)
+                Dim k As UstawStanSygnalizatora = CType(kom, UstawStanSygnalizatora)
+                Dim st As StanSygnalizatora
+                Select Case k.Stan
+                    Case UstawianyStanSygnalizatora.Manewrowy
+                        st = StanSygnalizatora.Manewrowy
+                    Case UstawianyStanSygnalizatora.Zastepczy
+                        st = StanSygnalizatora.Zastepczy
+                    Case UstawianyStanSygnalizatora.Zezwalajacy
+                        st = StanSygnalizatora.Zezwalajacy
+                End Select
+                pol.WyslijKomunikat(New ZmienionoStanSygnalizatora() With {.Adres = k.Adres, .Stan = st})
+                RaiseEvent OdebranoUstawStanSygnalizatora(pol.AdresStacji, k)
+            End Sub
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_ZWROTNICE, New PrzetwOdebrKomunikatu(

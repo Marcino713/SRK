@@ -1,12 +1,28 @@
 ﻿Imports System.Numerics
 
-Friend Module Narzedzia
+Public Module Narzedzia
     Friend Const PUSTE_ODWOLANIE As Integer = -1
     Friend Const FORMAT_DATY As String = "d.MM.yyyy H:mm:ss"
     Private Const LICZBA_BAJTOW_DUZEJ_LICZBY As Integer = 150
     Private ReadOnly KODOWANIE As New Text.UTF8Encoding
     Private rnd As New Random
     Private FunkcjaSkrotu As Security.Cryptography.SHA1 = Security.Cryptography.SHA1.Create()
+
+    Public Function CzyPrzycisk(typ As TypKostki) As Boolean
+        Return _
+            typ = TypKostki.Przycisk Or
+            typ = TypKostki.PrzyciskTor Or
+            typ = TypKostki.RozjazdLewo Or
+            typ = TypKostki.RozjazdPrawo Or
+            typ = TypKostki.Kierunek
+    End Function
+
+    Public Function CzySygnalizator(typ As TypKostki) As Boolean
+        Return _
+            typ = TypKostki.SygnalizatorManewrowy Or
+            typ = TypKostki.SygnalizatorSamoczynny Or
+            typ = TypKostki.SygnalizatorPolsamoczynny
+    End Function
 
     Friend Function PobierzBajty(tekst As String) As Byte()
         If tekst Is Nothing Then tekst = ""

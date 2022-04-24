@@ -36,17 +36,18 @@
     Private ReadOnly PEDZEL_TOR_TEN_ODCINEK As New SolidBrush(KOLOR_TOR_TEN_ODCINEK)
     Private ReadOnly PEDZEL_TOR_NIEPRZYPISANY As New SolidBrush(KOLOR_TOR_NIEPRZYPISANY)
     Private ReadOnly PEDZEL_TOR_LICZNIK_ODCINEK_2 As New SolidBrush(KOLOR_TOR_LICZNIK_ODCINEK_2)
-    Private ReadOnly PEDZEL_SYGN_CZER As New SolidBrush(KolorRGB("#800000"))
-    Private ReadOnly PEDZEL_SYGN_CZER_JASNY As New SolidBrush(KolorRGB("#FF0000"))
-    Private ReadOnly PEDZEL_SYGN_ZIEL As New SolidBrush(KolorRGB("#008000"))
-    Private ReadOnly PEDZEL_SYGN_ZIEL_JASNY As New SolidBrush(KolorRGB("#00FF00"))
-    Private ReadOnly PEDZEL_SYGN_NIEB As New SolidBrush(KolorRGB("#000080"))
-    Private ReadOnly PEDZEL_SYGN_NIEB_JASNY As New SolidBrush(KolorRGB("#0000FF"))
-    Private ReadOnly PEDZEL_SYGN_BIAL As New SolidBrush(KolorRGB("#CCCCCC"))
+    Private ReadOnly PEDZEL_SYGN_CZER As New SolidBrush(KolorRGB("#520000"))
+    Private ReadOnly PEDZEL_SYGN_CZER_JASNY As New SolidBrush(KolorRGB("#FF3838"))
+    Private ReadOnly PEDZEL_SYGN_ZIEL As New SolidBrush(KolorRGB("#004700"))
+    Private ReadOnly PEDZEL_SYGN_ZIEL_JASNY As New SolidBrush(KolorRGB("#33FF33"))
+    Private ReadOnly PEDZEL_SYGN_NIEB As New SolidBrush(KolorRGB("#000661"))
+    Private ReadOnly PEDZEL_SYGN_NIEB_JASNY As New SolidBrush(KolorRGB("#14EBFF"))
+    Private ReadOnly PEDZEL_SYGN_BIAL As New SolidBrush(KolorRGB("#909090"))
     Private ReadOnly PEDZEL_SYGN_BIAL_JASNY As New SolidBrush(KolorRGB("#FFFFFF"))
     Private ReadOnly PEDZEL_SYGN_TLO As New SolidBrush(KolorRGB("#808080"))
     Private ReadOnly PEDZEL_SYGN_KRAWEDZ As New Pen(KolorRGB("#000000"), 0.01)
     Private ReadOnly PEDZEL_PRZYCISK As New SolidBrush(KolorRGB("#000000"))
+    Private ReadOnly PEDZEL_PRZYCISK_WCISNIETY As New SolidBrush(KolorRGB("#EDEDED"))
     Private ReadOnly PEDZEL_TEKST As New SolidBrush(KolorRGB("#000000"))
     Private ReadOnly PEDZEL_ZAZN_KOSTKA As New SolidBrush(KolorRGB("#009DFF"))
     Private ReadOnly PEDZEL_LAMPA_TLO As New SolidBrush(KolorRGB("#FFEA00"))
@@ -63,6 +64,7 @@
     Private pedzelToru As SolidBrush
     Private obrot As Single
     Private poczatkowaTransformacja As Drawing2D.Matrix
+    Private trybProjektowy As Boolean
 
     Private ReadOnly Property IRysownik_KOLKO_SZER As Single Implements IRysownik.KOLKO_SZER
         Get
@@ -106,6 +108,7 @@
         gr.FillRectangle(PEDZEL_TLO_KOSTKI, New Rectangle(0, 0, ps.SzerokoscPulpitu, ps.WysokoscPulpitu))
 
         pedzelToru = PEDZEL_TOR_WOLNY
+        trybProjektowy = ps.TrybProjektowy
 
         If ps.RysujKrawedzieKostek Then
             gr.ScaleTransform(ps.Skalowanie, ps.Skalowanie)
@@ -180,7 +183,7 @@
             Case Zaleznosci.TypKostki.PrzyciskTor
                 RysujPrzyciskTor(CType(kostka, Zaleznosci.PrzyciskTor))
             Case Zaleznosci.TypKostki.Kierunek
-                RysujKierunek()
+                RysujKierunek(CType(kostka, Zaleznosci.Kierunek))
             Case Zaleznosci.TypKostki.Napis
                 RysujKostkeNapis(CType(kostka, Zaleznosci.Napis))
         End Select
@@ -225,7 +228,7 @@
     Private Sub RysujRozjazdLewo(rozjazd As Zaleznosci.RozjazdLewo)
         RysujZakret()
         RysujTor()
-        RysujPrzycisk()
+        RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety)
         RysujNazwe(rozjazd.Nazwa, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y)
     End Sub
 
@@ -235,7 +238,7 @@
         RysujZakret()
         gr.Transform = transformacja
         RysujTor()
-        RysujPrzycisk(2)
+        RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, 2)
         RysujNazwe(rozjazd.Nazwa, SYGN_POZ + TEKST_POZ_X_PRZYCISK, 2 * SYGN_POZ + TEKST_POZ_Y)
     End Sub
 
@@ -244,43 +247,53 @@
     End Sub
 
     Private Sub RysujSygnalizatorManewrowy(sygnalizator As Zaleznosci.SygnalizatorManewrowy)
+        Dim pedzNiebieski As Brush = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraManewrowego.BrakWyjazdu, PEDZEL_SYGN_NIEB_JASNY, PEDZEL_SYGN_NIEB)
+        Dim pedzBialy As Brush = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraManewrowego.Manewrowy, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
+
         RysujTor()
         gr.FillPie(PEDZEL_SYGN_TLO, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, KAT_PROSTY, 2 * KAT_PROSTY)
         gr.FillPie(PEDZEL_SYGN_TLO, 2 * SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, 3 * KAT_PROSTY, 2 * KAT_PROSTY)
         gr.FillRectangle(PEDZEL_SYGN_TLO, SYGN_POZ, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ, SYGN_TLO_SZER)
-        gr.FillEllipse(PEDZEL_SYGN_NIEB_JASNY, SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
-        gr.FillEllipse(PEDZEL_SYGN_BIAL_JASNY, 2 * SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
+        gr.FillEllipse(pedzNiebieski, SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
+        gr.FillEllipse(pedzBialy, 2 * SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
         RysujSlupSygnalizatora(2)
         RysujNazweSygnalizatora(sygnalizator.Nazwa)
     End Sub
 
     Private Sub RysujSygnalizatorPolsamoczynny(sygnalizator As Zaleznosci.SygnalizatorPolsamoczynny)
+        Dim pedzCzer As Brush = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.BrakWyjazdu Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zastepczy, PEDZEL_SYGN_CZER_JASNY, PEDZEL_SYGN_CZER)
+        Dim pedzZiel As Brush = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zezwalajacy, PEDZEL_SYGN_ZIEL_JASNY, PEDZEL_SYGN_ZIEL)
+        Dim pedzBial As Brush = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Manewrowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zastepczy, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
+
         RysujTor()
         gr.FillPie(PEDZEL_SYGN_TLO, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, KAT_PROSTY, 2 * KAT_PROSTY)
         gr.FillPie(PEDZEL_SYGN_TLO, 3 * SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER, 3 * KAT_PROSTY, 2 * KAT_PROSTY)
         gr.FillRectangle(PEDZEL_SYGN_TLO, SYGN_POZ, SYGN_POZ - SYGN_TLO_SZER / 2, 2 * SYGN_POZ, SYGN_TLO_SZER)
-        gr.FillEllipse(PEDZEL_SYGN_CZER_JASNY, SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
-        gr.FillEllipse(PEDZEL_SYGN_ZIEL_JASNY, 2 * SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
-        gr.FillEllipse(PEDZEL_SYGN_BIAL_JASNY, 3 * SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
+        gr.FillEllipse(pedzCzer, SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
+        gr.FillEllipse(pedzZiel, 2 * SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
+        gr.FillEllipse(pedzBial, 3 * SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
         RysujSlupSygnalizatora(3)
         RysujNazweSygnalizatora(sygnalizator.Nazwa)
     End Sub
 
     Private Sub RysujSygnalizatorSamoczynny(sygnalizator As Zaleznosci.SygnalizatorSamoczynny)
+        Dim pedz As Brush = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraSamoczynnego.BrakWyjazdu, PEDZEL_SYGN_CZER_JASNY, PEDZEL_SYGN_CZER)
+
         RysujTor()
         gr.FillEllipse(PEDZEL_SYGN_TLO, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER)
-        gr.FillEllipse(PEDZEL_SYGN_CZER_JASNY, SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
+        gr.FillEllipse(pedz, SYGN_POZ - SYGN_SZER / 2, SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
         RysujSlupSygnalizatora(1)
         RysujNazweSygnalizatora(sygnalizator.Nazwa)
     End Sub
 
-    Private Sub RysujPrzycisk(Optional poczy As Single = 0)
+    Private Sub RysujPrzycisk(wcisniety As Boolean, Optional poczy As Single = 0)
+        Dim pedzel As Brush = If(wcisniety, PEDZEL_PRZYCISK_WCISNIETY, PEDZEL_PRZYCISK)
         gr.FillEllipse(PEDZEL_SYGN_TLO, SYGN_POZ - SYGN_TLO_SZER / 2, poczy * SYGN_POZ + SYGN_POZ - SYGN_TLO_SZER / 2, SYGN_TLO_SZER, SYGN_TLO_SZER)
-        gr.FillEllipse(PEDZEL_PRZYCISK, SYGN_POZ - SYGN_SZER / 2, poczy * SYGN_POZ + SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
+        gr.FillEllipse(pedzel, SYGN_POZ - SYGN_SZER / 2, poczy * SYGN_POZ + SYGN_POZ - SYGN_SZER / 2, SYGN_SZER, SYGN_SZER)
     End Sub
 
     Private Sub RysujPrzyciskZwykly(przycisk As Zaleznosci.Przycisk)
-        RysujPrzycisk()
+        RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety)
         Select Case przycisk.TypPrzycisku
             Case Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy
                 RysujNazwe(NAZWA_SZ, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y)
@@ -292,20 +305,20 @@
 
     Private Sub RysujPrzyciskTor(przycisk As Zaleznosci.PrzyciskTor)
         RysujTor()
-        RysujPrzycisk()
+        RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety)
         If przycisk.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy Or przycisk.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalManewrowy Then
             RysujNazwe(NAZWA_M, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y)
         End If
         RysujNazweSygnalizatora(przycisk.ObslugiwanySygnalizator?.Nazwa)
     End Sub
 
-    Private Sub RysujKierunek()
+    Private Sub RysujKierunek(kier As Zaleznosci.Kierunek)
         gr.FillPolygon(pedzelToru, New PointF() {
         New PointF(POL + KIER_SZER / 2, POL - KIER_SZER / 2),
         New PointF(POL - KIER_SZER / 2, POL),
         New PointF(POL + KIER_SZER / 2, POL + KIER_SZER / 2)
         })
-        RysujPrzycisk()
+        RysujPrzycisk((Not trybProjektowy) And kier.Wcisniety)
     End Sub
 
     Private Sub RysujKostkeNapis(napis As Zaleznosci.Napis)

@@ -3,6 +3,9 @@ Imports SegmPliku = Zaleznosci.SegmentPliku(Of Zaleznosci.IObiektPliku(Of Zalezn
 Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
 
 Public Class Pulpit
+    Private Delegate Function CzyZgodnyTypKostki(typ As TypKostki) As Boolean
+    Private Delegate Function PobierzAdres(k As Kostka) As UShort
+
     Public Shared ReadOnly ObslugiwaneWersje As WersjaPliku() = {New WersjaPliku(0, 1)}
     Public Const ROZSZERZENIE_PLIKU As String = ".stacja"
     Public Const OPIS_PLIKU As String = "Schemat posterunku ruchu"
@@ -394,6 +397,25 @@ Public Class Pulpit
 
         _Kostki = tab
         Return True
+    End Function
+
+    Public Function PobierzSygnalizatory() As Dictionary(Of UShort, Sygnalizator)
+        Return PobierzKostki(Of Sygnalizator)(AddressOf CzySygnalizator, Function(k) DirectCast(k, Sygnalizator).Adres)
+    End Function
+
+    Private Function PobierzKostki(Of T As Kostka)(sprTypu As CzyZgodnyTypKostki, pobAdres As PobierzAdres) As Dictionary(Of UShort, T)
+        Dim slownik As New Dictionary(Of UShort, T)
+
+        For x As Integer = 0 To _Szerokosc - 1
+            For y As Integer = 0 To _Wysokosc - 1
+                Dim k As Kostka = _Kostki(x, y)
+                If k IsNot Nothing AndAlso sprTypu(k.Typ) Then
+                    slownik.Add(pobAdres(k), CType(k, T))
+                End If
+            Next
+        Next
+
+        Return slownik
     End Function
 
 End Class

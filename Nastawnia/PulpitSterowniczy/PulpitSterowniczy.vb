@@ -7,7 +7,9 @@ Friend Class PulpitSterowniczy
     Private Const SKALOWANIE_MAX As Single = 200.0F
     Private Const ZWIEKSZ_OBROT As Integer = 90
     Private Const KAT_PELNY As Integer = 360
+    Private Const CZAS_WCISKANIA_PRZYCISKU_MS As Integer = 300
     Private Const KATEG_KONF As String = "Konfiguracja"
+    Private Const KATEG_ZDARZ As String = "Zdarzenia trybu działania"
     Private Const KATEG_ZDARZ_PROJ As String = "Zdarzenia trybu projektowego"
 
     <Browsable(False)>
@@ -90,6 +92,9 @@ Friend Class PulpitSterowniczy
         End Set
     End Property
 
+    <Description("Czas od kliknięcia przycisku do reakcji pulpitu"), Category(KATEG_KONF), DefaultValue(CZAS_WCISKANIA_PRZYCISKU_MS)>
+    Public Property CzasWciskaniaPrzyciskuMS As Integer = CZAS_WCISKANIA_PRZYCISKU_MS
+
     Private _Pulpit As New Zaleznosci.Pulpit
     <Browsable(False)>
     Public Property Pulpit As Zaleznosci.Pulpit
@@ -168,6 +173,10 @@ Friend Class PulpitSterowniczy
     Private AkceptowaniePrzeciagania As DragDropEffects = DragDropEffects.None
     Private PoprzLokalizacjaKostki As New Point(-1, -1)
     Private PierwszaObslugaPrzeciagania As Boolean = True
+    Private WcisnietyPrzycisk As Zaleznosci.IPrzycisk = Nothing
+
+    <Description("Wciśnięto przycisk na pulpicie"), Category(KATEG_ZDARZ)>
+    Public Event WcisnietoPrzycisk(kostka As Zaleznosci.Kostka)
 
     <Description("Zmiana zaznaczonej kostki"), Category(KATEG_ZDARZ_PROJ)>
     Public Event projZmianaZaznaczeniaKostki(kostka As Zaleznosci.Kostka)
@@ -192,6 +201,10 @@ Friend Class PulpitSterowniczy
         _projZaznaczonyLicznik = Nothing
         projZaznaczonaKostka = Nothing  'przypisanie do własności zamiast zmiennej, żeby wywołały się zdarzenia
         projZaznaczonaLampa = Nothing
+    End Sub
+
+    Private Sub PulpitSterowniczy_Paint(sender As Object, e As PaintEventArgs) Handles Me.Paint
+        _Rysownik.Rysuj(Me, e.Graphics)
     End Sub
 
     Private Sub PulpitSterowniczy_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
@@ -272,11 +285,19 @@ Friend Class PulpitSterowniczy
     Private Sub PulpitSterowniczy_MouseUp() Handles Me.MouseUp
         PoprzedniPunkt.X = -1
         PoprzedniPunkt.Y = -1
+
+        If WcisnietyPrzycisk IsNot Nothing Then
+            tmrLicznik.Stop()
+            WcisnietyPrzycisk.Wcisniety = False
+            WcisnietyPrzycisk = Nothing
+            Invalidate()
+        End If
     End Sub
 
-    Private Sub pctPulpit_MouseDown(sender As Object, e As MouseEventArgs) Handles Me.MouseDown
+    Private Sub PulpitSterowniczy_MouseDown(sender As Object, e As MouseEventArgs) Handles Me.MouseDown
+        Dim p As Point = PobierzKliknieteWspolrzedneKostki(e.Location)
+
         If TrybProjektowy And projDodatkoweObiekty = RysujDodatkoweObiekty.Nic And ((ModifierKeys And Keys.Shift) <> 0) Then      'Przesuń kostkę
-            Dim p As Point = PobierzKliknieteWspolrzedneKostki(e.Location)
             If CzyKostkaNiepusta(p) Then
                 PoprzLokalizacjaKostki = p
                 DoDragDrop(Pulpit.Kostki(p.X, p.Y), DragDropEffects.Move)
@@ -284,9 +305,20 @@ Friend Class PulpitSterowniczy
         Else        'Przesuń cały pulpit
             PoprzedniPunkt = e.Location
         End If
+
+        If Not TrybProjektowy AndAlso CzyKostkaNiepusta(p) Then
+            Dim k As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
+            If Zaleznosci.CzyPrzycisk(k.Typ) Then
+                WcisnietyPrzycisk = DirectCast(k, Zaleznosci.IPrzycisk)
+                WcisnietyPrzycisk.Wcisniety = True
+                Invalidate()
+                tmrLicznik.Interval = CzasWciskaniaPrzyciskuMS
+                tmrLicznik.Start()
+            End If
+        End If
     End Sub
 
-    Private Sub pctPulpit_DragOver(sender As Object, e As DragEventArgs) Handles Me.DragOver
+    Private Sub PulpitSterowniczy_DragOver(sender As Object, e As DragEventArgs) Handles Me.DragOver
         If Not e.Data.GetFormats()(0).StartsWith("Zaleznosci.") Then
             e.Effect = DragDropEffects.None
             Exit Sub
@@ -315,6 +347,18 @@ Friend Class PulpitSterowniczy
         End If
 
         e.Effect = AkceptowaniePrzeciagania
+    End Sub
+
+    Private Sub PulpitSterowniczy_DragEnter(sender As Object, e As DragEventArgs) Handles Me.DragEnter
+        If _projZaznaczonaKostka IsNot PobierzDodawanaKostke(e) Then
+            AkceptowaniePrzeciagania = DragDropEffects.None
+            PierwszaObslugaPrzeciagania = True
+        End If
+    End Sub
+
+    Private Sub tmrLicznik_Tick() Handles tmrLicznik.Tick
+        tmrLicznik.Stop()
+        If WcisnietyPrzycisk IsNot Nothing Then RaiseEvent WcisnietoPrzycisk(DirectCast(WcisnietyPrzycisk, Zaleznosci.Kostka))
     End Sub
 
     Private Function PobierzDodawanaKostke(e As DragEventArgs) As Zaleznosci.Kostka
@@ -350,15 +394,4 @@ Friend Class PulpitSterowniczy
 
         Return Nothing
     End Function
-
-    Private Sub PulpitSterowniczy_Paint(sender As Object, e As PaintEventArgs) Handles Me.Paint
-        _Rysownik.Rysuj(Me, e.Graphics)
-    End Sub
-
-    Private Sub PulpitSterowniczy_DragEnter(sender As Object, e As DragEventArgs) Handles Me.DragEnter
-        If _projZaznaczonaKostka IsNot PobierzDodawanaKostke(e) Then
-            AkceptowaniePrzeciagania = DragDropEffects.None
-            PierwszaObslugaPrzeciagania = True
-        End If
-    End Sub
 End Class

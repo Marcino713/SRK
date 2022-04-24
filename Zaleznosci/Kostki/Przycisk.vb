@@ -2,9 +2,12 @@
 
 Public Class Przycisk
     Inherits Kostka
+    Implements IPrzycisk
 
     Public Property TypPrzycisku As TypPrzyciskuEnum
     Public Property ObslugiwanySygnalizator As SygnalizatorPolsamoczynny
+
+    Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
 
     Public Sub New()
         MyBase.New(TypKostki.Przycisk)

@@ -2,6 +2,8 @@
 
 Public MustInherit Class Rozjazd
     Inherits Tor
+    Implements IPrzycisk
+
     Private Const LICZBA_ROZJAZDOW_ZALEZNYCH As Integer = 2
 
     Public Property PredkoscBoczna As Integer = 0
@@ -9,6 +11,9 @@ Public MustInherit Class Rozjazd
     Public Property Adres As UShort = 0
     Public Property ZaleznosciJesliWprost As KonfiguracjaRozjazduZaleznego()
     Public Property ZaleznosciJesliBok As KonfiguracjaRozjazduZaleznego()
+
+    Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
+    Public Property Stan As UstawienieZwrotnicy = UstawienieZwrotnicy.Niezdefiniowany
 
     Public Sub New(typ As TypKostki)
         MyBase.New(typ)
@@ -84,4 +89,10 @@ End Class
 Public Enum UstawienieRozjazduEnum
     Wprost
     Bok
+End Enum
+
+Public Enum UstawienieZwrotnicy As Byte
+    Wprost
+    Bok
+    Niezdefiniowany
 End Enum

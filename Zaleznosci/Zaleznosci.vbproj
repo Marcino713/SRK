@@ -73,6 +73,7 @@
     <Compile Include="Komunikaty\DHInicjalizuj.vb" />
     <Compile Include="Komunikaty\DHZainicjalizowano.vb" />
     <Compile Include="Komunikaty\Informacja.vb" />
+    <Compile Include="Kostki\IPrzycisk.vb" />
     <Compile Include="ObslugaKomunikatow\Komunikat.vb" />
     <Compile Include="Komunikaty\ZakonczDzialanieKlienta.vb" />
     <Compile Include="Komunikaty\ZakonczonoDzialanieSerwera.vb" />

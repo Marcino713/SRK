@@ -26,9 +26,3 @@
         Return kom
     End Function
 End Class
-
-Public Enum UstawienieZwrotnicy As Byte
-    Zasadniczy
-    Boczny
-    Niezdefiniowany
-End Enum

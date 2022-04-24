@@ -39,6 +39,13 @@
         Return typ = WYBIERZ_POSTERUNEK Or typ = WYBRANO_POSTERUNEK
     End Function
 
+    Friend Shared Function CzyKomunikatSterowaniaRuchem(typ As UShort) As Boolean
+        Return typ = USTAW_POCZATKOWA_ZAJETOSC_TORU Or typ = NADANO_NUMER_POCIAGU Or typ = ZMIENIONO_STAN_TORU Or typ = USTAW_ZWROTNICE Or typ = ZMIENIONO_STAN_ZWROTNICY Or
+               typ = USTAW_STAN_SYGNALIZATORA Or typ = ZMIENIONO_STAN_SYGNALIZATORA Or typ = ZWOLNIJ_PRZEBIEGI Or typ = USTAW_KIERUNEK Or typ = ZAZADANO_USTAWIENIA_KIERUNKU Or
+               typ = ZMIENIONO_KIERUNEK Or typ = USTAW_JASNOSC_LAMP Or typ = ZMIENIONO_JASNOSC_LAMP Or typ = USTAW_PREDKOSC_POCIAGU Or typ = ZMIENIONO_PREDKOSC_POCIAGU Or
+               typ = ZMIENIONO_PREDKOSC_MAKSYMALNA Or typ = INFORMACJA
+    End Function
+
     Friend Shared Function CzyKomunikatZakonczenia(typ As UShort) As Boolean
         Return typ = ZAKONCZ_DZIALANIE_KLIENTA Or typ = ZAKONCZONO_DZIALANIE_SERWERA Or typ = ZAKONCZONO_SESJE_KLIENTA
     End Function

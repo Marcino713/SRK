@@ -2,7 +2,7 @@
     Inherits Komunikat
 
     Public Property Adres As UShort
-    Public Property Stan As ZmienionyStanSygnalizatora
+    Public Property Stan As StanSygnalizatora
 
     Public Overrides ReadOnly Property Typ As UShort
         Get
@@ -18,15 +18,8 @@
     Public Shared Function Otworz(br As BinaryReader) As Komunikat
         Dim kom As New ZmienionoStanSygnalizatora
         kom.Adres = br.ReadUInt16
-        kom.Stan = CType(br.ReadByte, ZmienionyStanSygnalizatora)
+        kom.Stan = CType(br.ReadByte, StanSygnalizatora)
 
         Return kom
     End Function
 End Class
-
-Public Enum ZmienionyStanSygnalizatora As Byte
-    Zezwalajacy
-    Manewrowy
-    Zastepczy
-    BrakWyjazdu
-End Enum

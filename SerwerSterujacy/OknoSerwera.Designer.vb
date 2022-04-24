@@ -213,6 +213,7 @@ Partial Class wndOknoSerwera
         '
         'btnRozlacz
         '
+        Me.btnRozlacz.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnRozlacz.Location = New System.Drawing.Point(515, 392)
         Me.btnRozlacz.Name = "btnRozlacz"
         Me.btnRozlacz.Size = New System.Drawing.Size(75, 23)
@@ -222,7 +223,7 @@ Partial Class wndOknoSerwera
         '
         'btnOdswiez
         '
-        Me.btnOdswiez.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.btnOdswiez.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnOdswiez.Location = New System.Drawing.Point(596, 392)
         Me.btnOdswiez.Name = "btnOdswiez"
         Me.btnOdswiez.Size = New System.Drawing.Size(75, 23)

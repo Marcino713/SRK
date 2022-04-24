@@ -2,7 +2,11 @@
 
 Public Class Kierunek
     Inherits Tor
+    Implements IPrzycisk
+
     Public Property KierunekWlaczany As KierunekWlaczanyEnum
+
+    Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
 
     Public Sub New()
         MyBase.New(TypKostki.Kierunek)

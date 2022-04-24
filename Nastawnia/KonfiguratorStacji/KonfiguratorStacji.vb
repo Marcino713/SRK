@@ -67,7 +67,7 @@
     End Sub
 
     Private Sub DodajKostkeDoListy(kostka As Zaleznosci.Kostka, nazwa As String)
-        Dim p As New PulpitSterowniczy With {.Skalowanie = ROZMIAR_KOSTKI_LISTA - 1, .RysujKrawedzieKostek = False, .TypRysownika = TypRysownika.KlasycznyGDI}
+        Dim p As New PulpitSterowniczy With {.Skalowanie = ROZMIAR_KOSTKI_LISTA - 1, .RysujKrawedzieKostek = False, .TypRysownika = TypRysownika.KlasycznyGDI, .TrybProjektowy = True}
         p.Pulpit.Kostki(0, 0) = kostka
         Dim bm As New Bitmap(ROZMIAR_KOSTKI_LISTA, ROZMIAR_KOSTKI_LISTA)
         p.DrawToBitmap(bm, New Rectangle(0, 0, ROZMIAR_KOSTKI_LISTA, ROZMIAR_KOSTKI_LISTA))

@@ -5,6 +5,8 @@ Public Class SygnalizatorPolsamoczynny
 
     Public Property DostepneSwiatla As DostepneSwiatlaEnum
 
+    Public Property Stan As StanSygnalizatora = StanSygnalizatora.BrakWyjazdu
+
     Public Sub New()
         MyBase.New(TypKostki.SygnalizatorPolsamoczynny)
     End Sub
@@ -28,4 +30,11 @@ Public Enum DostepneSwiatlaEnum
     Biale = 1 << 5
     ZielonyPas = 1 << 6
     PomaranczowyPas = 1 << 7
+End Enum
+
+Public Enum StanSygnalizatora As Byte
+    BrakWyjazdu = 1
+    Zezwalajacy = 2
+    Manewrowy = 3
+    Zastepczy = 4
 End Enum

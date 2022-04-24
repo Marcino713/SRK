@@ -210,6 +210,7 @@ Friend Class PolaczenieTCP
             (_Stan = StanPolaczenia.UstalanieKluczaSzyfrujacego AndAlso TypKomunikatu.CzyKomunikatDH(typ)) Or
             (_Stan = StanPolaczenia.UwierzytelnianieHaslem AndAlso TypKomunikatu.CzyKomunikatUwierzytelniania(typ)) Or
             (_Stan = StanPolaczenia.WyborPosterunku AndAlso TypKomunikatu.CzyKomunikatWyboruPosterunku(typ)) Or
+            (_Stan = StanPolaczenia.SterowanieRuchem AndAlso TypKomunikatu.CzyKomunikatSterowaniaRuchem(typ)) Or
             (_Stan <> StanPolaczenia.UstalanieKluczaSzyfrujacego AndAlso TypKomunikatu.CzyKomunikatZakonczenia(typ))
             ) Then
                 Exit Sub
