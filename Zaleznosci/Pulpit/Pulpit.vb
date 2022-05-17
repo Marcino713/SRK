@@ -1,6 +1,7 @@
 ﻿Imports Zaleznosci.PlikiPulpitu
 Imports SegmPliku = Zaleznosci.SegmentPliku(Of Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu))
 Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
+Imports System.Drawing
 
 Public Class Pulpit
     Private Delegate Function CzyZgodnyTypKostki(typ As TypKostki) As Boolean
@@ -403,6 +404,10 @@ Public Class Pulpit
         Return PobierzKostki(Of Sygnalizator)(AddressOf CzySygnalizator, Function(k) DirectCast(k, Sygnalizator).Adres)
     End Function
 
+    Public Function PobierzRozjazdy() As Dictionary(Of UShort, Rozjazd)
+        Return PobierzKostki(Of Rozjazd)(AddressOf CzyRozjazd, Function(k) DirectCast(k, Rozjazd).Adres)
+    End Function
+
     Private Function PobierzKostki(Of T As Kostka)(sprTypu As CzyZgodnyTypKostki, pobAdres As PobierzAdres) As Dictionary(Of UShort, T)
         Dim slownik As New Dictionary(Of UShort, T)
 
@@ -416,6 +421,28 @@ Public Class Pulpit
         Next
 
         Return slownik
+    End Function
+
+    Public Function ZnajdzKostke(k As Kostka) As Punkt
+        If k Is Nothing Then Return Nothing
+
+        For x As Integer = 0 To _Szerokosc - 1
+            For y As Integer = 0 To _Wysokosc - 1
+                If _Kostki(x, y) Is k Then
+                    Return New Punkt() With {.X = CUShort(x), .Y = CUShort(y)}
+                End If
+            Next
+        Next
+
+        Return Nothing
+    End Function
+
+    Public Function CzyKostkaWZakresiePulpitu(wspolrzedne As Point) As Boolean
+        Return wspolrzedne.X >= 0 And wspolrzedne.X < _Szerokosc And wspolrzedne.Y >= 0 And wspolrzedne.Y < _Wysokosc
+    End Function
+
+    Public Function CzyKostkaNiepusta(wspolrzedne As Point) As Boolean
+        Return CzyKostkaWZakresiePulpitu(wspolrzedne) AndAlso _Kostki(wspolrzedne.X, wspolrzedne.Y) IsNot Nothing
     End Function
 
 End Class

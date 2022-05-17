@@ -71,7 +71,14 @@ Public Class SerwerTCP
 
         DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_POCZATKOWA_ZAJETOSC_TORU, New PrzetwOdebrKomunikatu(
             AddressOf UstawPoczatkowaZajetoscToru.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoUstawPoczatkowaZajetoscToru(pol.AdresStacji, CType(kom, UstawPoczatkowaZajetoscToru))
+            Sub(pol, kom)
+                Dim k As UstawPoczatkowaZajetoscToru = CType(kom, UstawPoczatkowaZajetoscToru)
+                Dim akt(0) As AktualizowanyKawalekToru
+                akt(0) = New AktualizowanyKawalekToru() With
+                    {.Polozenie = PolozenieToru.TorGlowny, .Zajetosc = ZajetoscToru.Zajety, .WspolrzedneKostki = k.WspolrzedneKostki}
+                pol.WyslijKomunikat(New ZmienionoStanToru() With {.Tory = akt})
+                RaiseEvent OdebranoUstawPoczatkowaZajetoscToru(pol.AdresStacji, k)
+            End Sub
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_PREDKOSC_POCIAGU, New PrzetwOdebrKomunikatu(
@@ -99,7 +106,11 @@ Public Class SerwerTCP
 
         DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_ZWROTNICE, New PrzetwOdebrKomunikatu(
             AddressOf UstawZwrotnice.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoUstawZwrotnice(pol.AdresStacji, CType(kom, UstawZwrotnice))
+            Sub(pol, kom)
+                Dim k As UstawZwrotnice = CType(kom, UstawZwrotnice)
+                pol.WyslijKomunikat(New ZmienionoStanZwrotnicy() With {.Adres = k.Adres, .Stan = If(k.Ustawienie = UstawienieRozjazduEnum.Wprost, UstawienieZwrotnicy.Wprost, UstawienieZwrotnicy.Bok)})
+                RaiseEvent OdebranoUstawZwrotnice(pol.AdresStacji, k)
+            End Sub
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.UWIERZYTELNIJ_SIE, New PrzetwOdebrKomunikatu(

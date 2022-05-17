@@ -14,6 +14,8 @@ Public MustInherit Class Rozjazd
 
     Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
     Public Property Stan As UstawienieZwrotnicy = UstawienieZwrotnicy.Niezdefiniowany
+    Public Property ZajetoscBok As ZajetoscToru = ZajetoscToru.Wolny
+    Public Property Rozprucie As Boolean = False
 
     Public Sub New(typ As TypKostki)
         MyBase.New(typ)

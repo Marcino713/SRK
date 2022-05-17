@@ -6,6 +6,8 @@ Public Class Tor
     Public Property PredkoscZasadnicza As Integer
     Public Property NalezyDoOdcinka As OdcinekToru
 
+    Public Property Zajetosc As ZajetoscToru = ZajetoscToru.Wolny
+
     Public Sub New()
         MyBase.New(TypKostki.Tor)
     End Sub
@@ -31,3 +33,9 @@ Public Class Tor
         NalezyDoOdcinka?.KostkiTory.Add(Me)
     End Sub
 End Class
+
+Public Enum ZajetoscToru As Byte
+    Wolny
+    Zajety
+    PrzebiegUtwierdzony
+End Enum

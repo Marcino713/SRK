@@ -27,6 +27,7 @@
 
         For i As Integer = 0 To ile - 1
             Dim tor As New AktualizowanyKawalekToru
+            tor.WspolrzedneKostki = New Punkt
             tor.WspolrzedneKostki.X = br.ReadUInt16
             tor.WspolrzedneKostki.Y = br.ReadUInt16
             tor.Polozenie = CType(br.ReadByte, PolozenieToru)
@@ -48,10 +49,4 @@ End Class
 Public Enum PolozenieToru As Byte
     TorGlowny
     RozjazdWBok
-End Enum
-
-Public Enum ZajetoscToru As Byte
-    Wolny
-    Zajety
-    PrzebiegUstawiony
 End Enum

@@ -107,7 +107,36 @@ Friend Class PulpitSterowniczy
         End Set
     End Property
 
-    Private _projDodatkoweObiekty As RysujDodatkoweObiekty
+    Private _ZaznaczonaKostka As Zaleznosci.Kostka
+    <Browsable(False)>
+    Public Property ZaznaczonaKostka As Zaleznosci.Kostka
+        Get
+            Return _ZaznaczonaKostka
+        End Get
+        Set(value As Zaleznosci.Kostka)
+            _ZaznaczonaKostka = value
+            RaiseEvent ZmianaZaznaczeniaKostki(value)
+            If Not TrybProjektowy Or _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then Invalidate()
+        End Set
+    End Property
+
+    Private _MozliwoscZaznaczeniaToru As Boolean = False
+    <Browsable(False)>
+    Public Property MozliwoscZaznaczeniaToru As Boolean
+        Get
+            Return _MozliwoscZaznaczeniaToru
+        End Get
+        Set(value As Boolean)
+            _MozliwoscZaznaczeniaToru = value
+            If value Then
+                Invalidate()
+            Else
+                ZaznaczonaKostka = Nothing
+            End If
+        End Set
+    End Property
+
+    Private _projDodatkoweObiekty As RysujDodatkoweObiekty = RysujDodatkoweObiekty.Nic
     <Browsable(False)>
     Public Property projDodatkoweObiekty As RysujDodatkoweObiekty
         Get
@@ -116,19 +145,6 @@ Friend Class PulpitSterowniczy
         Set(value As RysujDodatkoweObiekty)
             _projDodatkoweObiekty = value
             Invalidate()
-        End Set
-    End Property
-
-    Private _projZaznaczonaKostka As Zaleznosci.Kostka
-    <Browsable(False)>
-    Public Property projZaznaczonaKostka As Zaleznosci.Kostka
-        Get
-            Return _projZaznaczonaKostka
-        End Get
-        Set(value As Zaleznosci.Kostka)
-            _projZaznaczonaKostka = value
-            RaiseEvent projZmianaZaznaczeniaKostki(value)
-            If _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then Invalidate()
         End Set
     End Property
 
@@ -178,8 +194,8 @@ Friend Class PulpitSterowniczy
     <Description("Wciśnięto przycisk na pulpicie"), Category(KATEG_ZDARZ)>
     Public Event WcisnietoPrzycisk(kostka As Zaleznosci.Kostka)
 
-    <Description("Zmiana zaznaczonej kostki"), Category(KATEG_ZDARZ_PROJ)>
-    Public Event projZmianaZaznaczeniaKostki(kostka As Zaleznosci.Kostka)
+    <Description("Zmiana zaznaczonej kostki"), Category(KATEG_ZDARZ)>
+    Public Event ZmianaZaznaczeniaKostki(kostka As Zaleznosci.Kostka)
 
     <Description("Zmiana zaznaczonej lampy"), Category(KATEG_ZDARZ_PROJ)>
     Public Event projZmianaZaznaczeniaLampy(lampa As Zaleznosci.Lampa)
@@ -199,7 +215,7 @@ Friend Class PulpitSterowniczy
         _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
         _projZaznaczonyOdcinek = Nothing
         _projZaznaczonyLicznik = Nothing
-        projZaznaczonaKostka = Nothing  'przypisanie do własności zamiast zmiennej, żeby wywołały się zdarzenia
+        ZaznaczonaKostka = Nothing  'przypisanie do własności zamiast zmiennej, żeby wywołały się zdarzenia
         projZaznaczonaLampa = Nothing
     End Sub
 
@@ -208,17 +224,17 @@ Friend Class PulpitSterowniczy
     End Sub
 
     Private Sub PulpitSterowniczy_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
-        If TrybProjektowy And projZaznaczonaKostka IsNot Nothing Then
+        If TrybProjektowy And ZaznaczonaKostka IsNot Nothing Then
 
             If e.KeyData = Keys.R Then
-                Dim obrot As Integer = projZaznaczonaKostka.Obrot
+                Dim obrot As Integer = ZaznaczonaKostka.Obrot
                 obrot = (obrot + ZWIEKSZ_OBROT) Mod KAT_PELNY
-                projZaznaczonaKostka.Obrot = obrot
+                ZaznaczonaKostka.Obrot = obrot
                 Invalidate()
 
             ElseIf e.KeyData = Keys.Delete
-                Pulpit.UsunKostke(projZaznaczonaKostka)
-                projZaznaczonaKostka = Nothing
+                Pulpit.UsunKostke(ZaznaczonaKostka)
+                ZaznaczonaKostka = Nothing
             End If
 
         End If
@@ -230,7 +246,7 @@ Friend Class PulpitSterowniczy
         If TrybProjektowy Then
 
             If projDodatkoweObiekty = RysujDodatkoweObiekty.Tory Then
-                If CzyKostkaWZakresiePulpitu(p) Then
+                If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
                     Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
                     If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.Tor AndAlso projZaznaczonyOdcinek IsNot Nothing Then
 
@@ -253,13 +269,28 @@ Friend Class PulpitSterowniczy
                 projZaznaczonaLampa = PobierzKliknietaLampe(e.Location)
 
             ElseIf projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
-                If CzyKostkaNiepusta(p) Then
-                    projZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
+                If _Pulpit.CzyKostkaNiepusta(p) Then
+                    ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
                 Else
-                    projZaznaczonaKostka = Nothing
+                    ZaznaczonaKostka = Nothing
                 End If
 
             End If
+
+        ElseIf MozliwoscZaznaczeniaToru
+
+            Dim zaznaczono As Boolean = False
+
+            If _Pulpit.CzyKostkaNiepusta(p) Then
+                Dim k As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
+                If Zaleznosci.CzyTorBezRozjazdu(k.Typ) Then
+                    ZaznaczonaKostka = k
+                    zaznaczono = True
+                End If
+            End If
+
+            If Not zaznaczono Then ZaznaczonaKostka = Nothing
+
         End If
     End Sub
 
@@ -298,7 +329,7 @@ Friend Class PulpitSterowniczy
         Dim p As Point = PobierzKliknieteWspolrzedneKostki(e.Location)
 
         If TrybProjektowy And projDodatkoweObiekty = RysujDodatkoweObiekty.Nic And ((ModifierKeys And Keys.Shift) <> 0) Then      'Przesuń kostkę
-            If CzyKostkaNiepusta(p) Then
+            If _Pulpit.CzyKostkaNiepusta(p) Then
                 PoprzLokalizacjaKostki = p
                 DoDragDrop(Pulpit.Kostki(p.X, p.Y), DragDropEffects.Move)
             End If
@@ -306,7 +337,7 @@ Friend Class PulpitSterowniczy
             PoprzedniPunkt = e.Location
         End If
 
-        If Not TrybProjektowy AndAlso CzyKostkaNiepusta(p) Then
+        If Not TrybProjektowy AndAlso _Pulpit.CzyKostkaNiepusta(p) Then
             Dim k As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
             If Zaleznosci.CzyPrzycisk(k.Typ) Then
                 WcisnietyPrzycisk = DirectCast(k, Zaleznosci.IPrzycisk)
@@ -319,29 +350,29 @@ Friend Class PulpitSterowniczy
     End Sub
 
     Private Sub PulpitSterowniczy_DragOver(sender As Object, e As DragEventArgs) Handles Me.DragOver
-        If Not e.Data.GetFormats()(0).StartsWith("Zaleznosci.") Then
+        If Not TrybProjektowy Or Not e.Data.GetFormats()(0).StartsWith("Zaleznosci.") Then
             e.Effect = DragDropEffects.None
             Exit Sub
         End If
 
         Dim p As Point = PobierzKliknieteWspolrzedneKostki(PointToClient(New Point(e.X, e.Y)))
 
-        If CzyKostkaWZakresiePulpitu(p) AndAlso (
+        If _Pulpit.CzyKostkaWZakresiePulpitu(p) AndAlso (
             (PierwszaObslugaPrzeciagania AndAlso (Pulpit.Kostki(p.X, p.Y) Is Nothing Or Pulpit.Kostki(p.X, p.Y) Is PobierzDodawanaKostke(e))) Or
             (p <> PoprzLokalizacjaKostki AndAlso Pulpit.Kostki(p.X, p.Y) Is Nothing)
             ) Then
 
             If PierwszaObslugaPrzeciagania Then
                 AkceptowaniePrzeciagania = DragDropEffects.All
-                projZaznaczonaKostka = PobierzDodawanaKostke(e)
+                ZaznaczonaKostka = PobierzDodawanaKostke(e)
                 PierwszaObslugaPrzeciagania = False
             End If
 
-            If CzyKostkaWZakresiePulpitu(PoprzLokalizacjaKostki) AndAlso Pulpit.Kostki(PoprzLokalizacjaKostki.X, PoprzLokalizacjaKostki.Y) Is projZaznaczonaKostka Then
+            If _Pulpit.CzyKostkaWZakresiePulpitu(PoprzLokalizacjaKostki) AndAlso Pulpit.Kostki(PoprzLokalizacjaKostki.X, PoprzLokalizacjaKostki.Y) Is ZaznaczonaKostka Then
                 Pulpit.Kostki(PoprzLokalizacjaKostki.X, PoprzLokalizacjaKostki.Y) = Nothing
             End If
 
-            Pulpit.Kostki(p.X, p.Y) = projZaznaczonaKostka
+            Pulpit.Kostki(p.X, p.Y) = ZaznaczonaKostka
             PoprzLokalizacjaKostki = p
             Invalidate()
         End If
@@ -350,7 +381,9 @@ Friend Class PulpitSterowniczy
     End Sub
 
     Private Sub PulpitSterowniczy_DragEnter(sender As Object, e As DragEventArgs) Handles Me.DragEnter
-        If _projZaznaczonaKostka IsNot PobierzDodawanaKostke(e) Then
+        If Not TrybProjektowy Then Exit Sub
+
+        If _ZaznaczonaKostka IsNot PobierzDodawanaKostke(e) Then
             AkceptowaniePrzeciagania = DragDropEffects.None
             PierwszaObslugaPrzeciagania = True
         End If
@@ -363,14 +396,6 @@ Friend Class PulpitSterowniczy
 
     Private Function PobierzDodawanaKostke(e As DragEventArgs) As Zaleznosci.Kostka
         Return DirectCast(e.Data.GetData(e.Data.GetFormats()(0)), Zaleznosci.Kostka)
-    End Function
-
-    Private Function CzyKostkaWZakresiePulpitu(wspolrzedne As Point) As Boolean
-        Return wspolrzedne.X >= 0 And wspolrzedne.X < Pulpit.Szerokosc And wspolrzedne.Y >= 0 And wspolrzedne.Y < Pulpit.Wysokosc
-    End Function
-
-    Private Function CzyKostkaNiepusta(wspolrzedne As Point) As Boolean
-        Return CzyKostkaWZakresiePulpitu(wspolrzedne) AndAlso Pulpit.Kostki(wspolrzedne.X, wspolrzedne.Y) IsNot Nothing
     End Function
 
     Private Function PobierzKliknieteWspolrzedneKostki(klik As Point) As Point

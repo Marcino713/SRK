@@ -28,6 +28,8 @@ Partial Class wndNastawnia
         Me.mnuPolaczZSerwerem = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuRozlaczZSerwerem = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuZarzadzajSerwerem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
+        Me.mnuDodajPociag = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuKonfiguratorStacji = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
@@ -51,7 +53,7 @@ Partial Class wndNastawnia
         '
         'mnuNarzedzia
         '
-        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPolaczZSerwerem, Me.mnuRozlaczZSerwerem, Me.mnuZarzadzajSerwerem, Me.ToolStripSeparator2, Me.mnuKonfiguratorStacji, Me.ToolStripSeparator1, Me.mnuNowePolaczenia, Me.mnuOtworzPolaczenia})
+        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPolaczZSerwerem, Me.mnuRozlaczZSerwerem, Me.mnuZarzadzajSerwerem, Me.ToolStripSeparator3, Me.mnuDodajPociag, Me.ToolStripSeparator2, Me.mnuKonfiguratorStacji, Me.ToolStripSeparator1, Me.mnuNowePolaczenia, Me.mnuOtworzPolaczenia})
         Me.mnuNarzedzia.Name = "mnuNarzedzia"
         Me.mnuNarzedzia.Size = New System.Drawing.Size(70, 20)
         Me.mnuNarzedzia.Text = "Narzędzia"
@@ -74,6 +76,18 @@ Partial Class wndNastawnia
         Me.mnuZarzadzajSerwerem.Name = "mnuZarzadzajSerwerem"
         Me.mnuZarzadzajSerwerem.Size = New System.Drawing.Size(193, 22)
         Me.mnuZarzadzajSerwerem.Text = "Zarządzaj serwerem..."
+        '
+        'ToolStripSeparator3
+        '
+        Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(190, 6)
+        '
+        'mnuDodajPociag
+        '
+        Me.mnuDodajPociag.Enabled = False
+        Me.mnuDodajPociag.Name = "mnuDodajPociag"
+        Me.mnuDodajPociag.Size = New System.Drawing.Size(193, 22)
+        Me.mnuDodajPociag.Text = "Dodaj pociąg..."
         '
         'ToolStripSeparator2
         '
@@ -126,9 +140,9 @@ Partial Class wndNastawnia
         Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
         Me.plpPulpit.Dock = System.Windows.Forms.DockStyle.Fill
         Me.plpPulpit.Location = New System.Drawing.Point(0, 24)
+        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
         Me.plpPulpit.Name = "plpPulpit"
         Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
-        Me.plpPulpit.projZaznaczonaKostka = Nothing
         Me.plpPulpit.projZaznaczonaLampa = Nothing
         Me.plpPulpit.projZaznaczonyLicznik = Nothing
         Me.plpPulpit.projZaznaczonyOdcinek = Nothing
@@ -138,6 +152,7 @@ Partial Class wndNastawnia
         Me.plpPulpit.Pulpit = Pulpit1
         Me.plpPulpit.Size = New System.Drawing.Size(645, 504)
         Me.plpPulpit.TabIndex = 2
+        Me.plpPulpit.ZaznaczonaKostka = Nothing
         '
         'wndNastawnia
         '
@@ -172,4 +187,6 @@ Partial Class wndNastawnia
     Friend WithEvents stStan As StatusStrip
     Friend WithEvents tslStanPolaczenia As ToolStripStatusLabel
     Friend WithEvents plpPulpit As PulpitSterowniczy
+    Friend WithEvents ToolStripSeparator3 As ToolStripSeparator
+    Friend WithEvents mnuDodajPociag As ToolStripMenuItem
 End Class

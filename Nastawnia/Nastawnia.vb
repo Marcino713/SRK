@@ -5,10 +5,13 @@ Public Class wndNastawnia
     Private Const CZEKANIE_NA_ZAMKNIECIE As Integer = 2000
 
     Private WithEvents Klient As New Zaleznosci.KlientTCP
+    Private WithEvents OknoDodawaniaPociagu As wndDodawaniePociagu = Nothing
     Private WlaczoneOknoWyboruPost As Boolean = False
     Private Sygnalizatory As New Dictionary(Of UShort, Zaleznosci.Sygnalizator)
+    Private Rozjazdy As New Dictionary(Of UShort, Zaleznosci.Rozjazd)
 
     Private actPokazStatus As Action(Of String, Color, Boolean) = AddressOf PokazStatusPolaczenia
+    Private actUkryjDodawaniePociagu As Action = Sub() OknoDodawaniaPociagu?.Close()
     Private actPokazPulpit As Action(Of Zaleznosci.Pulpit) = AddressOf PokazPulpit
     Private actPokazBlad As Action(Of String) = AddressOf PokazBlad
     Private actPokazKomunikat As Action(Of String) = AddressOf PokazKomunikat
@@ -17,6 +20,7 @@ Public Class wndNastawnia
         If Not Klient.Uruchomiony Then Exit Sub
 
         If ZadajPytanie("Zamknąć okno? Spowoduje to rozłączenie z serwerem.") = DialogResult.Yes Then
+            actUkryjDodawaniePociagu()
             Klient.WyslijZakonczDzialanieKlienta(New Zaleznosci.ZakonczDzialanieKlienta() With {.Przyczyna = Zaleznosci.PrzyczynaZakonczeniaDzialaniaKlienta.ZatrzymanieKlienta})
             Dim t As New Thread(AddressOf ZamknijPolaczenie)
             t.Start(Klient)
@@ -39,6 +43,7 @@ Public Class wndNastawnia
 
     Private Sub mnuRozlaczZSerwerem_Click() Handles mnuRozlaczZSerwerem.Click
         If ZadajPytanie("Czy rozłączyć z serwerem?") = DialogResult.Yes Then
+            actUkryjDodawaniePociagu()
             Klient.WyslijZakonczDzialanieKlienta(New Zaleznosci.ZakonczDzialanieKlienta() With {.Przyczyna = Zaleznosci.PrzyczynaZakonczeniaDzialaniaKlienta.ZatrzymanieKlienta})
             actPokazStatus("Rozłączanie...", Color.Blue, False)
         End If
@@ -47,6 +52,15 @@ Public Class wndNastawnia
     Private Sub mnuZarzadzajSerwerem_Click() Handles mnuZarzadzajSerwerem.Click
         Dim t As New Thread(AddressOf PokazOknoSerwera)
         t.Start()
+    End Sub
+
+    Private Sub mnuDodajPociag_Click() Handles mnuDodajPociag.Click
+        If OknoDodawaniaPociagu IsNot Nothing Then Exit Sub
+
+        OknoDodawaniaPociagu = New wndDodawaniePociagu(Klient, plpPulpit)
+        OknoDodawaniaPociagu.Show()
+        mnuDodajPociag.Enabled = False
+        plpPulpit.MozliwoscZaznaczeniaToru = True
     End Sub
 
     Private Sub mnuKonfiguratorStacji_Click() Handles mnuKonfiguratorStacji.Click
@@ -61,6 +75,12 @@ Public Class wndNastawnia
 
     Private Sub mnuOtworzPolaczenia_Click() Handles mnuOtworzPolaczenia.Click
         WczytajPolaczenia(New OpenFileDialog, AddressOf Zaleznosci.PolaczeniaStacji.OtworzPlik, "Nie udało się otworzyć pliku.")
+    End Sub
+
+    Private Sub OknoDodawaniaPociagu_FormClosed() Handles OknoDodawaniaPociagu.FormClosed
+        OknoDodawaniaPociagu = Nothing
+        mnuDodajPociag.Enabled = True
+        plpPulpit.MozliwoscZaznaczeniaToru = False
     End Sub
 
     Private Sub plpPulpit_WcisnietoPrzycisk(kostka As Zaleznosci.Kostka) Handles plpPulpit.WcisnietoPrzycisk
@@ -111,13 +131,11 @@ Public Class wndNastawnia
     End Sub
 
     Private Sub Klient_ZakonczonoPolaczenie() Handles Klient.ZakonczonoPolaczenie
-        Invoke(actPokazStatus, "Rozłączono", Color.Red, True)
-        Invoke(actPokazPulpit, New Zaleznosci.Pulpit)
+        CzyscOkno()
     End Sub
 
     Private Sub Klient_OdebranoZakonczonoSesjeKlienta(kom As Zaleznosci.ZakonczonoSesjeKlienta) Handles Klient.OdebranoZakonczonoSesjeKlienta
-        Invoke(actPokazStatus, "Rozłączono", Color.Red, True)
-        Invoke(actPokazPulpit, New Zaleznosci.Pulpit)
+        CzyscOkno()
 
         If Not WlaczoneOknoWyboruPost Then
             Dim tresc As String = PrzyczynaZakonczeniaSesjiKlientaToString(kom.Przyczyna)
@@ -130,8 +148,7 @@ Public Class wndNastawnia
     End Sub
 
     Private Sub Klient_OdebranoZakonczonoDzialanieSerwera(kom As Zaleznosci.ZakonczonoDzialanieSerwera) Handles Klient.OdebranoZakonczonoDzialanieSerwera
-        Invoke(actPokazStatus, "Rozłączono", Color.Red, True)
-        Invoke(actPokazPulpit, New Zaleznosci.Pulpit)
+        CzyscOkno()
         If Not WlaczoneOknoWyboruPost Then Invoke(actPokazBlad, "Serwer został zatrzymany.")
     End Sub
 
@@ -165,6 +182,33 @@ Public Class wndNastawnia
         plpPulpit.Invalidate()
     End Sub
 
+    Private Sub Klient_OdebranoZmienionoStanToru(kom As Zaleznosci.ZmienionoStanToru) Handles Klient.OdebranoZmienionoStanToru
+        For i As Integer = 0 To kom.Tory.Length - 1
+            Dim akt As Zaleznosci.AktualizowanyKawalekToru = kom.Tory(i)
+            If Not plpPulpit.Pulpit.CzyKostkaNiepusta(akt.WspolrzedneKostki.Konwertuj) Then Continue For
+
+            Dim k As Zaleznosci.Kostka = plpPulpit.Pulpit.Kostki(akt.WspolrzedneKostki.X, akt.WspolrzedneKostki.Y)
+            If akt.Polozenie = Zaleznosci.PolozenieToru.RozjazdWBok Then
+                Dim rozjazd As Zaleznosci.Rozjazd = TryCast(k, Zaleznosci.Rozjazd)
+                If rozjazd IsNot Nothing Then rozjazd.ZajetoscBok = akt.Zajetosc
+            Else
+                Dim tor As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
+                If tor IsNot Nothing Then tor.Zajetosc = akt.Zajetosc
+            End If
+        Next
+
+        plpPulpit.Invalidate()
+    End Sub
+
+    Private Sub Klient_OdebranoZmienionoStanZwrotnicy(kom As Zaleznosci.ZmienionoStanZwrotnicy) Handles Klient.OdebranoZmienionoStanZwrotnicy
+        Dim rozj As Zaleznosci.Rozjazd = Nothing
+        If Not Rozjazdy.TryGetValue(kom.Adres, rozj) Then Exit Sub
+
+        rozj.Rozprucie = kom.Rozprucie
+        rozj.Stan = kom.Stan
+        plpPulpit.Invalidate()
+    End Sub
+
     Private Sub WczytajPolaczenia(Okno As FileDialog, MetodaOtwierajaca As Func(Of String, Zaleznosci.PolaczeniaStacji), KomunikatBledu As String)
         Okno.Filter = FILTR_PLIKU
 
@@ -179,6 +223,12 @@ Public Class wndNastawnia
         End If
     End Sub
 
+    Private Sub CzyscOkno()
+        Invoke(actPokazStatus, "Rozłączono", Color.Red, True)
+        Invoke(actPokazPulpit, New Zaleznosci.Pulpit)
+        Invoke(actUkryjDodawaniePociagu)
+    End Sub
+
     Private Sub ZamknijPolaczenie(klient As Object)
         Thread.Sleep(CZEKANIE_NA_ZAMKNIECIE)
         CType(klient, Zaleznosci.KlientTCP).Zakoncz(False)
@@ -189,16 +239,18 @@ Public Class wndNastawnia
         wnd.ShowDialog()
     End Sub
 
-    Private Sub PokazStatusPolaczenia(tekst As String, kolor As Color, moznaPolaczyc As Boolean)
+    Private Sub PokazStatusPolaczenia(tekst As String, kolor As Color, rozlaczony As Boolean)
         tslStanPolaczenia.Text = tekst
         tslStanPolaczenia.ForeColor = kolor
-        mnuPolaczZSerwerem.Enabled = moznaPolaczyc
-        mnuRozlaczZSerwerem.Enabled = Not moznaPolaczyc
+        mnuPolaczZSerwerem.Enabled = rozlaczony
+        mnuRozlaczZSerwerem.Enabled = Not rozlaczony
+        mnuDodajPociag.Enabled = Not rozlaczony And OknoDodawaniaPociagu Is Nothing
     End Sub
 
     Private Sub PokazPulpit(pulpit As Zaleznosci.Pulpit)
         plpPulpit.Pulpit = pulpit
 
         Sygnalizatory = pulpit.PobierzSygnalizatory()
+        Rozjazdy = pulpit.PobierzRozjazdy()
     End Sub
 End Class

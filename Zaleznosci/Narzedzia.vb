@@ -8,12 +8,17 @@ Public Module Narzedzia
     Private rnd As New Random
     Private FunkcjaSkrotu As Security.Cryptography.SHA1 = Security.Cryptography.SHA1.Create()
 
+    Public Function CzyRozjazd(typ As TypKostki) As Boolean
+        Return _
+            typ = TypKostki.RozjazdLewo Or
+            typ = TypKostki.RozjazdPrawo
+    End Function
+
     Public Function CzyPrzycisk(typ As TypKostki) As Boolean
         Return _
+            CzyRozjazd(typ) Or
             typ = TypKostki.Przycisk Or
             typ = TypKostki.PrzyciskTor Or
-            typ = TypKostki.RozjazdLewo Or
-            typ = TypKostki.RozjazdPrawo Or
             typ = TypKostki.Kierunek
     End Function
 
@@ -22,6 +27,14 @@ Public Module Narzedzia
             typ = TypKostki.SygnalizatorManewrowy Or
             typ = TypKostki.SygnalizatorSamoczynny Or
             typ = TypKostki.SygnalizatorPolsamoczynny
+    End Function
+
+    Public Function CzyTorBezRozjazdu(typ As TypKostki) As Boolean
+        Return _
+            CzySygnalizator(typ) Or
+            typ = TypKostki.Tor Or
+            typ = TypKostki.Zakret Or
+            typ = TypKostki.PrzyciskTor
     End Function
 
     Friend Function PobierzBajty(tekst As String) As Byte()

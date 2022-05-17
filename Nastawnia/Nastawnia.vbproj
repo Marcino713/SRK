@@ -76,6 +76,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DodawaniePociagu.Designer.vb">
+      <DependentUpon>DodawaniePociagu.vb</DependentUpon>
+    </Compile>
+    <Compile Include="DodawaniePociagu.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PulpitSterowniczy\Dodatki.vb" />
     <Compile Include="PulpitSterowniczy\RysujDodatkoweObiekty.vb" />
     <Compile Include="KonfiguratorStacji\EdytorPowierzchni.Designer.vb">
@@ -148,6 +154,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DodawaniePociagu.resx">
+      <DependentUpon>DodawaniePociagu.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="KonfiguratorStacji\EdytorPowierzchni.resx">
       <DependentUpon>EdytorPowierzchni.vb</DependentUpon>
     </EmbeddedResource>
