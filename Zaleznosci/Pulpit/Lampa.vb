@@ -8,6 +8,24 @@ Public Class Lampa
     Public Property X As Single
     Public Property Y As Single
 
+    Private kolejka As New Queue(Of Byte)({0})
+
+    Public Sub ZakolejkujZmianeJasnosci(jasnosc As Byte)
+        kolejka.Enqueue(jasnosc)
+    End Sub
+
+    Public Function OdkolejkujZmianeJasnosci() As Byte
+        If kolejka.Count > 1 Then
+            Return kolejka.Dequeue
+        Else
+            Return kolejka.Peek
+        End If
+    End Function
+
+    Public Function PobierzJasnosc() As Byte
+        Return kolejka.Peek
+    End Function
+
     Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
         Using ms As New MemoryStream
             Using bw As New BinaryWriter(ms)

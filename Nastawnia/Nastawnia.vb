@@ -6,21 +6,32 @@ Public Class wndNastawnia
 
     Private WithEvents Klient As New Zaleznosci.KlientTCP
     Private WithEvents OknoDodawaniaPociagu As wndDodawaniePociagu = Nothing
+    Private WithEvents OknoOswietlenia As wndOswietlenie = Nothing
     Private WlaczoneOknoWyboruPost As Boolean = False
     Private Sygnalizatory As New Dictionary(Of UShort, Zaleznosci.Sygnalizator)
     Private Rozjazdy As New Dictionary(Of UShort, Zaleznosci.Rozjazd)
+    Private Lampy As New Dictionary(Of UShort, Zaleznosci.Lampa)
+    Private KursorDomyslny As Cursor
 
     Private actPokazStatus As Action(Of String, Color, Boolean) = AddressOf PokazStatusPolaczenia
     Private actUkryjDodawaniePociagu As Action = Sub() OknoDodawaniaPociagu?.Close()
+    Private actUkryjOswietlenie As Action = Sub() OknoOswietlenia?.Close()
     Private actPokazPulpit As Action(Of Zaleznosci.Pulpit) = AddressOf PokazPulpit
     Private actPokazBlad As Action(Of String) = AddressOf PokazBlad
     Private actPokazKomunikat As Action(Of String) = AddressOf PokazKomunikat
+
+    Public Sub New()
+        InitializeComponent()
+
+        KursorDomyslny = plpPulpit.Cursor
+    End Sub
 
     Private Sub wndNastawnia_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         If Not Klient.Uruchomiony Then Exit Sub
 
         If ZadajPytanie("Zamknąć okno? Spowoduje to rozłączenie z serwerem.") = DialogResult.Yes Then
             actUkryjDodawaniePociagu()
+            actUkryjOswietlenie()
             Klient.WyslijZakonczDzialanieKlienta(New Zaleznosci.ZakonczDzialanieKlienta() With {.Przyczyna = Zaleznosci.PrzyczynaZakonczeniaDzialaniaKlienta.ZatrzymanieKlienta})
             Dim t As New Thread(AddressOf ZamknijPolaczenie)
             t.Start(Klient)
@@ -44,6 +55,7 @@ Public Class wndNastawnia
     Private Sub mnuRozlaczZSerwerem_Click() Handles mnuRozlaczZSerwerem.Click
         If ZadajPytanie("Czy rozłączyć z serwerem?") = DialogResult.Yes Then
             actUkryjDodawaniePociagu()
+            actUkryjOswietlenie()
             Klient.WyslijZakonczDzialanieKlienta(New Zaleznosci.ZakonczDzialanieKlienta() With {.Przyczyna = Zaleznosci.PrzyczynaZakonczeniaDzialaniaKlienta.ZatrzymanieKlienta})
             actPokazStatus("Rozłączanie...", Color.Blue, False)
         End If
@@ -55,12 +67,24 @@ Public Class wndNastawnia
     End Sub
 
     Private Sub mnuDodajPociag_Click() Handles mnuDodajPociag.Click
-        If OknoDodawaniaPociagu IsNot Nothing Then Exit Sub
+        If OknoDodawaniaPociagu Is Nothing Then
+            OknoDodawaniaPociagu = New wndDodawaniePociagu(Klient, plpPulpit)
+            OknoDodawaniaPociagu.Show()
+            plpPulpit.MozliwoscZaznaczeniaToru = True
+        Else
+            OknoDodawaniaPociagu.Focus()
+        End If
+    End Sub
 
-        OknoDodawaniaPociagu = New wndDodawaniePociagu(Klient, plpPulpit)
-        OknoDodawaniaPociagu.Show()
-        mnuDodajPociag.Enabled = False
-        plpPulpit.MozliwoscZaznaczeniaToru = True
+    Private Sub mnuOswietlenie_Click() Handles mnuOswietlenie.Click
+        If OknoOswietlenia Is Nothing Then
+            OknoOswietlenia = New wndOswietlenie(Klient, plpPulpit, Lampy)
+            OknoOswietlenia.Show()
+            plpPulpit.MozliwoscZaznaczeniaLamp = True
+            plpPulpit.Cursor = Cursors.Default
+        Else
+            OknoOswietlenia.Focus()
+        End If
     End Sub
 
     Private Sub mnuKonfiguratorStacji_Click() Handles mnuKonfiguratorStacji.Click
@@ -79,8 +103,13 @@ Public Class wndNastawnia
 
     Private Sub OknoDodawaniaPociagu_FormClosed() Handles OknoDodawaniaPociagu.FormClosed
         OknoDodawaniaPociagu = Nothing
-        mnuDodajPociag.Enabled = True
         plpPulpit.MozliwoscZaznaczeniaToru = False
+    End Sub
+
+    Private Sub OknoOswietlenia_FormClosed() Handles OknoOswietlenia.FormClosed
+        OknoOswietlenia = Nothing
+        plpPulpit.MozliwoscZaznaczeniaLamp = False
+        plpPulpit.Cursor = KursorDomyslny
     End Sub
 
     Private Sub plpPulpit_WcisnietoPrzycisk(kostka As Zaleznosci.Kostka) Handles plpPulpit.WcisnietoPrzycisk
@@ -209,6 +238,21 @@ Public Class wndNastawnia
         plpPulpit.Invalidate()
     End Sub
 
+    Private Sub Klient_OdebranoZmienionoJasnoscLamp(kom As Zaleznosci.ZmienionoJasnoscLamp) Handles Klient.OdebranoZmienionoJasnoscLamp
+        Dim l As Zaleznosci.Lampa = Nothing
+        Dim zaznaczona As Integer = -1
+        If OknoOswietlenia IsNot Nothing Then zaznaczona = OknoOswietlenia.ZaznaczonaLampa
+
+        For i As Integer = 0 To kom.Adresy.Length - 1
+            If Lampy.TryGetValue(kom.Adresy(i), l) Then
+                l.OdkolejkujZmianeJasnosci()
+                If l.Adres = zaznaczona Then
+                    OknoOswietlenia?.OdswiezJasnoscZaznaczonejLampy(CUShort(zaznaczona))
+                End If
+            End If
+        Next
+    End Sub
+
     Private Sub WczytajPolaczenia(Okno As FileDialog, MetodaOtwierajaca As Func(Of String, Zaleznosci.PolaczeniaStacji), KomunikatBledu As String)
         Okno.Filter = FILTR_PLIKU
 
@@ -227,6 +271,7 @@ Public Class wndNastawnia
         Invoke(actPokazStatus, "Rozłączono", Color.Red, True)
         Invoke(actPokazPulpit, New Zaleznosci.Pulpit)
         Invoke(actUkryjDodawaniePociagu)
+        Invoke(actUkryjOswietlenie)
     End Sub
 
     Private Sub ZamknijPolaczenie(klient As Object)
@@ -244,7 +289,8 @@ Public Class wndNastawnia
         tslStanPolaczenia.ForeColor = kolor
         mnuPolaczZSerwerem.Enabled = rozlaczony
         mnuRozlaczZSerwerem.Enabled = Not rozlaczony
-        mnuDodajPociag.Enabled = Not rozlaczony And OknoDodawaniaPociagu Is Nothing
+        mnuDodajPociag.Enabled = Not rozlaczony
+        mnuOswietlenie.Enabled = Not rozlaczony
     End Sub
 
     Private Sub PokazPulpit(pulpit As Zaleznosci.Pulpit)
@@ -252,5 +298,6 @@ Public Class wndNastawnia
 
         Sygnalizatory = pulpit.PobierzSygnalizatory()
         Rozjazdy = pulpit.PobierzRozjazdy()
+        Lampy = pulpit.PobierzLampy()
     End Sub
 End Class

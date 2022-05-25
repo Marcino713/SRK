@@ -61,7 +61,15 @@ Public Class SerwerTCP
 
         DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_JASNOSC_LAMP, New PrzetwOdebrKomunikatu(
             AddressOf UstawJasnoscLamp.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoUstawJasnoscLamp(pol.AdresStacji, CType(kom, UstawJasnoscLamp))
+            Sub(pol, kom)
+                Dim k As UstawJasnoscLamp = CType(kom, UstawJasnoscLamp)
+                Dim adr(k.Jasnosci.Length - 1) As UShort
+                For i As Integer = 0 To k.Jasnosci.Length - 1
+                    adr(i) = k.Jasnosci(i).Adres
+                Next
+                pol.WyslijKomunikat(New ZmienionoJasnoscLamp() With {.Adresy = adr})
+                'RaiseEvent OdebranoUstawJasnoscLamp(pol.AdresStacji, CType(kom, UstawJasnoscLamp))
+            End Sub
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_KIERUNEK, New PrzetwOdebrKomunikatu(

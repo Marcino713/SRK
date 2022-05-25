@@ -62,6 +62,8 @@
     Private ReadOnly PEDZEL_LAMPA_TLO As New SolidBrush(KolorRGB("#FFEA00"))
     Private ReadOnly PEDZEL_LAMPA_ZAZN As New SolidBrush(KolorRGB("#FF9500"))
     Private ReadOnly PEDZEL_KOLKO_TEKST As New SolidBrush(KolorRGB("#FF1A71"))
+    Private ReadOnly PEDZEL_OBSZAR_ZAZN_RAMKA As New Pen(KolorRGB("#00D8DB"), 0.04)
+    Private ReadOnly PEDZEL_OBSZAR_ZAZN_TLO As New SolidBrush(KolorRGB("#00D8DB", 70))
 
     Private ReadOnly PUNKTY_KIERUNKU As PointF()
     Private ReadOnly PUNKTY_SZCZELINY_KIERUNKU As PointF()
@@ -155,11 +157,13 @@
             Next
         Next
 
-        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then
+        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Or (Not ps.TrybProjektowy And ps.MozliwoscZaznaczeniaLamp) Then
+            Dim zaznLampy As HashSet(Of Zaleznosci.Lampa) = ps.ZaznaczoneLampy
             Dim en As List(Of Zaleznosci.Lampa).Enumerator = ps.Pulpit.Lampy.GetEnumerator
             While en.MoveNext
                 Dim l As Zaleznosci.Lampa = en.Current
-                RysujKolko(If(l Is ps.projZaznaczonaLampa, PEDZEL_LAMPA_ZAZN, PEDZEL_LAMPA_TLO), ps.Skalowanie, l.X, l.Y)
+                Dim zazn As Boolean = (ps.TrybProjektowy And l Is ps.projZaznaczonaLampa) Or (Not ps.TrybProjektowy And zaznLampy.Contains(l))
+                RysujKolko(If(zazn, PEDZEL_LAMPA_ZAZN, PEDZEL_LAMPA_TLO), ps.Skalowanie, l.X, l.Y)
             End While
         End If
 
@@ -169,6 +173,10 @@
                 RysujKolko(PEDZEL_TOR_TEN_ODCINEK, ps.Skalowanie, l.X1, l.Y1)
                 RysujKolko(PEDZEL_TOR_LICZNIK_ODCINEK_2, ps.Skalowanie, l.X2, l.Y2)
             End If
+        End If
+
+        If Not ps.TrybProjektowy AndAlso ps.MozliwoscZaznaczeniaLamp AndAlso Not ps.PoczatekZaznaczeniaLamp.IsEmpty AndAlso Not ps.KoniecZaznaczeniaLamp.IsEmpty Then
+            RysujZaznaczenieLamp(ps.Skalowanie, ps.PoczatekZaznaczeniaLamp, ps.KoniecZaznaczeniaLamp)
         End If
     End Sub
 
@@ -403,6 +411,18 @@
         gr.ScaleTransform(skalowanie, skalowanie)
         gr.TranslateTransform(x - KOLKO_SZER / 2.0F, y - KOLKO_SZER / 2.0F)
         gr.FillEllipse(pedzel, 0, 0, KOLKO_SZER, KOLKO_SZER)
+    End Sub
+
+    Private Sub RysujZaznaczenieLamp(skalowanie As Single, pocz As PointF, konc As PointF)
+        gr.Transform = poczatkowaTransformacja
+        gr.ScaleTransform(skalowanie, skalowanie)
+        Dim rect As New RectangleF(
+            Math.Min(pocz.X, konc.X),
+            Math.Min(pocz.Y, konc.Y),
+            Math.Abs(pocz.X - konc.X),
+            Math.Abs(pocz.Y - konc.Y))
+        gr.FillRectangle(PEDZEL_OBSZAR_ZAZN_TLO, rect)
+        gr.DrawRectangle(PEDZEL_OBSZAR_ZAZN_RAMKA, rect.X, rect.Y, rect.Width, rect.Height)
     End Sub
 
     Private Sub Obroc(srodekX As Single, srodekY As Single, kat As Single)

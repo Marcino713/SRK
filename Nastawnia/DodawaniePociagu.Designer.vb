@@ -118,6 +118,7 @@ Partial Class wndDodawaniePociagu
         Me.MaximizeBox = False
         Me.Name = "wndDodawaniePociagu"
         Me.Text = "Dodawanie pociągu"
+        Me.TopMost = True
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

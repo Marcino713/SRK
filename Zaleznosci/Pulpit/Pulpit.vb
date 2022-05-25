@@ -408,6 +408,17 @@ Public Class Pulpit
         Return PobierzKostki(Of Rozjazd)(AddressOf CzyRozjazd, Function(k) DirectCast(k, Rozjazd).Adres)
     End Function
 
+    Public Function PobierzLampy() As Dictionary(Of UShort, Lampa)
+        Dim dict As New Dictionary(Of UShort, Lampa)
+
+        Dim en As List(Of Lampa).Enumerator = Lampy.GetEnumerator
+        While en.MoveNext
+            dict.Add(en.Current.Adres, en.Current)
+        End While
+
+        Return dict
+    End Function
+
     Private Function PobierzKostki(Of T As Kostka)(sprTypu As CzyZgodnyTypKostki, pobAdres As PobierzAdres) As Dictionary(Of UShort, T)
         Dim slownik As New Dictionary(Of UShort, T)
 
