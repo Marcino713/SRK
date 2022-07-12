@@ -15,7 +15,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
@@ -89,6 +89,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PulpitSterowniczy\Dodatki.vb" />
+    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyDirect2D.vb" />
+    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyGDI.vb" />
     <Compile Include="PulpitSterowniczy\RysujDodatkoweObiekty.vb" />
     <Compile Include="KonfiguratorStacji\EdytorPowierzchni.Designer.vb">
       <DependentUpon>EdytorPowierzchni.vb</DependentUpon>
@@ -150,8 +152,11 @@
     <Compile Include="PulpitSterowniczy\PulpitSterowniczy.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyGDI.vb" />
+    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasyczny.vb" />
     <Compile Include="PulpitSterowniczy\TypRysownika.vb" />
+    <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\IUrzadzenieRysujace.vb" />
+    <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceDirect2D.vb" />
+    <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceGDI.vb" />
     <Compile Include="WyborStacji.Designer.vb">
       <DependentUpon>WyborStacji.vb</DependentUpon>
     </Compile>

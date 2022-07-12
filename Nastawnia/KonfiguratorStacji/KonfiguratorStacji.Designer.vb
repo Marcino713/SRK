@@ -23,6 +23,7 @@ Partial Class wndKonfiguratorStacji
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
+        Dim Pulpit1 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
         Me.mnuMenu = New System.Windows.Forms.MenuStrip()
         Me.mnuNarzedzia = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuNowy = New System.Windows.Forms.ToolStripMenuItem()
@@ -1777,11 +1778,21 @@ Partial Class wndKonfiguratorStacji
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
         Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
+        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
+        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
         Me.plpPulpit.Name = "plpPulpit"
+        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projZaznaczonaLampa = Nothing
+        Me.plpPulpit.projZaznaczonyLicznik = Nothing
+        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
         Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
+        Pulpit1.Adres = CType(0US, UShort)
+        Pulpit1.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit1
         Me.plpPulpit.Size = New System.Drawing.Size(785, 645)
         Me.plpPulpit.TabIndex = 4
         Me.plpPulpit.TrybProjektowy = True
+        Me.plpPulpit.ZaznaczonaKostka = Nothing
         '
         'wndKonfiguratorStacji
         '

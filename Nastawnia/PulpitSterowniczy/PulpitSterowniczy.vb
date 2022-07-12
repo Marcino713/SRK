@@ -21,6 +21,7 @@ Friend Class PulpitSterowniczy
     Private PoprzLokalizacjaKostki As New Point(-1, -1)
     Private PierwszaObslugaPrzeciagania As Boolean = True
     Private WcisnietyPrzycisk As Zaleznosci.IPrzycisk = Nothing
+    Private RysowanieWlaczone As Boolean = True
 
     <Browsable(False)>
     Public ReadOnly Property SzerokoscPulpitu As Integer
@@ -95,8 +96,13 @@ Friend Class PulpitSterowniczy
             Select Case value
                 Case TypRysownika.KlasycznyGDI
                     _Rysownik = New PulpitKlasycznyGDI()
+                    DoubleBuffered = True
+                Case TypRysownika.KlasycznyDirect2D
+                    _Rysownik = New PulpitKlasycznyDirect2D()
+                    DoubleBuffered = False
             End Select
 
+            _Rysownik.Inicjalizuj(Handle, CUInt(Width), CUInt(Height))
             _TypRysownika = value
             Invalidate()
         End Set
@@ -124,6 +130,8 @@ Friend Class PulpitSterowniczy
             Return _ZaznaczonaKostka
         End Get
         Set(value As Zaleznosci.Kostka)
+            If _ZaznaczonaKostka Is value Then Exit Property
+
             _ZaznaczonaKostka = value
             RaiseEvent ZmianaZaznaczeniaKostki(value)
             If Not TrybProjektowy Or _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then Invalidate()
@@ -249,6 +257,25 @@ Friend Class PulpitSterowniczy
         projZaznaczonaLampa = Nothing
     End Sub
 
+    Public Overloads Sub Invalidate()
+        If Not RysowanieWlaczone Then Exit Sub
+
+        If _TypRysownika = TypRysownika.KlasycznyGDI Then
+            MyBase.Invalidate()
+        Else
+            _Rysownik.Rysuj(Me, Nothing)
+        End If
+    End Sub
+
+    Private Sub PulpitSterowniczy_Load() Handles Me.Load
+        _Rysownik.Inicjalizuj(Handle, CUInt(Width), CUInt(Height))
+    End Sub
+
+    Private Sub PulpitSterowniczy_Resize() Handles Me.Resize
+        _Rysownik.ZmienRozmiar(CUInt(Width), CUInt(Height))
+        Invalidate()
+    End Sub
+
     Private Sub PulpitSterowniczy_Paint(sender As Object, e As PaintEventArgs) Handles Me.Paint
         _Rysownik.Rysuj(Me, e.Graphics)
     End Sub
@@ -262,7 +289,7 @@ Friend Class PulpitSterowniczy
                 ZaznaczonaKostka.Obrot = obrot
                 Invalidate()
 
-            ElseIf e.KeyData = Keys.Delete
+            ElseIf e.KeyData = Keys.Delete Then
                 Pulpit.UsunKostke(ZaznaczonaKostka)
                 ZaznaczonaKostka = Nothing
             End If
@@ -295,10 +322,11 @@ Friend Class PulpitSterowniczy
                     End If
                 End If
 
-            ElseIf projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy
+            ElseIf projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then
                 projZaznaczonaLampa = PobierzKliknietaLampe(e.Location)
 
-            ElseIf projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
+            ElseIf projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then
+
                 If _Pulpit.CzyKostkaNiepusta(p) Then
                     ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
                 Else
@@ -357,7 +385,7 @@ Friend Class PulpitSterowniczy
 
                     RaiseEvent ZmianaZaznaczeniaLamp(ZaznaczoneLampy)
 
-                ElseIf czyNieCtrl And lampa Is Nothing And Not pusteZazn
+                ElseIf czyNieCtrl And lampa Is Nothing And Not pusteZazn Then
                     RaiseEvent ZmianaZaznaczeniaOstatniejLampy(Nothing)
                     RaiseEvent ZmianaZaznaczeniaLamp(ZaznaczoneLampy)
 
@@ -373,7 +401,9 @@ Friend Class PulpitSterowniczy
         Dim wspx As Double = (e.X - Przesuniecie.X) / SzerokoscPulpitu
         Dim wspy As Double = (e.Y - Przesuniecie.Y) / WysokoscPulpitu
 
+        RysowanieWlaczone = False
         Skalowanie = Skalowanie + e.Delta * SKALOWANIE_ZMIANA
+        RysowanieWlaczone = True
 
         Dim nowy As New Point(CInt(wspx * SzerokoscPulpitu), CInt(wspy * WysokoscPulpitu))
         Przesuniecie = New Point(e.X - nowy.X, e.Y - nowy.Y)
@@ -387,7 +417,7 @@ Friend Class PulpitSterowniczy
                 Przesuniecie = New Point(Przesuniecie.X + zmX, Przesuniecie.Y + zmY)
                 PoprzedniPunkt = e.Location
 
-            ElseIf MozliwoscZaznaczeniaLamp And PoprzZaznLampyWObszarze IsNot Nothing      'zaznacz lampy obszrem
+            ElseIf MozliwoscZaznaczeniaLamp And PoprzZaznLampyWObszarze IsNot Nothing Then      'zaznacz lampy obszrem
                 KoniecZaznaczeniaLamp = WspolrzedneEkranuDoPulpitu(e.Location)
                 Dim zazn As HashSet(Of Zaleznosci.Lampa) = PobierzLampyWObszarze()
                 Dim ostLampa As Zaleznosci.Lampa = If(KolejnoscZaznaczeniaLamp.Count = 0, Nothing, KolejnoscZaznaczeniaLamp.Last)

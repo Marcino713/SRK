@@ -22,6 +22,7 @@ Public Class wndNastawnia
 
     Public Sub New()
         InitializeComponent()
+        plpPulpit.TypRysownika = TypRysownika.KlasycznyDirect2D
 
         KursorDomyslny = plpPulpit.Cursor
     End Sub

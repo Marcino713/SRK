@@ -20,6 +20,8 @@
     End Sub
 
     Private Sub wndKonfiguratorStacji_Load() Handles Me.Load
+        plpPulpit.TypRysownika = TypRysownika.KlasycznyDirect2D
+
         PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygn, pnlKonfTor, pnlKonfNapis, pnlKonfKier}
         For i As Integer = 0 To PaneleKonfKostek.Length - 1
             PaneleKonfKostek(i).Width = splKartaPulpit.Panel2.Width
@@ -66,11 +68,10 @@
         End If
     End Sub
 
-    Private Sub DodajKostkeDoListy(kostka As Zaleznosci.Kostka, nazwa As String)
-        Dim p As New PulpitSterowniczy With {.Skalowanie = ROZMIAR_KOSTKI_LISTA - 1, .RysujKrawedzieKostek = False, .TypRysownika = TypRysownika.KlasycznyGDI, .TrybProjektowy = True}
-        p.Pulpit.Kostki(0, 0) = kostka
+    Private Sub DodajKostkeDoListy(pulpit As PulpitSterowniczy, kostka As Zaleznosci.Kostka, nazwa As String)
+        pulpit.Pulpit.Kostki(0, 0) = kostka
         Dim bm As New Bitmap(ROZMIAR_KOSTKI_LISTA, ROZMIAR_KOSTKI_LISTA)
-        p.DrawToBitmap(bm, New Rectangle(0, 0, ROZMIAR_KOSTKI_LISTA, ROZMIAR_KOSTKI_LISTA))
+        pulpit.DrawToBitmap(bm, New Rectangle(0, 0, ROZMIAR_KOSTKI_LISTA, ROZMIAR_KOSTKI_LISTA))
         imlKostki.Images.Add(bm)
         Dim lvi As New ListViewItem(nazwa, imlKostki.Images.Count - 1)
         lvi.Tag = kostka.GetType()
@@ -78,18 +79,20 @@
     End Sub
 
     Private Sub UtworzListeKostek()
-        DodajKostkeDoListy(New Zaleznosci.Tor(), "Tor")
-        DodajKostkeDoListy(New Zaleznosci.TorKoniec(), "Koniec toru")
-        DodajKostkeDoListy(New Zaleznosci.Zakret(), "Zakręt")
-        DodajKostkeDoListy(New Zaleznosci.RozjazdLewo(), "Rozjazd lewy")
-        DodajKostkeDoListy(New Zaleznosci.RozjazdPrawo(), "Rozjazd prawy")
-        DodajKostkeDoListy(New Zaleznosci.SygnalizatorManewrowy(), "Sygnalizator manewrowy")
-        DodajKostkeDoListy(New Zaleznosci.SygnalizatorPolsamoczynny(), "Sygnalizator półsamoczynny")
-        DodajKostkeDoListy(New Zaleznosci.SygnalizatorSamoczynny(), "Sygnalizator samoczynny")
-        DodajKostkeDoListy(New Zaleznosci.Przycisk(), "Przycisk")
-        DodajKostkeDoListy(New Zaleznosci.PrzyciskTor(), "Przycisk z torem")
-        DodajKostkeDoListy(New Zaleznosci.Kierunek(), "Wjazd/wyjazd ze stacji")
-        DodajKostkeDoListy(New Zaleznosci.Napis(), "Napis")
+        Dim p As New PulpitSterowniczy With {.Skalowanie = ROZMIAR_KOSTKI_LISTA - 1, .RysujKrawedzieKostek = False, .TypRysownika = TypRysownika.KlasycznyGDI, .TrybProjektowy = True}
+
+        DodajKostkeDoListy(p, New Zaleznosci.Tor(), "Tor")
+        DodajKostkeDoListy(p, New Zaleznosci.TorKoniec(), "Koniec toru")
+        DodajKostkeDoListy(p, New Zaleznosci.Zakret(), "Zakręt")
+        DodajKostkeDoListy(p, New Zaleznosci.RozjazdLewo(), "Rozjazd lewy")
+        DodajKostkeDoListy(p, New Zaleznosci.RozjazdPrawo(), "Rozjazd prawy")
+        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorManewrowy(), "Sygnalizator manewrowy")
+        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorPolsamoczynny(), "Sygnalizator półsamoczynny")
+        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorSamoczynny(), "Sygnalizator samoczynny")
+        DodajKostkeDoListy(p, New Zaleznosci.Przycisk(), "Przycisk")
+        DodajKostkeDoListy(p, New Zaleznosci.PrzyciskTor(), "Przycisk z torem")
+        DodajKostkeDoListy(p, New Zaleznosci.Kierunek(), "Wjazd/wyjazd ze stacji")
+        DodajKostkeDoListy(p, New Zaleznosci.Napis(), "Napis")
     End Sub
 
     Private Sub UstawTytulOkna()
@@ -224,11 +227,11 @@
             plpPulpit.Pulpit.SortujOdcinkiNazwaRosnaco()
             OdswiezListeTorow()
 
-        ElseIf tabUstawienia.SelectedTab Is tbpLiczniki
+        ElseIf tabUstawienia.SelectedTab Is tbpLiczniki Then
             plpPulpit.Pulpit.SortujLicznikiAdres1Rosnaco()
             OdswiezListeLicznikow()
 
-        ElseIf tabUstawienia.SelectedTab Is tbpLampy
+        ElseIf tabUstawienia.SelectedTab Is tbpLampy Then
             plpPulpit.Pulpit.SortujLampyAdresRosnaco()
             OdswiezListeLamp()
 
