@@ -2,7 +2,7 @@
 
 Public MustInherit Class Rozjazd
     Inherits Tor
-    Implements IPrzycisk
+    Implements IPrzycisk, IZakret
 
     Private Const LICZBA_ROZJAZDOW_ZALEZNYCH As Integer = 2
 
@@ -16,6 +16,7 @@ Public MustInherit Class Rozjazd
     Public Property Stan As UstawienieZwrotnicy = UstawienieZwrotnicy.Niezdefiniowany
     Public Property ZajetoscBok As ZajetoscToru = ZajetoscToru.Wolny
     Public Property Rozprucie As Boolean = False
+    Public Property PrzytnijZakret As PrzycinanieZakretu Implements IZakret.PrzytnijZakret
 
     Public Sub New(typ As TypKostki)
         MyBase.New(typ)

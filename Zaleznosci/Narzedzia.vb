@@ -37,6 +37,13 @@ Public Module Narzedzia
             typ = TypKostki.PrzyciskTor
     End Function
 
+    Public Function CzyTor(typ As TypKostki) As Boolean
+        Return _
+            CzyTorBezRozjazdu(typ) Or
+            CzyRozjazd(typ) Or
+            typ = TypKostki.TorKoniec
+    End Function
+
     Friend Function PobierzBajty(tekst As String) As Byte()
         If tekst Is Nothing Then tekst = ""
         Return KODOWANIE.GetBytes(tekst)

@@ -157,6 +157,7 @@
     <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\IUrzadzenieRysujace.vb" />
     <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceDirect2D.vb" />
     <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceGDI.vb" />
+    <Compile Include="PulpitSterowniczy\WygladzanieTorowUkosnych.vb" />
     <Compile Include="WyborStacji.Designer.vb">
       <DependentUpon>WyborStacji.vb</DependentUpon>
     </Compile>

@@ -1,37 +1,38 @@
 ﻿Friend MustInherit Class PulpitKlasyczny(Of TOlowek, TPedzel, TMacierz, TCzcionka)
     Implements IRysownik
 
-    Private Const COS45 As Single = 0.707
-    Private Const KAT_PROSTY As Single = 90.0F
+    Private Const COS45 As Single = 0.707F
+    Private Const KAT_PROSTY As Integer = 90
     Private Const POL As Single = 0.5F
-    Private Const KRAWEDZ_SZER As Single = 0.02         'grubość krawędzi między kostkami
-    Private Const KOLKO_PROMIEN As Single = 0.125       'promień kółka (lampy/licznika osi)
-    Private Const KOLKO_TEKST_PROMIEN As Single = 0.06  'promień kółka obok tekstu
-    Private Const KOLKO_TEKST_POZ As Single = 0.1       'położenie kółka obok tekstu
-    Private Const TOR_SZEROKOSC As Single = 0.16        'szerokość toru na kostce
+    Private Const KRAWEDZ_SZER As Single = 0.02F         'grubość krawędzi między kostkami
+    Private Const KOLKO_PROMIEN As Single = 0.125F       'promień kółka (lampy/licznika osi)
+    Private Const KOLKO_TEKST_PROMIEN As Single = 0.06F  'promień kółka obok tekstu
+    Private Const KOLKO_TEKST_POZ As Single = 0.1F       'położenie kółka obok tekstu
+    Private Const TOR_SZEROKOSC As Single = 0.16F        'szerokość toru na kostce
     Private Const TOR_SZER_ZAKRET As Single = TOR_SZEROKOSC / COS45
-    Private Const TOR_KONC_DLUGOSC As Single = 0.27     'długość toru na kostce z końcem
-    Private Const TOR_KONC_SZEROKOSC As Single = 0.5    'szerokość odcinka prostopadłego na kostce z końcem
-    Private Const SZCZELINA_MARGINES_POZIOM As Single = 0.1     'margines szczeliny w poziomie
-    Private Const SZCZEL_MARG_POZIOM_ZAKRET As Single = 0.05    'margines szczeliny w poziomie toru ukośnego
-    Private Const SZCZEL_MARG_POZIOM_ROZJ As Single = 0.08      'margines szczeliny w poziomie toru bocznego rozjazdu, na końcu przylegającym do toru prostego
-    Private Const SZCZELINA_MARGINES_PION As Single = 0.04      'margines szczeliny w pionie
-    Private Const SZCZELINA_MARGINES_KIER As Single = 0.06      'margines szczeliny na kostce z kierunkiem
-    Private Const SYGN_POZ As Single = 0.25             'wielokorotność stałej oznacza położenie środków kolejnych świateł sygnałów na osi X
-    Private Const SYGN_PROMIEN As Single = 0.09         'promień sygnału
-    Private Const SYGN_TLO_SZER As Single = 0.28        'średnica okręgu stanowiącego tło sygnału
-    Private Const SYGN_SLUP_SZER_DUZA As Single = 0.15  'szerokość słupa sygnalizatora w szerszym miejscu
-    Private Const SYGN_SLUP_SZER_MALA As Single = 0.05  'szerokosć słupa sygnalizatora w węższym miejscu
-    Private Const SYGN_SLUP_DLUG As Single = 0.04       'długość poszczególnych segmentów słupa
-    Private Const SYGN_KRAWEDZ As Single = 0.01         'grubość krawędzi słupa sygnalizatora
-    Private Const KIER_SZER As Single = 0.4             'rozmiar strzałki na przycisku kierunku
-    Private Const TEKST_POZ_X_PRZYCISK As Single = 0.17 'dodatkowy margines dla tekstu obok przycisku
-    Private Const TEKST_POZ_X As Single = 0.1           'dodatkowy margines dla tekstu
-    Private Const TEKST_POZ_Y As Single = 0.12          'dodatkowy margines dla tekstu
-    Private Const TEKST_NAPIS_POZ As Single = 0.12      'pozycja tekstu w kostce z napisem
-    Private Const TEKST_WYS As Single = 0.78            'wysokość tekstu w kostce z napisem
-    Private Const KRAWEDZ_RAMKA_ZAZN As Single = 0.04   'grubość krawędzi ramki zaznaczenia lamp
-    Private Const DODATKOWY_MARGINS As Single = 0.01    'margines uwzględniany w elementach, aby te lekko nachodziły na siebie i nie rysowały się przerwy między nimi
+    Private Const TOR_TROJKAT As Single = (TOR_SZER_ZAKRET - TOR_SZEROKOSC) / 2.0F  'długość przyprostokątnej trójkąta do ścięcia/narysowania przy granicy toru ukośnego i prostego
+    Private Const TOR_KONC_DLUGOSC As Single = 0.27F     'długość toru na kostce z końcem
+    Private Const TOR_KONC_SZEROKOSC As Single = 0.5F    'szerokość odcinka prostopadłego na kostce z końcem
+    Private Const SZCZELINA_MARGINES_POZIOM As Single = 0.1F    'margines szczeliny w poziomie
+    Private Const SZCZEL_MARG_POZIOM_ZAKRET As Single = 0.05F   'margines szczeliny w poziomie toru ukośnego
+    Private Const SZCZEL_MARG_POZIOM_ROZJ As Single = 0.08F     'margines szczeliny w poziomie toru bocznego rozjazdu, na końcu przylegającym do toru prostego
+    Private Const SZCZELINA_MARGINES_PION As Single = 0.04F     'margines szczeliny w pionie
+    Private Const SZCZELINA_MARGINES_KIER As Single = 0.06F     'margines szczeliny na kostce z kierunkiem
+    Private Const SYGN_POZ As Single = 0.25F             'wielokorotność stałej oznacza położenie środków kolejnych świateł sygnałów na osi X
+    Private Const SYGN_PROMIEN As Single = 0.09F         'promień sygnału
+    Private Const SYGN_TLO_SZER As Single = 0.28F        'średnica okręgu stanowiącego tło sygnału
+    Private Const SYGN_SLUP_SZER_DUZA As Single = 0.15F  'szerokość słupa sygnalizatora w szerszym miejscu
+    Private Const SYGN_SLUP_SZER_MALA As Single = 0.05F  'szerokosć słupa sygnalizatora w węższym miejscu
+    Private Const SYGN_SLUP_DLUG As Single = 0.04F       'długość poszczególnych segmentów słupa
+    Private Const SYGN_KRAWEDZ As Single = 0.01F         'grubość krawędzi słupa sygnalizatora
+    Private Const KIER_SZER As Single = 0.4F             'rozmiar strzałki na przycisku kierunku
+    Private Const TEKST_POZ_X_PRZYCISK As Single = 0.17F 'dodatkowy margines dla tekstu obok przycisku
+    Private Const TEKST_POZ_X As Single = 0.1F           'dodatkowy margines dla tekstu
+    Private Const TEKST_POZ_Y As Single = 0.12F          'dodatkowy margines dla tekstu
+    Private Const TEKST_NAPIS_POZ As Single = 0.12F      'pozycja tekstu w kostce z napisem
+    Private Const TEKST_WYS As Single = 0.78F            'wysokość tekstu w kostce z napisem
+    Private Const KRAWEDZ_RAMKA_ZAZN As Single = 0.04F   'grubość krawędzi ramki zaznaczenia lamp
+    Private Const DODATKOWY_MARGINES As Single = 0.01F   'margines uwzględniany w elementach, aby te lekko nachodziły na siebie i nie rysowały się przerwy między nimi
 
     Private ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")          'tor przypisany do innego odcinka
     Private ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")         'tor przypisany do zaznaczonego odcinka
@@ -81,10 +82,12 @@
     Private pedzelToru As TPedzel
     Private pedzelSzczelinyWprost As TPedzel
     Private pedzelSzczelinyBok As TPedzel
-    Private obrot As Single
+    Private obrot As Integer
     Private glownaTransformacja As TMacierz
     Private trybProjektowy As Boolean
-    Private Zainicjalizowano As Boolean = False
+    Private zainicjalizowano As Boolean = False
+    Private pulpit As Zaleznosci.Pulpit
+    Private rysujSzczeliny As Boolean
 
     Private ReadOnly Property IRysownik_KOLKO_SZER As Single Implements IRysownik.KOLKO_SZER
         Get
@@ -116,6 +119,8 @@
         End Get
     End Property
 
+    Private Property UniewaznioneSasiedztwoTorow As Boolean = True Implements IRysownik.UniewaznioneSasiedztwoTorow
+
     Protected Sub New(urzadzenie As IUrzadzenieRysujace(Of TOlowek, TPedzel, TMacierz, TCzcionka))
         urz = urzadzenie
 
@@ -124,7 +129,7 @@
     End Sub
 
     Public Sub Inicjalizuj(uchwyt As IntPtr, szer As UInteger, wys As UInteger) Implements IRysownik.Inicjalizuj
-        If Zainicjalizowano Then Exit Sub
+        If zainicjalizowano Then Exit Sub
 
         urz.Inicjalizuj(uchwyt, szer, wys)
 
@@ -160,7 +165,7 @@
         PEDZEL_OBSZAR_ZAZN_TLO = urz.UtworzPedzel(KolorRGB("#00D8DB", 70))
         CZCIONKA = urz.UtworzCzcionke("Arial", 0.17)
 
-        Zainicjalizowano = True
+        zainicjalizowano = True
     End Sub
 
     Public Sub ZmienRozmiar(szer As UInteger, wys As UInteger) Implements IRysownik.ZmienRozmiar
@@ -168,7 +173,13 @@
     End Sub
 
     Friend Overridable Sub Rysuj(ps As PulpitSterowniczy, grp As Graphics) Implements IRysownik.Rysuj
-        If Not Zainicjalizowano Then Exit Sub
+        If Not zainicjalizowano Then Exit Sub
+
+        pulpit = ps.Pulpit
+        rysujSzczeliny = Not (
+            ps.TrybProjektowy And
+            (ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Or ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Tory)
+            )
 
         urz.RozpocznijRysunek(grp)
         urz.Czysc(ps.BackColor)
@@ -199,6 +210,11 @@
         End If
 
         'Rysuj kostki
+        If UniewaznioneSasiedztwoTorow Then
+            WyznaczWygladzanieZakretow(pulpit)
+            UniewaznioneSasiedztwoTorow = False
+        End If
+
         For x As Integer = 0 To ps.Pulpit.Szerokosc - 1
             For y As Integer = 0 To ps.Pulpit.Wysokosc - 1
                 Dim k As Zaleznosci.Kostka = ps.Pulpit.Kostki(x, y)
@@ -249,11 +265,11 @@
 
         Select Case kostka.Typ
             Case Zaleznosci.TypKostki.Tor
-                RysujTorProsty()
+                RysujTorProsty(CType(kostka, Zaleznosci.Tor).RysowanieDodatkowychTrojkatow)
             Case Zaleznosci.TypKostki.TorKoniec
-                RysujKoniecToru()
+                RysujKoniecToru(CType(kostka, Zaleznosci.TorKoniec).RysowanieDodatkowychTrojkatow)
             Case Zaleznosci.TypKostki.Zakret
-                RysujTorUkosny()
+                RysujTorUkosny(CType(kostka, Zaleznosci.IZakret))
             Case Zaleznosci.TypKostki.RozjazdLewo
                 RysujRozjazdLewo(CType(kostka, Zaleznosci.RozjazdLewo))
             Case Zaleznosci.TypKostki.RozjazdPrawo
@@ -275,39 +291,94 @@
         End Select
     End Sub
 
-    Private Sub RysujTorProsty(Optional dlugosc As Single = 1.0F)
-        RysujTor(dlugosc)
+    Private Sub RysujTorProsty(dodatkoweTrojkaty As Zaleznosci.DodatkoweTrojkatyTor, Optional dlugosc As Single = 1.0F)
+        RysujTor(dodatkoweTrojkaty, dlugosc)
         RysujSzczelineToru(dlugosc)
     End Sub
 
-    Private Sub RysujTor(dlugosc As Single)
-        urz.WypelnijProstokat(pedzelToru, 0, POL - TOR_SZEROKOSC / 2, dlugosc, TOR_SZEROKOSC)
+    Private Sub RysujTor(dodatkoweTrojkaty As Zaleznosci.DodatkoweTrojkatyTor, dlugosc As Single)
+        Dim punkty As New List(Of PointF)
+
+        If (dodatkoweTrojkaty And Zaleznosci.DodatkoweTrojkatyTor.LewoGora) <> 0 Then
+            punkty.Add(New PointF(TOR_TROJKAT, POL - TOR_SZEROKOSC / 2))
+            punkty.Add(New PointF(0, POL - TOR_SZER_ZAKRET / 2))
+        Else
+            punkty.Add(New PointF(0, POL - TOR_SZEROKOSC / 2))
+        End If
+
+        If (dodatkoweTrojkaty And Zaleznosci.DodatkoweTrojkatyTor.LewoDol) <> 0 Then
+            punkty.Add(New PointF(0, POL + TOR_SZER_ZAKRET / 2))
+            punkty.Add(New PointF(TOR_TROJKAT, POL + TOR_SZEROKOSC / 2))
+        Else
+            punkty.Add(New PointF(0, POL + TOR_SZEROKOSC / 2))
+        End If
+
+        If (dodatkoweTrojkaty And Zaleznosci.DodatkoweTrojkatyTor.PrawoDol) <> 0 Then
+            punkty.Add(New PointF(dlugosc - TOR_TROJKAT, POL + TOR_SZEROKOSC / 2))
+            punkty.Add(New PointF(dlugosc, POL + TOR_SZER_ZAKRET / 2))
+        Else
+            punkty.Add(New PointF(dlugosc, POL + TOR_SZEROKOSC / 2))
+        End If
+
+        If (dodatkoweTrojkaty And Zaleznosci.DodatkoweTrojkatyTor.PrawoGora) <> 0 Then
+            punkty.Add(New PointF(dlugosc, POL - TOR_SZER_ZAKRET / 2))
+            punkty.Add(New PointF(dlugosc - TOR_TROJKAT, POL - TOR_SZEROKOSC / 2))
+        Else
+            punkty.Add(New PointF(dlugosc, POL - TOR_SZEROKOSC / 2))
+        End If
+
+        urz.WypelnijFigure(pedzelToru, punkty.ToArray)
     End Sub
 
     Private Sub RysujSzczelineToru(dlugosc As Single)
+        If Not rysujSzczeliny Then Exit Sub
+
         urz.WypelnijProstokat(pedzelSzczelinyWprost, SZCZELINA_MARGINES_POZIOM, POL - TOR_SZEROKOSC / 2 + SZCZELINA_MARGINES_PION, dlugosc - 2 * SZCZELINA_MARGINES_POZIOM, TOR_SZEROKOSC - 2 * SZCZELINA_MARGINES_PION)
     End Sub
 
-    Private Sub RysujKoniecToru()
-        RysujTor(TOR_KONC_DLUGOSC)
-        urz.WypelnijProstokat(pedzelToru, TOR_KONC_DLUGOSC - DODATKOWY_MARGINS, POL - TOR_KONC_SZEROKOSC / 2, TOR_SZEROKOSC, TOR_KONC_SZEROKOSC)
+    Private Sub RysujKoniecToru(dodatkoweTrojkaty As Zaleznosci.DodatkoweTrojkatyTorKoniec)
+        RysujTor(CType(dodatkoweTrojkaty, Zaleznosci.DodatkoweTrojkatyTor), TOR_KONC_DLUGOSC)
+        urz.WypelnijProstokat(pedzelToru, TOR_KONC_DLUGOSC - DODATKOWY_MARGINES, POL - TOR_KONC_SZEROKOSC / 2, TOR_SZEROKOSC, TOR_KONC_SZEROKOSC)
     End Sub
 
-    Private Sub RysujTorUkosny()
-        RysujZakret()
+    Private Sub RysujTorUkosny(zakret As Zaleznosci.IZakret)
+        RysujZakret(zakret)
         RysujSzczelineZakretu(pedzelSzczelinyWprost)
     End Sub
 
-    Private Sub RysujZakret()
-        urz.WypelnijFigure(pedzelToru, {
-            New PointF(1, POL - TOR_SZER_ZAKRET / 2),
-            New PointF(1, POL + TOR_SZER_ZAKRET / 2),
-            New PointF(POL + TOR_SZER_ZAKRET / 2, 1),
-            New PointF(POL - TOR_SZER_ZAKRET / 2, 1)
-        })
+    Private Sub RysujZakret(zakret As Zaleznosci.IZakret)
+        Dim punkty As New List(Of PointF)
+        Dim dodatkowePrzesuniecie As Single
+
+        If (zakret.PrzytnijZakret And Zaleznosci.PrzycinanieZakretu.Prawo) <> 0 Then
+            dodatkowePrzesuniecie = 0.0F
+            If (zakret.PrzytnijZakret And Zaleznosci.PrzycinanieZakretu.UmniejszPrawo) <> 0 Then dodatkowePrzesuniecie = DODATKOWY_MARGINES
+
+            punkty.Add(New PointF(1 - TOR_TROJKAT - dodatkowePrzesuniecie, POL - TOR_SZEROKOSC / 2.0F + dodatkowePrzesuniecie))
+            punkty.Add(New PointF(1, POL - TOR_SZEROKOSC / 2.0F + dodatkowePrzesuniecie))
+        Else
+            punkty.Add(New PointF(1, POL - TOR_SZER_ZAKRET / 2.0F))
+        End If
+
+        punkty.Add(New PointF(1, POL + TOR_SZER_ZAKRET / 2.0F))
+        punkty.Add(New PointF(POL + TOR_SZER_ZAKRET / 2.0F, 1))
+
+        If (zakret.PrzytnijZakret And Zaleznosci.PrzycinanieZakretu.Dol) <> 0 Then
+            dodatkowePrzesuniecie = 0.0F
+            If (zakret.PrzytnijZakret And Zaleznosci.PrzycinanieZakretu.UmniejszDol) <> 0 Then dodatkowePrzesuniecie = DODATKOWY_MARGINES
+
+            punkty.Add(New PointF(POL - TOR_SZEROKOSC / 2.0F + dodatkowePrzesuniecie, 1))
+            punkty.Add(New PointF(POL - TOR_SZEROKOSC / 2.0F + dodatkowePrzesuniecie, 1 - TOR_TROJKAT - dodatkowePrzesuniecie))
+        Else
+            punkty.Add(New PointF(POL - TOR_SZER_ZAKRET / 2.0F, 1))
+        End If
+
+        urz.WypelnijFigure(pedzelToru, punkty.ToArray)
     End Sub
 
     Private Sub RysujSzczelineZakretu(pedzel As TPedzel, Optional margines_lewy As Single = SZCZEL_MARG_POZIOM_ZAKRET, Optional margines_prawy As Single = SZCZEL_MARG_POZIOM_ZAKRET)
+        If Not rysujSzczeliny Then Exit Sub
+
         Dim marg_pion As Single = SZCZELINA_MARGINES_PION / COS45
         Dim szczel As Single = TOR_SZER_ZAKRET - 2 * marg_pion
 
@@ -342,8 +413,8 @@
     End Sub
 
     Private Sub RysujRozjazdLewo(rozjazd As Zaleznosci.RozjazdLewo)
-        RysujZakret()
-        RysujTor(1)
+        RysujZakret(rozjazd)
+        RysujTor(rozjazd.RysowanieDodatkowychTrojkatow, 1)
         RysujSzczelineZakretu(pedzelSzczelinyBok, margines_prawy:=SZCZEL_MARG_POZIOM_ROZJ)
         RysujSzczelineToru(1)
         RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety)
@@ -351,12 +422,12 @@
     End Sub
 
     Private Sub RysujRozjazdPrawo(rozjazd As Zaleznosci.RozjazdPrawo)
-        RysujTor(1)
+        RysujTor(rozjazd.RysowanieDodatkowychTrojkatow, 1)
         Dim transformacja As TMacierz = urz.TransformacjaPobierz
         urz.TransformacjaResetuj()
-        urz.TransformacjaObroc(-KAT_PROSTY, POL, POL)
+        urz.TransformacjaObroc(3 * KAT_PROSTY, POL, POL)
         urz.TransformacjaDolacz(transformacja)
-        RysujZakret()
+        RysujZakret(rozjazd)
         RysujSzczelineZakretu(pedzelSzczelinyBok, margines_lewy:=SZCZEL_MARG_POZIOM_ROZJ)
         urz.TransformacjaResetuj()
         urz.TransformacjaDolacz(transformacja)
@@ -373,7 +444,7 @@
         Dim pedzNiebieski As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraManewrowego.BrakWyjazdu, PEDZEL_SYGN_NIEB_JASNY, PEDZEL_SYGN_NIEB)
         Dim pedzBialy As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraManewrowego.Manewrowy, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
 
-        RysujTorProsty()
+        RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
         urz.WypelnijTloSygnalizatora(PEDZEL_SYGN_TLO, SYGN_POZ, 2 * SYGN_POZ, SYGN_POZ, SYGN_TLO_SZER / 2)
         urz.WypelnijKolo(pedzNiebieski, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         urz.WypelnijKolo(pedzBialy, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
@@ -386,7 +457,7 @@
         Dim pedzZiel As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zezwalajacy, PEDZEL_SYGN_ZIEL_JASNY, PEDZEL_SYGN_ZIEL)
         Dim pedzBial As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Manewrowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zastepczy, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
 
-        RysujTorProsty()
+        RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
         urz.WypelnijTloSygnalizatora(PEDZEL_SYGN_TLO, SYGN_POZ, 3 * SYGN_POZ, SYGN_POZ, SYGN_TLO_SZER / 2)
         urz.WypelnijKolo(pedzCzer, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         urz.WypelnijKolo(pedzZiel, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
@@ -398,7 +469,7 @@
     Private Sub RysujSygnalizatorSamoczynny(sygnalizator As Zaleznosci.SygnalizatorSamoczynny)
         Dim pedz As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraSamoczynnego.BrakWyjazdu, PEDZEL_SYGN_CZER_JASNY, PEDZEL_SYGN_CZER)
 
-        RysujTorProsty()
+        RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
         urz.WypelnijKolo(PEDZEL_SYGN_TLO, SYGN_POZ, SYGN_POZ, SYGN_TLO_SZER / 2)
         urz.WypelnijKolo(pedz, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         RysujSlupSygnalizatora(1)
@@ -426,7 +497,7 @@
     End Sub
 
     Private Sub RysujPrzyciskTor(przycisk As Zaleznosci.PrzyciskTor)
-        RysujTorProsty()
+        RysujTorProsty(przycisk.RysowanieDodatkowychTrojkatow)
         RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety)
 
         If przycisk.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy Or przycisk.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalManewrowy Then
@@ -438,7 +509,7 @@
 
     Private Sub RysujKierunek(kier As Zaleznosci.Kierunek)
         urz.WypelnijFigure(pedzelToru, PUNKTY_KIERUNKU)
-        urz.WypelnijFigure(PEDZEL_SZCZELINA_ZWROTNICA, PUNKTY_SZCZELINY_KIERUNKU)
+        If rysujSzczeliny Then urz.WypelnijFigure(PEDZEL_SZCZELINA_ZWROTNICA, PUNKTY_SZCZELINY_KIERUNKU)
 
         RysujPrzycisk((Not trybProjektowy) And kier.Wcisniety)
     End Sub
@@ -522,6 +593,8 @@
     End Sub
 
     Private Sub UstawKolorSzczeliny(k As Zaleznosci.Kostka)
+        If Not rysujSzczeliny Then Exit Sub
+
         pedzelSzczelinyWprost = PEDZEL_SZCZELINA_WOLNY
         pedzelSzczelinyBok = PEDZEL_SZCZELINA_WOLNY
 

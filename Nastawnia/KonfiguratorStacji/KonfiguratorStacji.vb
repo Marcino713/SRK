@@ -54,15 +54,18 @@
             plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
             PokazKonfSygnTory()
         End If
+
         If tabUstawienia.SelectedTab Is tbpTory Then
             plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Tory
             OdswiezListeTorow()
         End If
+
         If tabUstawienia.SelectedTab Is tbpLiczniki Then
             plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki
             OdswiezListeLicznikow()
             OdswiezListeTorowWLicznikach()
         End If
+
         If tabUstawienia.SelectedTab Is tbpLampy Then
             plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy
         End If

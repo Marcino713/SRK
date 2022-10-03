@@ -74,7 +74,7 @@ Friend Class PulpitSterowniczy
         End Set
     End Property
 
-    Private _Przesuniecie As Point = New Point(0, 0)
+    Private _Przesuniecie As New Point(0, 0)
     <Description("Przesunięcie pulpitu względem początku kontrolki"), Category(KATEG_KONF)>
     Public Property Przesuniecie As Point
         Get
@@ -119,6 +119,7 @@ Friend Class PulpitSterowniczy
         End Get
         Set(value As Zaleznosci.Pulpit)
             _Pulpit = value
+            _Rysownik.UniewaznioneSasiedztwoTorow = True
             Invalidate()
         End Set
     End Property
@@ -249,10 +250,11 @@ Friend Class PulpitSterowniczy
     Public Sub Czysc(Optional nowyPulpit As Zaleznosci.Pulpit = Nothing)
         _Skalowanie = SKALOWANIE_DOMYSLNE
         _Przesuniecie = New Point(0, 0)
-        _Pulpit = If(nowyPulpit Is Nothing, New Zaleznosci.Pulpit, nowyPulpit)
+        _Pulpit = If(nowyPulpit, New Zaleznosci.Pulpit)
         _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
         _projZaznaczonyOdcinek = Nothing
         _projZaznaczonyLicznik = Nothing
+        _Rysownik.UniewaznioneSasiedztwoTorow = True
         ZaznaczonaKostka = Nothing  'przypisanie do własności zamiast zmiennej, żeby wywołały się zdarzenia
         projZaznaczonaLampa = Nothing
     End Sub
@@ -287,10 +289,12 @@ Friend Class PulpitSterowniczy
                 Dim obrot As Integer = ZaznaczonaKostka.Obrot
                 obrot = (obrot + ZWIEKSZ_OBROT) Mod KAT_PELNY
                 ZaznaczonaKostka.Obrot = obrot
+                _Rysownik.UniewaznioneSasiedztwoTorow = True
                 Invalidate()
 
             ElseIf e.KeyData = Keys.Delete Then
                 Pulpit.UsunKostke(ZaznaczonaKostka)
+                _Rysownik.UniewaznioneSasiedztwoTorow = True
                 ZaznaczonaKostka = Nothing
             End If
 
@@ -529,6 +533,7 @@ Friend Class PulpitSterowniczy
 
             Pulpit.Kostki(p.X, p.Y) = ZaznaczonaKostka
             PoprzLokalizacjaKostki = p
+            _Rysownik.UniewaznioneSasiedztwoTorow = True
             Invalidate()
         End If
 

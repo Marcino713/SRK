@@ -7,6 +7,7 @@ Public Class Tor
     Public Property NalezyDoOdcinka As OdcinekToru
 
     Public Property Zajetosc As ZajetoscToru = ZajetoscToru.Wolny
+    Public Overridable Property RysowanieDodatkowychTrojkatow As DodatkoweTrojkatyTor
 
     Public Sub New()
         MyBase.New(TypKostki.Tor)
@@ -38,4 +39,12 @@ Public Enum ZajetoscToru As Byte
     Wolny
     Zajety
     PrzebiegUtwierdzony
+End Enum
+
+<Flags>
+Public Enum DodatkoweTrojkatyTor
+    LewoGora = 1
+    LewoDol = 2
+    PrawoDol = 4
+    PrawoGora = 8
 End Enum
