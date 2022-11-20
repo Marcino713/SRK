@@ -175,6 +175,20 @@ Friend Class PulpitSterowniczy
         End Set
     End Property
 
+    Private _MozliwoscWcisnieciaPrzycisku As Boolean = True
+    <Browsable(False)>
+    Public Property MozliwoscWcisnieciaPrzycisku As Boolean
+        Get
+            Return _MozliwoscWcisnieciaPrzycisku
+        End Get
+        Set(value As Boolean)
+            If value <> _MozliwoscWcisnieciaPrzycisku Then
+                If Not value Then WylaczWcisnieciePrzycisku()
+                _MozliwoscWcisnieciaPrzycisku = value
+            End If
+        End Set
+    End Property
+
     Private _projDodatkoweObiekty As RysujDodatkoweObiekty = RysujDodatkoweObiekty.Nic
     <Browsable(False)>
     Public Property projDodatkoweObiekty As RysujDodatkoweObiekty
@@ -208,7 +222,7 @@ Friend Class PulpitSterowniczy
         End Get
         Set(value As Zaleznosci.OdcinekToru)
             _projZaznaczonyOdcinek = value
-            If _projDodatkoweObiekty = RysujDodatkoweObiekty.Tory Then Invalidate()
+            If _projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Then Invalidate()
         End Set
     End Property
 
@@ -248,15 +262,20 @@ Friend Class PulpitSterowniczy
     End Sub
 
     Public Sub Czysc(Optional nowyPulpit As Zaleznosci.Pulpit = Nothing)
-        _Skalowanie = SKALOWANIE_DOMYSLNE
-        _Przesuniecie = New Point(0, 0)
         _Pulpit = If(nowyPulpit, New Zaleznosci.Pulpit)
+        _Skalowanie = SKALOWANIE_DOMYSLNE
+        _Przesuniecie = PobierzPozycjeDlaWysrodkowania()
         _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
         _projZaznaczonyOdcinek = Nothing
         _projZaznaczonyLicznik = Nothing
         _Rysownik.UniewaznioneSasiedztwoTorow = True
         ZaznaczonaKostka = Nothing  'przypisanie do własności zamiast zmiennej, żeby wywołały się zdarzenia
         projZaznaczonaLampa = Nothing
+        Invalidate()
+    End Sub
+
+    Public Sub Wysrodkuj()
+        Przesuniecie = PobierzPozycjeDlaWysrodkowania()
     End Sub
 
     Public Overloads Sub Invalidate()
@@ -306,7 +325,7 @@ Friend Class PulpitSterowniczy
 
         If TrybProjektowy Then
 
-            If projDodatkoweObiekty = RysujDodatkoweObiekty.Tory Then
+            If projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Then
                 If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
                     Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
                     If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.Tor AndAlso projZaznaczonyOdcinek IsNot Nothing Then
@@ -347,7 +366,7 @@ Friend Class PulpitSterowniczy
 
                 If _Pulpit.CzyKostkaNiepusta(p) Then
                     Dim k As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-                    If Zaleznosci.CzyTorBezRozjazdu(k.Typ) Then
+                    If Zaleznosci.Kostka.CzyTorBezRozjazdu(k.Typ) Then
                         ZaznaczonaKostka = k
                         zaznaczono = True
                     End If
@@ -406,7 +425,7 @@ Friend Class PulpitSterowniczy
         Dim wspy As Double = (e.Y - Przesuniecie.Y) / WysokoscPulpitu
 
         RysowanieWlaczone = False
-        Skalowanie = Skalowanie + e.Delta * SKALOWANIE_ZMIANA
+        Skalowanie += e.Delta * SKALOWANIE_ZMIANA
         RysowanieWlaczone = True
 
         Dim nowy As New Point(CInt(wspx * SzerokoscPulpitu), CInt(wspy * WysokoscPulpitu))
@@ -454,12 +473,7 @@ Friend Class PulpitSterowniczy
             Invalidate()
         End If
 
-        If WcisnietyPrzycisk IsNot Nothing Then
-            tmrLicznik.Stop()
-            WcisnietyPrzycisk.Wcisniety = False
-            WcisnietyPrzycisk = Nothing
-            Invalidate()
-        End If
+        WylaczWcisnieciePrzycisku()
     End Sub
 
     Private Sub PulpitSterowniczy_MouseDown(sender As Object, e As MouseEventArgs) Handles Me.MouseDown
@@ -482,7 +496,7 @@ Friend Class PulpitSterowniczy
                 End If
             End If
 
-            Exit Sub
+            Exit Sub    'przy sterowaniu oświetleniem (możliwość zaznaczenia obszaru), wyłącz możliwość przesuwania pulpitu/wciskania przycisków
         End If
 
         Dim p As Point = PobierzKliknieteWspolrzedneKostki(e.Location)
@@ -496,9 +510,9 @@ Friend Class PulpitSterowniczy
             PoprzedniPunkt = e.Location
         End If
 
-        If Not TrybProjektowy AndAlso _Pulpit.CzyKostkaNiepusta(p) Then
+        If Not TrybProjektowy AndAlso _MozliwoscWcisnieciaPrzycisku AndAlso _Pulpit.CzyKostkaNiepusta(p) Then
             Dim k As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-            If Zaleznosci.CzyPrzycisk(k.Typ) Then
+            If Zaleznosci.Kostka.CzyPrzycisk(k.Typ) Then
                 WcisnietyPrzycisk = DirectCast(k, Zaleznosci.IPrzycisk)
                 WcisnietyPrzycisk.Wcisniety = True
                 Invalidate()
@@ -535,6 +549,7 @@ Friend Class PulpitSterowniczy
             PoprzLokalizacjaKostki = p
             _Rysownik.UniewaznioneSasiedztwoTorow = True
             Invalidate()
+            Focus()
         End If
 
         e.Effect = AkceptowaniePrzeciagania
@@ -554,6 +569,12 @@ Friend Class PulpitSterowniczy
         If WcisnietyPrzycisk IsNot Nothing Then RaiseEvent WcisnietoPrzycisk(DirectCast(WcisnietyPrzycisk, Zaleznosci.Kostka))
     End Sub
 
+    Private Function PobierzPozycjeDlaWysrodkowania() As Point
+        Return New Point(
+            (Width - SzerokoscPulpitu) \ 2,
+            (Height - WysokoscPulpitu) \ 2)
+    End Function
+
     Private Function PobierzDodawanaKostke(e As DragEventArgs) As Zaleznosci.Kostka
         Return DirectCast(e.Data.GetData(e.Data.GetFormats()(0)), Zaleznosci.Kostka)
     End Function
@@ -570,14 +591,12 @@ Friend Class PulpitSterowniczy
     Private Function PobierzKliknietaLampe(klik As Point) As Zaleznosci.Lampa
         Dim s As PointF = WspolrzedneEkranuDoPulpitu(klik)
         Dim pol As Single = _Rysownik.KOLKO_SZER / 2
-        Dim en As List(Of Zaleznosci.Lampa).Enumerator = Pulpit.Lampy.GetEnumerator
 
-        While en.MoveNext
-            Dim l As Zaleznosci.Lampa = en.Current
+        For Each l As Zaleznosci.Lampa In Pulpit.Lampy
             If (s.X <= l.X + pol) And (s.X >= l.X - pol) And (s.Y <= l.Y + pol) And (s.Y >= l.Y - pol) Then
                 Return l
             End If
-        End While
+        Next
 
         Return Nothing
     End Function
@@ -588,40 +607,44 @@ Friend Class PulpitSterowniczy
 
         Dim pocz As New PointF(Math.Min(PoczatekZaznaczeniaLamp.X, KoniecZaznaczeniaLamp.X), Math.Min(PoczatekZaznaczeniaLamp.Y, KoniecZaznaczeniaLamp.Y))
         Dim konc As New PointF(Math.Max(PoczatekZaznaczeniaLamp.X, KoniecZaznaczeniaLamp.X), Math.Max(PoczatekZaznaczeniaLamp.Y, KoniecZaznaczeniaLamp.Y))
-        Dim en As List(Of Zaleznosci.Lampa).Enumerator = Pulpit.Lampy.GetEnumerator
 
-        While en.MoveNext
-            Dim l As Zaleznosci.Lampa = en.Current
+        For Each l As Zaleznosci.Lampa In Pulpit.Lampy
             If l.X >= pocz.X AndAlso l.X <= konc.X AndAlso l.Y >= pocz.Y AndAlso l.Y <= konc.Y Then
                 lampy.Add(l)
             End If
-        End While
+        Next
 
         Return lampy
     End Function
 
     Private Function PorwonajLampyWObszarze(poprz As HashSet(Of Zaleznosci.Lampa), nowe As HashSet(Of Zaleznosci.Lampa)) As Boolean
-        Dim en As HashSet(Of Zaleznosci.Lampa).Enumerator
         Dim zmiana As Boolean = False
 
-        en = poprz.GetEnumerator
-        While en.MoveNext
-            If Not nowe.Contains(en.Current) Then
-                _ZaznaczoneLampy.Remove(en.Current)
-                KolejnoscZaznaczeniaLamp.Remove(en.Current)
+        For Each l As Zaleznosci.Lampa In poprz
+            If Not nowe.Contains(l) Then
+                _ZaznaczoneLampy.Remove(l)
+                KolejnoscZaznaczeniaLamp.Remove(l)
                 zmiana = True
             End If
-        End While
+        Next
 
-        en = nowe.GetEnumerator
-        While en.MoveNext
-            If Not poprz.Contains(en.Current) And Not _ZaznaczoneLampy.Contains(en.Current) Then
-                _ZaznaczoneLampy.Add(en.Current)
-                KolejnoscZaznaczeniaLamp.Add(en.Current)
+        For Each l As Zaleznosci.Lampa In nowe
+            If Not poprz.Contains(l) And Not _ZaznaczoneLampy.Contains(l) Then
+                _ZaznaczoneLampy.Add(l)
+                KolejnoscZaznaczeniaLamp.Add(l)
                 zmiana = True
             End If
-        End While
+        Next
 
         Return zmiana
     End Function
+
+    Private Sub WylaczWcisnieciePrzycisku()
+        If WcisnietyPrzycisk IsNot Nothing Then
+            tmrLicznik.Stop()
+            WcisnietyPrzycisk.Wcisniety = False
+            WcisnietyPrzycisk = Nothing
+            Invalidate()
+        End If
+    End Sub
 End Class

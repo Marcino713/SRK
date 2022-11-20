@@ -2,6 +2,7 @@
 
 Public MustInherit Class Sygnalizator
     Inherits Tor
+
     Public Property Adres As UShort = 0
     Public Property Nazwa As String = ""
     Public Property OdcinekNastepujacy As OdcinekToru
@@ -13,7 +14,7 @@ Public MustInherit Class Sygnalizator
     End Sub
 
     Protected Friend Overrides Sub UsunOdcinekToruZPowiazan(odcinek As OdcinekToru)
-        If NalezyDoOdcinka Is odcinek Then NalezyDoOdcinka = Nothing
+        MyBase.UsunOdcinekToruZPowiazan(odcinek)
         If OdcinekNastepujacy Is odcinek Then OdcinekNastepujacy = Nothing
     End Sub
 

@@ -1,6 +1,6 @@
 ﻿Public Enum RysujDodatkoweObiekty
     Nic
     Lampy
-    Tory
+    OdcinkiTorow
     Liczniki
 End Enum

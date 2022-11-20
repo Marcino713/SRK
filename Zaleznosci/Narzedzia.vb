@@ -8,42 +8,6 @@ Public Module Narzedzia
     Private rnd As New Random
     Private FunkcjaSkrotu As Security.Cryptography.SHA1 = Security.Cryptography.SHA1.Create()
 
-    Public Function CzyRozjazd(typ As TypKostki) As Boolean
-        Return _
-            typ = TypKostki.RozjazdLewo Or
-            typ = TypKostki.RozjazdPrawo
-    End Function
-
-    Public Function CzyPrzycisk(typ As TypKostki) As Boolean
-        Return _
-            CzyRozjazd(typ) Or
-            typ = TypKostki.Przycisk Or
-            typ = TypKostki.PrzyciskTor Or
-            typ = TypKostki.Kierunek
-    End Function
-
-    Public Function CzySygnalizator(typ As TypKostki) As Boolean
-        Return _
-            typ = TypKostki.SygnalizatorManewrowy Or
-            typ = TypKostki.SygnalizatorSamoczynny Or
-            typ = TypKostki.SygnalizatorPolsamoczynny
-    End Function
-
-    Public Function CzyTorBezRozjazdu(typ As TypKostki) As Boolean
-        Return _
-            CzySygnalizator(typ) Or
-            typ = TypKostki.Tor Or
-            typ = TypKostki.Zakret Or
-            typ = TypKostki.PrzyciskTor
-    End Function
-
-    Public Function CzyTor(typ As TypKostki) As Boolean
-        Return _
-            CzyTorBezRozjazdu(typ) Or
-            CzyRozjazd(typ) Or
-            typ = TypKostki.TorKoniec
-    End Function
-
     Friend Function PobierzBajty(tekst As String) As Byte()
         If tekst Is Nothing Then tekst = ""
         Return KODOWANIE.GetBytes(tekst)
@@ -88,7 +52,7 @@ Public Module Narzedzia
         Return True
     End Function
 
-    Friend Function PobierzDuzaLiczbe() As BigInteger
+    Friend Function PobierzLosowaDuzaLiczbe() As BigInteger
         Dim b(LICZBA_BAJTOW_DUZEJ_LICZBY - 1) As Byte
         rnd.NextBytes(b)
         Return BigInteger.Abs(New BigInteger(b))

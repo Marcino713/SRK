@@ -23,6 +23,7 @@ Public Class wndNastawnia
     Public Sub New()
         InitializeComponent()
         plpPulpit.TypRysownika = TypRysownika.KlasycznyDirect2D
+        plpPulpit.Wysrodkuj()
 
         KursorDomyslny = plpPulpit.Cursor
     End Sub
@@ -71,6 +72,7 @@ Public Class wndNastawnia
         If OknoDodawaniaPociagu Is Nothing Then
             OknoDodawaniaPociagu = New wndDodawaniePociagu(Klient, plpPulpit)
             OknoDodawaniaPociagu.Show()
+            plpPulpit.MozliwoscWcisnieciaPrzycisku = False
             plpPulpit.MozliwoscZaznaczeniaToru = True
         Else
             OknoDodawaniaPociagu.Focus()
@@ -105,6 +107,7 @@ Public Class wndNastawnia
     Private Sub OknoDodawaniaPociagu_FormClosed() Handles OknoDodawaniaPociagu.FormClosed
         OknoDodawaniaPociagu = Nothing
         plpPulpit.MozliwoscZaznaczeniaToru = False
+        plpPulpit.MozliwoscWcisnieciaPrzycisku = True
     End Sub
 
     Private Sub OknoOswietlenia_FormClosed() Handles OknoOswietlenia.FormClosed

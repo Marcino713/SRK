@@ -24,7 +24,7 @@
             Exit Sub
         End If
 
-        If zazn Is Nothing OrElse Not Zaleznosci.CzyTorBezRozjazdu(zazn.Typ) Then
+        If zazn Is Nothing OrElse Not Zaleznosci.Kostka.CzyTorBezRozjazdu(zazn.Typ) Then
             PokazBlad("Należy na schemacie zaznaczyć kostkę, na której znajduje się pociąg.")
             Exit Sub
         End If

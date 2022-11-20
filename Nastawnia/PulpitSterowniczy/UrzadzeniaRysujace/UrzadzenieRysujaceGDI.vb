@@ -10,8 +10,9 @@ Friend Class UrzadzenieRysujaceGDI
     Public Sub Inicjalizuj(uchwyt As IntPtr, szer As UInteger, wys As UInteger) Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).Inicjalizuj
     End Sub
 
-    Public Sub RozpocznijRysunek(grp As Graphics) Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).RozpocznijRysunek
+    Public Sub RozpocznijRysunek(grp As Graphics, kolorTla As Color) Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).RozpocznijRysunek
         gr = grp
+        gr.Clear(kolorTla)
     End Sub
 
     Public Sub ZakonczRysunek() Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).ZakonczRysunek
@@ -62,10 +63,6 @@ Friend Class UrzadzenieRysujaceGDI
     Public Sub RysujProstokat(pedzel As Pen, grubosc As Single, x As Single, y As Single, szer As Single, wys As Single) Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).RysujProstokat
         pedzel.Width = grubosc
         gr.DrawRectangle(pedzel, x, y, szer, wys)
-    End Sub
-
-    Public Sub Czysc(kolor As Color) Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).Czysc
-        gr.Clear(kolor)
     End Sub
 
     Public Sub WypelnijProstokat(pedzel As Brush, x As Single, y As Single, szer As Single, wys As Single) Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).WypelnijProstokat

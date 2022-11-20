@@ -36,6 +36,7 @@ Partial Class wndKonfiguratorStacji
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuNazwa = New System.Windows.Forms.ToolStripMenuItem()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
+        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
         Me.Label36 = New System.Windows.Forms.Label()
         Me.tabUstawienia = New System.Windows.Forms.TabControl()
         Me.tbpPulpit = New System.Windows.Forms.TabPage()
@@ -109,30 +110,30 @@ Partial Class wndKonfiguratorStacji
         Me.pnlKonfTor = New System.Windows.Forms.Panel()
         Me.txtKonfTorPredkosc = New System.Windows.Forms.TextBox()
         Me.Label12 = New System.Windows.Forms.Label()
-        Me.tbpTory = New System.Windows.Forms.TabPage()
+        Me.tbpOdcinki = New System.Windows.Forms.TabPage()
         Me.splKartaTory = New System.Windows.Forms.SplitContainer()
-        Me.lvTory = New System.Windows.Forms.ListView()
+        Me.lvOdcinki = New System.Windows.Forms.ListView()
         Me.ColumnHeader4 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader5 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader6 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ctxSortowanie = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.ctxSortuj = New System.Windows.Forms.ToolStripMenuItem()
-        Me.txtTorAdres = New System.Windows.Forms.TextBox()
+        Me.txtOdcinekAdres = New System.Windows.Forms.TextBox()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.pnlTorLegenda = New System.Windows.Forms.Panel()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
-        Me.pnlTorNieprzypisany = New System.Windows.Forms.Panel()
-        Me.pnlTorTenOdcinek = New System.Windows.Forms.Panel()
+        Me.pnlTorKolorNieprzypisany = New System.Windows.Forms.Panel()
+        Me.pnlTorKolorTenOdcinek = New System.Windows.Forms.Panel()
         Me.Label5 = New System.Windows.Forms.Label()
-        Me.pnlTorInnyOdcinek = New System.Windows.Forms.Panel()
-        Me.btnTorUsun = New System.Windows.Forms.Button()
-        Me.txtTorOpis = New System.Windows.Forms.TextBox()
-        Me.txtTorNazwa = New System.Windows.Forms.TextBox()
+        Me.pnlTorKolorInnyOdcinek = New System.Windows.Forms.Panel()
+        Me.btnOdcinekUsun = New System.Windows.Forms.Button()
+        Me.txtOdcinekOpis = New System.Windows.Forms.TextBox()
+        Me.txtOdcinekNazwa = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.btnTorDodaj = New System.Windows.Forms.Button()
+        Me.btnOdcinekDodaj = New System.Windows.Forms.Button()
         Me.tbpLiczniki = New System.Windows.Forms.TabPage()
         Me.splKartaLiczniki = New System.Windows.Forms.SplitContainer()
         Me.lvLiczniki = New System.Windows.Forms.ListView()
@@ -159,10 +160,10 @@ Partial Class wndKonfiguratorStacji
         Me.btnLicznikUsun = New System.Windows.Forms.Button()
         Me.btnLicznikDodaj = New System.Windows.Forms.Button()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-        Me.cboLicznikTor2 = New System.Windows.Forms.ComboBox()
-        Me.cboLicznikTor1 = New System.Windows.Forms.ComboBox()
-        Me.pnlLicznikTor1 = New System.Windows.Forms.Panel()
-        Me.pnlLicznikTor2 = New System.Windows.Forms.Panel()
+        Me.cboLicznikOdcinek2 = New System.Windows.Forms.ComboBox()
+        Me.cboLicznikOdcinek1 = New System.Windows.Forms.ComboBox()
+        Me.pnlLicznikOdcinek1 = New System.Windows.Forms.Panel()
+        Me.pnlLicznikOdcinek2 = New System.Windows.Forms.Panel()
         Me.Label10 = New System.Windows.Forms.Label()
         Me.Label11 = New System.Windows.Forms.Label()
         Me.tbpLampy = New System.Windows.Forms.TabPage()
@@ -179,7 +180,6 @@ Partial Class wndKonfiguratorStacji
         Me.Label24 = New System.Windows.Forms.Label()
         Me.btnLampaUsun = New System.Windows.Forms.Button()
         Me.btnLampaDodaj = New System.Windows.Forms.Button()
-        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
         Me.mnuMenu.SuspendLayout()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
@@ -205,7 +205,7 @@ Partial Class wndKonfiguratorStacji
         Me.pnlKonfSygnSwiatla.SuspendLayout()
         Me.pnlKonfNapis.SuspendLayout()
         Me.pnlKonfTor.SuspendLayout()
-        Me.tbpTory.SuspendLayout()
+        Me.tbpOdcinki.SuspendLayout()
         CType(Me.splKartaTory, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splKartaTory.Panel1.SuspendLayout()
         Me.splKartaTory.Panel2.SuspendLayout()
@@ -316,6 +316,31 @@ Partial Class wndKonfiguratorStacji
         Me.splOkno.SplitterDistance = 788
         Me.splOkno.TabIndex = 1
         '
+        'plpPulpit
+        '
+        Me.plpPulpit.AllowDrop = True
+        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
+        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
+        Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
+        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
+        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
+        Me.plpPulpit.Name = "plpPulpit"
+        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projZaznaczonaLampa = Nothing
+        Me.plpPulpit.projZaznaczonyLicznik = Nothing
+        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
+        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
+        Pulpit1.Adres = CType(0US, UShort)
+        Pulpit1.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit1
+        Me.plpPulpit.Size = New System.Drawing.Size(785, 645)
+        Me.plpPulpit.TabIndex = 4
+        Me.plpPulpit.TrybProjektowy = True
+        Me.plpPulpit.ZaznaczonaKostka = Nothing
+        '
         'Label36
         '
         Me.Label36.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
@@ -330,7 +355,7 @@ Partial Class wndKonfiguratorStacji
         'tabUstawienia
         '
         Me.tabUstawienia.Controls.Add(Me.tbpPulpit)
-        Me.tabUstawienia.Controls.Add(Me.tbpTory)
+        Me.tabUstawienia.Controls.Add(Me.tbpOdcinki)
         Me.tabUstawienia.Controls.Add(Me.tbpLiczniki)
         Me.tabUstawienia.Controls.Add(Me.tbpLampy)
         Me.tabUstawienia.Dock = System.Windows.Forms.DockStyle.Fill
@@ -907,7 +932,7 @@ Partial Class wndKonfiguratorStacji
         Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnCzer)
         Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnPomGor)
         Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnZiel)
-        Me.pnlKonfSygnSwiatla.Location = New System.Drawing.Point(0, 205)
+        Me.pnlKonfSygnSwiatla.Location = New System.Drawing.Point(0, 198)
         Me.pnlKonfSygnSwiatla.Name = "pnlKonfSygnSwiatla"
         Me.pnlKonfSygnSwiatla.Size = New System.Drawing.Size(206, 186)
         Me.pnlKonfSygnSwiatla.TabIndex = 15
@@ -1108,16 +1133,16 @@ Partial Class wndKonfiguratorStacji
         Me.Label12.TabIndex = 0
         Me.Label12.Text = "Prędkość maksymalna:"
         '
-        'tbpTory
+        'tbpOdcinki
         '
-        Me.tbpTory.Controls.Add(Me.splKartaTory)
-        Me.tbpTory.Location = New System.Drawing.Point(4, 22)
-        Me.tbpTory.Name = "tbpTory"
-        Me.tbpTory.Padding = New System.Windows.Forms.Padding(3)
-        Me.tbpTory.Size = New System.Drawing.Size(206, 644)
-        Me.tbpTory.TabIndex = 1
-        Me.tbpTory.Text = "Odcinki torów"
-        Me.tbpTory.UseVisualStyleBackColor = True
+        Me.tbpOdcinki.Controls.Add(Me.splKartaTory)
+        Me.tbpOdcinki.Location = New System.Drawing.Point(4, 22)
+        Me.tbpOdcinki.Name = "tbpOdcinki"
+        Me.tbpOdcinki.Padding = New System.Windows.Forms.Padding(3)
+        Me.tbpOdcinki.Size = New System.Drawing.Size(206, 644)
+        Me.tbpOdcinki.TabIndex = 1
+        Me.tbpOdcinki.Text = "Odcinki torów"
+        Me.tbpOdcinki.UseVisualStyleBackColor = True
         '
         'splKartaTory
         '
@@ -1130,37 +1155,37 @@ Partial Class wndKonfiguratorStacji
         '
         'splKartaTory.Panel1
         '
-        Me.splKartaTory.Panel1.Controls.Add(Me.lvTory)
+        Me.splKartaTory.Panel1.Controls.Add(Me.lvOdcinki)
         '
         'splKartaTory.Panel2
         '
-        Me.splKartaTory.Panel2.Controls.Add(Me.txtTorAdres)
+        Me.splKartaTory.Panel2.Controls.Add(Me.txtOdcinekAdres)
         Me.splKartaTory.Panel2.Controls.Add(Me.Label7)
         Me.splKartaTory.Panel2.Controls.Add(Me.pnlTorLegenda)
-        Me.splKartaTory.Panel2.Controls.Add(Me.btnTorUsun)
-        Me.splKartaTory.Panel2.Controls.Add(Me.txtTorOpis)
-        Me.splKartaTory.Panel2.Controls.Add(Me.txtTorNazwa)
+        Me.splKartaTory.Panel2.Controls.Add(Me.btnOdcinekUsun)
+        Me.splKartaTory.Panel2.Controls.Add(Me.txtOdcinekOpis)
+        Me.splKartaTory.Panel2.Controls.Add(Me.txtOdcinekNazwa)
         Me.splKartaTory.Panel2.Controls.Add(Me.Label2)
         Me.splKartaTory.Panel2.Controls.Add(Me.Label1)
-        Me.splKartaTory.Panel2.Controls.Add(Me.btnTorDodaj)
+        Me.splKartaTory.Panel2.Controls.Add(Me.btnOdcinekDodaj)
         Me.splKartaTory.Size = New System.Drawing.Size(200, 638)
         Me.splKartaTory.SplitterDistance = 250
         Me.splKartaTory.TabIndex = 0
         '
-        'lvTory
+        'lvOdcinki
         '
-        Me.lvTory.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader4, Me.ColumnHeader5, Me.ColumnHeader6})
-        Me.lvTory.ContextMenuStrip = Me.ctxSortowanie
-        Me.lvTory.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.lvTory.FullRowSelect = True
-        Me.lvTory.HideSelection = False
-        Me.lvTory.Location = New System.Drawing.Point(0, 0)
-        Me.lvTory.MultiSelect = False
-        Me.lvTory.Name = "lvTory"
-        Me.lvTory.Size = New System.Drawing.Size(200, 250)
-        Me.lvTory.TabIndex = 0
-        Me.lvTory.UseCompatibleStateImageBehavior = False
-        Me.lvTory.View = System.Windows.Forms.View.Details
+        Me.lvOdcinki.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader4, Me.ColumnHeader5, Me.ColumnHeader6})
+        Me.lvOdcinki.ContextMenuStrip = Me.ctxSortowanie
+        Me.lvOdcinki.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lvOdcinki.FullRowSelect = True
+        Me.lvOdcinki.HideSelection = False
+        Me.lvOdcinki.Location = New System.Drawing.Point(0, 0)
+        Me.lvOdcinki.MultiSelect = False
+        Me.lvOdcinki.Name = "lvOdcinki"
+        Me.lvOdcinki.Size = New System.Drawing.Size(200, 250)
+        Me.lvOdcinki.TabIndex = 0
+        Me.lvOdcinki.UseCompatibleStateImageBehavior = False
+        Me.lvOdcinki.View = System.Windows.Forms.View.Details
         '
         'ColumnHeader4
         '
@@ -1186,14 +1211,14 @@ Partial Class wndKonfiguratorStacji
         Me.ctxSortuj.Size = New System.Drawing.Size(105, 22)
         Me.ctxSortuj.Text = "Sortuj"
         '
-        'txtTorAdres
+        'txtOdcinekAdres
         '
-        Me.txtTorAdres.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+        Me.txtOdcinekAdres.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtTorAdres.Location = New System.Drawing.Point(0, 45)
-        Me.txtTorAdres.Name = "txtTorAdres"
-        Me.txtTorAdres.Size = New System.Drawing.Size(200, 20)
-        Me.txtTorAdres.TabIndex = 12
+        Me.txtOdcinekAdres.Location = New System.Drawing.Point(0, 45)
+        Me.txtOdcinekAdres.Name = "txtOdcinekAdres"
+        Me.txtOdcinekAdres.Size = New System.Drawing.Size(200, 20)
+        Me.txtOdcinekAdres.TabIndex = 12
         '
         'Label7
         '
@@ -1211,10 +1236,10 @@ Partial Class wndKonfiguratorStacji
         Me.pnlTorLegenda.Controls.Add(Me.Label4)
         Me.pnlTorLegenda.Controls.Add(Me.Label6)
         Me.pnlTorLegenda.Controls.Add(Me.Label3)
-        Me.pnlTorLegenda.Controls.Add(Me.pnlTorNieprzypisany)
-        Me.pnlTorLegenda.Controls.Add(Me.pnlTorTenOdcinek)
+        Me.pnlTorLegenda.Controls.Add(Me.pnlTorKolorNieprzypisany)
+        Me.pnlTorLegenda.Controls.Add(Me.pnlTorKolorTenOdcinek)
         Me.pnlTorLegenda.Controls.Add(Me.Label5)
-        Me.pnlTorLegenda.Controls.Add(Me.pnlTorInnyOdcinek)
+        Me.pnlTorLegenda.Controls.Add(Me.pnlTorKolorInnyOdcinek)
         Me.pnlTorLegenda.Location = New System.Drawing.Point(0, 195)
         Me.pnlTorLegenda.Name = "pnlTorLegenda"
         Me.pnlTorLegenda.Size = New System.Drawing.Size(200, 100)
@@ -1247,19 +1272,19 @@ Partial Class wndKonfiguratorStacji
         Me.Label3.TabIndex = 6
         Me.Label3.Text = "Legenda"
         '
-        'pnlTorNieprzypisany
+        'pnlTorKolorNieprzypisany
         '
-        Me.pnlTorNieprzypisany.Location = New System.Drawing.Point(4, 55)
-        Me.pnlTorNieprzypisany.Name = "pnlTorNieprzypisany"
-        Me.pnlTorNieprzypisany.Size = New System.Drawing.Size(13, 13)
-        Me.pnlTorNieprzypisany.TabIndex = 12
+        Me.pnlTorKolorNieprzypisany.Location = New System.Drawing.Point(4, 55)
+        Me.pnlTorKolorNieprzypisany.Name = "pnlTorKolorNieprzypisany"
+        Me.pnlTorKolorNieprzypisany.Size = New System.Drawing.Size(13, 13)
+        Me.pnlTorKolorNieprzypisany.TabIndex = 12
         '
-        'pnlTorTenOdcinek
+        'pnlTorKolorTenOdcinek
         '
-        Me.pnlTorTenOdcinek.Location = New System.Drawing.Point(4, 17)
-        Me.pnlTorTenOdcinek.Name = "pnlTorTenOdcinek"
-        Me.pnlTorTenOdcinek.Size = New System.Drawing.Size(13, 13)
-        Me.pnlTorTenOdcinek.TabIndex = 7
+        Me.pnlTorKolorTenOdcinek.Location = New System.Drawing.Point(4, 17)
+        Me.pnlTorKolorTenOdcinek.Name = "pnlTorKolorTenOdcinek"
+        Me.pnlTorKolorTenOdcinek.Size = New System.Drawing.Size(13, 13)
+        Me.pnlTorKolorTenOdcinek.TabIndex = 7
         '
         'Label5
         '
@@ -1270,40 +1295,40 @@ Partial Class wndKonfiguratorStacji
         Me.Label5.TabIndex = 11
         Me.Label5.Text = "Tor przypisany do innego odcinka"
         '
-        'pnlTorInnyOdcinek
+        'pnlTorKolorInnyOdcinek
         '
-        Me.pnlTorInnyOdcinek.Location = New System.Drawing.Point(4, 36)
-        Me.pnlTorInnyOdcinek.Name = "pnlTorInnyOdcinek"
-        Me.pnlTorInnyOdcinek.Size = New System.Drawing.Size(13, 13)
-        Me.pnlTorInnyOdcinek.TabIndex = 10
+        Me.pnlTorKolorInnyOdcinek.Location = New System.Drawing.Point(4, 36)
+        Me.pnlTorKolorInnyOdcinek.Name = "pnlTorKolorInnyOdcinek"
+        Me.pnlTorKolorInnyOdcinek.Size = New System.Drawing.Size(13, 13)
+        Me.pnlTorKolorInnyOdcinek.TabIndex = 10
         '
-        'btnTorUsun
+        'btnOdcinekUsun
         '
-        Me.btnTorUsun.Location = New System.Drawing.Point(103, 3)
-        Me.btnTorUsun.Name = "btnTorUsun"
-        Me.btnTorUsun.Size = New System.Drawing.Size(98, 23)
-        Me.btnTorUsun.TabIndex = 11
-        Me.btnTorUsun.Text = "Usuń"
-        Me.btnTorUsun.UseVisualStyleBackColor = True
+        Me.btnOdcinekUsun.Location = New System.Drawing.Point(103, 3)
+        Me.btnOdcinekUsun.Name = "btnOdcinekUsun"
+        Me.btnOdcinekUsun.Size = New System.Drawing.Size(98, 23)
+        Me.btnOdcinekUsun.TabIndex = 11
+        Me.btnOdcinekUsun.Text = "Usuń"
+        Me.btnOdcinekUsun.UseVisualStyleBackColor = True
         '
-        'txtTorOpis
+        'txtOdcinekOpis
         '
-        Me.txtTorOpis.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+        Me.txtOdcinekOpis.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtTorOpis.Location = New System.Drawing.Point(0, 123)
-        Me.txtTorOpis.Multiline = True
-        Me.txtTorOpis.Name = "txtTorOpis"
-        Me.txtTorOpis.Size = New System.Drawing.Size(200, 66)
-        Me.txtTorOpis.TabIndex = 14
+        Me.txtOdcinekOpis.Location = New System.Drawing.Point(0, 123)
+        Me.txtOdcinekOpis.Multiline = True
+        Me.txtOdcinekOpis.Name = "txtOdcinekOpis"
+        Me.txtOdcinekOpis.Size = New System.Drawing.Size(200, 66)
+        Me.txtOdcinekOpis.TabIndex = 14
         '
-        'txtTorNazwa
+        'txtOdcinekNazwa
         '
-        Me.txtTorNazwa.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+        Me.txtOdcinekNazwa.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtTorNazwa.Location = New System.Drawing.Point(0, 84)
-        Me.txtTorNazwa.Name = "txtTorNazwa"
-        Me.txtTorNazwa.Size = New System.Drawing.Size(200, 20)
-        Me.txtTorNazwa.TabIndex = 13
+        Me.txtOdcinekNazwa.Location = New System.Drawing.Point(0, 84)
+        Me.txtOdcinekNazwa.Name = "txtOdcinekNazwa"
+        Me.txtOdcinekNazwa.Size = New System.Drawing.Size(200, 20)
+        Me.txtOdcinekNazwa.TabIndex = 13
         '
         'Label2
         '
@@ -1323,14 +1348,14 @@ Partial Class wndKonfiguratorStacji
         Me.Label1.TabIndex = 2
         Me.Label1.Text = "Nazwa:"
         '
-        'btnTorDodaj
+        'btnOdcinekDodaj
         '
-        Me.btnTorDodaj.Location = New System.Drawing.Point(-1, 3)
-        Me.btnTorDodaj.Name = "btnTorDodaj"
-        Me.btnTorDodaj.Size = New System.Drawing.Size(98, 23)
-        Me.btnTorDodaj.TabIndex = 10
-        Me.btnTorDodaj.Text = "Dodaj"
-        Me.btnTorDodaj.UseVisualStyleBackColor = True
+        Me.btnOdcinekDodaj.Location = New System.Drawing.Point(-1, 3)
+        Me.btnOdcinekDodaj.Name = "btnOdcinekDodaj"
+        Me.btnOdcinekDodaj.Size = New System.Drawing.Size(98, 23)
+        Me.btnOdcinekDodaj.TabIndex = 10
+        Me.btnOdcinekDodaj.Text = "Dodaj"
+        Me.btnOdcinekDodaj.UseVisualStyleBackColor = True
         '
         'tbpLiczniki
         '
@@ -1567,10 +1592,10 @@ Partial Class wndKonfiguratorStacji
         '
         Me.GroupBox1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.GroupBox1.Controls.Add(Me.cboLicznikTor2)
-        Me.GroupBox1.Controls.Add(Me.cboLicznikTor1)
-        Me.GroupBox1.Controls.Add(Me.pnlLicznikTor1)
-        Me.GroupBox1.Controls.Add(Me.pnlLicznikTor2)
+        Me.GroupBox1.Controls.Add(Me.cboLicznikOdcinek2)
+        Me.GroupBox1.Controls.Add(Me.cboLicznikOdcinek1)
+        Me.GroupBox1.Controls.Add(Me.pnlLicznikOdcinek1)
+        Me.GroupBox1.Controls.Add(Me.pnlLicznikOdcinek2)
         Me.GroupBox1.Controls.Add(Me.Label10)
         Me.GroupBox1.Controls.Add(Me.Label11)
         Me.GroupBox1.Location = New System.Drawing.Point(0, 174)
@@ -1580,41 +1605,41 @@ Partial Class wndKonfiguratorStacji
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Jeśli przejazd od licznika 1 do 2"
         '
-        'cboLicznikTor2
+        'cboLicznikOdcinek2
         '
-        Me.cboLicznikTor2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+        Me.cboLicznikOdcinek2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cboLicznikTor2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboLicznikTor2.FormattingEnabled = True
-        Me.cboLicznikTor2.Location = New System.Drawing.Point(6, 72)
-        Me.cboLicznikTor2.Name = "cboLicznikTor2"
-        Me.cboLicznikTor2.Size = New System.Drawing.Size(189, 21)
-        Me.cboLicznikTor2.TabIndex = 22
+        Me.cboLicznikOdcinek2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboLicznikOdcinek2.FormattingEnabled = True
+        Me.cboLicznikOdcinek2.Location = New System.Drawing.Point(6, 72)
+        Me.cboLicznikOdcinek2.Name = "cboLicznikOdcinek2"
+        Me.cboLicznikOdcinek2.Size = New System.Drawing.Size(189, 21)
+        Me.cboLicznikOdcinek2.TabIndex = 22
         '
-        'cboLicznikTor1
+        'cboLicznikOdcinek1
         '
-        Me.cboLicznikTor1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+        Me.cboLicznikOdcinek1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cboLicznikTor1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboLicznikTor1.FormattingEnabled = True
-        Me.cboLicznikTor1.Location = New System.Drawing.Point(6, 32)
-        Me.cboLicznikTor1.Name = "cboLicznikTor1"
-        Me.cboLicznikTor1.Size = New System.Drawing.Size(189, 21)
-        Me.cboLicznikTor1.TabIndex = 21
+        Me.cboLicznikOdcinek1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboLicznikOdcinek1.FormattingEnabled = True
+        Me.cboLicznikOdcinek1.Location = New System.Drawing.Point(6, 32)
+        Me.cboLicznikOdcinek1.Name = "cboLicznikOdcinek1"
+        Me.cboLicznikOdcinek1.Size = New System.Drawing.Size(189, 21)
+        Me.cboLicznikOdcinek1.TabIndex = 21
         '
-        'pnlLicznikTor1
+        'pnlLicznikOdcinek1
         '
-        Me.pnlLicznikTor1.Location = New System.Drawing.Point(182, 16)
-        Me.pnlLicznikTor1.Name = "pnlLicznikTor1"
-        Me.pnlLicznikTor1.Size = New System.Drawing.Size(13, 13)
-        Me.pnlLicznikTor1.TabIndex = 7
+        Me.pnlLicznikOdcinek1.Location = New System.Drawing.Point(182, 16)
+        Me.pnlLicznikOdcinek1.Name = "pnlLicznikOdcinek1"
+        Me.pnlLicznikOdcinek1.Size = New System.Drawing.Size(13, 13)
+        Me.pnlLicznikOdcinek1.TabIndex = 7
         '
-        'pnlLicznikTor2
+        'pnlLicznikOdcinek2
         '
-        Me.pnlLicznikTor2.Location = New System.Drawing.Point(182, 56)
-        Me.pnlLicznikTor2.Name = "pnlLicznikTor2"
-        Me.pnlLicznikTor2.Size = New System.Drawing.Size(13, 13)
-        Me.pnlLicznikTor2.TabIndex = 10
+        Me.pnlLicznikOdcinek2.Location = New System.Drawing.Point(182, 56)
+        Me.pnlLicznikOdcinek2.Name = "pnlLicznikOdcinek2"
+        Me.pnlLicznikOdcinek2.Size = New System.Drawing.Size(13, 13)
+        Me.pnlLicznikOdcinek2.TabIndex = 10
         '
         'Label10
         '
@@ -1770,30 +1795,6 @@ Partial Class wndKonfiguratorStacji
         Me.btnLampaDodaj.Text = "Dodaj"
         Me.btnLampaDodaj.UseVisualStyleBackColor = True
         '
-        'plpPulpit
-        '
-        Me.plpPulpit.AllowDrop = True
-        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
-        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
-        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
-        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
-        Me.plpPulpit.Name = "plpPulpit"
-        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
-        Me.plpPulpit.projZaznaczonaLampa = Nothing
-        Me.plpPulpit.projZaznaczonyLicznik = Nothing
-        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
-        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit1.Adres = CType(0US, UShort)
-        Pulpit1.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit1
-        Me.plpPulpit.Size = New System.Drawing.Size(785, 645)
-        Me.plpPulpit.TabIndex = 4
-        Me.plpPulpit.TrybProjektowy = True
-        Me.plpPulpit.ZaznaczonaKostka = Nothing
-        '
         'wndKonfiguratorStacji
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1843,7 +1844,7 @@ Partial Class wndKonfiguratorStacji
         Me.pnlKonfNapis.PerformLayout()
         Me.pnlKonfTor.ResumeLayout(False)
         Me.pnlKonfTor.PerformLayout()
-        Me.tbpTory.ResumeLayout(False)
+        Me.tbpOdcinki.ResumeLayout(False)
         Me.splKartaTory.Panel1.ResumeLayout(False)
         Me.splKartaTory.Panel2.ResumeLayout(False)
         Me.splKartaTory.Panel2.PerformLayout()
@@ -1885,33 +1886,33 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents mnuNazwa As ToolStripMenuItem
     Friend WithEvents tabUstawienia As TabControl
     Friend WithEvents tbpPulpit As TabPage
-    Friend WithEvents tbpTory As TabPage
+    Friend WithEvents tbpOdcinki As TabPage
     Friend WithEvents tbpLiczniki As TabPage
     Friend WithEvents splKartaPulpit As SplitContainer
     Friend WithEvents splKartaTory As SplitContainer
-    Friend WithEvents lvTory As ListView
+    Friend WithEvents lvOdcinki As ListView
     Friend WithEvents Label3 As Label
-    Friend WithEvents txtTorOpis As TextBox
-    Friend WithEvents txtTorNazwa As TextBox
+    Friend WithEvents txtOdcinekOpis As TextBox
+    Friend WithEvents txtOdcinekNazwa As TextBox
     Friend WithEvents Label2 As Label
     Friend WithEvents Label1 As Label
-    Friend WithEvents btnTorDodaj As Button
+    Friend WithEvents btnOdcinekDodaj As Button
     Friend WithEvents Label4 As Label
-    Friend WithEvents pnlTorTenOdcinek As Panel
-    Friend WithEvents btnTorUsun As Button
+    Friend WithEvents pnlTorKolorTenOdcinek As Panel
+    Friend WithEvents btnOdcinekUsun As Button
     Friend WithEvents Label6 As Label
-    Friend WithEvents pnlTorNieprzypisany As Panel
+    Friend WithEvents pnlTorKolorNieprzypisany As Panel
     Friend WithEvents Label5 As Label
-    Friend WithEvents pnlTorInnyOdcinek As Panel
+    Friend WithEvents pnlTorKolorInnyOdcinek As Panel
     Friend WithEvents pnlTorLegenda As Panel
-    Friend WithEvents txtTorAdres As TextBox
+    Friend WithEvents txtOdcinekAdres As TextBox
     Friend WithEvents Label7 As Label
     Friend WithEvents splKartaLiczniki As SplitContainer
     Friend WithEvents lvLiczniki As ListView
     Friend WithEvents txtLicznik1Adres As TextBox
     Friend WithEvents GroupBox1 As GroupBox
-    Friend WithEvents cboLicznikTor2 As ComboBox
-    Friend WithEvents cboLicznikTor1 As ComboBox
+    Friend WithEvents cboLicznikOdcinek2 As ComboBox
+    Friend WithEvents cboLicznikOdcinek1 As ComboBox
     Friend WithEvents Label10 As Label
     Friend WithEvents Label11 As Label
     Friend WithEvents Label8 As Label
@@ -2004,8 +2005,8 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents Label32 As Label
     Friend WithEvents Label33 As Label
     Friend WithEvents txtLicznik2Adres As TextBox
-    Friend WithEvents pnlLicznikTor1 As Panel
-    Friend WithEvents pnlLicznikTor2 As Panel
+    Friend WithEvents pnlLicznikOdcinek1 As Panel
+    Friend WithEvents pnlLicznikOdcinek2 As Panel
     Friend WithEvents ColumnHeader7 As ColumnHeader
     Friend WithEvents ColumnHeader8 As ColumnHeader
     Friend WithEvents ColumnHeader9 As ColumnHeader

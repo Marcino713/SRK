@@ -87,7 +87,7 @@ Partial Class wndOknoSerwera
         'btnPrzegladaj
         '
         Me.btnPrzegladaj.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnPrzegladaj.Location = New System.Drawing.Point(748, 18)
+        Me.btnPrzegladaj.Location = New System.Drawing.Point(749, 18)
         Me.btnPrzegladaj.Name = "btnPrzegladaj"
         Me.btnPrzegladaj.Size = New System.Drawing.Size(75, 22)
         Me.btnPrzegladaj.TabIndex = 2
@@ -100,7 +100,7 @@ Partial Class wndOknoSerwera
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtSciezka.Location = New System.Drawing.Point(60, 19)
         Me.txtSciezka.Name = "txtSciezka"
-        Me.txtSciezka.Size = New System.Drawing.Size(682, 20)
+        Me.txtSciezka.Size = New System.Drawing.Size(683, 20)
         Me.txtSciezka.TabIndex = 1
         Me.txtSciezka.Text = "C:\Users\Marcin\Desktop\Testy\Testy pol\a.pol"
         '

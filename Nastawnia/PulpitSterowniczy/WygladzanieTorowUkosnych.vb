@@ -13,77 +13,62 @@
     Private ReadOnly KOSTKI_SASIEDNIE As Point() = {PRAWO, DOL, LEWO, GORA}
 
     Friend Sub WyznaczWygladzanieZakretow(pulpit As Zaleznosci.Pulpit)
-        CzyscParametryWygladzania(pulpit)
-
-        Dim k As Zaleznosci.Kostka
-
-        For x As Integer = 0 To pulpit.Szerokosc - 1
-            For y As Integer = 0 To pulpit.Wysokosc - 1
-                k = pulpit.Kostki(x, y)
-
-                If k IsNot Nothing AndAlso TypeOf k Is Zaleznosci.IZakret Then
-                    Dim zakret As Zaleznosci.IZakret = DirectCast(k, Zaleznosci.IZakret)
-                    Dim rozjLewo As Boolean = k.Typ = Zaleznosci.TypKostki.RozjazdLewo
-                    Dim rozjPrawo As Boolean = k.Typ = Zaleznosci.TypKostki.RozjazdPrawo
-                    Dim wsp As New Point(x, y)
-                    Dim granicaPrawo As GranicaToru
-                    Dim granicaDol As GranicaToru
-                    Dim sasiedztwoPrawo As Point
-                    Dim sasiedztwoDol As Point
-                    Dim obrotKostki As Integer = ObliczObrot(k.Obrot, rozjPrawo)
-
-                    'sprawdź, z czym graniczy kostka
-                    sasiedztwoPrawo = KOSTKI_SASIEDNIE(ObliczStopienObrotu(obrotKostki))
-                    sasiedztwoDol = KOSTKI_SASIEDNIE(ObliczStopienObrotu(obrotKostki + KAT_PROSTY))
-
-                    granicaPrawo = CzyGraniczyZTorem(pulpit, wsp, sasiedztwoPrawo, KrawedzZakretu.Prawo, rozjPrawo)
-                    granicaDol = CzyGraniczyZTorem(pulpit, wsp, sasiedztwoDol, KrawedzZakretu.Dol, rozjPrawo)
-
-                    'wyznacz przycięcie trójkątów na torach ukośnych
-                    If ((granicaPrawo And GranicaToru.PrzedluzonyZakret) = 0) And (((granicaPrawo And GranicaToru.Prosty) <> 0) Or rozjLewo) Then
-                        zakret.PrzytnijZakret = zakret.PrzytnijZakret Or Zaleznosci.PrzycinanieZakretu.Prawo
-                        If rozjLewo Then zakret.PrzytnijZakret = zakret.PrzytnijZakret Or Zaleznosci.PrzycinanieZakretu.UmniejszPrawo
-                    End If
-
-                    If ((granicaDol And GranicaToru.PrzedluzonyZakret) = 0) And (((granicaDol And GranicaToru.Prosty) <> 0) Or rozjPrawo) Then
-                        zakret.PrzytnijZakret = zakret.PrzytnijZakret Or Zaleznosci.PrzycinanieZakretu.Dol
-                        If rozjPrawo Then zakret.PrzytnijZakret = zakret.PrzytnijZakret Or Zaleznosci.PrzycinanieZakretu.UmniejszDol
-                    End If
-
-                    'wyznacz dokładanie trójkątów na torach prostych
-                    WyznaczDodatkoweTrojkaty(pulpit, x, y, obrotKostki, granicaPrawo, sasiedztwoPrawo, 0 * KAT_PROSTY,
-                                             Zaleznosci.DodatkoweTrojkatyTor.LewoDol, Zaleznosci.DodatkoweTrojkatyTorKoniec.LewoDol, Zaleznosci.DodatkoweTrojkatyTor.PrawoGora)
-
-                    WyznaczDodatkoweTrojkaty(pulpit, x, y, obrotKostki, granicaDol, sasiedztwoDol, 1 * KAT_PROSTY,
-                                             Zaleznosci.DodatkoweTrojkatyTor.LewoGora, Zaleznosci.DodatkoweTrojkatyTorKoniec.LewoGora, Zaleznosci.DodatkoweTrojkatyTor.PrawoDol)
-
-                End If
-            Next
-        Next
+        pulpit.PrzeiterujKostki(AddressOf CzyscParametryWygladzaniaDlaKostki)
+        pulpit.PrzeiterujKostki(AddressOf PrzetworzKostke, pulpit)
     End Sub
 
-    Private Sub CzyscParametryWygladzania(pulpit As Zaleznosci.Pulpit)
-        Dim k As Zaleznosci.Kostka
+    Private Sub CzyscParametryWygladzaniaDlaKostki(x As Integer, y As Integer, k As Zaleznosci.Kostka)
+        If TypeOf k Is Zaleznosci.Tor And TypeOf k IsNot Zaleznosci.Zakret Then
+            DirectCast(k, Zaleznosci.Tor).RysowanieDodatkowychTrojkatow = 0
+        End If
 
-        For x As Integer = 0 To pulpit.Szerokosc - 1
-            For y As Integer = 0 To pulpit.Wysokosc - 1
-                k = pulpit.Kostki(x, y)
+        If TypeOf k Is Zaleznosci.TorKoniec Then
+            DirectCast(k, Zaleznosci.TorKoniec).RysowanieDodatkowychTrojkatow = 0
+        End If
 
-                If k IsNot Nothing Then
-                    If TypeOf k Is Zaleznosci.Tor And TypeOf k IsNot Zaleznosci.Zakret Then
-                        DirectCast(k, Zaleznosci.Tor).RysowanieDodatkowychTrojkatow = 0
-                    End If
+        If TypeOf k Is Zaleznosci.IZakret Then
+            DirectCast(k, Zaleznosci.IZakret).PrzytnijZakret = 0
+        End If
+    End Sub
 
-                    If TypeOf k Is Zaleznosci.TorKoniec Then
-                        DirectCast(k, Zaleznosci.TorKoniec).RysowanieDodatkowychTrojkatow = 0
-                    End If
+    Private Sub PrzetworzKostke(x As Integer, y As Integer, k As Zaleznosci.Kostka, pulpit As Zaleznosci.Pulpit)
+        If TypeOf k Is Zaleznosci.IZakret Then
+            Dim zakret As Zaleznosci.IZakret = DirectCast(k, Zaleznosci.IZakret)
+            Dim rozjLewo As Boolean = k.Typ = Zaleznosci.TypKostki.RozjazdLewo
+            Dim rozjPrawo As Boolean = k.Typ = Zaleznosci.TypKostki.RozjazdPrawo
+            Dim wsp As New Point(x, y)
+            Dim granicaPrawo As GranicaToru
+            Dim granicaDol As GranicaToru
+            Dim sasiedztwoPrawo As Point
+            Dim sasiedztwoDol As Point
+            Dim obrotKostki As Integer = ObliczObrot(k.Obrot, rozjPrawo)
 
-                    If TypeOf k Is Zaleznosci.IZakret Then
-                        DirectCast(k, Zaleznosci.IZakret).PrzytnijZakret = 0
-                    End If
-                End If
-            Next
-        Next
+            'sprawdź, z czym graniczy kostka
+            sasiedztwoPrawo = KOSTKI_SASIEDNIE(ObliczStopienObrotu(obrotKostki))
+            sasiedztwoDol = KOSTKI_SASIEDNIE(ObliczStopienObrotu(obrotKostki + KAT_PROSTY))
+
+            granicaPrawo = CzyGraniczyZTorem(pulpit, wsp, sasiedztwoPrawo, KrawedzZakretu.Prawo, rozjPrawo)
+            granicaDol = CzyGraniczyZTorem(pulpit, wsp, sasiedztwoDol, KrawedzZakretu.Dol, rozjPrawo)
+
+            'wyznacz przycięcie trójkątów na torach ukośnych
+            If ((granicaPrawo And GranicaToru.PrzedluzonyZakret) = 0) And (((granicaPrawo And GranicaToru.Prosty) <> 0) Or rozjLewo) Then
+                zakret.PrzytnijZakret = zakret.PrzytnijZakret Or Zaleznosci.PrzycinanieZakretu.Prawo
+                If rozjLewo Then zakret.PrzytnijZakret = zakret.PrzytnijZakret Or Zaleznosci.PrzycinanieZakretu.UmniejszPrawo
+            End If
+
+            If ((granicaDol And GranicaToru.PrzedluzonyZakret) = 0) And (((granicaDol And GranicaToru.Prosty) <> 0) Or rozjPrawo) Then
+                zakret.PrzytnijZakret = zakret.PrzytnijZakret Or Zaleznosci.PrzycinanieZakretu.Dol
+                If rozjPrawo Then zakret.PrzytnijZakret = zakret.PrzytnijZakret Or Zaleznosci.PrzycinanieZakretu.UmniejszDol
+            End If
+
+            'wyznacz dokładanie trójkątów na torach prostych
+            WyznaczDodatkoweTrojkaty(pulpit, x, y, obrotKostki, granicaPrawo, sasiedztwoPrawo, 0 * KAT_PROSTY,
+                                     Zaleznosci.DodatkoweTrojkatyTor.LewoDol, Zaleznosci.DodatkoweTrojkatyTorKoniec.LewoDol, Zaleznosci.DodatkoweTrojkatyTor.PrawoGora)
+
+            WyznaczDodatkoweTrojkaty(pulpit, x, y, obrotKostki, granicaDol, sasiedztwoDol, 1 * KAT_PROSTY,
+                                     Zaleznosci.DodatkoweTrojkatyTor.LewoGora, Zaleznosci.DodatkoweTrojkatyTorKoniec.LewoGora, Zaleznosci.DodatkoweTrojkatyTor.PrawoDol)
+
+        End If
     End Sub
 
     Private Sub WyznaczDodatkoweTrojkaty(pulpit As Zaleznosci.Pulpit, x As Integer, y As Integer, obrot As Integer, granica As GranicaToru, sasiedztwo As Point, poczatkowyObrot As Integer,
@@ -127,7 +112,7 @@
         Dim kostka As Zaleznosci.Kostka = pulpit.Kostki(kostkaNowa.X, kostkaNowa.Y)
         If kostka Is Nothing Then Return GranicaToru.Brak
 
-        If Zaleznosci.CzyTor(kostka.Typ) Then
+        If Zaleznosci.Kostka.CzyTor(kostka.Typ) Then
             If kostka.Typ = Zaleznosci.TypKostki.Zakret Then
                 Return CzyGraniczyZZakretem(kostka.Obrot, roznica, krawedz)
 

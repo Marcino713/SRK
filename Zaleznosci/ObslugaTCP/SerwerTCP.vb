@@ -344,7 +344,7 @@ Public Class SerwerTCP
 
     Private Sub ZamykajNieaktywnePolaczenia()
         Dim kom As New ZakonczonoSesjeKlienta() With {.Przyczyna = PrzyczynaZakonczeniaSesjiKlienta.PrzekroczenieCzasuOczekiwania}
-        Dim polaczeniaDoZamkniecia As List(Of PolaczenieTCP) = Nothing
+        Dim polaczeniaDoZamkniecia As List(Of PolaczenieTCP)
         Dim czas As Date
         Dim ix As Integer
 
@@ -400,7 +400,7 @@ Public Class SerwerTCP
         Dim dh As DHInicjalizuj = CType(kom, DHInicjalizuj)
         If dh.LiczbaP < MIN_LICZBA_PIERWSZA Then Exit Sub
 
-        Dim liczbaPrywB As BigInteger = PobierzDuzaLiczbe()
+        Dim liczbaPrywB As BigInteger = PobierzLosowaDuzaLiczbe()
         Dim dhOdp As New DHZainicjalizowano
         dhOdp.LiczbaB = BigInteger.ModPow(New BigInteger(dh.LiczbaG), liczbaPrywB, dh.LiczbaP)
 

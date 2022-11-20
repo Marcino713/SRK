@@ -76,6 +76,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Narzedzia.vb" />
     <Compile Include="OknoSerwera.vb">
       <SubType>Form</SubType>
     </Compile>

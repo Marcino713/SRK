@@ -5,7 +5,20 @@ Public Class PrzyciskTor
     Implements IPrzycisk
 
     Public Property TypPrzycisku As TypPrzyciskuTorEnum
+
+    Private _ObslugiwanySygnalizator As Sygnalizator
     Public Property ObslugiwanySygnalizator As Sygnalizator
+        Get
+            Return _ObslugiwanySygnalizator
+        End Get
+        Set(value As Sygnalizator)
+            If Not (value Is Nothing OrElse TypeOf value Is SygnalizatorPolsamoczynny OrElse TypeOf value Is SygnalizatorManewrowy) Then
+                Throw New Exception("Przycisk z torem może być powiązany tylko z sygnalizatorem półsamoczynnym albo manewrowym.")
+            End If
+
+            _ObslugiwanySygnalizator = value
+        End Set
+    End Property
 
     Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
 
@@ -14,13 +27,13 @@ Public Class PrzyciskTor
     End Sub
 
     Protected Friend Overrides Sub UsunPowiazanie(kostka As Kostka)
-        If ObslugiwanySygnalizator Is kostka Then ObslugiwanySygnalizator = Nothing
+        If _ObslugiwanySygnalizator Is kostka Then _ObslugiwanySygnalizator = Nothing
     End Sub
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
         MyBase.ZapiszKostke(bw, konf)
         bw.Write(CType(TypPrzycisku, Byte))
-        bw.Write(If(ObslugiwanySygnalizator Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(ObslugiwanySygnalizator)))
+        bw.Write(If(_ObslugiwanySygnalizator Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(_ObslugiwanySygnalizator)))
     End Sub
 
     Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)

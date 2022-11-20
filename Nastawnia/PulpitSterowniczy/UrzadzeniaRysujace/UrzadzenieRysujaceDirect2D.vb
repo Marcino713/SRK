@@ -2,7 +2,7 @@
     Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr), IDisposable
 
     Private Declare Auto Function InicjalizujD2D Lib "ObslugaDirectX.dll" (uchwyt As IntPtr, szer As UInteger, wys As UInteger) As IntPtr
-    Private Declare Auto Sub RozpocznijRysunekD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr)
+    Private Declare Auto Sub RozpocznijRysunekD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, r As Single, g As Single, b As Single)
     Private Declare Auto Sub ZakonczRysunekD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr)
     Private Declare Auto Sub ZmienRozmiarD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, szer As UInteger, wys As UInteger)
     Private Declare Auto Function UtworzPedzelD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, r As Single, g As Single, b As Single, a As Single) As IntPtr
@@ -18,7 +18,6 @@
     Private Declare Auto Sub RysujLinieD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, pedzel As IntPtr, grubosc As Single, x1 As Single, y1 As Single, x2 As Single, y2 As Single)
     Private Declare Auto Sub RysujProstokatD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, pedzel As IntPtr, grubosc As Single, lewo As Single, gora As Single, prawo As Single, dol As Single)
 
-    Private Declare Auto Sub CzyscD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, r As Single, g As Single, b As Single)
     Private Declare Auto Sub WypelnijProstokatD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, pedzel As IntPtr, lewo As Single, gora As Single, prawo As Single, dol As Single)
     Private Declare Auto Sub WypelnijFigureD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, pedzel As IntPtr, sciezka As IntPtr)
     Private Declare Auto Sub WypelnijKoloD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, pedzel As IntPtr, x As Single, y As Single, r As Single)
@@ -59,8 +58,8 @@
         hOkno = InicjalizujD2D(uchwyt, szer, wys)
     End Sub
 
-    Public Sub RozpocznijRysunek(grp As Graphics) Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).RozpocznijRysunek
-        RozpocznijRysunekD2D(hOkno)
+    Public Sub RozpocznijRysunek(grp As Graphics, kolorTla As Color) Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).RozpocznijRysunek
+        RozpocznijRysunekD2D(hOkno, kolorTla.R / MAX_BAJT, kolorTla.G / MAX_BAJT, kolorTla.B / MAX_BAJT)
     End Sub
 
     Public Sub ZakonczRysunek() Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).ZakonczRysunek
@@ -109,10 +108,6 @@
 
     Public Sub RysujProstokat(pedzel As IntPtr, grubosc As Single, x As Single, y As Single, szer As Single, wys As Single) Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).RysujProstokat
         RysujProstokatD2D(hOkno, pedzel, grubosc, x, y, x + szer, y + wys)
-    End Sub
-
-    Public Sub Czysc(kolor As Color) Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).Czysc
-        CzyscD2D(hOkno, kolor.R / MAX_BAJT, kolor.G / MAX_BAJT, kolor.B / MAX_BAJT)
     End Sub
 
     Public Sub WypelnijProstokat(pedzel As IntPtr, x As Single, y As Single, szer As Single, wys As Single) Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).WypelnijProstokat

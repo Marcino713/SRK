@@ -11,7 +11,7 @@ Friend Class KlientDaneDH
     Friend Sub New()
         Dim rnd As New Random
 
-        LiczbaPrywA = PobierzDuzaLiczbe()
+        LiczbaPrywA = PobierzLosowaDuzaLiczbe()
 
         LiczbaG = LICZBA_G
         LiczbaP = New BigInteger(LICZBY_PIERWSZE(rnd.Next(0, LICZBY_PIERWSZE.Length)))

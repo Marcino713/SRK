@@ -24,7 +24,7 @@ struct DaneOkna {
 
 extern "C" {
 	wskaznik DLL InicjalizujD2D(HWND uchwyt, UINT szer, UINT wys);
-	void DLL RozpocznijRysunekD2D(DaneOkna* hOkno);
+	void DLL RozpocznijRysunekD2D(DaneOkna* hOkno, float r, float g, float b);
 	void DLL ZakonczRysunekD2D(DaneOkna* hOkno);
 	void DLL ZmienRozmiarD2D(DaneOkna* hOkno, UINT szer, UINT wys);
 	wskaznik DLL UtworzPedzelD2D(DaneOkna* hOkno, float r, float g, float b, float a);
@@ -40,7 +40,6 @@ extern "C" {
 	void DLL RysujLinieD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, float grubosc, float x1, float y1, float x2, float y2);
 	void DLL RysujProstokatD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, float grubosc, float lewo, float gora, float prawo, float dol);
 
-	void DLL CzyscD2D(DaneOkna* hOkno, float r, float g, float b);
 	void DLL WypelnijProstokatD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, float lewo, float gora, float prawo, float dol);
 	void DLL WypelnijFigureD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, ID2D1PathGeometry* sciezka);
 	void DLL WypelnijKoloD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, float srodekX, float srodekY, float r);

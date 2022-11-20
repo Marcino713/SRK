@@ -9,8 +9,9 @@ wskaznik DLL InicjalizujD2D(HWND uchwyt, UINT szer, UINT wys) {
 	return (wskaznik)okno;
 }
 
-void DLL RozpocznijRysunekD2D(DaneOkna* hOkno) {
+void DLL RozpocznijRysunekD2D(DaneOkna* hOkno, float r, float g, float b) {
 	hOkno->obraz->BeginDraw();
+	hOkno->obraz->Clear(D2D1::ColorF(r, g, b));
 }
 
 void DLL ZakonczRysunekD2D(DaneOkna* hOkno) {
@@ -86,10 +87,6 @@ void DLL RysujLinieD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, float grub
 
 void DLL RysujProstokatD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, float grubosc, float lewo, float gora, float prawo, float dol) {
 	hOkno->obraz->DrawRectangle(D2D1::RectF(lewo, gora, prawo, dol), pedzel, grubosc);
-}
-
-void DLL CzyscD2D(DaneOkna* hOkno, float r, float g, float b) {
-	hOkno->obraz->Clear(D2D1::ColorF(r, g, b));
 }
 
 void DLL WypelnijProstokatD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, float lewo, float gora, float prawo, float dol) {
