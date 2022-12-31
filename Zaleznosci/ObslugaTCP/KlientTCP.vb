@@ -24,7 +24,7 @@ Public Class KlientTCP
     Public Event ZakonczonoPolaczenie()
     Public Event OdebranoInformacje(kom As Informacja)
     Public Event OdebranoZakonczonoDzialanieSerwera(kom As ZakonczonoDzialanieSerwera)
-    Public Event OdebranoNadanoNumerPociagu(kom As NadanoNumerPociagu)
+    Public Event OdebranoDodanoPociag(kom As DodanoPociag)
     Public Event OdebranoNieuwierzytelniono(kom As Nieuwierzytelniono)
     Public Event OdebranoUwierzytelnionoPoprawnie(kom As UwierzytelnionoPoprawnie)
     Public Event OdebranoWybranoPosterunek(kom As WybranoPosterunek)
@@ -32,11 +32,16 @@ Public Class KlientTCP
     Public Event OdebranoZazadanoUstawieniaKierunku(kom As ZazadanoUstawieniaKierunku)
     Public Event OdebranoZmienionoJasnoscLamp(kom As ZmienionoJasnoscLamp)
     Public Event OdebranoZmienionoKierunek(kom As ZmienionoKierunek)
-    Public Event OdebranoZmienionoPredkoscMaksymalna(kom As ZmienionoPredkoscMaksymalna)
+    Public Event OdebranoZmienionoPredkoscDozwolona(kom As ZmienionoPredkoscDozwolona)
     Public Event OdebranoZmienionoPredkoscPociagu(kom As ZmienionoPredkoscPociagu)
     Public Event OdebranoZmienionoStanSygnalizatora(kom As ZmienionoStanSygnalizatora)
     Public Event OdebranoZmienionoStanToru(kom As ZmienionoStanToru)
     Public Event OdebranoZmienionoStanZwrotnicy(kom As ZmienionoStanZwrotnicy)
+    Public Event OdebranoPobranoPociagi(kom As PobranoPociagi)
+    Public Event OdebranoWybranoPociag(kom As WybranoPociag)
+    Public Event OdebranoWysiadznietoZPociagu(kom As WysiadznietoZPociagu)
+    Public Event OdebranoUsunietoPociag(kom As UsunietoPociag)
+    Public Event OdebranoZmienionoNazwePociagu(kom As ZmienionoNazwePociagu)
 
     Public Sub New()
         DaneFabrykiObiektow.Add(TypKomunikatu.DH_ZAINICJALIZOWANO, New PrzetwOdebrKomunikatu(
@@ -54,9 +59,9 @@ Public Class KlientTCP
             AddressOf ZakonczonoDzialSerwera
         ))
 
-        DaneFabrykiObiektow.Add(TypKomunikatu.NADANO_NUMER_POCIAGU, New PrzetwOdebrKomunikatu(
-            AddressOf NadanoNumerPociagu.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoNadanoNumerPociagu(CType(kom, NadanoNumerPociagu))
+        DaneFabrykiObiektow.Add(TypKomunikatu.DODANO_POCIAG, New PrzetwOdebrKomunikatu(
+            AddressOf DodanoPociag.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoDodanoPociag(CType(kom, DodanoPociag))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.NIEUWIERZYTELNIONO, New PrzetwOdebrKomunikatu(
@@ -94,9 +99,9 @@ Public Class KlientTCP
             Sub(pol, kom) RaiseEvent OdebranoZmienionoKierunek(CType(kom, ZmienionoKierunek))
         ))
 
-        DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_PREDKOSC_MAKSYMALNA, New PrzetwOdebrKomunikatu(
-            AddressOf ZmienionoPredkoscMaksymalna.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoZmienionoPredkoscMaksymalna(CType(kom, ZmienionoPredkoscMaksymalna))
+        DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_PREDKOSC_DOZWOLONA, New PrzetwOdebrKomunikatu(
+            AddressOf ZmienionoPredkoscDozwolona.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoPredkoscDozwolona(CType(kom, ZmienionoPredkoscDozwolona))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_PREDKOSC_POCIAGU, New PrzetwOdebrKomunikatu(
@@ -118,6 +123,31 @@ Public Class KlientTCP
             AddressOf ZmienionoStanZwrotnicy.Otworz,
             Sub(pol, kom) RaiseEvent OdebranoZmienionoStanZwrotnicy(CType(kom, ZmienionoStanZwrotnicy))
         ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.POBRANO_POCIAGI, New PrzetwOdebrKomunikatu(
+            AddressOf PobranoPociagi.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoPobranoPociagi(CType(kom, PobranoPociagi))
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.WYBRANO_POCIAG, New PrzetwOdebrKomunikatu(
+            AddressOf WybranoPociag.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoWybranoPociag(CType(kom, WybranoPociag))
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.WYSIADZNIETO_Z_POCIAGU, New PrzetwOdebrKomunikatu(
+            AddressOf WysiadznietoZPociagu.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoWysiadznietoZPociagu(CType(kom, WysiadznietoZPociagu))
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.USUNIETO_POCIAG, New PrzetwOdebrKomunikatu(
+            AddressOf UsunietoPociag.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoUsunietoPociag(CType(kom, UsunietoPociag))
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_NAZWE_POCIAGU, New PrzetwOdebrKomunikatu(
+            AddressOf ZmienionoNazwePociagu.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoNazwePociagu(CType(kom, ZmienionoNazwePociagu))
+        ))
     End Sub
 
     Public Sub WyslijZakonczDzialanieKlienta(kom As ZakonczDzialanieKlienta)
@@ -132,7 +162,7 @@ Public Class KlientTCP
         Klient?.WyslijKomunikat(kom)
     End Sub
 
-    Public Sub WyslijUstawPoczatkowaZajetoscToru(kom As UstawPoczatkowaZajetoscToru)
+    Public Sub WyslijDodajPociag(kom As DodajPociag)
         Klient?.WyslijKomunikat(kom)
     End Sub
 
@@ -157,6 +187,22 @@ Public Class KlientTCP
     End Sub
 
     Public Sub WyslijZwolnijPrzebiegi(kom As ZwolnijPrzebiegi)
+        Klient?.WyslijKomunikat(kom)
+    End Sub
+
+    Public Sub WyslijPobierzPociagi(kom As PobierzPociagi)
+        Klient?.WyslijKomunikat(kom)
+    End Sub
+
+    Public Sub WyslijWybierzPociag(kom As WybierzPociag)
+        Klient?.WyslijKomunikat(kom)
+    End Sub
+
+    Public Sub WyslijWysiadzZPociagu(kom As WysiadzZPociagu)
+        Klient?.WyslijKomunikat(kom)
+    End Sub
+
+    Public Sub WyslijUsunPociag(kom As UsunPociag)
         Klient?.WyslijKomunikat(kom)
     End Sub
 

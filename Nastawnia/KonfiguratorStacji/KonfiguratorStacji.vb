@@ -273,7 +273,7 @@
 
     'Tor
     Private Sub txtKonfTorPredkosc_TextChanged() Handles txtKonfTorPredkosc.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Tor).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfTorPredkosc)
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Tor).PredkoscZasadnicza = PobierzKrotkaLiczbeNieujemna(txtKonfTorPredkosc)
     End Sub
 
 
@@ -288,11 +288,11 @@
     End Sub
 
     Private Sub txtKonfRozjazdPredkZasad_TextChanged() Handles txtKonfRozjazdPredkZasad.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfRozjazdPredkZasad)
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).PredkoscZasadnicza = PobierzKrotkaLiczbeNieujemna(txtKonfRozjazdPredkZasad)
     End Sub
 
     Private Sub txtKonfRozjazdPredkBoczna_TextChanged() Handles txtKonfRozjazdPredkBoczna.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).PredkoscBoczna = PobierzLiczbeNieujemna(txtKonfRozjazdPredkBoczna)
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).PredkoscBoczna = PobierzKrotkaLiczbeNieujemna(txtKonfRozjazdPredkBoczna)
     End Sub
 
     Private Sub cboKonfRozjazdWprost1_SelectedIndexChanged() Handles cboKonfRozjazdWprost1.SelectedIndexChanged
@@ -407,7 +407,7 @@
     End Sub
 
     Private Sub txtKonfSygnPredkosc_TextChanged() Handles txtKonfSygnPredkosc.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Sygnalizator).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfSygnPredkosc)
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Sygnalizator).PredkoscZasadnicza = PobierzKrotkaLiczbeNieujemna(txtKonfSygnPredkosc)
     End Sub
 
     Private Sub cbKonfSygnZiel_CheckedChanged() Handles cbKonfSygnZiel.CheckedChanged
@@ -505,7 +505,7 @@
 
     Private Sub txtKonfPrzyciskPredkosc_TextChanged() Handles txtKonfPrzyciskPredkosc.TextChanged
         If plpPulpit.ZaznaczonaKostka.Typ = Zaleznosci.TypKostki.PrzyciskTor Then
-            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.PrzyciskTor).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfPrzyciskPredkosc)
+            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.PrzyciskTor).PredkoscZasadnicza = PobierzKrotkaLiczbeNieujemna(txtKonfPrzyciskPredkosc)
         End If
     End Sub
 
@@ -519,7 +519,7 @@
 
     'Kierunek
     Private Sub txtKonfKierPredkosc_TextChanged() Handles txtKonfKierPredkosc.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).PredkoscZasadnicza = PobierzLiczbeNieujemna(txtKonfKierPredkosc)
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).PredkoscZasadnicza = PobierzKrotkaLiczbeNieujemna(txtKonfKierPredkosc)
     End Sub
 
     Private Sub rbKonfKierZasadniczy_CheckedChanged() Handles rbKonfKierZasadniczy.CheckedChanged
@@ -1221,22 +1221,10 @@
         End If
     End Function
 
-    Private Function PobierzLiczbeNieujemna(pole As TextBox) As Integer
-        Dim liczba As Integer = 0
-        If Integer.TryParse(pole.Text, liczba) Then
-            If liczba < 0 Then liczba = 0
-        End If
-
-        Return liczba
-    End Function
-
     Private Function PobierzKrotkaLiczbeNieujemna(pole As TextBox) As UShort
-        Dim liczba As Integer = PobierzLiczbeNieujemna(pole)
-        If liczba >= UShort.MinValue And liczba <= UShort.MaxValue Then
-            Return Convert.ToUInt16(liczba)
-        Else
-            Return 0
-        End If
+        Dim liczba As UShort = 0
+        UShort.TryParse(pole.Text, liczba)
+        Return liczba
     End Function
 
     Private Function PobierzLiczbeNieujemnaRzeczywistaWZakresiePulpitu(pole As TextBox, zakresMax As Single) As Single

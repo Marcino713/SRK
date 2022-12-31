@@ -1,6 +1,7 @@
 ﻿Public Class UwierzytelnionoPoprawnie   's
     Inherits Komunikat
 
+    Public Property PredkoscMaksymalna As UShort    'maksymalna prędkość pociągów na całej sieci
     Public Property Posterunki As DanePosterunku()
 
     Public Overrides ReadOnly Property Typ As UShort
@@ -10,7 +11,8 @@
     End Property
 
     Public Overrides Sub Zapisz(bw As BinaryWriter)
-        bw.Write(CType(Posterunki.Length, UShort))
+        bw.Write(PredkoscMaksymalna)
+        bw.Write(CUShort(Posterunki.Length))
 
         For i As Integer = 0 To Posterunki.Length - 1
             ZapiszTekst(bw, Posterunki(i).Nazwa)
@@ -21,6 +23,8 @@
 
     Public Shared Function Otworz(br As BinaryReader) As Komunikat
         Dim kom As New UwierzytelnionoPoprawnie
+        kom.PredkoscMaksymalna = br.ReadUInt16
+
         Dim ile As Integer = br.ReadUInt16
         ReDim kom.Posterunki(ile - 1)
 

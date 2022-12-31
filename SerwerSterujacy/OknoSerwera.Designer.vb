@@ -46,9 +46,12 @@ Partial Class wndOknoSerwera
         Me.ColumnHeader4 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader5 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.Label6 = New System.Windows.Forms.Label()
+        Me.GroupBox4 = New System.Windows.Forms.GroupBox()
+        Me.btnPociagi = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
+        Me.GroupBox4.SuspendLayout()
         Me.SuspendLayout()
         '
         'GroupBox1
@@ -115,8 +118,6 @@ Partial Class wndOknoSerwera
         '
         'GroupBox2
         '
-        Me.GroupBox2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.GroupBox2.Controls.Add(Me.lblStanSerwera)
         Me.GroupBox2.Controls.Add(Me.btnStop)
         Me.GroupBox2.Controls.Add(Me.btnStart)
@@ -126,7 +127,7 @@ Partial Class wndOknoSerwera
         Me.GroupBox2.Controls.Add(Me.Label3)
         Me.GroupBox2.Location = New System.Drawing.Point(12, 95)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(147, 421)
+        Me.GroupBox2.Size = New System.Drawing.Size(147, 172)
         Me.GroupBox2.TabIndex = 1
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Kontrola"
@@ -217,7 +218,7 @@ Partial Class wndOknoSerwera
         Me.btnRozlacz.Location = New System.Drawing.Point(515, 392)
         Me.btnRozlacz.Name = "btnRozlacz"
         Me.btnRozlacz.Size = New System.Drawing.Size(75, 23)
-        Me.btnRozlacz.TabIndex = 9
+        Me.btnRozlacz.TabIndex = 22
         Me.btnRozlacz.Text = "Rozłącz"
         Me.btnRozlacz.UseVisualStyleBackColor = True
         '
@@ -227,7 +228,7 @@ Partial Class wndOknoSerwera
         Me.btnOdswiez.Location = New System.Drawing.Point(596, 392)
         Me.btnOdswiez.Name = "btnOdswiez"
         Me.btnOdswiez.Size = New System.Drawing.Size(75, 23)
-        Me.btnOdswiez.TabIndex = 10
+        Me.btnOdswiez.TabIndex = 23
         Me.btnOdswiez.Text = "Odśwież"
         Me.btnOdswiez.UseVisualStyleBackColor = True
         '
@@ -243,7 +244,7 @@ Partial Class wndOknoSerwera
         Me.lvPosterunki.MultiSelect = False
         Me.lvPosterunki.Name = "lvPosterunki"
         Me.lvPosterunki.Size = New System.Drawing.Size(664, 354)
-        Me.lvPosterunki.TabIndex = 8
+        Me.lvPosterunki.TabIndex = 21
         Me.lvPosterunki.UseCompatibleStateImageBehavior = False
         Me.lvPosterunki.View = System.Windows.Forms.View.Details
         '
@@ -281,11 +282,34 @@ Partial Class wndOknoSerwera
         Me.Label6.TabIndex = 0
         Me.Label6.Text = "Dostępne posterunki i obsługujący je klienci:"
         '
+        'GroupBox4
+        '
+        Me.GroupBox4.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox4.Controls.Add(Me.btnPociagi)
+        Me.GroupBox4.Location = New System.Drawing.Point(12, 273)
+        Me.GroupBox4.Name = "GroupBox4"
+        Me.GroupBox4.Size = New System.Drawing.Size(147, 243)
+        Me.GroupBox4.TabIndex = 3
+        Me.GroupBox4.TabStop = False
+        Me.GroupBox4.Text = "Zarządzanie obiektami"
+        '
+        'btnPociagi
+        '
+        Me.btnPociagi.Enabled = False
+        Me.btnPociagi.Location = New System.Drawing.Point(5, 19)
+        Me.btnPociagi.Name = "btnPociagi"
+        Me.btnPociagi.Size = New System.Drawing.Size(137, 23)
+        Me.btnPociagi.TabIndex = 8
+        Me.btnPociagi.Text = "Pociągi..."
+        Me.btnPociagi.UseVisualStyleBackColor = True
+        '
         'wndOknoSerwera
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(853, 528)
+        Me.Controls.Add(Me.GroupBox4)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
@@ -297,6 +321,7 @@ Partial Class wndOknoSerwera
         Me.GroupBox2.PerformLayout()
         Me.GroupBox3.ResumeLayout(False)
         Me.GroupBox3.PerformLayout()
+        Me.GroupBox4.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -325,4 +350,6 @@ Partial Class wndOknoSerwera
     Friend WithEvents ColumnHeader4 As ColumnHeader
     Friend WithEvents ColumnHeader5 As ColumnHeader
     Friend WithEvents btnRozlacz As Button
+    Friend WithEvents GroupBox4 As GroupBox
+    Friend WithEvents btnPociagi As Button
 End Class

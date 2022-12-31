@@ -1,12 +1,12 @@
-﻿Public Class ZmienionoPredkoscMaksymalna    's
+﻿Public Class ZmienionoPredkoscDozwolona    's
     Inherits Komunikat
 
     Public Property NrPociagu As UInteger
-    Public Property Predkosc As Short
+    Public Property Predkosc As UShort
 
     Public Overrides ReadOnly Property Typ As UShort
         Get
-            Return TypKomunikatu.ZMIENIONO_PREDKOSC_MAKSYMALNA
+            Return TypKomunikatu.ZMIENIONO_PREDKOSC_DOZWOLONA
         End Get
     End Property
 
@@ -16,13 +16,9 @@
     End Sub
 
     Public Shared Function Otworz(br As BinaryReader) As Komunikat
-        Dim kom As New ZmienionoPredkoscMaksymalna
-        Return Otworz(br, kom)
-    End Function
-
-    Public Shared Function Otworz(br As BinaryReader, kom As ZmienionoPredkoscMaksymalna) As Komunikat
+        Dim kom As New ZmienionoPredkoscDozwolona
         kom.NrPociagu = br.ReadUInt32
-        kom.Predkosc = br.ReadInt16
+        kom.Predkosc = br.ReadUInt16
         Return kom
     End Function
 End Class

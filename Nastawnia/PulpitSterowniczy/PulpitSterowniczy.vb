@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 
 Friend Class PulpitSterowniczy
+    Private Const PUSTA_WSPOLRZEDNA As Integer = -1
     Private Const SKALOWANIE_DOMYSLNE As Single = 50.0F
     Private Const SKALOWANIE_ZMIANA As Single = 0.05F
     Private Const SKALOWANIE_MIN As Single = 30.0F
@@ -16,9 +17,9 @@ Friend Class PulpitSterowniczy
     Public KoniecZaznaczeniaLamp As PointF
     Private PoprzZaznLampyWObszarze As HashSet(Of Zaleznosci.Lampa)     'Nothing - tryb zaznaczania pojedynczej lampy; niepusty obiekt - tryb zaznaczania obszarem
     Private KolejnoscZaznaczeniaLamp As New List(Of Zaleznosci.Lampa)
-    Private PoprzedniPunkt As New Point(-1, -1)
+    Private PoprzedniPunkt As New Point(PUSTA_WSPOLRZEDNA, PUSTA_WSPOLRZEDNA)
     Private AkceptowaniePrzeciagania As DragDropEffects = DragDropEffects.None
-    Private PoprzLokalizacjaKostki As New Point(-1, -1)
+    Private PoprzLokalizacjaKostki As New Point(PUSTA_WSPOLRZEDNA, PUSTA_WSPOLRZEDNA)
     Private PierwszaObslugaPrzeciagania As Boolean = True
     Private WcisnietyPrzycisk As Zaleznosci.IPrzycisk = Nothing
     Private RysowanieWlaczone As Boolean = True
@@ -434,7 +435,7 @@ Friend Class PulpitSterowniczy
 
     Private Sub PulpitSterowniczy_MouseMove(sender As Object, e As MouseEventArgs) Handles Me.MouseMove
         If e.Button = MouseButtons.Left Then
-            If PoprzedniPunkt.X <> -1 Then    'przesuń
+            If PoprzedniPunkt.X <> PUSTA_WSPOLRZEDNA Then    'przesuń
                 Dim zmX As Integer = e.X - PoprzedniPunkt.X
                 Dim zmY As Integer = e.Y - PoprzedniPunkt.Y
                 Przesuniecie = New Point(Przesuniecie.X + zmX, Przesuniecie.Y + zmY)
@@ -464,8 +465,8 @@ Friend Class PulpitSterowniczy
     End Sub
 
     Private Sub PulpitSterowniczy_MouseUp() Handles Me.MouseUp
-        PoprzedniPunkt.X = -1
-        PoprzedniPunkt.Y = -1
+        PoprzedniPunkt.X = PUSTA_WSPOLRZEDNA
+        PoprzedniPunkt.Y = PUSTA_WSPOLRZEDNA
 
         If Not TrybProjektowy And _MozliwoscZaznaczeniaLamp And PoprzZaznLampyWObszarze IsNot Nothing Then
             PoczatekZaznaczeniaLamp = New PointF

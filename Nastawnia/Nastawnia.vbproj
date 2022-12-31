@@ -76,16 +76,16 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DodawaniePociagu.Designer.vb">
+    <Compile Include="SterowanieRuchem\DodawaniePociagu.Designer.vb">
       <DependentUpon>DodawaniePociagu.vb</DependentUpon>
     </Compile>
-    <Compile Include="DodawaniePociagu.vb">
+    <Compile Include="SterowanieRuchem\DodawaniePociagu.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Oswietlenie.Designer.vb">
+    <Compile Include="SterowanieRuchem\Oswietlenie.Designer.vb">
       <DependentUpon>Oswietlenie.vb</DependentUpon>
     </Compile>
-    <Compile Include="Oswietlenie.vb">
+    <Compile Include="SterowanieRuchem\Oswietlenie.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PulpitSterowniczy\Dodatki.vb" />
@@ -117,10 +117,10 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Narzedzia.vb" />
-    <Compile Include="Nastawnia.vb">
+    <Compile Include="SterowanieRuchem\Nastawnia.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Nastawnia.Designer.vb">
+    <Compile Include="SterowanieRuchem\Nastawnia.Designer.vb">
       <DependentUpon>Nastawnia.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
@@ -158,16 +158,35 @@
     <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceDirect2D.vb" />
     <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceGDI.vb" />
     <Compile Include="PulpitSterowniczy\WygladzanieTorowUkosnych.vb" />
-    <Compile Include="WyborStacji.Designer.vb">
+    <Compile Include="SterowanieRuchem\PredkoscPociagu.Designer.vb">
+      <DependentUpon>PredkoscPociagu.vb</DependentUpon>
+    </Compile>
+    <Compile Include="SterowanieRuchem\PredkoscPociagu.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SterowanieRuchem\SterowaniePociagiem.Designer.vb">
+      <DependentUpon>SterowaniePociagiem.vb</DependentUpon>
+    </Compile>
+    <Compile Include="SterowanieRuchem\SterowaniePociagiem.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SterowanieRuchem\WyborPociagu.Designer.vb">
+      <DependentUpon>WyborPociagu.vb</DependentUpon>
+    </Compile>
+    <Compile Include="SterowanieRuchem\WyborPociagu.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SterowanieRuchem\WyborStacji.Designer.vb">
       <DependentUpon>WyborStacji.vb</DependentUpon>
     </Compile>
-    <Compile Include="WyborStacji.vb">
+    <Compile Include="SterowanieRuchem\WyborStacji.vb">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DodawaniePociagu.resx">
+    <EmbeddedResource Include="SterowanieRuchem\DodawaniePociagu.resx">
       <DependentUpon>DodawaniePociagu.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="KonfiguratorStacji\EdytorPowierzchni.resx">
       <DependentUpon>EdytorPowierzchni.vb</DependentUpon>
@@ -184,8 +203,9 @@
     <EmbeddedResource Include="LaczenieStacji\KonfiguratorPolaczen.resx">
       <DependentUpon>KonfiguratorPolaczen.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Nastawnia.resx">
+    <EmbeddedResource Include="SterowanieRuchem\Nastawnia.resx">
       <DependentUpon>Nastawnia.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -193,14 +213,25 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Oswietlenie.resx">
+    <EmbeddedResource Include="SterowanieRuchem\Oswietlenie.resx">
       <DependentUpon>Oswietlenie.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PulpitSterowniczy\PulpitSterowniczy.resx">
       <DependentUpon>PulpitSterowniczy.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="WyborStacji.resx">
+    <EmbeddedResource Include="SterowanieRuchem\PredkoscPociagu.resx">
+      <DependentUpon>PredkoscPociagu.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SterowanieRuchem\SterowaniePociagiem.resx">
+      <DependentUpon>SterowaniePociagiem.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SterowanieRuchem\WyborPociagu.resx">
+      <DependentUpon>WyborPociagu.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SterowanieRuchem\WyborStacji.resx">
       <DependentUpon>WyborStacji.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

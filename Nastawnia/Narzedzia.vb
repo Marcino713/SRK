@@ -38,6 +38,13 @@
         Return "Połączenie zostało zamknięte" & dodatek & "."
     End Function
 
+    Friend Function PobierzOznaczeniePociagu(nr As UInteger, nazwa As String) As String
+        Dim ozn As String = nr.ToString
+        If Not String.IsNullOrEmpty(nazwa) Then ozn &= " " & nazwa
+
+        Return ozn
+    End Function
+
     Friend Class ObiektComboBox(Of T)
         Public Property Wartosc As T
         Public Property Tekst As String

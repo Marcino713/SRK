@@ -2,11 +2,24 @@
     Private Const STAN_WOLNY As String = "Wolny"
     Private Const STAN_ZAJETY As String = "Zajęty"
 
-    Friend Pulpit As Zaleznosci.Pulpit
+    Private _Pulpit As Zaleznosci.Pulpit
+    Friend ReadOnly Property Pulpit As Zaleznosci.Pulpit
+        Get
+            Return _Pulpit
+        End Get
+    End Property
+
+    Private _PredkoscMaksymalnaSieci As UShort
+    Friend ReadOnly Property PredkoscMaksymalnaSieci As UShort
+        Get
+            Return _PredkoscMaksymalnaSieci
+        End Get
+    End Property
 
     Private WithEvents Klient As Zaleznosci.KlientTCP
     Private WybranyAdres As UShort
     Private post As Zaleznosci.DanePosterunku()
+
     Private actOdswiezPosterunki As Action = AddressOf OdswiezPosterunki
     Private actPokazStan As Action(Of Boolean, String) = AddressOf PokazStanPolaczenia
     Private actPokazBlad As Action(Of String) = AddressOf PokazBlad
@@ -22,7 +35,7 @@
     Private Sub wndWyborStacji_FormClosing() Handles Me.FormClosing
         Dim k As Zaleznosci.KlientTCP = Klient
         Klient = Nothing
-        If Pulpit Is Nothing Then k.Zakoncz(False)
+        If _Pulpit Is Nothing Then k.Zakoncz(False)
     End Sub
 
     Private Sub btnPolacz_Click() Handles btnPolacz.Click
@@ -77,6 +90,7 @@
     End Sub
 
     Private Sub Klient_OdebranoUwierzytelnionoPoprawnie(kom As Zaleznosci.UwierzytelnionoPoprawnie) Handles Klient.OdebranoUwierzytelnionoPoprawnie
+        _PredkoscMaksymalnaSieci = kom.PredkoscMaksymalna
         post = kom.Posterunki
 
         Invoke(actPokazStan, False, "Połączono")
@@ -92,7 +106,7 @@
                                                      .Przyczyna = Zaleznosci.PrzyczynaZakonczeniaDzialaniaKlienta.BladOtwarciaPlikuPosterunku}
                                                      )
             Else
-                Pulpit = p
+                _Pulpit = p
                 Invoke(actZamknijOkno)
             End If
         ElseIf kom.Stan = Zaleznosci.StanUstawianegoPosterunku.PosterunekZajety

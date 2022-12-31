@@ -1,12 +1,12 @@
-﻿Public Class NadanoNumerPociagu 's
+﻿Public Class WysiadznietoZPociagu   's
     Inherits Komunikat
 
     Public Property NrPociagu As UInteger
-    Public Property Stan As StanNadaniaNumeru
+    Public Property Stan As StanWysiadzniecia
 
     Public Overrides ReadOnly Property Typ As UShort
         Get
-            Return TypKomunikatu.NADANO_NUMER_POCIAGU
+            Return TypKomunikatu.WYSIADZNIETO_Z_POCIAGU
         End Get
     End Property
 
@@ -16,16 +16,16 @@
     End Sub
 
     Public Shared Function Otworz(br As BinaryReader) As Komunikat
-        Dim kom As New NadanoNumerPociagu
+        Dim kom As New WysiadznietoZPociagu
         kom.NrPociagu = br.ReadUInt32
-        kom.Stan = CType(br.ReadByte, StanNadaniaNumeru)
+        kom.Stan = CType(br.ReadByte, StanWysiadzniecia)
 
         Return kom
     End Function
 End Class
 
-Public Enum StanNadaniaNumeru As Byte
-    Dobrze
-    NrZajety
-    BledneWspolrzedne
+Public Enum StanWysiadzniecia As Byte
+    Wysiadznieto
+    PociagNiesterowanyPrzezPosterunek
+    BlednyNumer
 End Enum

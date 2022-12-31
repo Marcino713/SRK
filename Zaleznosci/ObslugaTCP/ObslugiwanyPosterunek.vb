@@ -4,4 +4,5 @@
     Public Property Adres As UShort
     Public Property Polaczenie As PolaczenieTCP
     Public Property Zawartosc As Byte()
+    Public Property DanePulpitu As Pulpit
 End Class

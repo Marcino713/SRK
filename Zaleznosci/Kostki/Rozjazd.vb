@@ -6,7 +6,7 @@ Public MustInherit Class Rozjazd
 
     Private Const LICZBA_ROZJAZDOW_ZALEZNYCH As Integer = 2
 
-    Public Property PredkoscBoczna As Integer = 0
+    Public Property PredkoscBoczna As UShort = 0
     Public Property Nazwa As String = ""
     Public Property Adres As UShort = 0
 
@@ -48,7 +48,7 @@ Public MustInherit Class Rozjazd
         MyBase.ZapiszKostke(bw, konf)
         bw.Write(Adres)
         ZapiszTekst(bw, Nazwa)
-        bw.Write(CType(PredkoscBoczna, Short))
+        bw.Write(PredkoscBoczna)
         ZapiszZaleznosci(_ZaleznosciJesliWprost, bw, konf)
         ZapiszZaleznosci(_ZaleznosciJesliBok, bw, konf)
     End Sub
@@ -57,7 +57,7 @@ Public MustInherit Class Rozjazd
         MyBase.OtworzKostke(br, konf)
         Adres = br.ReadUInt16
         Nazwa = OdczytajTekst(br)
-        PredkoscBoczna = br.ReadInt16
+        PredkoscBoczna = br.ReadUInt16
         ZaleznosciJesliWprost = OtworzZaleznosci(br, konf)
         ZaleznosciJesliBok = OtworzZaleznosci(br, konf)
     End Sub

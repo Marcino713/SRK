@@ -18,6 +18,13 @@ Public Class LaczonyPlikStacji
         End Get
     End Property
 
+    Private _DanePulpitu As Pulpit
+    Public ReadOnly Property DanePulpitu As Pulpit
+        Get
+            Return _DanePulpitu
+        End Get
+    End Property
+
     Public Shared Function WczytajPulpit(sciezka As String) As LaczonyPlikStacji
         Dim b As Byte() = File.ReadAllBytes(sciezka)
         Dim zawartoscPulpitu As Pulpit = Pulpit.Otworz(b)
@@ -29,7 +36,8 @@ Public Class LaczonyPlikStacji
                 .Skrot = ObliczSkrot(b),
                 .OdcinkiTorow = PobierzDostepneTory(zawartoscPulpitu.OdcinkiTorow),
                 .Adres = zawartoscPulpitu.Adres,
-                ._ZawartoscPosterunku = b
+                ._ZawartoscPosterunku = b,
+                ._DanePulpitu = zawartoscPulpitu
             }
         Else
             Return Nothing
@@ -102,6 +110,7 @@ Public Class LaczonyPlikStacji
             plik.OdcinkiTorow = New List(Of OdcinekToru)().ToArray
         Else
             plik._ZawartoscPosterunku = b
+            plik._DanePulpitu = zawartoscPulpitu
             plik.Adres = zawartoscPulpitu.Adres
             plik.NazwaPosterunku = zawartoscPulpitu.Nazwa
             plik.OdcinkiTorow = PobierzDostepneTory(zawartoscPulpitu.OdcinkiTorow)

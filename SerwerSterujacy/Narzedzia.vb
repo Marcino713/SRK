@@ -8,4 +8,11 @@
     Friend Sub PokazBlad(tekst As String)
         MessageBox.Show(tekst, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error)
     End Sub
+
+    Friend Function PobierzOznaczeniePociagu(nr As UInteger, nazwa As String) As String
+        Dim ozn As String = nr.ToString
+        If Not String.IsNullOrEmpty(nazwa) Then ozn &= " " & nazwa
+
+        Return ozn
+    End Function
 End Module

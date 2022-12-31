@@ -3,7 +3,7 @@
 Public Class Tor
     Inherits Kostka
 
-    Public Property PredkoscZasadnicza As Integer
+    Public Property PredkoscZasadnicza As UShort
     Public Property NalezyDoOdcinka As OdcinekToru
 
     Public Property Zajetosc As ZajetoscToru = ZajetoscToru.Wolny
@@ -23,13 +23,13 @@ Public Class Tor
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
         bw.Write(If(NalezyDoOdcinka Is Nothing, PUSTE_ODWOLANIE, konf.OdcinkiTorow(NalezyDoOdcinka)))
-        bw.Write(CType(PredkoscZasadnicza, Short))
+        bw.Write(PredkoscZasadnicza)
     End Sub
 
     Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
         Dim id As Integer = br.ReadInt32
         NalezyDoOdcinka = konf.OdcinkiTorow(id)
-        PredkoscZasadnicza = br.ReadInt16
+        PredkoscZasadnicza = br.ReadUInt16
 
         NalezyDoOdcinka?.KostkiTory.Add(Me)
     End Sub

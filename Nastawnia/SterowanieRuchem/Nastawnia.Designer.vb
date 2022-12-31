@@ -30,6 +30,8 @@ Partial Class wndNastawnia
         Me.mnuZarzadzajSerwerem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuDodajPociag = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuSterujPociagiem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuOswietlenie = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuKonfiguratorStacji = New System.Windows.Forms.ToolStripMenuItem()
@@ -54,7 +56,7 @@ Partial Class wndNastawnia
         '
         'mnuNarzedzia
         '
-        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPolaczZSerwerem, Me.mnuRozlaczZSerwerem, Me.mnuZarzadzajSerwerem, Me.ToolStripSeparator3, Me.mnuDodajPociag, Me.mnuOswietlenie, Me.ToolStripSeparator2, Me.mnuKonfiguratorStacji, Me.ToolStripSeparator1, Me.mnuNowePolaczenia, Me.mnuOtworzPolaczenia})
+        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPolaczZSerwerem, Me.mnuRozlaczZSerwerem, Me.mnuZarzadzajSerwerem, Me.ToolStripSeparator3, Me.mnuDodajPociag, Me.mnuSterujPociagiem, Me.ToolStripSeparator4, Me.mnuOswietlenie, Me.ToolStripSeparator2, Me.mnuKonfiguratorStacji, Me.ToolStripSeparator1, Me.mnuNowePolaczenia, Me.mnuOtworzPolaczenia})
         Me.mnuNarzedzia.Name = "mnuNarzedzia"
         Me.mnuNarzedzia.Size = New System.Drawing.Size(70, 20)
         Me.mnuNarzedzia.Text = "Narzędzia"
@@ -62,67 +64,79 @@ Partial Class wndNastawnia
         'mnuPolaczZSerwerem
         '
         Me.mnuPolaczZSerwerem.Name = "mnuPolaczZSerwerem"
-        Me.mnuPolaczZSerwerem.Size = New System.Drawing.Size(214, 22)
+        Me.mnuPolaczZSerwerem.Size = New System.Drawing.Size(193, 22)
         Me.mnuPolaczZSerwerem.Text = "Połącz z serwerem..."
         '
         'mnuRozlaczZSerwerem
         '
         Me.mnuRozlaczZSerwerem.Enabled = False
         Me.mnuRozlaczZSerwerem.Name = "mnuRozlaczZSerwerem"
-        Me.mnuRozlaczZSerwerem.Size = New System.Drawing.Size(214, 22)
+        Me.mnuRozlaczZSerwerem.Size = New System.Drawing.Size(193, 22)
         Me.mnuRozlaczZSerwerem.Text = "Rozłącz..."
         '
         'mnuZarzadzajSerwerem
         '
         Me.mnuZarzadzajSerwerem.Name = "mnuZarzadzajSerwerem"
-        Me.mnuZarzadzajSerwerem.Size = New System.Drawing.Size(214, 22)
+        Me.mnuZarzadzajSerwerem.Size = New System.Drawing.Size(193, 22)
         Me.mnuZarzadzajSerwerem.Text = "Zarządzaj serwerem..."
         '
         'ToolStripSeparator3
         '
         Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
-        Me.ToolStripSeparator3.Size = New System.Drawing.Size(211, 6)
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(190, 6)
         '
         'mnuDodajPociag
         '
         Me.mnuDodajPociag.Enabled = False
         Me.mnuDodajPociag.Name = "mnuDodajPociag"
-        Me.mnuDodajPociag.Size = New System.Drawing.Size(214, 22)
+        Me.mnuDodajPociag.Size = New System.Drawing.Size(193, 22)
         Me.mnuDodajPociag.Text = "Dodaj pociąg..."
+        '
+        'mnuSterujPociagiem
+        '
+        Me.mnuSterujPociagiem.Enabled = False
+        Me.mnuSterujPociagiem.Name = "mnuSterujPociagiem"
+        Me.mnuSterujPociagiem.Size = New System.Drawing.Size(193, 22)
+        Me.mnuSterujPociagiem.Text = "Steruj pociągiem..."
+        '
+        'ToolStripSeparator4
+        '
+        Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(190, 6)
         '
         'mnuOswietlenie
         '
         Me.mnuOswietlenie.Enabled = False
         Me.mnuOswietlenie.Name = "mnuOswietlenie"
-        Me.mnuOswietlenie.Size = New System.Drawing.Size(214, 22)
-        Me.mnuOswietlenie.Text = "Sterowanie oświetleniem..."
+        Me.mnuOswietlenie.Size = New System.Drawing.Size(193, 22)
+        Me.mnuOswietlenie.Text = "Steruj oświetleniem..."
         '
         'ToolStripSeparator2
         '
         Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(211, 6)
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(190, 6)
         '
         'mnuKonfiguratorStacji
         '
         Me.mnuKonfiguratorStacji.Name = "mnuKonfiguratorStacji"
-        Me.mnuKonfiguratorStacji.Size = New System.Drawing.Size(214, 22)
+        Me.mnuKonfiguratorStacji.Size = New System.Drawing.Size(193, 22)
         Me.mnuKonfiguratorStacji.Text = "Konfigurator stacji..."
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(211, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(190, 6)
         '
         'mnuNowePolaczenia
         '
         Me.mnuNowePolaczenia.Name = "mnuNowePolaczenia"
-        Me.mnuNowePolaczenia.Size = New System.Drawing.Size(214, 22)
+        Me.mnuNowePolaczenia.Size = New System.Drawing.Size(193, 22)
         Me.mnuNowePolaczenia.Text = "Nowy plik połączeń..."
         '
         'mnuOtworzPolaczenia
         '
         Me.mnuOtworzPolaczenia.Name = "mnuOtworzPolaczenia"
-        Me.mnuOtworzPolaczenia.Size = New System.Drawing.Size(214, 22)
+        Me.mnuOtworzPolaczenia.Size = New System.Drawing.Size(193, 22)
         Me.mnuOtworzPolaczenia.Text = "Otwórz plik połączeń..."
         '
         'stStan
@@ -148,6 +162,7 @@ Partial Class wndNastawnia
         Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
         Me.plpPulpit.Dock = System.Windows.Forms.DockStyle.Fill
         Me.plpPulpit.Location = New System.Drawing.Point(0, 24)
+        Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
         Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
         Me.plpPulpit.MozliwoscZaznaczeniaToru = False
         Me.plpPulpit.Name = "plpPulpit"
@@ -199,4 +214,6 @@ Partial Class wndNastawnia
     Friend WithEvents ToolStripSeparator3 As ToolStripSeparator
     Friend WithEvents mnuDodajPociag As ToolStripMenuItem
     Friend WithEvents mnuOswietlenie As ToolStripMenuItem
+    Friend WithEvents mnuSterujPociagiem As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator4 As ToolStripSeparator
 End Class

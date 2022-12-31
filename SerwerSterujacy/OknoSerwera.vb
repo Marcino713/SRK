@@ -1,5 +1,8 @@
 ﻿Public Class wndOknoSerwera
     Private WithEvents Serwer As New Zaleznosci.SerwerTCP
+    Private WithEvents OknoPociagow As wndPociagi
+    Private PosterunkiSlownik As New Dictionary(Of String, ListViewItem)
+
     Private actZmianaCzasuPodlaczenia As Action(Of String, String) = AddressOf PokazZmianeCzasuPodlaczenia
     Private slockListaPosterunkow As New Object
 
@@ -73,6 +76,15 @@
         PokazZatrzymanie()
     End Sub
 
+    Private Sub btnPociagi_Click() Handles btnPociagi.Click
+        If OknoPociagow Is Nothing Then
+            OknoPociagow = New wndPociagi(Serwer)
+            OknoPociagow.Show()
+        Else
+            OknoPociagow.Focus()
+        End If
+    End Sub
+
     Private Sub lvPosterunki_SelectedIndexChanged() Handles lvPosterunki.SelectedIndexChanged
         SyncLock slockListaPosterunkow
             btnRozlacz.Enabled =
@@ -100,6 +112,10 @@
         OdswiezPosterunki()
     End Sub
 
+    Private Sub OknoPociagow_FormClosed() Handles OknoPociagow.FormClosed
+        OknoPociagow = Nothing
+    End Sub
+
     Private Sub Serwer_UniewaznionoListePosterunkow() Handles Serwer.UniewaznionoListePosterunkow
         OdswiezPosterunki()
     End Sub
@@ -114,15 +130,12 @@
                 btnRozlacz.Enabled = data <> ""
             End If
 
-            For Each lvi As ListViewItem In lvPosterunki.Items
+            Dim lvi As ListViewItem = Nothing
+            If PosterunkiSlownik.TryGetValue(adres, lvi) Then
+                lvi.SubItems(3).Text = data
                 Dim post As Zaleznosci.StanObslugiwanegoPosterunku = CType(lvi.Tag, Zaleznosci.StanObslugiwanegoPosterunku)
-
-                If post.Adres = adres Then
-                    lvi.SubItems(3).Text = data
-                    post.DataPodlaczenia = data
-                    Exit Sub
-                End If
-            Next
+                post.DataPodlaczenia = data
+            End If
         End SyncLock
     End Sub
 
@@ -131,14 +144,17 @@
 
         SyncLock slockListaPosterunkow
             lvPosterunki.Items.Clear()
+            PosterunkiSlownik.Clear()
             btnRozlacz.Enabled = False
             If polaczenia Is Nothing Then Exit Sub
 
             For Each pol As Zaleznosci.StanObslugiwanegoPosterunku In polaczenia
-                lvPosterunki.Items.Add(
-                    New ListViewItem(New String() {pol.NazwaPosterunku, pol.NazwaPliku, pol.Adres, pol.DataPodlaczenia, pol.OstatnieZapytanie}) With {
+                Dim lvi As New ListViewItem(New String() {pol.NazwaPosterunku, pol.NazwaPliku, pol.Adres, pol.DataPodlaczenia, pol.OstatnieZapytanie}) With {
                         .Tag = pol
-                    })
+                    }
+
+                lvPosterunki.Items.Add(lvi)
+                PosterunkiSlownik.Add(pol.Adres, lvi)
             Next
         End SyncLock
     End Sub
@@ -161,7 +177,12 @@
         btnStop.Enabled = serwerUruchomiony
         lblStanSerwera.Text = tekst
         lblStanSerwera.ForeColor = kolor
-        If Not serwerUruchomiony Then btnRozlacz.Enabled = False
+        btnPociagi.Enabled = serwerUruchomiony
         btnOdswiez.Enabled = serwerUruchomiony
+
+        If Not serwerUruchomiony Then
+            btnRozlacz.Enabled = False
+            OknoPociagow?.Close()
+        End If
     End Sub
 End Class
