@@ -2,13 +2,13 @@
 
 Public MustInherit Class Rozjazd
     Inherits Tor
-    Implements IPrzycisk, IZakret
+    Implements IAdres, IPrzycisk, IZakret
 
     Private Const LICZBA_ROZJAZDOW_ZALEZNYCH As Integer = 2
 
     Public Property PredkoscBoczna As UShort = 0
     Public Property Nazwa As String = ""
-    Public Property Adres As UShort = 0
+    Public Property Adres As UShort = 0 Implements IAdres.Adres
 
     Private _ZaleznosciJesliWprost As KonfiguracjaRozjazduZaleznego()
     Public Property ZaleznosciJesliWprost As KonfiguracjaRozjazduZaleznego()

@@ -83,8 +83,10 @@
     <Compile Include="Komunikaty\WysiadznietoZPociagu.vb" />
     <Compile Include="Komunikaty\WysiadzZPociagu.vb" />
     <Compile Include="Komunikaty\ZmienionoNazwePociagu.vb" />
+    <Compile Include="Kostki\IAdres.vb" />
     <Compile Include="Kostki\IPrzycisk.vb" />
     <Compile Include="Kostki\IZakret.vb" />
+    <Compile Include="Kostki\SygnalizatorPowtarzajacy.vb" />
     <Compile Include="ObslugaKomunikatow\Komunikat.vb" />
     <Compile Include="Komunikaty\ZakonczDzialanieKlienta.vb" />
     <Compile Include="Komunikaty\ZakonczonoDzialanieSerwera.vb" />

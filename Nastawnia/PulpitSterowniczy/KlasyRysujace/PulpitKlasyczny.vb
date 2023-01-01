@@ -64,6 +64,8 @@
     Private PEDZEL_SYGN_NIEB_JASNY As TPedzel
     Private PEDZEL_SYGN_BIAL As TPedzel
     Private PEDZEL_SYGN_BIAL_JASNY As TPedzel
+    Private PEDZEL_SYGN_POMC As TPedzel
+    Private PEDZEL_SYGN_POMC_JASNY As TPedzel
     Private PEDZEL_SYGN_TLO As TPedzel
     Private PEDZEL_SYGN_KRAWEDZ As TOlowek
     Private PEDZEL_PRZYCISK As TPedzel
@@ -81,6 +83,7 @@
 
     Private CZCIONKA As TCzcionka
 
+    Private Const NAZWA_SP As String = "Sp"     'Sygnalizator powtarzający
     Private Const NAZWA_SZ As String = "Sz"     'Sygnał zastępczy
     Private Const NAZWA_ZW As String = "Zw"     'Zwolnienie przebiegów
     Private Const NAZWA_M As String = "m"       'Sygnał manewrowy
@@ -160,6 +163,8 @@
         PEDZEL_SYGN_NIEB_JASNY = urz.UtworzPedzel(KolorRGB("#14EBFF"))
         PEDZEL_SYGN_BIAL = urz.UtworzPedzel(KolorRGB("#909090"))
         PEDZEL_SYGN_BIAL_JASNY = urz.UtworzPedzel(KolorRGB("#FFFFFF"))
+        PEDZEL_SYGN_POMC = urz.UtworzPedzel(KolorRGB("#663D00"))
+        PEDZEL_SYGN_POMC_JASNY = urz.UtworzPedzel(KolorRGB("#FF9900"))
         PEDZEL_SYGN_TLO = urz.UtworzPedzel(KolorRGB("#808080"))
         PEDZEL_SYGN_KRAWEDZ = urz.UtworzOlowek(KolorRGB("#000000"))
         PEDZEL_PRZYCISK = urz.UtworzPedzel(KolorRGB("#000000"))
@@ -278,6 +283,8 @@
                 RysujRozjazdPrawo(CType(kostka, Zaleznosci.RozjazdPrawo))
             Case Zaleznosci.TypKostki.SygnalizatorManewrowy
                 RysujSygnalizatorManewrowy(CType(kostka, Zaleznosci.SygnalizatorManewrowy))
+            Case Zaleznosci.TypKostki.SygnalizatorPowtarzajacy
+                RysujSygnalizatorPowtarzajacy(CType(kostka, Zaleznosci.SygnalizatorPowtarzajacy))
             Case Zaleznosci.TypKostki.SygnalizatorPolsamoczynny
                 RysujSygnalizatorPolsamoczynny(CType(kostka, Zaleznosci.SygnalizatorPolsamoczynny))
             Case Zaleznosci.TypKostki.SygnalizatorSamoczynny
@@ -473,6 +480,21 @@
         urz.WypelnijKolo(pedzBialy, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         RysujSlupSygnalizatora(2)
         RysujNazweSygnalizatora(sygnalizator.Nazwa)
+    End Sub
+
+    Private Sub RysujSygnalizatorPowtarzajacy(sygnalizator As Zaleznosci.SygnalizatorPowtarzajacy)
+        Dim pedzPomc As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.BrakWyjazdu, PEDZEL_SYGN_POMC_JASNY, PEDZEL_SYGN_POMC)
+        Dim pedzZiel As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.Zezwalajacy, PEDZEL_SYGN_ZIEL_JASNY, PEDZEL_SYGN_ZIEL)
+
+        Dim nazwa As String = KolejnoscSygnPowtToString(sygnalizator.Kolejnosc) & NAZWA_SP
+        If sygnalizator.SygnalizatorPowtarzany IsNot Nothing Then nazwa &= sygnalizator.SygnalizatorPowtarzany.Nazwa
+
+        RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
+        urz.WypelnijTloSygnalizatora(PEDZEL_SYGN_TLO, SYGN_POZ, 2 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
+        urz.WypelnijKolo(pedzPomc, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+        urz.WypelnijKolo(pedzZiel, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+        RysujSlupSygnalizatora(2)
+        RysujNazweSygnalizatora(nazwa)
     End Sub
 
     Private Sub RysujSygnalizatorPolsamoczynny(sygnalizator As Zaleznosci.SygnalizatorPolsamoczynny)
@@ -726,5 +748,18 @@
         Dim Cprim As New PointF(x, y)
 
         Return New PointF() {Aprim, Bprim, Cprim}
+    End Function
+
+    Private Function KolejnoscSygnPowtToString(kolejnosc As Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego) As String
+        Select Case kolejnosc
+            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Pierwszy
+                Return "I"
+            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Drugi
+                Return "II"
+            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Trzeci
+                Return "III"
+            Case Else
+                Return ""
+        End Select
     End Function
 End Class

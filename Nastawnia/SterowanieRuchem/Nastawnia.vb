@@ -9,7 +9,7 @@ Public Class wndNastawnia
     Private WithEvents OknoWybieraniaPociagu As wndWyborPociagu = Nothing
     Private WithEvents OknoOswietlenia As wndOswietlenie = Nothing
     Private WlaczoneOknoWyboruPost As Boolean = False
-    Private Sygnalizatory As New Dictionary(Of UShort, Zaleznosci.Sygnalizator)
+    Private Sygnalizatory As New Dictionary(Of UShort, Zaleznosci.Kostka)
     Private Rozjazdy As New Dictionary(Of UShort, Zaleznosci.Rozjazd)
     Private Lampy As New Dictionary(Of UShort, Zaleznosci.Lampa)
     Private PredkoscMaksymalna As UShort
@@ -221,7 +221,7 @@ Public Class wndNastawnia
     End Sub
 
     Private Sub Klient_OdebranoZmienionoStanSygnalizatora(kom As Zaleznosci.ZmienionoStanSygnalizatora) Handles Klient.OdebranoZmienionoStanSygnalizatora
-        Dim sygn As Zaleznosci.Sygnalizator = Nothing
+        Dim sygn As Zaleznosci.Kostka = Nothing
         If Not Sygnalizatory.TryGetValue(kom.Adres, sygn) Then Exit Sub
 
         Select Case sygn.Typ
@@ -245,6 +245,13 @@ Public Class wndNastawnia
                 Dim s As Zaleznosci.SygnalizatorPolsamoczynny = DirectCast(sygn, Zaleznosci.SygnalizatorPolsamoczynny)
                 s.Stan = kom.Stan
 
+            Case Zaleznosci.TypKostki.SygnalizatorPowtarzajacy
+                Dim s As Zaleznosci.SygnalizatorPowtarzajacy = DirectCast(sygn, Zaleznosci.SygnalizatorPowtarzajacy)
+                If kom.Stan = Zaleznosci.StanSygnalizatora.Zezwalajacy Then
+                    s.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.Zezwalajacy
+                Else
+                    s.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.BrakWyjazdu
+                End If
         End Select
 
         plpPulpit.Invalidate()

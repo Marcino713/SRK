@@ -29,6 +29,7 @@ Public Class SerwerTCP
     Private KlienciPoAdresieStacji As New Dictionary(Of UShort, ObslugiwanyPosterunek)
     Private PociagiPoNumerze As New Dictionary(Of UInteger, Pociag)
     Private WszyscyKlienci As New List(Of PolaczenieTCP)
+    Private SygnalizatoryPowtDlaSygnalizatoraPolsamoczynego As New Dictionary(Of UShort, List(Of SygnalizatorPowtarzajacy))
     Private Serwer As TcpListener
     Private WatekSerwera As Thread
     Private WatekZamykaniaPolaczen As Thread
@@ -190,6 +191,17 @@ Public Class SerwerTCP
                         st = StanSygnalizatora.Zezwalajacy
                 End Select
                 pol.WyslijKomunikat(New ZmienionoStanSygnalizatora() With {.Adres = k.Adres, .Stan = st})
+
+                Dim lista As List(Of SygnalizatorPowtarzajacy) = Nothing
+                If SygnalizatoryPowtDlaSygnalizatoraPolsamoczynego.TryGetValue(k.Adres, lista) Then
+                    Dim stanPowt As StanSygnalizatora = StanSygnalizatora.BrakWyjazdu
+                    If k.Stan = UstawianyStanSygnalizatora.Zezwalajacy Then stanPowt = StanSygnalizatora.Zezwalajacy
+
+                    For Each powt As SygnalizatorPowtarzajacy In lista
+                        pol.WyslijKomunikat(New ZmienionoStanSygnalizatora With {.Adres = powt.Adres, .Stan = stanPowt})
+                    Next
+                End If
+
                 RaiseEvent OdebranoUstawStanSygnalizatora(pol.AdresStacji, k)
             End Sub
         ))
@@ -493,6 +505,7 @@ Public Class SerwerTCP
         If Uruchomiony Then Return False
 
         KlienciPoAdresieStacji = New Dictionary(Of UShort, ObslugiwanyPosterunek)
+        SygnalizatoryPowtDlaSygnalizatoraPolsamoczynego = New Dictionary(Of UShort, List(Of SygnalizatorPowtarzajacy))
         Dim PosterunkiLista As New List(Of ObslugiwanyPosterunek)
 
         MaksymalnaPredkoscSieci = 0
@@ -510,6 +523,7 @@ Public Class SerwerTCP
                 KlienciPoAdresieStacji.Add(pol.Adres, obs)
                 PosterunkiLista.Add(obs)
                 ZnajdzMaksymalnaPredkoscSieci(pol.DanePulpitu)
+                ZnajdzSygnalizatoryPowtarzajace(pol.DanePulpitu)
             Next
         End If
 
@@ -752,4 +766,22 @@ Public Class SerwerTCP
                            End Sub)
     End Sub
 
+    Private Sub ZnajdzSygnalizatoryPowtarzajace(p As Pulpit)
+        p.PrzeiterujKostki(Sub(x, y, k)
+                               If k.Typ = TypKostki.SygnalizatorPowtarzajacy Then
+                                   Dim powt As SygnalizatorPowtarzajacy = CType(k, SygnalizatorPowtarzajacy)
+
+                                   If powt.SygnalizatorPowtarzany IsNot Nothing Then
+                                       Dim lista As List(Of SygnalizatorPowtarzajacy) = Nothing
+
+                                       If Not SygnalizatoryPowtDlaSygnalizatoraPolsamoczynego.TryGetValue(powt.SygnalizatorPowtarzany.Adres, lista) Then
+                                           lista = New List(Of SygnalizatorPowtarzajacy)()
+                                           SygnalizatoryPowtDlaSygnalizatoraPolsamoczynego.Add(powt.SygnalizatorPowtarzany.Adres, lista)
+                                       End If
+
+                                       lista.Add(powt)
+                                   End If
+                               End If
+                           End Sub)
+    End Sub
 End Class

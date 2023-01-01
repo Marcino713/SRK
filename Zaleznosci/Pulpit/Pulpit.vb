@@ -7,7 +7,6 @@ Public Class Pulpit
     Public Delegate Sub PrzetworzKostkeZObiektem(Of T)(x As Integer, y As Integer, k As Kostka, o As T)
     Public Delegate Sub PrzetworzKostke(x As Integer, y As Integer, k As Kostka)
     Private Delegate Function CzyZgodnyTypKostki(typ As TypKostki) As Boolean
-    Private Delegate Function PobierzAdres(k As Kostka) As UShort
 
     Public Shared ReadOnly ObslugiwaneWersje As WersjaPliku() = {New WersjaPliku(0, 1)}
     Public Const ROZSZERZENIE_PLIKU As String = ".stacja"
@@ -144,12 +143,12 @@ Public Class Pulpit
         _LicznikiOsi = _LicznikiOsi.OrderBy(Function(l As ParaLicznikowOsi) l.Adres1).ToList
     End Sub
 
-    Public Function PobierzSygnalizatory() As Dictionary(Of UShort, Sygnalizator)
-        Return PobierzKostki(Of Sygnalizator)(AddressOf Kostka.CzySygnalizator, Function(k) DirectCast(k, Sygnalizator).Adres)
+    Public Function PobierzSygnalizatory() As Dictionary(Of UShort, Kostka)
+        Return PobierzKostki(Of Kostka)(AddressOf Kostka.CzySygnalizator)
     End Function
 
     Public Function PobierzRozjazdy() As Dictionary(Of UShort, Rozjazd)
-        Return PobierzKostki(Of Rozjazd)(AddressOf Kostka.CzyRozjazd, Function(k) DirectCast(k, Rozjazd).Adres)
+        Return PobierzKostki(Of Rozjazd)(AddressOf Kostka.CzyRozjazd)
     End Function
 
     Public Function PobierzLampy() As Dictionary(Of UShort, Lampa)
@@ -488,12 +487,12 @@ Public Class Pulpit
         Return New SegmPliku() With {.Dane = b, .Obiekt = ob}
     End Function
 
-    Private Function PobierzKostki(Of T As Kostka)(sprTypu As CzyZgodnyTypKostki, pobAdres As PobierzAdres) As Dictionary(Of UShort, T)
+    Private Function PobierzKostki(Of T As Kostka)(sprTypu As CzyZgodnyTypKostki) As Dictionary(Of UShort, T)
         Dim slownik As New Dictionary(Of UShort, T)
 
         PrzeiterujKostki(Sub(x, y, k)
                              If sprTypu(k.Typ) Then
-                                 slownik.Add(pobAdres(k), CType(k, T))
+                                 slownik.Add(CType(k, IAdres).Adres, CType(k, T))
                              End If
                          End Sub)
 

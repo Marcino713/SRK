@@ -25,7 +25,7 @@
         plpPulpit.TypRysownika = TypRysownika.KlasycznyDirect2D
         plpPulpit.Wysrodkuj()
 
-        Dim PaneleKonfKostek As Panel() = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygn, pnlKonfTor, pnlKonfNapis, pnlKonfKier}
+        Dim PaneleKonfKostek As Panel() = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygn, pnlKonfSygnPowt, pnlKonfTor, pnlKonfNapis, pnlKonfKier}
         For i As Integer = 0 To PaneleKonfKostek.Length - 1
             PaneleKonfKostek(i).Width = splKartaPulpit.Panel2.Width
             PaneleKonfKostek(i).Location = New Point(0, 0)
@@ -92,9 +92,10 @@
         DodajKostkeDoListy(p, New Zaleznosci.Zakret(), "Zakręt")
         DodajKostkeDoListy(p, New Zaleznosci.RozjazdLewo(), "Rozjazd lewy")
         DodajKostkeDoListy(p, New Zaleznosci.RozjazdPrawo(), "Rozjazd prawy")
-        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorManewrowy(), "Sygnalizator manewrowy")
-        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorPolsamoczynny(), "Sygnalizator półsamoczynny")
         DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorSamoczynny(), "Sygnalizator samoczynny")
+        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorManewrowy(), "Sygnalizator manewrowy")
+        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorPowtarzajacy(), "Sygnalizator powtarzający")
+        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorPolsamoczynny(), "Sygnalizator półsamoczynny")
         DodajKostkeDoListy(p, New Zaleznosci.Przycisk(), "Przycisk")
         DodajKostkeDoListy(p, New Zaleznosci.PrzyciskTor(), "Przycisk z torem")
         DodajKostkeDoListy(p, New Zaleznosci.Kierunek(), "Wjazd/wyjazd ze stacji")
@@ -439,6 +440,35 @@
     End Sub
 
 
+    'Sygnalizator powtarzający
+    Private Sub txtKonfSygnPowtAdres_TextChanged() Handles txtKonfSygnPowtAdres.TextChanged
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy).Adres = PobierzKrotkaLiczbeNieujemna(txtKonfSygnPowtAdres)
+    End Sub
+
+    Private Sub rbKonfSygnPowtKolejnoscI_CheckedChanged() Handles rbKonfSygnPowtKolejnoscI.CheckedChanged
+        UstawKolejnoscSygnalizatoraPowtarzajacego(rbKonfSygnPowtKolejnoscI, Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Pierwszy)
+    End Sub
+
+    Private Sub rbKonfSygnPowtKolejnoscII_CheckedChanged() Handles rbKonfSygnPowtKolejnoscII.CheckedChanged
+        UstawKolejnoscSygnalizatoraPowtarzajacego(rbKonfSygnPowtKolejnoscII, Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Drugi)
+    End Sub
+
+    Private Sub rbKonfSygnPowtKolejnoscIII_CheckedChanged() Handles rbKonfSygnPowtKolejnoscIII.CheckedChanged
+        UstawKolejnoscSygnalizatoraPowtarzajacego(rbKonfSygnPowtKolejnoscIII, Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Trzeci)
+    End Sub
+
+    Private Sub cboKonfSygnPowtSygnObslugiwany_SelectedIndexChanged() Handles cboKonfSygnPowtSygnObslugiwany.SelectedIndexChanged
+        If cboKonfSygnPowtSygnObslugiwany.SelectedItem Is Nothing Then Exit Sub
+        Dim el As ObiektComboBox(Of Zaleznosci.Kostka) = DirectCast(cboKonfSygnPowtSygnObslugiwany.SelectedItem, ObiektComboBox(Of Zaleznosci.Kostka))
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy).SygnalizatorPowtarzany = DirectCast(el.Wartosc, Zaleznosci.SygnalizatorPolsamoczynny)
+        plpPulpit.Invalidate()
+    End Sub
+
+    Private Sub txtKonfSygnPowtPredkosc_TextChanged() Handles txtKonfSygnPowtPredkosc.TextChanged
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy).PredkoscZasadnicza = PobierzKrotkaLiczbeNieujemna(txtKonfSygnPowtPredkosc)
+    End Sub
+
+
     'Przycisk
     Private Sub cboKonfPrzyciskTyp_SelectedIndexChanged() Handles cboKonfPrzyciskTyp.SelectedIndexChanged
         Dim aktywny As Boolean = False
@@ -548,6 +578,8 @@
                     nowyPanel = PokazKonfRozjazd()
                 Case Zaleznosci.TypKostki.SygnalizatorManewrowy, Zaleznosci.TypKostki.SygnalizatorSamoczynny, Zaleznosci.TypKostki.SygnalizatorPolsamoczynny
                     nowyPanel = PokazKonfSygn()
+                Case Zaleznosci.TypKostki.SygnalizatorPowtarzajacy
+                    nowyPanel = PokazKonfSygnPowt()
                 Case Zaleznosci.TypKostki.Przycisk, Zaleznosci.TypKostki.PrzyciskTor
                     nowyPanel = PokazKonfPrzycisk()
                 Case Zaleznosci.TypKostki.Napis
@@ -645,6 +677,30 @@
         Return pnlKonfSygn
     End Function
 
+    Private Function PokazKonfSygnPowt() As Panel
+        Dim sygn As Zaleznosci.SygnalizatorPowtarzajacy = CType(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy)
+
+        txtKonfSygnPowtAdres.Text = sygn.Adres.ToString
+
+        Select Case sygn.Kolejnosc
+            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Pierwszy
+                rbKonfSygnPowtKolejnoscI.Checked = True
+            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Drugi
+                rbKonfSygnPowtKolejnoscII.Checked = True
+            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Trzeci
+                rbKonfSygnPowtKolejnoscIII.Checked = True
+        End Select
+
+        Dim sygnalizatory As ObiektComboBox(Of Zaleznosci.Kostka)() = PobierzElementyDoComboBox(AddressOf CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweSygnalizatora)
+        cboKonfSygnPowtSygnObslugiwany.Items.Clear()
+        cboKonfSygnPowtSygnObslugiwany.Items.AddRange(sygnalizatory)
+        ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfSygnPowtSygnObslugiwany, sygn.SygnalizatorPowtarzany)
+
+        txtKonfSygnPowtPredkosc.Text = sygn.PredkoscZasadnicza.ToString
+
+        Return pnlKonfSygnPowt
+    End Function
+
     Private Function PokazKonfPrzycisk() As Panel
         cboKonfPrzyciskTyp.Items.Clear()
 
@@ -738,6 +794,13 @@
             sygn.DostepneSwiatla = sygn.DostepneSwiatla Or kolor
         Else
             sygn.DostepneSwiatla = sygn.DostepneSwiatla And (Not kolor)
+        End If
+    End Sub
+
+    Private Sub UstawKolejnoscSygnalizatoraPowtarzajacego(rb As RadioButton, kolejnosc As Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego)
+        If rb.Checked Then
+            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy).Kolejnosc = kolejnosc
+            plpPulpit.Invalidate()
         End If
     End Sub
 

@@ -2,8 +2,9 @@
 
 Public MustInherit Class Sygnalizator
     Inherits Tor
+    Implements IAdres
 
-    Public Property Adres As UShort = 0
+    Public Property Adres As UShort = 0 Implements IAdres.Adres
     Public Property Nazwa As String = ""
     Public Property OdcinekNastepujacy As OdcinekToru
 

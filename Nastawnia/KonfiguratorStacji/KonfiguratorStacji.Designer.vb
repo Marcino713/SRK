@@ -36,7 +36,6 @@ Partial Class wndKonfiguratorStacji
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuNazwa = New System.Windows.Forms.ToolStripMenuItem()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
-        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
         Me.Label36 = New System.Windows.Forms.Label()
         Me.tabUstawienia = New System.Windows.Forms.TabControl()
         Me.tbpPulpit = New System.Windows.Forms.TabPage()
@@ -180,6 +179,18 @@ Partial Class wndKonfiguratorStacji
         Me.Label24 = New System.Windows.Forms.Label()
         Me.btnLampaUsun = New System.Windows.Forms.Button()
         Me.btnLampaDodaj = New System.Windows.Forms.Button()
+        Me.pnlKonfSygnPowt = New System.Windows.Forms.Panel()
+        Me.Label37 = New System.Windows.Forms.Label()
+        Me.Label38 = New System.Windows.Forms.Label()
+        Me.Label39 = New System.Windows.Forms.Label()
+        Me.Label40 = New System.Windows.Forms.Label()
+        Me.txtKonfSygnPowtAdres = New System.Windows.Forms.TextBox()
+        Me.cboKonfSygnPowtSygnObslugiwany = New System.Windows.Forms.ComboBox()
+        Me.txtKonfSygnPowtPredkosc = New System.Windows.Forms.TextBox()
+        Me.rbKonfSygnPowtKolejnoscI = New System.Windows.Forms.RadioButton()
+        Me.rbKonfSygnPowtKolejnoscII = New System.Windows.Forms.RadioButton()
+        Me.rbKonfSygnPowtKolejnoscIII = New System.Windows.Forms.RadioButton()
+        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
         Me.mnuMenu.SuspendLayout()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
@@ -225,6 +236,7 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaLampy.Panel1.SuspendLayout()
         Me.splKartaLampy.Panel2.SuspendLayout()
         Me.splKartaLampy.SuspendLayout()
+        Me.pnlKonfSygnPowt.SuspendLayout()
         Me.SuspendLayout()
         '
         'mnuMenu
@@ -316,31 +328,6 @@ Partial Class wndKonfiguratorStacji
         Me.splOkno.SplitterDistance = 788
         Me.splOkno.TabIndex = 1
         '
-        'plpPulpit
-        '
-        Me.plpPulpit.AllowDrop = True
-        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
-        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
-        Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
-        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
-        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
-        Me.plpPulpit.Name = "plpPulpit"
-        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
-        Me.plpPulpit.projZaznaczonaLampa = Nothing
-        Me.plpPulpit.projZaznaczonyLicznik = Nothing
-        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
-        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit1.Adres = CType(0US, UShort)
-        Pulpit1.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit1
-        Me.plpPulpit.Size = New System.Drawing.Size(785, 645)
-        Me.plpPulpit.TabIndex = 4
-        Me.plpPulpit.TrybProjektowy = True
-        Me.plpPulpit.ZaznaczonaKostka = Nothing
-        '
         'Label36
         '
         Me.Label36.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
@@ -391,6 +378,7 @@ Partial Class wndKonfiguratorStacji
         '
         'splKartaPulpit.Panel2
         '
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnPowt)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfRozjazd)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfKier)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfPrzycisk)
@@ -1795,6 +1783,149 @@ Partial Class wndKonfiguratorStacji
         Me.btnLampaDodaj.Text = "Dodaj"
         Me.btnLampaDodaj.UseVisualStyleBackColor = True
         '
+        'pnlKonfSygnPowt
+        '
+        Me.pnlKonfSygnPowt.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfSygnPowt.Controls.Add(Me.rbKonfSygnPowtKolejnoscIII)
+        Me.pnlKonfSygnPowt.Controls.Add(Me.rbKonfSygnPowtKolejnoscII)
+        Me.pnlKonfSygnPowt.Controls.Add(Me.rbKonfSygnPowtKolejnoscI)
+        Me.pnlKonfSygnPowt.Controls.Add(Me.txtKonfSygnPowtPredkosc)
+        Me.pnlKonfSygnPowt.Controls.Add(Me.cboKonfSygnPowtSygnObslugiwany)
+        Me.pnlKonfSygnPowt.Controls.Add(Me.txtKonfSygnPowtAdres)
+        Me.pnlKonfSygnPowt.Controls.Add(Me.Label40)
+        Me.pnlKonfSygnPowt.Controls.Add(Me.Label39)
+        Me.pnlKonfSygnPowt.Controls.Add(Me.Label38)
+        Me.pnlKonfSygnPowt.Controls.Add(Me.Label37)
+        Me.pnlKonfSygnPowt.Location = New System.Drawing.Point(12, 131)
+        Me.pnlKonfSygnPowt.Name = "pnlKonfSygnPowt"
+        Me.pnlKonfSygnPowt.Size = New System.Drawing.Size(177, 158)
+        Me.pnlKonfSygnPowt.TabIndex = 2
+        Me.pnlKonfSygnPowt.Visible = False
+        '
+        'Label37
+        '
+        Me.Label37.AutoSize = True
+        Me.Label37.Location = New System.Drawing.Point(0, 0)
+        Me.Label37.Name = "Label37"
+        Me.Label37.Size = New System.Drawing.Size(37, 13)
+        Me.Label37.TabIndex = 0
+        Me.Label37.Text = "Adres:"
+        '
+        'Label38
+        '
+        Me.Label38.AutoSize = True
+        Me.Label38.Location = New System.Drawing.Point(0, 75)
+        Me.Label38.Name = "Label38"
+        Me.Label38.Size = New System.Drawing.Size(124, 13)
+        Me.Label38.TabIndex = 1
+        Me.Label38.Text = "Sygnalizator powtarzany:"
+        '
+        'Label39
+        '
+        Me.Label39.AutoSize = True
+        Me.Label39.Location = New System.Drawing.Point(0, 115)
+        Me.Label39.Name = "Label39"
+        Me.Label39.Size = New System.Drawing.Size(195, 13)
+        Me.Label39.TabIndex = 2
+        Me.Label39.Text = "Prędkość maksymalna toru przyległego:"
+        '
+        'Label40
+        '
+        Me.Label40.AutoSize = True
+        Me.Label40.Location = New System.Drawing.Point(0, 39)
+        Me.Label40.Name = "Label40"
+        Me.Label40.Size = New System.Drawing.Size(56, 13)
+        Me.Label40.TabIndex = 3
+        Me.Label40.Text = "Kolejność:"
+        '
+        'txtKonfSygnPowtAdres
+        '
+        Me.txtKonfSygnPowtAdres.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfSygnPowtAdres.Location = New System.Drawing.Point(0, 16)
+        Me.txtKonfSygnPowtAdres.Name = "txtKonfSygnPowtAdres"
+        Me.txtKonfSygnPowtAdres.Size = New System.Drawing.Size(177, 20)
+        Me.txtKonfSygnPowtAdres.TabIndex = 4
+        '
+        'cboKonfSygnPowtSygnObslugiwany
+        '
+        Me.cboKonfSygnPowtSygnObslugiwany.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfSygnPowtSygnObslugiwany.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfSygnPowtSygnObslugiwany.FormattingEnabled = True
+        Me.cboKonfSygnPowtSygnObslugiwany.Location = New System.Drawing.Point(0, 91)
+        Me.cboKonfSygnPowtSygnObslugiwany.Name = "cboKonfSygnPowtSygnObslugiwany"
+        Me.cboKonfSygnPowtSygnObslugiwany.Size = New System.Drawing.Size(177, 21)
+        Me.cboKonfSygnPowtSygnObslugiwany.TabIndex = 8
+        '
+        'txtKonfSygnPowtPredkosc
+        '
+        Me.txtKonfSygnPowtPredkosc.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfSygnPowtPredkosc.Location = New System.Drawing.Point(0, 131)
+        Me.txtKonfSygnPowtPredkosc.Name = "txtKonfSygnPowtPredkosc"
+        Me.txtKonfSygnPowtPredkosc.Size = New System.Drawing.Size(177, 20)
+        Me.txtKonfSygnPowtPredkosc.TabIndex = 9
+        '
+        'rbKonfSygnPowtKolejnoscI
+        '
+        Me.rbKonfSygnPowtKolejnoscI.AutoSize = True
+        Me.rbKonfSygnPowtKolejnoscI.Location = New System.Drawing.Point(0, 55)
+        Me.rbKonfSygnPowtKolejnoscI.Name = "rbKonfSygnPowtKolejnoscI"
+        Me.rbKonfSygnPowtKolejnoscI.Size = New System.Drawing.Size(28, 17)
+        Me.rbKonfSygnPowtKolejnoscI.TabIndex = 5
+        Me.rbKonfSygnPowtKolejnoscI.TabStop = True
+        Me.rbKonfSygnPowtKolejnoscI.Text = "I"
+        Me.rbKonfSygnPowtKolejnoscI.UseVisualStyleBackColor = True
+        '
+        'rbKonfSygnPowtKolejnoscII
+        '
+        Me.rbKonfSygnPowtKolejnoscII.AutoSize = True
+        Me.rbKonfSygnPowtKolejnoscII.Location = New System.Drawing.Point(34, 55)
+        Me.rbKonfSygnPowtKolejnoscII.Name = "rbKonfSygnPowtKolejnoscII"
+        Me.rbKonfSygnPowtKolejnoscII.Size = New System.Drawing.Size(31, 17)
+        Me.rbKonfSygnPowtKolejnoscII.TabIndex = 6
+        Me.rbKonfSygnPowtKolejnoscII.TabStop = True
+        Me.rbKonfSygnPowtKolejnoscII.Text = "II"
+        Me.rbKonfSygnPowtKolejnoscII.UseVisualStyleBackColor = True
+        '
+        'rbKonfSygnPowtKolejnoscIII
+        '
+        Me.rbKonfSygnPowtKolejnoscIII.AutoSize = True
+        Me.rbKonfSygnPowtKolejnoscIII.Location = New System.Drawing.Point(71, 55)
+        Me.rbKonfSygnPowtKolejnoscIII.Name = "rbKonfSygnPowtKolejnoscIII"
+        Me.rbKonfSygnPowtKolejnoscIII.Size = New System.Drawing.Size(34, 17)
+        Me.rbKonfSygnPowtKolejnoscIII.TabIndex = 7
+        Me.rbKonfSygnPowtKolejnoscIII.TabStop = True
+        Me.rbKonfSygnPowtKolejnoscIII.Text = "III"
+        Me.rbKonfSygnPowtKolejnoscIII.UseVisualStyleBackColor = True
+        '
+        'plpPulpit
+        '
+        Me.plpPulpit.AllowDrop = True
+        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
+        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
+        Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
+        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
+        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
+        Me.plpPulpit.Name = "plpPulpit"
+        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projZaznaczonaLampa = Nothing
+        Me.plpPulpit.projZaznaczonyLicznik = Nothing
+        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
+        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
+        Pulpit1.Adres = CType(0US, UShort)
+        Pulpit1.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit1
+        Me.plpPulpit.Size = New System.Drawing.Size(785, 645)
+        Me.plpPulpit.TabIndex = 4
+        Me.plpPulpit.TrybProjektowy = True
+        Me.plpPulpit.ZaznaczonaKostka = Nothing
+        '
         'wndKonfiguratorStacji
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1870,6 +2001,8 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaLampy.Panel2.PerformLayout()
         CType(Me.splKartaLampy, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splKartaLampy.ResumeLayout(False)
+        Me.pnlKonfSygnPowt.ResumeLayout(False)
+        Me.pnlKonfSygnPowt.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -2031,4 +2164,15 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents mnuZapiszJako As ToolStripMenuItem
     Friend WithEvents Label36 As Label
     Friend WithEvents plpPulpit As PulpitSterowniczy
+    Friend WithEvents pnlKonfSygnPowt As Panel
+    Friend WithEvents rbKonfSygnPowtKolejnoscIII As RadioButton
+    Friend WithEvents rbKonfSygnPowtKolejnoscII As RadioButton
+    Friend WithEvents rbKonfSygnPowtKolejnoscI As RadioButton
+    Friend WithEvents txtKonfSygnPowtPredkosc As TextBox
+    Friend WithEvents cboKonfSygnPowtSygnObslugiwany As ComboBox
+    Friend WithEvents txtKonfSygnPowtAdres As TextBox
+    Friend WithEvents Label40 As Label
+    Friend WithEvents Label39 As Label
+    Friend WithEvents Label38 As Label
+    Friend WithEvents Label37 As Label
 End Class
