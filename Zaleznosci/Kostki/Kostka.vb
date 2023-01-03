@@ -26,7 +26,8 @@ Public MustInherit Class Kostka
             typ = TypKostki.SygnalizatorManewrowy Or
             typ = TypKostki.SygnalizatorSamoczynny Or
             typ = TypKostki.SygnalizatorPolsamoczynny Or
-            typ = TypKostki.SygnalizatorPowtarzajacy
+            typ = TypKostki.SygnalizatorPowtarzajacy Or
+            typ = TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
     End Function
 
     Public Shared Function CzyTorBezRozjazdu(typ As TypKostki) As Boolean
@@ -34,7 +35,8 @@ Public MustInherit Class Kostka
             CzySygnalizator(typ) Or
             typ = TypKostki.Tor Or
             typ = TypKostki.Zakret Or
-            typ = TypKostki.PrzyciskTor
+            typ = TypKostki.PrzyciskTor Or
+            typ = TypKostki.PrzejazdKolejowy
     End Function
 
     Public Shared Function CzyTor(typ As TypKostki) As Boolean
@@ -102,6 +104,10 @@ Public MustInherit Class Kostka
                 k = New Napis
             Case TypKostki.SygnalizatorPowtarzajacy
                 k = New SygnalizatorPowtarzajacy
+            Case TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
+                k = New SygnalizatorOstrzegawczyPrzejazdowy
+            Case TypKostki.PrzejazdKolejowy
+                k = New PrzejazdKolejowy
         End Select
 
         konf.Kostki.Add(id, k)
@@ -140,4 +146,6 @@ Public Enum TypKostki
     Kierunek = 11
     Napis = 12
     SygnalizatorPowtarzajacy = 13
+    SygnalizatorOstrzegawczyPrzejazdowy = 14
+    PrzejazdKolejowy = 15
 End Enum

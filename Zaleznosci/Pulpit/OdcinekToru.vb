@@ -15,9 +15,6 @@ Public Class OdcinekToru
         End Get
     End Property
 
-    Public Event ZajetoOdcinek()
-    Public Event ZwolnionoOdcinek()
-
     Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
         Using ms As New MemoryStream
             Using bw As New BinaryWriter(ms)

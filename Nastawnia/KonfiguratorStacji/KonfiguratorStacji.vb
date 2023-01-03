@@ -96,6 +96,8 @@
         DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorManewrowy(), "Sygnalizator manewrowy")
         DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorPowtarzajacy(), "Sygnalizator powtarzający")
         DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorPolsamoczynny(), "Sygnalizator półsamoczynny")
+        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy(), "Sygnalizator przejazdowy")
+        DodajKostkeDoListy(p, New Zaleznosci.PrzejazdKolejowy(), "Przejazd kolejowy")
         DodajKostkeDoListy(p, New Zaleznosci.Przycisk(), "Przycisk")
         DodajKostkeDoListy(p, New Zaleznosci.PrzyciskTor(), "Przycisk z torem")
         DodajKostkeDoListy(p, New Zaleznosci.Kierunek(), "Wjazd/wyjazd ze stacji")
@@ -397,14 +399,22 @@
 
     Private Sub cboKonfSygnOdcinekNast_SelectedIndexChanged() Handles cboKonfSygnOdcinekNast.SelectedIndexChanged
         If cboKonfSygnOdcinekNast.SelectedItem Is Nothing Then Exit Sub
-        Dim el As ObiektComboBox(Of Zaleznosci.OdcinekToru) = DirectCast(cboKonfSygnOdcinekNast.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru))
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Sygnalizator).OdcinekNastepujacy = el.Wartosc
+        Dim sygn As Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu = TryCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu)
+
+        If sygn IsNot Nothing Then
+            Dim el As ObiektComboBox(Of Zaleznosci.OdcinekToru) = DirectCast(cboKonfSygnOdcinekNast.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru))
+            sygn.OdcinekNastepujacy = el.Wartosc
+        End If
     End Sub
 
     Private Sub cboKonfSygnSygnNast_SelectedIndexChanged() Handles cboKonfSygnSygnNast.SelectedIndexChanged
         If cboKonfSygnSygnNast.SelectedItem Is Nothing Then Exit Sub
-        Dim el As ObiektComboBox(Of Zaleznosci.Kostka) = DirectCast(cboKonfSygnSygnNast.SelectedItem, ObiektComboBox(Of Zaleznosci.Kostka))
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorUzalezniony).SygnalizatorNastepny = DirectCast(el.Wartosc, Zaleznosci.Sygnalizator)
+        Dim sygn As Zaleznosci.SygnalizatorUzalezniony = TryCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorUzalezniony)
+
+        If sygn IsNot Nothing Then
+            Dim el As ObiektComboBox(Of Zaleznosci.Kostka) = DirectCast(cboKonfSygnSygnNast.SelectedItem, ObiektComboBox(Of Zaleznosci.Kostka))
+            sygn.SygnalizatorNastepny = DirectCast(el.Wartosc, Zaleznosci.Sygnalizator)
+        End If
     End Sub
 
     Private Sub txtKonfSygnPredkosc_TextChanged() Handles txtKonfSygnPredkosc.TextChanged
@@ -572,11 +582,11 @@
         If plpPulpit.ZaznaczonaKostka IsNot Nothing Then
 
             Select Case plpPulpit.ZaznaczonaKostka.Typ
-                Case Zaleznosci.TypKostki.Tor, Zaleznosci.TypKostki.Zakret
+                Case Zaleznosci.TypKostki.Tor, Zaleznosci.TypKostki.Zakret, Zaleznosci.TypKostki.PrzejazdKolejowy
                     nowyPanel = PokazKonfTor()
                 Case Zaleznosci.TypKostki.RozjazdLewo, Zaleznosci.TypKostki.RozjazdPrawo
                     nowyPanel = PokazKonfRozjazd()
-                Case Zaleznosci.TypKostki.SygnalizatorManewrowy, Zaleznosci.TypKostki.SygnalizatorSamoczynny, Zaleznosci.TypKostki.SygnalizatorPolsamoczynny
+                Case Zaleznosci.TypKostki.SygnalizatorManewrowy, Zaleznosci.TypKostki.SygnalizatorSamoczynny, Zaleznosci.TypKostki.SygnalizatorPolsamoczynny, Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
                     nowyPanel = PokazKonfSygn()
                 Case Zaleznosci.TypKostki.SygnalizatorPowtarzajacy
                     nowyPanel = PokazKonfSygnPowt()
@@ -630,10 +640,11 @@
     End Function
 
     Private Sub PokazKonfSygnOdcinki()
-        Dim sygn As Zaleznosci.Sygnalizator = TryCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Sygnalizator)
+        cboKonfSygnOdcinekNast.Items.Clear()
+
+        Dim sygn As Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu = TryCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu)
         If sygn Is Nothing Then Exit Sub
 
-        cboKonfSygnOdcinekNast.Items.Clear()
         Dim odcinki As IEnumerable(Of Zaleznosci.OdcinekToru) = plpPulpit.Pulpit.OdcinkiTorow.OrderBy(Function(t As Zaleznosci.OdcinekToru) t.Nazwa)
         For Each odc As Zaleznosci.OdcinekToru In odcinki
             cboKonfSygnOdcinekNast.Items.Add(New ObiektComboBox(Of Zaleznosci.OdcinekToru)(odc, odc.Nazwa))
@@ -646,22 +657,23 @@
         Dim sygn As Zaleznosci.Sygnalizator = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Sygnalizator)
         txtKonfSygnAdres.Text = sygn.Adres.ToString
         txtKonfSygnNazwa.Text = sygn.Nazwa.ToString
-        cboKonfSygnSygnNast.Enabled = sygn.Typ <> Zaleznosci.TypKostki.SygnalizatorManewrowy
+        txtKonfSygnPredkosc.Text = sygn.PredkoscZasadnicza.ToString()
+
+        pnlKonfSygnOdcNast.Visible = sygn.Typ <> Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
+        pnlKonfSygnSygnNast.Visible = sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Or sygn.Typ = Zaleznosci.TypKostki.SygnalizatorSamoczynny
         pnlKonfSygnSwiatla.Visible = sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny
 
         PokazKonfSygnOdcinki()
 
         cboKonfSygnSygnNast.Items.Clear()
         Dim sygn_nast As Zaleznosci.Sygnalizator = Nothing
-        If sygn.Typ <> Zaleznosci.TypKostki.SygnalizatorManewrowy Then
+        If sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Or sygn.Typ = Zaleznosci.TypKostki.SygnalizatorSamoczynny Then
             Dim sygnalizatory As ObiektComboBox(Of Zaleznosci.Kostka)() = PobierzElementyDoComboBox(AddressOf CzySygnalizatorUzalezniony, AddressOf PobierzNazweSygnalizatora)
             cboKonfSygnSygnNast.Items.Add(PUSTY_CBO_KOSTKA)
             cboKonfSygnSygnNast.Items.AddRange(sygnalizatory)
             sygn_nast = DirectCast(sygn, Zaleznosci.SygnalizatorUzalezniony).SygnalizatorNastepny
             ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfSygnSygnNast, sygn_nast)
         End If
-
-        txtKonfSygnPredkosc.Text = sygn.PredkoscZasadnicza.ToString()
 
         If sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Then
             Dim sw As Zaleznosci.DostepneSwiatlaEnum = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny).DostepneSwiatla

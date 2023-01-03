@@ -86,7 +86,10 @@
     <Compile Include="Kostki\IAdres.vb" />
     <Compile Include="Kostki\IPrzycisk.vb" />
     <Compile Include="Kostki\IZakret.vb" />
+    <Compile Include="Kostki\PrzejazdKolejowy.vb" />
+    <Compile Include="Kostki\SygnalizatorOstrzegawczyPrzejazdowy.vb" />
     <Compile Include="Kostki\SygnalizatorPowtarzajacy.vb" />
+    <Compile Include="Kostki\SygnalizatorWylaczanyPoPrzejechaniu.vb" />
     <Compile Include="ObslugaKomunikatow\Komunikat.vb" />
     <Compile Include="Komunikaty\ZakonczDzialanieKlienta.vb" />
     <Compile Include="Komunikaty\ZakonczonoDzialanieSerwera.vb" />

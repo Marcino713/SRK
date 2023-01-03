@@ -1,7 +1,7 @@
 ﻿Imports Zaleznosci.PlikiPulpitu
 
 Public MustInherit Class SygnalizatorUzalezniony
-    Inherits Sygnalizator
+    Inherits SygnalizatorWylaczanyPoPrzejechaniu
 
     Public Property SygnalizatorNastepny As Sygnalizator
 

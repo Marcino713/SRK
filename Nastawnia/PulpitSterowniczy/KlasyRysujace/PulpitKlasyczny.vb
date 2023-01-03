@@ -32,6 +32,9 @@
     Private Const SYGN_SLUP_DLUG As Single = 0.04F       'długość poszczególnych segmentów słupa
     Private Const SYGN_KRAWEDZ As Single = 0.01F         'grubość krawędzi słupa sygnalizatora
     Private Const KIER_SZER As Single = 0.4F             'rozmiar strzałki na przycisku kierunku
+    Private Const PRZEJAZD_POZ As Single = 0.35F         'odległość linii przejazdu kolejowego od krawędzi bocznych
+    Private Const PRZEJAZD_SZER_LINII As Single = 0.02F  'szerokość linii przejazdu kolejowego
+    Private Const PRZEJAZD_KONTR_POZ As Single = 0.17F   'pozycja na osi X kontrolek przejazdu kolejowego
     Private Const TEKST_POZ_X_PRZYCISK As Single = 0.17F 'dodatkowy margines dla tekstu obok przycisku
     Private Const TEKST_POZ_X As Single = 0.1F           'dodatkowy margines dla tekstu
     Private Const TEKST_POZ_Y As Single = 0.12F          'dodatkowy margines dla tekstu
@@ -289,6 +292,10 @@
                 RysujSygnalizatorPolsamoczynny(CType(kostka, Zaleznosci.SygnalizatorPolsamoczynny))
             Case Zaleznosci.TypKostki.SygnalizatorSamoczynny
                 RysujSygnalizatorSamoczynny(CType(kostka, Zaleznosci.SygnalizatorSamoczynny))
+            Case Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
+                RysujSygnalizatorTOP(CType(kostka, Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy))
+            Case Zaleznosci.TypKostki.PrzejazdKolejowy
+                RysujPrzejazd(CType(kostka, Zaleznosci.PrzejazdKolejowy))
             Case Zaleznosci.TypKostki.Przycisk
                 RysujPrzyciskZwykly(CType(kostka, Zaleznosci.Przycisk))
             Case Zaleznosci.TypKostki.PrzyciskTor
@@ -519,6 +526,31 @@
         urz.WypelnijKolo(pedz, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         RysujSlupSygnalizatora(1)
         RysujNazweSygnalizatora(sygnalizator.Nazwa)
+    End Sub
+
+    Private Sub RysujSygnalizatorTOP(sygnalizator As Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy)
+        Dim pedzBial As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraOstrzegawczegoPrzejazdowego.PrzejazdZamkniety, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
+        Dim pedzPomc As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraOstrzegawczegoPrzejazdowego.PrzejazdUszkodzony, PEDZEL_SYGN_POMC_JASNY, PEDZEL_SYGN_POMC)
+
+        RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
+        urz.WypelnijTloSygnalizatora(PEDZEL_SYGN_TLO, SYGN_POZ, 2 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
+        urz.WypelnijKolo(pedzBial, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+        urz.WypelnijKolo(pedzPomc, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+        RysujSlupSygnalizatora(2)
+        RysujNazweSygnalizatora(sygnalizator.Nazwa)
+    End Sub
+
+    Private Sub RysujPrzejazd(przejazd As Zaleznosci.PrzejazdKolejowy)
+        Dim pedzAwaria As TPedzel = If(trybProjektowy Or przejazd.Awaria, PEDZEL_SYGN_CZER_JASNY, PEDZEL_SYGN_CZER)
+        Dim pedzStan As TPedzel = If(trybProjektowy Or przejazd.Stan <> Zaleznosci.StanPrzejazduKolejowego.Otwarty, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
+
+        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, PRZEJAZD_SZER_LINII, PRZEJAZD_POZ, 0.0, PRZEJAZD_POZ, 1.0)
+        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, PRZEJAZD_SZER_LINII, 1.0 - PRZEJAZD_POZ, 0.0, 1.0 - PRZEJAZD_POZ, 1.0)
+        RysujTorProsty(przejazd.RysowanieDodatkowychTrojkatow)
+        urz.WypelnijKolo(PEDZEL_SYGN_TLO, PRZEJAZD_KONTR_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
+        urz.WypelnijKolo(pedzAwaria, PRZEJAZD_KONTR_POZ, SYGN_POZ, SYGN_PROMIEN)
+        urz.WypelnijKolo(PEDZEL_SYGN_TLO, PRZEJAZD_KONTR_POZ, 3 * SYGN_POZ, SYGN_TLO_PROMIEN)
+        urz.WypelnijKolo(pedzStan, PRZEJAZD_KONTR_POZ, 3 * SYGN_POZ, SYGN_PROMIEN)
     End Sub
 
     Private Sub RysujPrzycisk(wcisniety As Boolean, Optional poczx As Single = 0.0F, Optional poczy As Single = 0.0F)

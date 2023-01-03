@@ -1,5 +1,5 @@
 ﻿Public Class SygnalizatorManewrowy
-    Inherits Sygnalizator
+    Inherits SygnalizatorWylaczanyPoPrzejechaniu
 
     Public Property Stan As StanSygnalizatoraManewrowego = StanSygnalizatoraManewrowego.BrakWyjazdu
 
