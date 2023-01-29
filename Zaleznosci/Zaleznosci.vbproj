@@ -170,6 +170,7 @@
     <Compile Include="PlikiPulpitu\KonfiguracjaZapisu.vb" />
     <Compile Include="ObslugaPlikow\OtwieraniePlikuException.vb" />
     <Compile Include="ObslugaPlikow\SegmentPliku.vb" />
+    <Compile Include="Pulpit\PrzejazdKolejowoDrogowy.vb" />
     <Compile Include="WersjaPliku.vb" />
     <Compile Include="Pulpit\Lampa.vb" />
     <Compile Include="Pulpit\ParaLicznikowOsi.vb" />

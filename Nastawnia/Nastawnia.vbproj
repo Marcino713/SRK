@@ -193,6 +193,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="KonfiguratorStacji\KonfiguratorStacji.resx">
       <DependentUpon>KonfiguratorStacji.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="KonfiguratorStacji\NazwaStacji.resx">
       <DependentUpon>NazwaStacji.vb</DependentUpon>

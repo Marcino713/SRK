@@ -56,6 +56,9 @@ Public MustInherit Class Kostka
     Protected Friend Overridable Sub UsunOdcinekToruZPowiazan(odcinek As OdcinekToru)
     End Sub
 
+    Protected Friend Overridable Sub UsunPrzejazdZPowiazan(przejazd As PrzejazdKolejowoDrogowy)
+    End Sub
+
     Friend MustOverride Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
 
     Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
@@ -67,6 +70,7 @@ Public MustInherit Class Kostka
                 bw.Write(konf.Y)
                 bw.Write(CType(Obrot, UShort))
                 ZapiszKostke(bw, konf)
+
                 Return ms.ToArray()
             End Using
         End Using
@@ -128,6 +132,7 @@ Public MustInherit Class Kostka
                 OtworzKostke(br, konf)
             End Using
         End Using
+
         konf.Pulpit.Kostki(x, y) = Me
     End Sub
 End Class

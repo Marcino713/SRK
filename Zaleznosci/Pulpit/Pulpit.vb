@@ -75,6 +75,13 @@ Public Class Pulpit
         End Get
     End Property
 
+    Private _Przejazdy As New List(Of PrzejazdKolejowoDrogowy)
+    Public ReadOnly Property Przejazdy As List(Of PrzejazdKolejowoDrogowy)
+        Get
+            Return _Przejazdy
+        End Get
+    End Property
+
     Public Sub New()
         Me.New(ROZMIAR_DOMYSLNY, ROZMIAR_DOMYSLNY)
     End Sub
@@ -143,6 +150,10 @@ Public Class Pulpit
         _LicznikiOsi = _LicznikiOsi.OrderBy(Function(l As ParaLicznikowOsi) l.Adres1).ToList
     End Sub
 
+    Public Sub SortujPrzejazdyNazwaRosnaco()
+        _Przejazdy = _Przejazdy.OrderBy(Function(p As PrzejazdKolejowoDrogowy) p.Nazwa).ToList
+    End Sub
+
     Public Function PobierzSygnalizatory() As Dictionary(Of UShort, Kostka)
         Return PobierzKostki(Of Kostka)(AddressOf Kostka.CzySygnalizator)
     End Function
@@ -195,9 +206,17 @@ Public Class Pulpit
     End Function
 
     Public Sub UsunKostke(kostka As Kostka)
-        If TypeOf kostka Is Tor Then
-            Dim tor As Tor = DirectCast(kostka, Tor)
-            tor.NalezyDoOdcinka?.KostkiTory.Remove(tor)
+        Dim tor As Tor = TryCast(kostka, Tor)
+        tor?.NalezyDoOdcinka?.KostkiTory.Remove(tor)
+
+        Dim przejazd As PrzejazdKolejowy = TryCast(kostka, PrzejazdKolejowy)
+        przejazd?.NalezyDoPrzejazdu?.KostkiPrzejazdy.Remove(przejazd)
+
+        Dim sygnTop As SygnalizatorOstrzegawczyPrzejazdowy = TryCast(kostka, SygnalizatorOstrzegawczyPrzejazdowy)
+        If sygnTop IsNot Nothing Then
+            For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
+                p.UsunSygnalizatorZPowiazan(sygnTop)
+            Next
         End If
 
         PrzeiterujKostki(Sub(x, y, k)
@@ -207,13 +226,23 @@ Public Class Pulpit
     End Sub
 
     Public Sub UsunOdcinekToru(odcinek As OdcinekToru)
-        OdcinkiTorow.Remove(odcinek)
+        _Odcinki.Remove(odcinek)
 
         PrzeiterujKostki(Sub(x, y, k) k.UsunOdcinekToruZPowiazan(odcinek))
 
         For Each p As ParaLicznikowOsi In _LicznikiOsi
             p.UsunOdcinekToruZPowiazan(odcinek)
         Next
+
+        For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
+            p.UsunOdcinekToruZPowiazan(odcinek)
+        Next
+    End Sub
+
+    Public Sub UsunPrzejazdKolejowoDrogowy(przejazd As PrzejazdKolejowoDrogowy)
+        _Przejazdy.Remove(przejazd)
+
+        PrzeiterujKostki(Sub(x, y, k) k.UsunPrzejazdZPowiazan(przejazd))
     End Sub
 
     Public Sub PowiekszPulpit(kierunek As KierunekEdycjiPulpitu, rozmiar As Integer)
@@ -234,7 +263,7 @@ Public Class Pulpit
             If kierunek = KierunekEdycjiPulpitu.Gora Then przesy = rozmiar
         End If
 
-        'Kopiuj kostki
+        'Przesuń kostki
         Dim tab(szernowa - 1, wysnowa - 1) As Kostka
         PrzeiterujKostki(Sub(x, y, k) tab(x + przesx, y + przesy) = k)
         _Kostki = tab
@@ -242,7 +271,7 @@ Public Class Pulpit
         _Wysokosc = wysnowa
 
         'Przesuń obiekty punktowe
-        PrzesunLicznikiILampy(kierunek, rozmiar)
+        PrzesunObiektyPunktowe(kierunek, rozmiar)
     End Sub
 
     Public Function PomniejszPulpit(kierunek As KierunekEdycjiPulpitu, rozmiar As Integer) As ObiektBlokujacyZmniejszaniePulpitu
@@ -320,24 +349,46 @@ Public Class Pulpit
             End If
         Next
 
+        'Sprawdź, czy są elementy przejazdów
+        Dim koniec As Boolean = False
+
+        For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
+            For Each r As ElementWykonaczyPrzejazduKolejowego In p.Rogatki
+                If CzyPunktWUsuwanymZakresie(r.X, r.Y, kierunek, wspolrzednaGraniczna) Then
+                    wynik = wynik Or ObiektBlokujacyZmniejszaniePulpitu.PrzejazdRogatka
+                    koniec = True
+                    Exit For
+                End If
+            Next
+
+            If koniec Then Exit For
+
+            For Each s As ElementWykonaczyPrzejazduKolejowego In p.SygnalizatoryDrogowe
+                If CzyPunktWUsuwanymZakresie(s.X, s.Y, kierunek, wspolrzednaGraniczna) Then
+                    wynik = wynik Or ObiektBlokujacyZmniejszaniePulpitu.PrzejazdSygnalizatorDrogowy
+                    koniec = True
+                    Exit For
+                End If
+            Next
+
+            If koniec Then Exit For
+        Next
+
         'Usuwany zakres jest pusty, można usunąć
         If wynik = 0 Then
-
-            'Usuń komórki
             Dim tab(szernowa - 1, wysnowa - 1) As Kostka
             PrzeiterujKostki(Sub(x, y, k) tab(x - przesx, y - przesy) = k)
             _Kostki = tab
             _Szerokosc = szernowa
             _Wysokosc = wysnowa
 
-            'Przesuń obiekty punktowe
-            PrzesunLicznikiILampy(kierunek, -rozmiar)
+            PrzesunObiektyPunktowe(kierunek, -rozmiar)
         End If
 
         Return wynik
     End Function
 
-    Private Sub PrzesunLicznikiILampy(kierunek As KierunekEdycjiPulpitu, rozm As Single)
+    Private Sub PrzesunObiektyPunktowe(kierunek As KierunekEdycjiPulpitu, rozm As Single)
         If kierunek = KierunekEdycjiPulpitu.Lewo Or kierunek = KierunekEdycjiPulpitu.Gora Then
 
             'Przesuń liczniki
@@ -359,6 +410,29 @@ Public Class Pulpit
                     l.Y += rozm
                 End If
             Next
+
+            'Przejazdy
+            For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
+
+                'Przesuń rogatki
+                For Each r As ElementWykonaczyPrzejazduKolejowego In p.Rogatki
+                    If kierunek = KierunekEdycjiPulpitu.Lewo Then
+                        r.X += rozm
+                    Else
+                        r.Y += rozm
+                    End If
+                Next
+
+                'Przesuń sygnalizatory drogowe
+                For Each s As ElementWykonaczyPrzejazduKolejowego In p.SygnalizatoryDrogowe
+                    If kierunek = KierunekEdycjiPulpitu.Lewo Then
+                        s.X += rozm
+                    Else
+                        s.Y += rozm
+                    End If
+                Next
+            Next
+
         End If
     End Sub
 
@@ -374,6 +448,12 @@ Public Class Pulpit
         ix = 1
         For Each o As OdcinekToru In _Odcinki
             konf.OdcinkiTorow.Add(o, ix)
+            ix += 1
+        Next
+
+        ix = 1
+        For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
+            konf.Przejazdy.Add(p, ix)
             ix += 1
         Next
 
@@ -403,6 +483,7 @@ Public Class Pulpit
                 ZapiszObiekty(bw, _Odcinki, TypObiektuPliku.ODCINEK_TORU, konf)
                 ZapiszObiekty(bw, _LicznikiOsi, TypObiektuPliku.LICZNIK_OSI, konf)
                 ZapiszObiekty(bw, _Lampy, TypObiektuPliku.LAMPA, konf)
+                ZapiszObiekty(bw, _Przejazdy, TypObiektuPliku.PRZEJAZD_KOLEJOWO_DROGOWY, konf)
 
             End Using
         End Using
@@ -429,6 +510,7 @@ Public Class Pulpit
         Dim segmenty As New List(Of SegmPliku)
         konf.Kostki.Add(PUSTE_ODWOLANIE, Nothing)
         konf.OdcinkiTorow.Add(PUSTE_ODWOLANIE, Nothing)
+        konf.Przejazdy.Add(PUSTE_ODWOLANIE, Nothing)
 
         Using br As New BinaryReader(str)
             Dim b As Byte()
@@ -482,6 +564,8 @@ Public Class Pulpit
                 ob = ParaLicznikowOsi.UtworzObiekt(b, konf)
             Case TypObiektuPliku.LAMPA
                 ob = Lampa.UtworzObiekt(b, konf)
+            Case TypObiektuPliku.PRZEJAZD_KOLEJOWO_DROGOWY
+                ob = PrzejazdKolejowoDrogowy.UtworzObiekt(b, konf)
         End Select
 
         Return New SegmPliku() With {.Dane = b, .Obiekt = ob}
@@ -521,4 +605,6 @@ Public Enum ObiektBlokujacyZmniejszaniePulpitu
     Kostka = 1
     LicznikOsi = 2
     Lampa = 4
+    PrzejazdRogatka = 8
+    PrzejazdSygnalizatorDrogowy = 16
 End Enum

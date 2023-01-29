@@ -23,7 +23,7 @@ Partial Class wndKonfiguratorStacji
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim Pulpit2 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
+        Dim Pulpit1 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
         Me.mnuMenu = New System.Windows.Forms.MenuStrip()
         Me.mnuNarzedzia = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuNowy = New System.Windows.Forms.ToolStripMenuItem()
@@ -36,6 +36,7 @@ Partial Class wndKonfiguratorStacji
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuNazwa = New System.Windows.Forms.ToolStripMenuItem()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
+        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
         Me.Label36 = New System.Windows.Forms.Label()
         Me.tabUstawienia = New System.Windows.Forms.TabControl()
         Me.tbpPulpit = New System.Windows.Forms.TabPage()
@@ -192,7 +193,83 @@ Partial Class wndKonfiguratorStacji
         Me.Label24 = New System.Windows.Forms.Label()
         Me.btnLampaUsun = New System.Windows.Forms.Button()
         Me.btnLampaDodaj = New System.Windows.Forms.Button()
-        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
+        Me.tbpPrzejazdy = New System.Windows.Forms.TabPage()
+        Me.splKartaPrzejazdy = New System.Windows.Forms.SplitContainer()
+        Me.lvPrzejazdy = New System.Windows.Forms.ListView()
+        Me.ColumnHeader11 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader14 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader24 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader12 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader13 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.btnPrzejazdUsun = New System.Windows.Forms.Button()
+        Me.btnPrzejazdDodaj = New System.Windows.Forms.Button()
+        Me.tabPrzejazd = New System.Windows.Forms.TabControl()
+        Me.tbpPrzejazdOgolne = New System.Windows.Forms.TabPage()
+        Me.cbPrzejazdTrybReczny = New System.Windows.Forms.CheckBox()
+        Me.cbPrzejazdTrybAutomatyczny = New System.Windows.Forms.CheckBox()
+        Me.Label49 = New System.Windows.Forms.Label()
+        Me.pnlPrzejazdKolorInny = New System.Windows.Forms.Panel()
+        Me.pnlPrzejazdKolorNieprzypisany = New System.Windows.Forms.Panel()
+        Me.pnlPrzejazdKolorPrzypisany = New System.Windows.Forms.Panel()
+        Me.Label48 = New System.Windows.Forms.Label()
+        Me.Label47 = New System.Windows.Forms.Label()
+        Me.Label46 = New System.Windows.Forms.Label()
+        Me.txtPrzejazdCzasPodnoszenie = New System.Windows.Forms.TextBox()
+        Me.txtPrzejazdCzasOpuszczanie = New System.Windows.Forms.TextBox()
+        Me.txtPrzejazdCzasSwiatla = New System.Windows.Forms.TextBox()
+        Me.txtPrzejazdNazwa = New System.Windows.Forms.TextBox()
+        Me.Label45 = New System.Windows.Forms.Label()
+        Me.Label44 = New System.Windows.Forms.Label()
+        Me.Label43 = New System.Windows.Forms.Label()
+        Me.Label42 = New System.Windows.Forms.Label()
+        Me.Label41 = New System.Windows.Forms.Label()
+        Me.tbpPrzejazdAutomatyzacja = New System.Windows.Forms.TabPage()
+        Me.splPrzejazdAutomatyzacja = New System.Windows.Forms.SplitContainer()
+        Me.lvPrzejazdAutomatyzacja = New System.Windows.Forms.ListView()
+        Me.ColumnHeader21 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader22 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader23 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ctxSortowaniePrzejazdy = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.ctxSortujPrzejazdy = New System.Windows.Forms.ToolStripMenuItem()
+        Me.pnlPrzejazdAutomatyzacjaKolorSygnalizator = New System.Windows.Forms.Panel()
+        Me.pnlPrzejazdAutomatyzacjaKolorPrzyjazd = New System.Windows.Forms.Panel()
+        Me.pnlPrzejazdAutomatyzacjaKolorWyjazd = New System.Windows.Forms.Panel()
+        Me.cboPrzejazdAutomatyzacjaSygnalizator = New System.Windows.Forms.ComboBox()
+        Me.cboPrzejazdAutomatyzacjaOdcinekPrzyjazd = New System.Windows.Forms.ComboBox()
+        Me.cboPrzejazdAutomatyzacjaOdcinekWyjazd = New System.Windows.Forms.ComboBox()
+        Me.Label58 = New System.Windows.Forms.Label()
+        Me.Label57 = New System.Windows.Forms.Label()
+        Me.Label56 = New System.Windows.Forms.Label()
+        Me.btnPrzejazdAutomatyzacjaUsun = New System.Windows.Forms.Button()
+        Me.btnPrzejazdAutomatyzacjaDodaj = New System.Windows.Forms.Button()
+        Me.tbpPrzejazdRogatki = New System.Windows.Forms.TabPage()
+        Me.splPrzejazdRogatki = New System.Windows.Forms.SplitContainer()
+        Me.lvPrzejazdRogatki = New System.Windows.Forms.ListView()
+        Me.ColumnHeader15 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader16 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader17 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.btnPrzejazdRogatkaDodaj = New System.Windows.Forms.Button()
+        Me.txtPrzejazdRogatkaY = New System.Windows.Forms.TextBox()
+        Me.btnPrzejazdRogatkaUsun = New System.Windows.Forms.Button()
+        Me.txtPrzejazdRogatkaX = New System.Windows.Forms.TextBox()
+        Me.Label51 = New System.Windows.Forms.Label()
+        Me.txtPrzejazdRogatkaAdres = New System.Windows.Forms.TextBox()
+        Me.Label52 = New System.Windows.Forms.Label()
+        Me.Label50 = New System.Windows.Forms.Label()
+        Me.tbpPrzejazdSygnDrog = New System.Windows.Forms.TabPage()
+        Me.splPrzejazdSygnDrog = New System.Windows.Forms.SplitContainer()
+        Me.lvPrzejazdSygnDrog = New System.Windows.Forms.ListView()
+        Me.ColumnHeader18 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader19 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader20 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.txtPrzejazdSygnDrogY = New System.Windows.Forms.TextBox()
+        Me.txtPrzejazdSygnDrogX = New System.Windows.Forms.TextBox()
+        Me.txtPrzejazdSygnDrogAdres = New System.Windows.Forms.TextBox()
+        Me.Label55 = New System.Windows.Forms.Label()
+        Me.Label54 = New System.Windows.Forms.Label()
+        Me.Label53 = New System.Windows.Forms.Label()
+        Me.btnPrzejazdSygnDrogUsun = New System.Windows.Forms.Button()
+        Me.btnPrzejazdSygnDrogDodaj = New System.Windows.Forms.Button()
         Me.mnuMenu.SuspendLayout()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
@@ -241,6 +318,29 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaLampy.Panel1.SuspendLayout()
         Me.splKartaLampy.Panel2.SuspendLayout()
         Me.splKartaLampy.SuspendLayout()
+        Me.tbpPrzejazdy.SuspendLayout()
+        CType(Me.splKartaPrzejazdy, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.splKartaPrzejazdy.Panel1.SuspendLayout()
+        Me.splKartaPrzejazdy.Panel2.SuspendLayout()
+        Me.splKartaPrzejazdy.SuspendLayout()
+        Me.tabPrzejazd.SuspendLayout()
+        Me.tbpPrzejazdOgolne.SuspendLayout()
+        Me.tbpPrzejazdAutomatyzacja.SuspendLayout()
+        CType(Me.splPrzejazdAutomatyzacja, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.splPrzejazdAutomatyzacja.Panel1.SuspendLayout()
+        Me.splPrzejazdAutomatyzacja.Panel2.SuspendLayout()
+        Me.splPrzejazdAutomatyzacja.SuspendLayout()
+        Me.ctxSortowaniePrzejazdy.SuspendLayout()
+        Me.tbpPrzejazdRogatki.SuspendLayout()
+        CType(Me.splPrzejazdRogatki, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.splPrzejazdRogatki.Panel1.SuspendLayout()
+        Me.splPrzejazdRogatki.Panel2.SuspendLayout()
+        Me.splPrzejazdRogatki.SuspendLayout()
+        Me.tbpPrzejazdSygnDrog.SuspendLayout()
+        CType(Me.splPrzejazdSygnDrog, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.splPrzejazdSygnDrog.Panel1.SuspendLayout()
+        Me.splPrzejazdSygnDrog.Panel2.SuspendLayout()
+        Me.splPrzejazdSygnDrog.SuspendLayout()
         Me.SuspendLayout()
         '
         'mnuMenu
@@ -332,6 +432,35 @@ Partial Class wndKonfiguratorStacji
         Me.splOkno.SplitterDistance = 788
         Me.splOkno.TabIndex = 1
         '
+        'plpPulpit
+        '
+        Me.plpPulpit.AllowDrop = True
+        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
+        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
+        Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
+        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
+        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
+        Me.plpPulpit.Name = "plpPulpit"
+        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projZaznaczonaLampa = Nothing
+        Me.plpPulpit.projZaznaczonyLicznik = Nothing
+        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
+        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
+        Pulpit1.Adres = CType(0US, UShort)
+        Pulpit1.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit1
+        Me.plpPulpit.Size = New System.Drawing.Size(785, 645)
+        Me.plpPulpit.TabIndex = 4
+        Me.plpPulpit.TrybProjektowy = True
+        Me.plpPulpit.ZaznaczonaKostka = Nothing
+        '
         'Label36
         '
         Me.Label36.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
@@ -349,6 +478,7 @@ Partial Class wndKonfiguratorStacji
         Me.tabUstawienia.Controls.Add(Me.tbpOdcinki)
         Me.tabUstawienia.Controls.Add(Me.tbpLiczniki)
         Me.tabUstawienia.Controls.Add(Me.tbpLampy)
+        Me.tabUstawienia.Controls.Add(Me.tbpPrzejazdy)
         Me.tabUstawienia.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabUstawienia.Location = New System.Drawing.Point(0, 0)
         Me.tabUstawienia.Name = "tabUstawienia"
@@ -1925,30 +2055,741 @@ Partial Class wndKonfiguratorStacji
         Me.btnLampaDodaj.Text = "Dodaj"
         Me.btnLampaDodaj.UseVisualStyleBackColor = True
         '
-        'plpPulpit
+        'tbpPrzejazdy
         '
-        Me.plpPulpit.AllowDrop = True
-        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+        Me.tbpPrzejazdy.Controls.Add(Me.splKartaPrzejazdy)
+        Me.tbpPrzejazdy.Location = New System.Drawing.Point(4, 22)
+        Me.tbpPrzejazdy.Name = "tbpPrzejazdy"
+        Me.tbpPrzejazdy.Size = New System.Drawing.Size(206, 644)
+        Me.tbpPrzejazdy.TabIndex = 4
+        Me.tbpPrzejazdy.Text = "Przejazdy kolejowo-drogowe"
+        Me.tbpPrzejazdy.UseVisualStyleBackColor = True
+        '
+        'splKartaPrzejazdy
+        '
+        Me.splKartaPrzejazdy.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
-        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
-        Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
-        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
-        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
-        Me.plpPulpit.Name = "plpPulpit"
-        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
-        Me.plpPulpit.projZaznaczonaLampa = Nothing
-        Me.plpPulpit.projZaznaczonyLicznik = Nothing
-        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
-        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit2.Adres = CType(0US, UShort)
-        Pulpit2.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit2
-        Me.plpPulpit.Size = New System.Drawing.Size(785, 645)
-        Me.plpPulpit.TabIndex = 4
-        Me.plpPulpit.TrybProjektowy = True
-        Me.plpPulpit.ZaznaczonaKostka = Nothing
+        Me.splKartaPrzejazdy.Location = New System.Drawing.Point(3, 3)
+        Me.splKartaPrzejazdy.Name = "splKartaPrzejazdy"
+        Me.splKartaPrzejazdy.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'splKartaPrzejazdy.Panel1
+        '
+        Me.splKartaPrzejazdy.Panel1.Controls.Add(Me.lvPrzejazdy)
+        '
+        'splKartaPrzejazdy.Panel2
+        '
+        Me.splKartaPrzejazdy.Panel2.Controls.Add(Me.btnPrzejazdUsun)
+        Me.splKartaPrzejazdy.Panel2.Controls.Add(Me.btnPrzejazdDodaj)
+        Me.splKartaPrzejazdy.Panel2.Controls.Add(Me.tabPrzejazd)
+        Me.splKartaPrzejazdy.Size = New System.Drawing.Size(200, 638)
+        Me.splKartaPrzejazdy.SplitterDistance = 250
+        Me.splKartaPrzejazdy.TabIndex = 0
+        '
+        'lvPrzejazdy
+        '
+        Me.lvPrzejazdy.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader11, Me.ColumnHeader14, Me.ColumnHeader24, Me.ColumnHeader12, Me.ColumnHeader13})
+        Me.lvPrzejazdy.ContextMenuStrip = Me.ctxSortowanie
+        Me.lvPrzejazdy.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.lvPrzejazdy.FullRowSelect = True
+        Me.lvPrzejazdy.HideSelection = False
+        Me.lvPrzejazdy.Location = New System.Drawing.Point(0, 0)
+        Me.lvPrzejazdy.MultiSelect = False
+        Me.lvPrzejazdy.Name = "lvPrzejazdy"
+        Me.lvPrzejazdy.Size = New System.Drawing.Size(200, 250)
+        Me.lvPrzejazdy.TabIndex = 0
+        Me.lvPrzejazdy.UseCompatibleStateImageBehavior = False
+        Me.lvPrzejazdy.View = System.Windows.Forms.View.Details
+        '
+        'ColumnHeader11
+        '
+        Me.ColumnHeader11.Text = "Nazwa"
+        Me.ColumnHeader11.Width = 90
+        '
+        'ColumnHeader14
+        '
+        Me.ColumnHeader14.Text = "Tryb"
+        Me.ColumnHeader14.Width = 40
+        '
+        'ColumnHeader24
+        '
+        Me.ColumnHeader24.Text = "Kostki"
+        Me.ColumnHeader24.Width = 50
+        '
+        'ColumnHeader12
+        '
+        Me.ColumnHeader12.Text = "Rogatki"
+        Me.ColumnHeader12.Width = 50
+        '
+        'ColumnHeader13
+        '
+        Me.ColumnHeader13.Text = "Sygnalizatory drogowe"
+        Me.ColumnHeader13.Width = 50
+        '
+        'btnPrzejazdUsun
+        '
+        Me.btnPrzejazdUsun.Location = New System.Drawing.Point(103, 3)
+        Me.btnPrzejazdUsun.Name = "btnPrzejazdUsun"
+        Me.btnPrzejazdUsun.Size = New System.Drawing.Size(98, 23)
+        Me.btnPrzejazdUsun.TabIndex = 2
+        Me.btnPrzejazdUsun.Text = "Usuń"
+        Me.btnPrzejazdUsun.UseVisualStyleBackColor = True
+        '
+        'btnPrzejazdDodaj
+        '
+        Me.btnPrzejazdDodaj.Location = New System.Drawing.Point(-1, 3)
+        Me.btnPrzejazdDodaj.Name = "btnPrzejazdDodaj"
+        Me.btnPrzejazdDodaj.Size = New System.Drawing.Size(98, 23)
+        Me.btnPrzejazdDodaj.TabIndex = 1
+        Me.btnPrzejazdDodaj.Text = "Dodaj"
+        Me.btnPrzejazdDodaj.UseVisualStyleBackColor = True
+        '
+        'tabPrzejazd
+        '
+        Me.tabPrzejazd.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.tabPrzejazd.Controls.Add(Me.tbpPrzejazdOgolne)
+        Me.tabPrzejazd.Controls.Add(Me.tbpPrzejazdAutomatyzacja)
+        Me.tabPrzejazd.Controls.Add(Me.tbpPrzejazdRogatki)
+        Me.tabPrzejazd.Controls.Add(Me.tbpPrzejazdSygnDrog)
+        Me.tabPrzejazd.Location = New System.Drawing.Point(0, 32)
+        Me.tabPrzejazd.Name = "tabPrzejazd"
+        Me.tabPrzejazd.SelectedIndex = 0
+        Me.tabPrzejazd.Size = New System.Drawing.Size(202, 349)
+        Me.tabPrzejazd.TabIndex = 3
+        '
+        'tbpPrzejazdOgolne
+        '
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.cbPrzejazdTrybReczny)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.cbPrzejazdTrybAutomatyczny)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.Label49)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.pnlPrzejazdKolorInny)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.pnlPrzejazdKolorNieprzypisany)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.pnlPrzejazdKolorPrzypisany)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.Label48)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.Label47)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.Label46)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.txtPrzejazdCzasPodnoszenie)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.txtPrzejazdCzasOpuszczanie)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.txtPrzejazdCzasSwiatla)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.txtPrzejazdNazwa)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.Label45)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.Label44)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.Label43)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.Label42)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.Label41)
+        Me.tbpPrzejazdOgolne.Location = New System.Drawing.Point(4, 22)
+        Me.tbpPrzejazdOgolne.Name = "tbpPrzejazdOgolne"
+        Me.tbpPrzejazdOgolne.Padding = New System.Windows.Forms.Padding(3)
+        Me.tbpPrzejazdOgolne.Size = New System.Drawing.Size(194, 323)
+        Me.tbpPrzejazdOgolne.TabIndex = 0
+        Me.tbpPrzejazdOgolne.Text = "Ogólne"
+        Me.tbpPrzejazdOgolne.UseVisualStyleBackColor = True
+        '
+        'cbPrzejazdTrybReczny
+        '
+        Me.cbPrzejazdTrybReczny.AutoSize = True
+        Me.cbPrzejazdTrybReczny.Location = New System.Drawing.Point(97, 58)
+        Me.cbPrzejazdTrybReczny.Name = "cbPrzejazdTrybReczny"
+        Me.cbPrzejazdTrybReczny.Size = New System.Drawing.Size(57, 17)
+        Me.cbPrzejazdTrybReczny.TabIndex = 8
+        Me.cbPrzejazdTrybReczny.Text = "ręczny"
+        Me.cbPrzejazdTrybReczny.UseVisualStyleBackColor = True
+        '
+        'cbPrzejazdTrybAutomatyczny
+        '
+        Me.cbPrzejazdTrybAutomatyczny.AutoSize = True
+        Me.cbPrzejazdTrybAutomatyczny.Location = New System.Drawing.Point(0, 58)
+        Me.cbPrzejazdTrybAutomatyczny.Name = "cbPrzejazdTrybAutomatyczny"
+        Me.cbPrzejazdTrybAutomatyczny.Size = New System.Drawing.Size(91, 17)
+        Me.cbPrzejazdTrybAutomatyczny.TabIndex = 7
+        Me.cbPrzejazdTrybAutomatyczny.Text = "automatyczny"
+        Me.cbPrzejazdTrybAutomatyczny.UseVisualStyleBackColor = True
+        '
+        'Label49
+        '
+        Me.Label49.AutoSize = True
+        Me.Label49.Location = New System.Drawing.Point(22, 252)
+        Me.Label49.Name = "Label49"
+        Me.Label49.Size = New System.Drawing.Size(214, 13)
+        Me.Label49.TabIndex = 18
+        Me.Label49.Text = "Kostka nieprzypisana do żadnego przejazdu"
+        '
+        'pnlPrzejazdKolorInny
+        '
+        Me.pnlPrzejazdKolorInny.Location = New System.Drawing.Point(3, 233)
+        Me.pnlPrzejazdKolorInny.Name = "pnlPrzejazdKolorInny"
+        Me.pnlPrzejazdKolorInny.Size = New System.Drawing.Size(13, 13)
+        Me.pnlPrzejazdKolorInny.TabIndex = 17
+        '
+        'pnlPrzejazdKolorNieprzypisany
+        '
+        Me.pnlPrzejazdKolorNieprzypisany.Location = New System.Drawing.Point(3, 252)
+        Me.pnlPrzejazdKolorNieprzypisany.Name = "pnlPrzejazdKolorNieprzypisany"
+        Me.pnlPrzejazdKolorNieprzypisany.Size = New System.Drawing.Size(13, 13)
+        Me.pnlPrzejazdKolorNieprzypisany.TabIndex = 16
+        '
+        'pnlPrzejazdKolorPrzypisany
+        '
+        Me.pnlPrzejazdKolorPrzypisany.Location = New System.Drawing.Point(3, 214)
+        Me.pnlPrzejazdKolorPrzypisany.Name = "pnlPrzejazdKolorPrzypisany"
+        Me.pnlPrzejazdKolorPrzypisany.Size = New System.Drawing.Size(13, 13)
+        Me.pnlPrzejazdKolorPrzypisany.TabIndex = 15
+        '
+        'Label48
+        '
+        Me.Label48.AutoSize = True
+        Me.Label48.Location = New System.Drawing.Point(22, 233)
+        Me.Label48.Name = "Label48"
+        Me.Label48.Size = New System.Drawing.Size(191, 13)
+        Me.Label48.TabIndex = 14
+        Me.Label48.Text = "Kostka przypisana do innego przejazdu"
+        '
+        'Label47
+        '
+        Me.Label47.AutoSize = True
+        Me.Label47.Location = New System.Drawing.Point(22, 214)
+        Me.Label47.Name = "Label47"
+        Me.Label47.Size = New System.Drawing.Size(180, 13)
+        Me.Label47.TabIndex = 13
+        Me.Label47.Text = "Kostka przypisana do tego przejazdu"
+        '
+        'Label46
+        '
+        Me.Label46.AutoSize = True
+        Me.Label46.Location = New System.Drawing.Point(0, 198)
+        Me.Label46.Name = "Label46"
+        Me.Label46.Size = New System.Drawing.Size(49, 13)
+        Me.Label46.TabIndex = 12
+        Me.Label46.Text = "Legenda"
+        '
+        'txtPrzejazdCzasPodnoszenie
+        '
+        Me.txtPrzejazdCzasPodnoszenie.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtPrzejazdCzasPodnoszenie.Location = New System.Drawing.Point(0, 172)
+        Me.txtPrzejazdCzasPodnoszenie.Name = "txtPrzejazdCzasPodnoszenie"
+        Me.txtPrzejazdCzasPodnoszenie.Size = New System.Drawing.Size(192, 20)
+        Me.txtPrzejazdCzasPodnoszenie.TabIndex = 11
+        '
+        'txtPrzejazdCzasOpuszczanie
+        '
+        Me.txtPrzejazdCzasOpuszczanie.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtPrzejazdCzasOpuszczanie.Location = New System.Drawing.Point(0, 133)
+        Me.txtPrzejazdCzasOpuszczanie.Name = "txtPrzejazdCzasOpuszczanie"
+        Me.txtPrzejazdCzasOpuszczanie.Size = New System.Drawing.Size(192, 20)
+        Me.txtPrzejazdCzasOpuszczanie.TabIndex = 10
+        '
+        'txtPrzejazdCzasSwiatla
+        '
+        Me.txtPrzejazdCzasSwiatla.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtPrzejazdCzasSwiatla.Location = New System.Drawing.Point(0, 94)
+        Me.txtPrzejazdCzasSwiatla.Name = "txtPrzejazdCzasSwiatla"
+        Me.txtPrzejazdCzasSwiatla.Size = New System.Drawing.Size(192, 20)
+        Me.txtPrzejazdCzasSwiatla.TabIndex = 9
+        '
+        'txtPrzejazdNazwa
+        '
+        Me.txtPrzejazdNazwa.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtPrzejazdNazwa.Location = New System.Drawing.Point(0, 19)
+        Me.txtPrzejazdNazwa.Name = "txtPrzejazdNazwa"
+        Me.txtPrzejazdNazwa.Size = New System.Drawing.Size(192, 20)
+        Me.txtPrzejazdNazwa.TabIndex = 6
+        '
+        'Label45
+        '
+        Me.Label45.AutoSize = True
+        Me.Label45.Location = New System.Drawing.Point(0, 156)
+        Me.Label45.Name = "Label45"
+        Me.Label45.Size = New System.Drawing.Size(157, 13)
+        Me.Label45.TabIndex = 4
+        Me.Label45.Text = "Czas podnoszenia rogatek [ms]:"
+        '
+        'Label44
+        '
+        Me.Label44.AutoSize = True
+        Me.Label44.Location = New System.Drawing.Point(0, 117)
+        Me.Label44.Name = "Label44"
+        Me.Label44.Size = New System.Drawing.Size(156, 13)
+        Me.Label44.TabIndex = 3
+        Me.Label44.Text = "Czas opuszczania rogatek [ms]:"
+        '
+        'Label43
+        '
+        Me.Label43.AutoSize = True
+        Me.Label43.Location = New System.Drawing.Point(0, 78)
+        Me.Label43.Name = "Label43"
+        Me.Label43.Size = New System.Drawing.Size(269, 13)
+        Me.Label43.TabIndex = 2
+        Me.Label43.Text = "Czas migania świateł przed opuszczeniem rogatek [ms]:"
+        '
+        'Label42
+        '
+        Me.Label42.AutoSize = True
+        Me.Label42.Location = New System.Drawing.Point(0, 42)
+        Me.Label42.Name = "Label42"
+        Me.Label42.Size = New System.Drawing.Size(31, 13)
+        Me.Label42.TabIndex = 1
+        Me.Label42.Text = "Tryb:"
+        '
+        'Label41
+        '
+        Me.Label41.AutoSize = True
+        Me.Label41.Location = New System.Drawing.Point(0, 3)
+        Me.Label41.Name = "Label41"
+        Me.Label41.Size = New System.Drawing.Size(43, 13)
+        Me.Label41.TabIndex = 0
+        Me.Label41.Text = "Nazwa:"
+        '
+        'tbpPrzejazdAutomatyzacja
+        '
+        Me.tbpPrzejazdAutomatyzacja.Controls.Add(Me.splPrzejazdAutomatyzacja)
+        Me.tbpPrzejazdAutomatyzacja.Location = New System.Drawing.Point(4, 22)
+        Me.tbpPrzejazdAutomatyzacja.Name = "tbpPrzejazdAutomatyzacja"
+        Me.tbpPrzejazdAutomatyzacja.Padding = New System.Windows.Forms.Padding(3)
+        Me.tbpPrzejazdAutomatyzacja.Size = New System.Drawing.Size(194, 323)
+        Me.tbpPrzejazdAutomatyzacja.TabIndex = 1
+        Me.tbpPrzejazdAutomatyzacja.Text = "Automatyzacja"
+        Me.tbpPrzejazdAutomatyzacja.UseVisualStyleBackColor = True
+        '
+        'splPrzejazdAutomatyzacja
+        '
+        Me.splPrzejazdAutomatyzacja.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.splPrzejazdAutomatyzacja.Location = New System.Drawing.Point(0, 0)
+        Me.splPrzejazdAutomatyzacja.Name = "splPrzejazdAutomatyzacja"
+        Me.splPrzejazdAutomatyzacja.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'splPrzejazdAutomatyzacja.Panel1
+        '
+        Me.splPrzejazdAutomatyzacja.Panel1.Controls.Add(Me.lvPrzejazdAutomatyzacja)
+        '
+        'splPrzejazdAutomatyzacja.Panel2
+        '
+        Me.splPrzejazdAutomatyzacja.Panel2.Controls.Add(Me.pnlPrzejazdAutomatyzacjaKolorSygnalizator)
+        Me.splPrzejazdAutomatyzacja.Panel2.Controls.Add(Me.pnlPrzejazdAutomatyzacjaKolorPrzyjazd)
+        Me.splPrzejazdAutomatyzacja.Panel2.Controls.Add(Me.pnlPrzejazdAutomatyzacjaKolorWyjazd)
+        Me.splPrzejazdAutomatyzacja.Panel2.Controls.Add(Me.cboPrzejazdAutomatyzacjaSygnalizator)
+        Me.splPrzejazdAutomatyzacja.Panel2.Controls.Add(Me.cboPrzejazdAutomatyzacjaOdcinekPrzyjazd)
+        Me.splPrzejazdAutomatyzacja.Panel2.Controls.Add(Me.cboPrzejazdAutomatyzacjaOdcinekWyjazd)
+        Me.splPrzejazdAutomatyzacja.Panel2.Controls.Add(Me.Label58)
+        Me.splPrzejazdAutomatyzacja.Panel2.Controls.Add(Me.Label57)
+        Me.splPrzejazdAutomatyzacja.Panel2.Controls.Add(Me.Label56)
+        Me.splPrzejazdAutomatyzacja.Panel2.Controls.Add(Me.btnPrzejazdAutomatyzacjaUsun)
+        Me.splPrzejazdAutomatyzacja.Panel2.Controls.Add(Me.btnPrzejazdAutomatyzacjaDodaj)
+        Me.splPrzejazdAutomatyzacja.Size = New System.Drawing.Size(194, 323)
+        Me.splPrzejazdAutomatyzacja.SplitterDistance = 150
+        Me.splPrzejazdAutomatyzacja.TabIndex = 0
+        '
+        'lvPrzejazdAutomatyzacja
+        '
+        Me.lvPrzejazdAutomatyzacja.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lvPrzejazdAutomatyzacja.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader21, Me.ColumnHeader22, Me.ColumnHeader23})
+        Me.lvPrzejazdAutomatyzacja.ContextMenuStrip = Me.ctxSortowaniePrzejazdy
+        Me.lvPrzejazdAutomatyzacja.FullRowSelect = True
+        Me.lvPrzejazdAutomatyzacja.HideSelection = False
+        Me.lvPrzejazdAutomatyzacja.Location = New System.Drawing.Point(0, 2)
+        Me.lvPrzejazdAutomatyzacja.MultiSelect = False
+        Me.lvPrzejazdAutomatyzacja.Name = "lvPrzejazdAutomatyzacja"
+        Me.lvPrzejazdAutomatyzacja.Size = New System.Drawing.Size(192, 148)
+        Me.lvPrzejazdAutomatyzacja.TabIndex = 0
+        Me.lvPrzejazdAutomatyzacja.UseCompatibleStateImageBehavior = False
+        Me.lvPrzejazdAutomatyzacja.View = System.Windows.Forms.View.Details
+        '
+        'ColumnHeader21
+        '
+        Me.ColumnHeader21.Text = "Wyjazd z odcinka"
+        '
+        'ColumnHeader22
+        '
+        Me.ColumnHeader22.Text = "Przyjazd do odcinka"
+        '
+        'ColumnHeader23
+        '
+        Me.ColumnHeader23.Text = "Sygnalizator"
+        '
+        'ctxSortowaniePrzejazdy
+        '
+        Me.ctxSortowaniePrzejazdy.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ctxSortujPrzejazdy})
+        Me.ctxSortowaniePrzejazdy.Name = "ctxSortowaniePrzejazdy"
+        Me.ctxSortowaniePrzejazdy.Size = New System.Drawing.Size(106, 26)
+        '
+        'ctxSortujPrzejazdy
+        '
+        Me.ctxSortujPrzejazdy.Name = "ctxSortujPrzejazdy"
+        Me.ctxSortujPrzejazdy.Size = New System.Drawing.Size(105, 22)
+        Me.ctxSortujPrzejazdy.Text = "Sortuj"
+        '
+        'pnlPrzejazdAutomatyzacjaKolorSygnalizator
+        '
+        Me.pnlPrzejazdAutomatyzacjaKolorSygnalizator.Location = New System.Drawing.Point(114, 109)
+        Me.pnlPrzejazdAutomatyzacjaKolorSygnalizator.Name = "pnlPrzejazdAutomatyzacjaKolorSygnalizator"
+        Me.pnlPrzejazdAutomatyzacjaKolorSygnalizator.Size = New System.Drawing.Size(13, 13)
+        Me.pnlPrzejazdAutomatyzacjaKolorSygnalizator.TabIndex = 10
+        '
+        'pnlPrzejazdAutomatyzacjaKolorPrzyjazd
+        '
+        Me.pnlPrzejazdAutomatyzacjaKolorPrzyjazd.Location = New System.Drawing.Point(114, 69)
+        Me.pnlPrzejazdAutomatyzacjaKolorPrzyjazd.Name = "pnlPrzejazdAutomatyzacjaKolorPrzyjazd"
+        Me.pnlPrzejazdAutomatyzacjaKolorPrzyjazd.Size = New System.Drawing.Size(13, 13)
+        Me.pnlPrzejazdAutomatyzacjaKolorPrzyjazd.TabIndex = 9
+        '
+        'pnlPrzejazdAutomatyzacjaKolorWyjazd
+        '
+        Me.pnlPrzejazdAutomatyzacjaKolorWyjazd.Location = New System.Drawing.Point(114, 29)
+        Me.pnlPrzejazdAutomatyzacjaKolorWyjazd.Name = "pnlPrzejazdAutomatyzacjaKolorWyjazd"
+        Me.pnlPrzejazdAutomatyzacjaKolorWyjazd.Size = New System.Drawing.Size(13, 13)
+        Me.pnlPrzejazdAutomatyzacjaKolorWyjazd.TabIndex = 8
+        '
+        'cboPrzejazdAutomatyzacjaSygnalizator
+        '
+        Me.cboPrzejazdAutomatyzacjaSygnalizator.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboPrzejazdAutomatyzacjaSygnalizator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboPrzejazdAutomatyzacjaSygnalizator.FormattingEnabled = True
+        Me.cboPrzejazdAutomatyzacjaSygnalizator.Location = New System.Drawing.Point(0, 125)
+        Me.cboPrzejazdAutomatyzacjaSygnalizator.Name = "cboPrzejazdAutomatyzacjaSygnalizator"
+        Me.cboPrzejazdAutomatyzacjaSygnalizator.Size = New System.Drawing.Size(192, 21)
+        Me.cboPrzejazdAutomatyzacjaSygnalizator.TabIndex = 7
+        '
+        'cboPrzejazdAutomatyzacjaOdcinekPrzyjazd
+        '
+        Me.cboPrzejazdAutomatyzacjaOdcinekPrzyjazd.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboPrzejazdAutomatyzacjaOdcinekPrzyjazd.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboPrzejazdAutomatyzacjaOdcinekPrzyjazd.FormattingEnabled = True
+        Me.cboPrzejazdAutomatyzacjaOdcinekPrzyjazd.Location = New System.Drawing.Point(0, 85)
+        Me.cboPrzejazdAutomatyzacjaOdcinekPrzyjazd.Name = "cboPrzejazdAutomatyzacjaOdcinekPrzyjazd"
+        Me.cboPrzejazdAutomatyzacjaOdcinekPrzyjazd.Size = New System.Drawing.Size(192, 21)
+        Me.cboPrzejazdAutomatyzacjaOdcinekPrzyjazd.TabIndex = 6
+        '
+        'cboPrzejazdAutomatyzacjaOdcinekWyjazd
+        '
+        Me.cboPrzejazdAutomatyzacjaOdcinekWyjazd.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboPrzejazdAutomatyzacjaOdcinekWyjazd.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboPrzejazdAutomatyzacjaOdcinekWyjazd.FormattingEnabled = True
+        Me.cboPrzejazdAutomatyzacjaOdcinekWyjazd.Location = New System.Drawing.Point(0, 45)
+        Me.cboPrzejazdAutomatyzacjaOdcinekWyjazd.Name = "cboPrzejazdAutomatyzacjaOdcinekWyjazd"
+        Me.cboPrzejazdAutomatyzacjaOdcinekWyjazd.Size = New System.Drawing.Size(192, 21)
+        Me.cboPrzejazdAutomatyzacjaOdcinekWyjazd.TabIndex = 5
+        '
+        'Label58
+        '
+        Me.Label58.AutoSize = True
+        Me.Label58.Location = New System.Drawing.Point(0, 109)
+        Me.Label58.Name = "Label58"
+        Me.Label58.Size = New System.Drawing.Size(67, 13)
+        Me.Label58.TabIndex = 4
+        Me.Label58.Text = "Sygnalizator:"
+        '
+        'Label57
+        '
+        Me.Label57.AutoSize = True
+        Me.Label57.Location = New System.Drawing.Point(0, 69)
+        Me.Label57.Name = "Label57"
+        Me.Label57.Size = New System.Drawing.Size(105, 13)
+        Me.Label57.TabIndex = 3
+        Me.Label57.Text = "Przyjazd do odcinka:"
+        '
+        'Label56
+        '
+        Me.Label56.AutoSize = True
+        Me.Label56.Location = New System.Drawing.Point(0, 29)
+        Me.Label56.Name = "Label56"
+        Me.Label56.Size = New System.Drawing.Size(94, 13)
+        Me.Label56.TabIndex = 2
+        Me.Label56.Text = "Wyjazd z odcinka:"
+        '
+        'btnPrzejazdAutomatyzacjaUsun
+        '
+        Me.btnPrzejazdAutomatyzacjaUsun.Location = New System.Drawing.Point(98, 3)
+        Me.btnPrzejazdAutomatyzacjaUsun.Name = "btnPrzejazdAutomatyzacjaUsun"
+        Me.btnPrzejazdAutomatyzacjaUsun.Size = New System.Drawing.Size(95, 23)
+        Me.btnPrzejazdAutomatyzacjaUsun.TabIndex = 1
+        Me.btnPrzejazdAutomatyzacjaUsun.Text = "Usuń"
+        Me.btnPrzejazdAutomatyzacjaUsun.UseVisualStyleBackColor = True
+        '
+        'btnPrzejazdAutomatyzacjaDodaj
+        '
+        Me.btnPrzejazdAutomatyzacjaDodaj.Location = New System.Drawing.Point(-1, 3)
+        Me.btnPrzejazdAutomatyzacjaDodaj.Name = "btnPrzejazdAutomatyzacjaDodaj"
+        Me.btnPrzejazdAutomatyzacjaDodaj.Size = New System.Drawing.Size(95, 23)
+        Me.btnPrzejazdAutomatyzacjaDodaj.TabIndex = 0
+        Me.btnPrzejazdAutomatyzacjaDodaj.Text = "Dodaj"
+        Me.btnPrzejazdAutomatyzacjaDodaj.UseVisualStyleBackColor = True
+        '
+        'tbpPrzejazdRogatki
+        '
+        Me.tbpPrzejazdRogatki.Controls.Add(Me.splPrzejazdRogatki)
+        Me.tbpPrzejazdRogatki.Location = New System.Drawing.Point(4, 22)
+        Me.tbpPrzejazdRogatki.Name = "tbpPrzejazdRogatki"
+        Me.tbpPrzejazdRogatki.Size = New System.Drawing.Size(194, 323)
+        Me.tbpPrzejazdRogatki.TabIndex = 2
+        Me.tbpPrzejazdRogatki.Text = "Rogatki"
+        Me.tbpPrzejazdRogatki.UseVisualStyleBackColor = True
+        '
+        'splPrzejazdRogatki
+        '
+        Me.splPrzejazdRogatki.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.splPrzejazdRogatki.Location = New System.Drawing.Point(0, 0)
+        Me.splPrzejazdRogatki.Name = "splPrzejazdRogatki"
+        Me.splPrzejazdRogatki.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'splPrzejazdRogatki.Panel1
+        '
+        Me.splPrzejazdRogatki.Panel1.Controls.Add(Me.lvPrzejazdRogatki)
+        '
+        'splPrzejazdRogatki.Panel2
+        '
+        Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.btnPrzejazdRogatkaDodaj)
+        Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.txtPrzejazdRogatkaY)
+        Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.btnPrzejazdRogatkaUsun)
+        Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.txtPrzejazdRogatkaX)
+        Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.Label51)
+        Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.txtPrzejazdRogatkaAdres)
+        Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.Label52)
+        Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.Label50)
+        Me.splPrzejazdRogatki.Size = New System.Drawing.Size(194, 323)
+        Me.splPrzejazdRogatki.SplitterDistance = 150
+        Me.splPrzejazdRogatki.TabIndex = 9
+        '
+        'lvPrzejazdRogatki
+        '
+        Me.lvPrzejazdRogatki.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lvPrzejazdRogatki.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader15, Me.ColumnHeader16, Me.ColumnHeader17})
+        Me.lvPrzejazdRogatki.ContextMenuStrip = Me.ctxSortowaniePrzejazdy
+        Me.lvPrzejazdRogatki.FullRowSelect = True
+        Me.lvPrzejazdRogatki.HideSelection = False
+        Me.lvPrzejazdRogatki.Location = New System.Drawing.Point(0, 2)
+        Me.lvPrzejazdRogatki.MultiSelect = False
+        Me.lvPrzejazdRogatki.Name = "lvPrzejazdRogatki"
+        Me.lvPrzejazdRogatki.Size = New System.Drawing.Size(192, 148)
+        Me.lvPrzejazdRogatki.TabIndex = 4
+        Me.lvPrzejazdRogatki.UseCompatibleStateImageBehavior = False
+        Me.lvPrzejazdRogatki.View = System.Windows.Forms.View.Details
+        '
+        'ColumnHeader15
+        '
+        Me.ColumnHeader15.Text = "Adres"
+        '
+        'ColumnHeader16
+        '
+        Me.ColumnHeader16.Text = "X"
+        '
+        'ColumnHeader17
+        '
+        Me.ColumnHeader17.Text = "Y"
+        '
+        'btnPrzejazdRogatkaDodaj
+        '
+        Me.btnPrzejazdRogatkaDodaj.Location = New System.Drawing.Point(-1, 3)
+        Me.btnPrzejazdRogatkaDodaj.Name = "btnPrzejazdRogatkaDodaj"
+        Me.btnPrzejazdRogatkaDodaj.Size = New System.Drawing.Size(95, 23)
+        Me.btnPrzejazdRogatkaDodaj.TabIndex = 5
+        Me.btnPrzejazdRogatkaDodaj.Text = "Dodaj"
+        Me.btnPrzejazdRogatkaDodaj.UseVisualStyleBackColor = True
+        '
+        'txtPrzejazdRogatkaY
+        '
+        Me.txtPrzejazdRogatkaY.Location = New System.Drawing.Point(132, 45)
+        Me.txtPrzejazdRogatkaY.Name = "txtPrzejazdRogatkaY"
+        Me.txtPrzejazdRogatkaY.Size = New System.Drawing.Size(60, 20)
+        Me.txtPrzejazdRogatkaY.TabIndex = 9
+        '
+        'btnPrzejazdRogatkaUsun
+        '
+        Me.btnPrzejazdRogatkaUsun.Location = New System.Drawing.Point(98, 3)
+        Me.btnPrzejazdRogatkaUsun.Name = "btnPrzejazdRogatkaUsun"
+        Me.btnPrzejazdRogatkaUsun.Size = New System.Drawing.Size(95, 23)
+        Me.btnPrzejazdRogatkaUsun.TabIndex = 6
+        Me.btnPrzejazdRogatkaUsun.Text = "Usuń"
+        Me.btnPrzejazdRogatkaUsun.UseVisualStyleBackColor = True
+        '
+        'txtPrzejazdRogatkaX
+        '
+        Me.txtPrzejazdRogatkaX.Location = New System.Drawing.Point(66, 45)
+        Me.txtPrzejazdRogatkaX.Name = "txtPrzejazdRogatkaX"
+        Me.txtPrzejazdRogatkaX.Size = New System.Drawing.Size(60, 20)
+        Me.txtPrzejazdRogatkaX.TabIndex = 8
+        '
+        'Label51
+        '
+        Me.Label51.AutoSize = True
+        Me.Label51.Location = New System.Drawing.Point(62, 29)
+        Me.Label51.Name = "Label51"
+        Me.Label51.Size = New System.Drawing.Size(17, 13)
+        Me.Label51.TabIndex = 1
+        Me.Label51.Text = "X:"
+        '
+        'txtPrzejazdRogatkaAdres
+        '
+        Me.txtPrzejazdRogatkaAdres.Location = New System.Drawing.Point(0, 45)
+        Me.txtPrzejazdRogatkaAdres.Name = "txtPrzejazdRogatkaAdres"
+        Me.txtPrzejazdRogatkaAdres.Size = New System.Drawing.Size(60, 20)
+        Me.txtPrzejazdRogatkaAdres.TabIndex = 7
+        '
+        'Label52
+        '
+        Me.Label52.AutoSize = True
+        Me.Label52.Location = New System.Drawing.Point(127, 29)
+        Me.Label52.Name = "Label52"
+        Me.Label52.Size = New System.Drawing.Size(17, 13)
+        Me.Label52.TabIndex = 2
+        Me.Label52.Text = "Y:"
+        '
+        'Label50
+        '
+        Me.Label50.AutoSize = True
+        Me.Label50.Location = New System.Drawing.Point(3, 29)
+        Me.Label50.Name = "Label50"
+        Me.Label50.Size = New System.Drawing.Size(37, 13)
+        Me.Label50.TabIndex = 0
+        Me.Label50.Text = "Adres:"
+        '
+        'tbpPrzejazdSygnDrog
+        '
+        Me.tbpPrzejazdSygnDrog.Controls.Add(Me.splPrzejazdSygnDrog)
+        Me.tbpPrzejazdSygnDrog.Location = New System.Drawing.Point(4, 22)
+        Me.tbpPrzejazdSygnDrog.Name = "tbpPrzejazdSygnDrog"
+        Me.tbpPrzejazdSygnDrog.Size = New System.Drawing.Size(194, 323)
+        Me.tbpPrzejazdSygnDrog.TabIndex = 3
+        Me.tbpPrzejazdSygnDrog.Text = "Sygnalizatory drogowe"
+        Me.tbpPrzejazdSygnDrog.UseVisualStyleBackColor = True
+        '
+        'splPrzejazdSygnDrog
+        '
+        Me.splPrzejazdSygnDrog.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.splPrzejazdSygnDrog.Location = New System.Drawing.Point(0, 0)
+        Me.splPrzejazdSygnDrog.Name = "splPrzejazdSygnDrog"
+        Me.splPrzejazdSygnDrog.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'splPrzejazdSygnDrog.Panel1
+        '
+        Me.splPrzejazdSygnDrog.Panel1.Controls.Add(Me.lvPrzejazdSygnDrog)
+        '
+        'splPrzejazdSygnDrog.Panel2
+        '
+        Me.splPrzejazdSygnDrog.Panel2.Controls.Add(Me.txtPrzejazdSygnDrogY)
+        Me.splPrzejazdSygnDrog.Panel2.Controls.Add(Me.txtPrzejazdSygnDrogX)
+        Me.splPrzejazdSygnDrog.Panel2.Controls.Add(Me.txtPrzejazdSygnDrogAdres)
+        Me.splPrzejazdSygnDrog.Panel2.Controls.Add(Me.Label55)
+        Me.splPrzejazdSygnDrog.Panel2.Controls.Add(Me.Label54)
+        Me.splPrzejazdSygnDrog.Panel2.Controls.Add(Me.Label53)
+        Me.splPrzejazdSygnDrog.Panel2.Controls.Add(Me.btnPrzejazdSygnDrogUsun)
+        Me.splPrzejazdSygnDrog.Panel2.Controls.Add(Me.btnPrzejazdSygnDrogDodaj)
+        Me.splPrzejazdSygnDrog.Size = New System.Drawing.Size(194, 323)
+        Me.splPrzejazdSygnDrog.SplitterDistance = 150
+        Me.splPrzejazdSygnDrog.TabIndex = 0
+        '
+        'lvPrzejazdSygnDrog
+        '
+        Me.lvPrzejazdSygnDrog.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lvPrzejazdSygnDrog.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader18, Me.ColumnHeader19, Me.ColumnHeader20})
+        Me.lvPrzejazdSygnDrog.ContextMenuStrip = Me.ctxSortowaniePrzejazdy
+        Me.lvPrzejazdSygnDrog.FullRowSelect = True
+        Me.lvPrzejazdSygnDrog.HideSelection = False
+        Me.lvPrzejazdSygnDrog.Location = New System.Drawing.Point(0, 2)
+        Me.lvPrzejazdSygnDrog.MultiSelect = False
+        Me.lvPrzejazdSygnDrog.Name = "lvPrzejazdSygnDrog"
+        Me.lvPrzejazdSygnDrog.Size = New System.Drawing.Size(192, 148)
+        Me.lvPrzejazdSygnDrog.TabIndex = 4
+        Me.lvPrzejazdSygnDrog.UseCompatibleStateImageBehavior = False
+        Me.lvPrzejazdSygnDrog.View = System.Windows.Forms.View.Details
+        '
+        'ColumnHeader18
+        '
+        Me.ColumnHeader18.Text = "Adres"
+        '
+        'ColumnHeader19
+        '
+        Me.ColumnHeader19.Text = "X"
+        '
+        'ColumnHeader20
+        '
+        Me.ColumnHeader20.Text = "Y"
+        '
+        'txtPrzejazdSygnDrogY
+        '
+        Me.txtPrzejazdSygnDrogY.Location = New System.Drawing.Point(132, 45)
+        Me.txtPrzejazdSygnDrogY.Name = "txtPrzejazdSygnDrogY"
+        Me.txtPrzejazdSygnDrogY.Size = New System.Drawing.Size(60, 20)
+        Me.txtPrzejazdSygnDrogY.TabIndex = 9
+        '
+        'txtPrzejazdSygnDrogX
+        '
+        Me.txtPrzejazdSygnDrogX.Location = New System.Drawing.Point(66, 45)
+        Me.txtPrzejazdSygnDrogX.Name = "txtPrzejazdSygnDrogX"
+        Me.txtPrzejazdSygnDrogX.Size = New System.Drawing.Size(60, 20)
+        Me.txtPrzejazdSygnDrogX.TabIndex = 8
+        '
+        'txtPrzejazdSygnDrogAdres
+        '
+        Me.txtPrzejazdSygnDrogAdres.Location = New System.Drawing.Point(0, 45)
+        Me.txtPrzejazdSygnDrogAdres.Name = "txtPrzejazdSygnDrogAdres"
+        Me.txtPrzejazdSygnDrogAdres.Size = New System.Drawing.Size(60, 20)
+        Me.txtPrzejazdSygnDrogAdres.TabIndex = 7
+        '
+        'Label55
+        '
+        Me.Label55.AutoSize = True
+        Me.Label55.Location = New System.Drawing.Point(127, 29)
+        Me.Label55.Name = "Label55"
+        Me.Label55.Size = New System.Drawing.Size(17, 13)
+        Me.Label55.TabIndex = 4
+        Me.Label55.Text = "Y:"
+        '
+        'Label54
+        '
+        Me.Label54.AutoSize = True
+        Me.Label54.Location = New System.Drawing.Point(62, 29)
+        Me.Label54.Name = "Label54"
+        Me.Label54.Size = New System.Drawing.Size(17, 13)
+        Me.Label54.TabIndex = 3
+        Me.Label54.Text = "X:"
+        '
+        'Label53
+        '
+        Me.Label53.AutoSize = True
+        Me.Label53.Location = New System.Drawing.Point(3, 29)
+        Me.Label53.Name = "Label53"
+        Me.Label53.Size = New System.Drawing.Size(37, 13)
+        Me.Label53.TabIndex = 2
+        Me.Label53.Text = "Adres:"
+        '
+        'btnPrzejazdSygnDrogUsun
+        '
+        Me.btnPrzejazdSygnDrogUsun.Location = New System.Drawing.Point(98, 3)
+        Me.btnPrzejazdSygnDrogUsun.Name = "btnPrzejazdSygnDrogUsun"
+        Me.btnPrzejazdSygnDrogUsun.Size = New System.Drawing.Size(95, 23)
+        Me.btnPrzejazdSygnDrogUsun.TabIndex = 6
+        Me.btnPrzejazdSygnDrogUsun.Text = "Usuń"
+        Me.btnPrzejazdSygnDrogUsun.UseVisualStyleBackColor = True
+        '
+        'btnPrzejazdSygnDrogDodaj
+        '
+        Me.btnPrzejazdSygnDrogDodaj.Location = New System.Drawing.Point(-1, 3)
+        Me.btnPrzejazdSygnDrogDodaj.Name = "btnPrzejazdSygnDrogDodaj"
+        Me.btnPrzejazdSygnDrogDodaj.Size = New System.Drawing.Size(95, 23)
+        Me.btnPrzejazdSygnDrogDodaj.TabIndex = 5
+        Me.btnPrzejazdSygnDrogDodaj.Text = "Dodaj"
+        Me.btnPrzejazdSygnDrogDodaj.UseVisualStyleBackColor = True
         '
         'wndKonfiguratorStacji
         '
@@ -2031,6 +2872,33 @@ Partial Class wndKonfiguratorStacji
         Me.splKartaLampy.Panel2.PerformLayout()
         CType(Me.splKartaLampy, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splKartaLampy.ResumeLayout(False)
+        Me.tbpPrzejazdy.ResumeLayout(False)
+        Me.splKartaPrzejazdy.Panel1.ResumeLayout(False)
+        Me.splKartaPrzejazdy.Panel2.ResumeLayout(False)
+        CType(Me.splKartaPrzejazdy, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.splKartaPrzejazdy.ResumeLayout(False)
+        Me.tabPrzejazd.ResumeLayout(False)
+        Me.tbpPrzejazdOgolne.ResumeLayout(False)
+        Me.tbpPrzejazdOgolne.PerformLayout()
+        Me.tbpPrzejazdAutomatyzacja.ResumeLayout(False)
+        Me.splPrzejazdAutomatyzacja.Panel1.ResumeLayout(False)
+        Me.splPrzejazdAutomatyzacja.Panel2.ResumeLayout(False)
+        Me.splPrzejazdAutomatyzacja.Panel2.PerformLayout()
+        CType(Me.splPrzejazdAutomatyzacja, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.splPrzejazdAutomatyzacja.ResumeLayout(False)
+        Me.ctxSortowaniePrzejazdy.ResumeLayout(False)
+        Me.tbpPrzejazdRogatki.ResumeLayout(False)
+        Me.splPrzejazdRogatki.Panel1.ResumeLayout(False)
+        Me.splPrzejazdRogatki.Panel2.ResumeLayout(False)
+        Me.splPrzejazdRogatki.Panel2.PerformLayout()
+        CType(Me.splPrzejazdRogatki, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.splPrzejazdRogatki.ResumeLayout(False)
+        Me.tbpPrzejazdSygnDrog.ResumeLayout(False)
+        Me.splPrzejazdSygnDrog.Panel1.ResumeLayout(False)
+        Me.splPrzejazdSygnDrog.Panel2.ResumeLayout(False)
+        Me.splPrzejazdSygnDrog.Panel2.PerformLayout()
+        CType(Me.splPrzejazdSygnDrog, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.splPrzejazdSygnDrog.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -2205,4 +3073,81 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents Label37 As Label
     Friend WithEvents pnlKonfSygnOdcNast As Panel
     Friend WithEvents pnlKonfSygnSygnNast As Panel
+    Friend WithEvents tbpPrzejazdy As TabPage
+    Friend WithEvents splKartaPrzejazdy As SplitContainer
+    Friend WithEvents lvPrzejazdy As ListView
+    Friend WithEvents ColumnHeader11 As ColumnHeader
+    Friend WithEvents ColumnHeader12 As ColumnHeader
+    Friend WithEvents ColumnHeader13 As ColumnHeader
+    Friend WithEvents tabPrzejazd As TabControl
+    Friend WithEvents tbpPrzejazdOgolne As TabPage
+    Friend WithEvents tbpPrzejazdAutomatyzacja As TabPage
+    Friend WithEvents tbpPrzejazdRogatki As TabPage
+    Friend WithEvents tbpPrzejazdSygnDrog As TabPage
+    Friend WithEvents ColumnHeader14 As ColumnHeader
+    Friend WithEvents Label45 As Label
+    Friend WithEvents Label44 As Label
+    Friend WithEvents Label43 As Label
+    Friend WithEvents Label42 As Label
+    Friend WithEvents Label41 As Label
+    Friend WithEvents txtPrzejazdCzasPodnoszenie As TextBox
+    Friend WithEvents txtPrzejazdCzasOpuszczanie As TextBox
+    Friend WithEvents txtPrzejazdCzasSwiatla As TextBox
+    Friend WithEvents txtPrzejazdNazwa As TextBox
+    Friend WithEvents pnlPrzejazdKolorNieprzypisany As Panel
+    Friend WithEvents pnlPrzejazdKolorPrzypisany As Panel
+    Friend WithEvents Label48 As Label
+    Friend WithEvents Label47 As Label
+    Friend WithEvents Label46 As Label
+    Friend WithEvents Label49 As Label
+    Friend WithEvents pnlPrzejazdKolorInny As Panel
+    Friend WithEvents btnPrzejazdUsun As Button
+    Friend WithEvents btnPrzejazdDodaj As Button
+    Friend WithEvents txtPrzejazdRogatkaY As TextBox
+    Friend WithEvents txtPrzejazdRogatkaX As TextBox
+    Friend WithEvents txtPrzejazdRogatkaAdres As TextBox
+    Friend WithEvents btnPrzejazdRogatkaUsun As Button
+    Friend WithEvents btnPrzejazdRogatkaDodaj As Button
+    Friend WithEvents lvPrzejazdRogatki As ListView
+    Friend WithEvents Label52 As Label
+    Friend WithEvents Label51 As Label
+    Friend WithEvents Label50 As Label
+    Friend WithEvents splPrzejazdRogatki As SplitContainer
+    Friend WithEvents ColumnHeader15 As ColumnHeader
+    Friend WithEvents ColumnHeader16 As ColumnHeader
+    Friend WithEvents ColumnHeader17 As ColumnHeader
+    Friend WithEvents splPrzejazdSygnDrog As SplitContainer
+    Friend WithEvents lvPrzejazdSygnDrog As ListView
+    Friend WithEvents ColumnHeader18 As ColumnHeader
+    Friend WithEvents ColumnHeader19 As ColumnHeader
+    Friend WithEvents ColumnHeader20 As ColumnHeader
+    Friend WithEvents txtPrzejazdSygnDrogY As TextBox
+    Friend WithEvents txtPrzejazdSygnDrogX As TextBox
+    Friend WithEvents txtPrzejazdSygnDrogAdres As TextBox
+    Friend WithEvents Label55 As Label
+    Friend WithEvents Label54 As Label
+    Friend WithEvents Label53 As Label
+    Friend WithEvents btnPrzejazdSygnDrogUsun As Button
+    Friend WithEvents btnPrzejazdSygnDrogDodaj As Button
+    Friend WithEvents splPrzejazdAutomatyzacja As SplitContainer
+    Friend WithEvents lvPrzejazdAutomatyzacja As ListView
+    Friend WithEvents ColumnHeader21 As ColumnHeader
+    Friend WithEvents ColumnHeader22 As ColumnHeader
+    Friend WithEvents ColumnHeader23 As ColumnHeader
+    Friend WithEvents cboPrzejazdAutomatyzacjaSygnalizator As ComboBox
+    Friend WithEvents cboPrzejazdAutomatyzacjaOdcinekPrzyjazd As ComboBox
+    Friend WithEvents cboPrzejazdAutomatyzacjaOdcinekWyjazd As ComboBox
+    Friend WithEvents Label58 As Label
+    Friend WithEvents Label57 As Label
+    Friend WithEvents Label56 As Label
+    Friend WithEvents btnPrzejazdAutomatyzacjaUsun As Button
+    Friend WithEvents btnPrzejazdAutomatyzacjaDodaj As Button
+    Friend WithEvents pnlPrzejazdAutomatyzacjaKolorPrzyjazd As Panel
+    Friend WithEvents pnlPrzejazdAutomatyzacjaKolorWyjazd As Panel
+    Friend WithEvents cbPrzejazdTrybReczny As CheckBox
+    Friend WithEvents cbPrzejazdTrybAutomatyczny As CheckBox
+    Friend WithEvents ColumnHeader24 As ColumnHeader
+    Friend WithEvents pnlPrzejazdAutomatyzacjaKolorSygnalizator As Panel
+    Friend WithEvents ctxSortowaniePrzejazdy As ContextMenuStrip
+    Friend WithEvents ctxSortujPrzejazdy As ToolStripMenuItem
 End Class

@@ -32,6 +32,7 @@ Public Class Lampa
                 bw.Write(Adres)
                 bw.Write(X)
                 bw.Write(Y)
+
                 Return ms.ToArray()
             End Using
         End Using
@@ -49,6 +50,7 @@ Public Class Lampa
                 Y = br.ReadSingle
             End Using
         End Using
+
         konf.Pulpit.Lampy.Add(Me)
     End Sub
 

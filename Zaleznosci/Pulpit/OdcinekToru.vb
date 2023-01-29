@@ -22,6 +22,7 @@ Public Class OdcinekToru
                 bw.Write(Adres)
                 ZapiszTekst(bw, Nazwa)
                 ZapiszTekst(bw, Opis)
+
                 Return ms.ToArray()
             End Using
         End Using
@@ -31,6 +32,7 @@ Public Class OdcinekToru
         Dim id As Integer = PobierzInt32(dane, 0, 4)
         Dim odc As New OdcinekToru
         konf.OdcinkiTorow.Add(id, odc)
+
         Return odc
     End Function
 
@@ -43,6 +45,7 @@ Public Class OdcinekToru
                 Opis = OdczytajTekst(br)
             End Using
         End Using
+
         konf.Pulpit.OdcinkiTorow.Add(Me)
     End Sub
 End Class

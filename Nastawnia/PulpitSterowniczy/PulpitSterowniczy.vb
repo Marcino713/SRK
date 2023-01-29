@@ -239,6 +239,59 @@ Friend Class PulpitSterowniczy
         End Set
     End Property
 
+    Private _projZaznaczonyPrzejazd As Zaleznosci.PrzejazdKolejowoDrogowy
+    <Browsable(False)>
+    Public Property projZaznaczonyPrzejazd As Zaleznosci.PrzejazdKolejowoDrogowy
+        Get
+            Return _projZaznaczonyPrzejazd
+        End Get
+        Set(value As Zaleznosci.PrzejazdKolejowoDrogowy)
+            If value IsNot _projZaznaczonyPrzejazd Then
+                _projZaznaczonyPrzejazd = value
+                projZaznaczonyPrzejazdAutomatyzacja = Nothing
+                projZaznaczonyPrzejazdRogatka = Nothing
+                projZaznaczonyPrzejazdSygnDrog = Nothing
+                If _projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy Then Invalidate()
+            End If
+        End Set
+    End Property
+
+    Private _projZaznaczonyPrzejazdAutomatyzacja As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego
+    <Browsable(False)>
+    Public Property projZaznaczonyPrzejazdAutomatyzacja As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego
+        Get
+            Return _projZaznaczonyPrzejazdAutomatyzacja
+        End Get
+        Set(value As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego)
+            _projZaznaczonyPrzejazdAutomatyzacja = value
+            If _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja Then Invalidate()
+        End Set
+    End Property
+
+    Private _projZaznaczonyPrzejazdRogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego
+    <Browsable(False)>
+    Public Property projZaznaczonyPrzejazdRogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego
+        Get
+            Return _projZaznaczonyPrzejazdRogatka
+        End Get
+        Set(value As Zaleznosci.ElementWykonaczyPrzejazduKolejowego)
+            _projZaznaczonyPrzejazdRogatka = value
+            If _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyRogatki Then Invalidate()
+        End Set
+    End Property
+
+    Private _projZaznaczonyPrzejazdSygnDrog As Zaleznosci.ElementWykonaczyPrzejazduKolejowego
+    <Browsable(False)>
+    Public Property projZaznaczonyPrzejazdSygnDrog As Zaleznosci.ElementWykonaczyPrzejazduKolejowego
+        Get
+            Return _projZaznaczonyPrzejazdSygnDrog
+        End Get
+        Set(value As Zaleznosci.ElementWykonaczyPrzejazduKolejowego)
+            _projZaznaczonyPrzejazdSygnDrog = value
+            If _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdySygnDrog Then Invalidate()
+        End Set
+    End Property
+
     <Description("Wciśnięto przycisk na pulpicie"), Category(KATEG_ZDARZ)>
     Public Event WcisnietoPrzycisk(kostka As Zaleznosci.Kostka)
 
@@ -257,6 +310,9 @@ Friend Class PulpitSterowniczy
     <Description("Zmiana przypisania toru do odcinka"), Category(KATEG_ZDARZ_PROJ)>
     Public Event projZmianaPrzypisaniaToruDoOdcinka()
 
+    <Description("Zmiana przypisania kostki do przejazdu kolejowo-drogowego"), Category(KATEG_ZDARZ_PROJ)>
+    Public Event projZmianaPrzypisaniaKostkiDoPrzejazdu()
+
     Public Sub New()
         InitializeComponent()
         DoubleBuffered = True
@@ -269,6 +325,10 @@ Friend Class PulpitSterowniczy
         _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
         _projZaznaczonyOdcinek = Nothing
         _projZaznaczonyLicznik = Nothing
+        _projZaznaczonyPrzejazd = Nothing
+        _projZaznaczonyPrzejazdAutomatyzacja = Nothing
+        _projZaznaczonyPrzejazdRogatka = Nothing
+        _projZaznaczonyPrzejazdSygnDrog = Nothing
         _Rysownik.UniewaznioneSasiedztwoTorow = True
         ZaznaczonaKostka = Nothing  'przypisanie do własności zamiast zmiennej, żeby wywołały się zdarzenia
         projZaznaczonaLampa = Nothing
@@ -326,19 +386,19 @@ Friend Class PulpitSterowniczy
 
         If TrybProjektowy Then
 
-            If projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Then
+            If _projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Then
                 If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
                     Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-                    If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.Tor AndAlso projZaznaczonyOdcinek IsNot Nothing Then
+                    If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.Tor AndAlso _projZaznaczonyOdcinek IsNot Nothing Then
 
                         Dim t As Zaleznosci.Tor = DirectCast(kostka, Zaleznosci.Tor)
-                        Dim nalezyDoTegoOdcinka As Boolean = t.NalezyDoOdcinka Is projZaznaczonyOdcinek
-                        If t.NalezyDoOdcinka IsNot Nothing Then t.NalezyDoOdcinka.KostkiTory.Remove(t)
+                        Dim nalezyDoTegoOdcinka As Boolean = t.NalezyDoOdcinka Is _projZaznaczonyOdcinek
+                        t.NalezyDoOdcinka?.KostkiTory.Remove(t)
                         If nalezyDoTegoOdcinka Then
                             t.NalezyDoOdcinka = Nothing
                         Else
-                            t.NalezyDoOdcinka = projZaznaczonyOdcinek
-                            projZaznaczonyOdcinek.KostkiTory.Add(t)
+                            t.NalezyDoOdcinka = _projZaznaczonyOdcinek
+                            _projZaznaczonyOdcinek.KostkiTory.Add(t)
                         End If
                         RaiseEvent projZmianaPrzypisaniaToruDoOdcinka()
                         Invalidate()
@@ -346,10 +406,30 @@ Friend Class PulpitSterowniczy
                     End If
                 End If
 
-            ElseIf projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then
+            ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy Then
+                If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
+                    Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
+                    If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.PrzejazdKolejowy AndAlso _projZaznaczonyPrzejazd IsNot Nothing Then
+
+                        Dim prz As Zaleznosci.PrzejazdKolejowy = DirectCast(kostka, Zaleznosci.PrzejazdKolejowy)
+                        Dim nalezyDoTegoPrzejazdu As Boolean = prz.NalezyDoPrzejazdu Is _projZaznaczonyPrzejazd
+                        prz.NalezyDoPrzejazdu?.KostkiPrzejazdy.Remove(prz)
+                        If nalezyDoTegoPrzejazdu Then
+                            prz.NalezyDoPrzejazdu = Nothing
+                        Else
+                            prz.NalezyDoPrzejazdu = _projZaznaczonyPrzejazd
+                            _projZaznaczonyPrzejazd.KostkiPrzejazdy.Add(prz)
+                        End If
+                        RaiseEvent projZmianaPrzypisaniaKostkiDoPrzejazdu()
+                        Invalidate()
+
+                    End If
+                End If
+
+            ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then
                 projZaznaczonaLampa = PobierzKliknietaLampe(e.Location)
 
-            ElseIf projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then
+            ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then
 
                 If _Pulpit.CzyKostkaNiepusta(p) Then
                     ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)

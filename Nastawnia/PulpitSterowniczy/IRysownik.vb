@@ -4,6 +4,7 @@
     ReadOnly Property KOLOR_TOR_PRZYPISANY As Color
     ReadOnly Property KOLOR_TOR_NIEPRZYPISANY As Color
     ReadOnly Property KOLOR_TOR_LICZNIK_ODCINEK_2 As Color
+    ReadOnly Property KOLOR_TLO_SYGNALIZATOR_PRZEJAZDOWY As Color
 
     Property UniewaznioneSasiedztwoTorow As Boolean
 

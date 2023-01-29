@@ -29,6 +29,7 @@ Public Class ParaLicznikowOsi
                 bw.Write(Y2)
                 bw.Write(If(Odcinek1 Is Nothing, PUSTE_ODWOLANIE, konf.OdcinkiTorow(Odcinek1)))
                 bw.Write(If(Odcinek2 Is Nothing, PUSTE_ODWOLANIE, konf.OdcinkiTorow(Odcinek2)))
+
                 Return ms.ToArray()
             End Using
         End Using

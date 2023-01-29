@@ -47,6 +47,7 @@
     Private ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")         'tor przypisany do zaznaczonego odcinka
     Private ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")       'tor nieprzypisany do żadnego odcinka
     Private ReadOnly KOLOR_TOR_LICZNIK_ODCINEK_2 As Color = KolorRGB("#D11AFF")   'drugi odcinek obsługiwany przez parę liczników osi
+    Private ReadOnly KOLOR_TLO_SYGNALIZATOR_TOP As Color = KolorRGB("#FF9900")    'tło sygnalizatora ostrzegawczego przejazdowego, który jest przypisany do zaznaczonego obiektu automatyzacji przejazdu
     Private PEDZEL_TLO_KOSTKI As TPedzel
     Private PEDZEL_KRAWEDZIE As TOlowek
     Private PEDZEL_TOR_WOLNY As TPedzel
@@ -80,6 +81,11 @@
     Private PEDZEL_KOLKO_TEKST As TPedzel
     Private PEDZEL_OBSZAR_ZAZN_RAMKA As TOlowek
     Private PEDZEL_OBSZAR_ZAZN_TLO As TPedzel
+    Private PEDZEL_PRZEJAZD_SYGN_TOP As TPedzel
+    Private PEDZEL_PRZEJAZD_ROGATKA As TPedzel
+    Private PEDZEL_PRZEJAZD_ROGATKA_ZAZN As TPedzel
+    Private PEDZEL_PRZEJAZD_SYGN_DROG As TPedzel
+    Private PEDZEL_PRZEJAZD_SYGN_DROG_ZAZN As TPedzel
 
     Private ReadOnly PUNKTY_KIERUNKU As PointF()
     Private ReadOnly PUNKTY_SZCZELINY_KIERUNKU As PointF()
@@ -101,6 +107,7 @@
     Private zainicjalizowano As Boolean = False
     Private pulpit As Zaleznosci.Pulpit
     Private rysujSzczeliny As Boolean
+    Private sygnTopWyrozniony As Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy
 
     Private ReadOnly Property IRysownik_KOLKO_SZER As Single Implements IRysownik.KOLKO_SZER
         Get
@@ -129,6 +136,12 @@
     Private ReadOnly Property IRysownik_KOLOR_TOR_LICZNIK_ODCINEK_2 As Color Implements IRysownik.KOLOR_TOR_LICZNIK_ODCINEK_2
         Get
             Return KOLOR_TOR_LICZNIK_ODCINEK_2
+        End Get
+    End Property
+
+    Private ReadOnly Property IRysownik_KOLOR_TLO_SYGNALIZATOR_PRZEJAZDOWY As Color Implements IRysownik.KOLOR_TLO_SYGNALIZATOR_PRZEJAZDOWY
+        Get
+            Return KOLOR_TLO_SYGNALIZATOR_TOP
         End Get
     End Property
 
@@ -179,6 +192,11 @@
         PEDZEL_KOLKO_TEKST = urz.UtworzPedzel(KolorRGB("#FF1A71"))
         PEDZEL_OBSZAR_ZAZN_RAMKA = urz.UtworzOlowek(KolorRGB("#00D8DB"))
         PEDZEL_OBSZAR_ZAZN_TLO = urz.UtworzPedzel(KolorRGB("#00D8DB", 70))
+        PEDZEL_PRZEJAZD_SYGN_TOP = urz.UtworzPedzel(KOLOR_TLO_SYGNALIZATOR_TOP)
+        PEDZEL_PRZEJAZD_ROGATKA = urz.UtworzPedzel(KolorRGB("#00BBFF"))
+        PEDZEL_PRZEJAZD_ROGATKA_ZAZN = urz.UtworzPedzel(KolorRGB("#000DFF"))
+        PEDZEL_PRZEJAZD_SYGN_DROG = urz.UtworzPedzel(KolorRGB("#FF66D1"))
+        PEDZEL_PRZEJAZD_SYGN_DROG_ZAZN = urz.UtworzPedzel(KolorRGB("#CC0047"))
         CZCIONKA = urz.UtworzCzcionke("Arial", 0.17)
 
         zainicjalizowano = True
@@ -192,9 +210,13 @@
         If Not zainicjalizowano Then Exit Sub
 
         pulpit = ps.Pulpit
+        sygnTopWyrozniony = If(ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja, ps.projZaznaczonyPrzejazdAutomatyzacja?.Sygnalizator, Nothing)
         rysujSzczeliny = Not (
-            ps.TrybProjektowy And
-            (ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Or ps.projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow)
+            ps.TrybProjektowy And (
+                ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Or
+                ps.projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Or
+                ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy Or
+                ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja)
             )
 
         urz.RozpocznijRysunek(grp, ps.BackColor)
@@ -248,6 +270,22 @@
             End If
         End If
 
+        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyRogatki AndAlso ps.projZaznaczonyPrzejazd IsNot Nothing Then
+            Dim pedzel As TPedzel
+            For Each rogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego In ps.projZaznaczonyPrzejazd.Rogatki
+                pedzel = If(rogatka Is ps.projZaznaczonyPrzejazdRogatka, PEDZEL_PRZEJAZD_ROGATKA_ZAZN, PEDZEL_PRZEJAZD_ROGATKA)
+                RysujKolko(pedzel, rogatka.X, rogatka.Y)
+            Next
+        End If
+
+        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdySygnDrog AndAlso ps.projZaznaczonyPrzejazd IsNot Nothing Then
+            Dim pedzel As TPedzel
+            For Each sygnDrog As Zaleznosci.ElementWykonaczyPrzejazduKolejowego In ps.projZaznaczonyPrzejazd.SygnalizatoryDrogowe
+                pedzel = If(sygnDrog Is ps.projZaznaczonyPrzejazdSygnDrog, PEDZEL_PRZEJAZD_SYGN_DROG_ZAZN, PEDZEL_PRZEJAZD_SYGN_DROG)
+                RysujKolko(pedzel, sygnDrog.X, sygnDrog.Y)
+            Next
+        End If
+
         If Not ps.TrybProjektowy AndAlso ps.MozliwoscZaznaczeniaLamp AndAlso Not ps.PoczatekZaznaczeniaLamp.IsEmpty AndAlso Not ps.KoniecZaznaczeniaLamp.IsEmpty Then
             RysujZaznaczenieLamp(ps.PoczatekZaznaczeniaLamp, ps.KoniecZaznaczeniaLamp)
         End If
@@ -259,6 +297,8 @@
         UstawKolorSzczeliny(k)
         If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Then UstawKolorToru(k, ps.projZaznaczonyOdcinek)
         If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Then UstawKolorToruDlaLicznika(k, ps.projZaznaczonyLicznik)
+        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy Then UstawKolorToruDlaPrzejazdu(k, ps.projZaznaczonyPrzejazd)
+        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja Then UstawKolorToruDlaPrzejazduAutomatyzacja(k, ps.projZaznaczonyPrzejazdAutomatyzacja)
         Dim zazn As Boolean = k Is ps.ZaznaczonaKostka AndAlso ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic AndAlso (ps.TrybProjektowy Or ps.MozliwoscZaznaczeniaToru)
         RysujKostke(x, y, k, zazn)
     End Sub
@@ -529,13 +569,20 @@
     End Sub
 
     Private Sub RysujSygnalizatorTOP(sygnalizator As Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy)
-        Dim pedzBial As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraOstrzegawczegoPrzejazdowego.PrzejazdZamkniety, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
-        Dim pedzPomc As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraOstrzegawczegoPrzejazdowego.PrzejazdUszkodzony, PEDZEL_SYGN_POMC_JASNY, PEDZEL_SYGN_POMC)
+        Dim wyrozniony As Boolean = sygnalizator Is sygnTopWyrozniony
+        Dim pedzTlo As TPedzel = If(wyrozniony, PEDZEL_PRZEJAZD_SYGN_TOP, PEDZEL_SYGN_TLO)
 
         RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
-        urz.WypelnijTloSygnalizatora(PEDZEL_SYGN_TLO, SYGN_POZ, 2 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
-        urz.WypelnijKolo(pedzBial, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
-        urz.WypelnijKolo(pedzPomc, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+        urz.WypelnijTloSygnalizatora(pedzTlo, SYGN_POZ, 2 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
+
+        If Not wyrozniony Then
+            Dim pedzBial As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraOstrzegawczegoPrzejazdowego.PrzejazdZamkniety, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
+            Dim pedzPomc As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraOstrzegawczegoPrzejazdowego.PrzejazdUszkodzony, PEDZEL_SYGN_POMC_JASNY, PEDZEL_SYGN_POMC)
+
+            urz.WypelnijKolo(pedzBial, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+            urz.WypelnijKolo(pedzPomc, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+        End If
+
         RysujSlupSygnalizatora(2)
         RysujNazweSygnalizatora(sygnalizator.Nazwa)
     End Sub
@@ -655,14 +702,44 @@
 
     Private Sub UstawKolorToruDlaLicznika(k As Zaleznosci.Kostka, zazn As Zaleznosci.ParaLicznikowOsi)
         pedzelToru = PEDZEL_TOR_WOLNY
-        If zazn Is Nothing Then Exit Sub
 
-        If TypeOf k Is Zaleznosci.Tor Then
+        If zazn IsNot Nothing AndAlso TypeOf k Is Zaleznosci.Tor Then
             Dim t As Zaleznosci.Tor = DirectCast(k, Zaleznosci.Tor)
+
             If t.NalezyDoOdcinka IsNot Nothing Then
                 If t.NalezyDoOdcinka Is zazn.Odcinek1 Then
                     pedzelToru = PEDZEL_TOR_TEN_ODCINEK
                 ElseIf t.NalezyDoOdcinka Is zazn.Odcinek2 Then
+                    pedzelToru = PEDZEL_TOR_LICZNIK_ODCINEK_2
+                End If
+            End If
+        End If
+    End Sub
+
+    Private Sub UstawKolorToruDlaPrzejazdu(k As Zaleznosci.Kostka, zazn As Zaleznosci.PrzejazdKolejowoDrogowy)
+        pedzelToru = PEDZEL_TOR_WOLNY
+
+        If TypeOf k Is Zaleznosci.PrzejazdKolejowy Then
+            Dim p As Zaleznosci.PrzejazdKolejowy = CType(k, Zaleznosci.PrzejazdKolejowy)
+
+            If zazn IsNot Nothing AndAlso p.NalezyDoPrzejazdu Is zazn Then
+                pedzelToru = PEDZEL_TOR_TEN_ODCINEK
+            ElseIf p.NalezyDoPrzejazdu Is Nothing Then
+                pedzelToru = PEDZEL_TOR_NIEPRZYPISANY
+            End If
+        End If
+    End Sub
+
+    Private Sub UstawKolorToruDlaPrzejazduAutomatyzacja(k As Zaleznosci.Kostka, zazn As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego)
+        pedzelToru = PEDZEL_TOR_WOLNY
+
+        If zazn IsNot Nothing AndAlso TypeOf k Is Zaleznosci.Tor Then
+            Dim t As Zaleznosci.Tor = DirectCast(k, Zaleznosci.Tor)
+
+            If t.NalezyDoOdcinka IsNot Nothing Then
+                If t.NalezyDoOdcinka Is zazn.OdcinekWyjazd Then
+                    pedzelToru = PEDZEL_TOR_TEN_ODCINEK
+                ElseIf t.NalezyDoOdcinka Is zazn.OdcinekPrzyjazd Then
                     pedzelToru = PEDZEL_TOR_LICZNIK_ODCINEK_2
                 End If
             End If
