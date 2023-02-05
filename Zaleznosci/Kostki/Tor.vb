@@ -39,6 +39,7 @@ Public Enum ZajetoscToru As Byte
     Wolny
     Zajety
     PrzebiegUtwierdzony
+    BlokadaNieustawiona
 End Enum
 
 <Flags>

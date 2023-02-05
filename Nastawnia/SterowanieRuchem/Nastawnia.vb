@@ -11,6 +11,7 @@ Public Class wndNastawnia
     Private WlaczoneOknoWyboruPost As Boolean = False
     Private Sygnalizatory As New Dictionary(Of UShort, Zaleznosci.Kostka)
     Private Rozjazdy As New Dictionary(Of UShort, Zaleznosci.Rozjazd)
+    Private Kierunki As New Dictionary(Of UShort, Zaleznosci.Kierunek)
     Private Lampy As New Dictionary(Of UShort, Zaleznosci.Lampa)
     Private PredkoscMaksymalna As UShort
     Private KursorDomyslny As Cursor
@@ -189,12 +190,6 @@ Public Class wndNastawnia
                     Klient.WyslijUstawStanSygnalizatora(New Zaleznosci.UstawStanSygnalizatora() With {.Adres = prz.ObslugiwanySygnalizator.Adres, .Stan = stan})
                 End If
 
-            Case Zaleznosci.TypKostki.Kierunek
-                Dim kier As Zaleznosci.Kierunek = DirectCast(kostka, Zaleznosci.Kierunek)
-                If kier.NalezyDoOdcinka IsNot Nothing Then
-                    Klient.WyslijUstawKierunek(New Zaleznosci.UstawKierunek() With {.Adres = kier.NalezyDoOdcinka.Adres, .Kierunek = kier.KierunekWlaczany})
-                End If
-
         End Select
     End Sub
 
@@ -284,6 +279,42 @@ Public Class wndNastawnia
         plpPulpit.Invalidate()
     End Sub
 
+    Private Sub Klient_OdebranoZmienionoKierunek(kom As Zaleznosci.ZmienionoKierunek) Handles Klient.OdebranoZmienionoKierunek
+        Dim kier As Zaleznosci.Kierunek = Nothing
+
+        If kom.Blad = Zaleznosci.BladZmianyKierunku.Brak AndAlso Kierunki.TryGetValue(kom.Adres, kier) Then
+            Select Case kom.Stan
+                Case Zaleznosci.ObecnyStanKierunku.Neutralny
+                    kier.UstawionyKierunek = Zaleznosci.UstawionyKierunekSBL.Zaden
+
+                Case Zaleznosci.ObecnyStanKierunku.Wyjazd
+                    kier.UstawionyKierunek = If(kier.KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Lewo, Zaleznosci.UstawionyKierunekSBL.Lewo, Zaleznosci.UstawionyKierunekSBL.Prawo)
+
+                Case Zaleznosci.ObecnyStanKierunku.Przyjazd
+                    kier.UstawionyKierunek = If(kier.KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Lewo, Zaleznosci.UstawionyKierunekSBL.Prawo, Zaleznosci.UstawionyKierunekSBL.Lewo)
+
+            End Select
+
+            Select Case kom.StanZmiany
+                Case Zaleznosci.StanZmianyKierunku.Brak
+                    kier.UstawionyStanZmiany = Zaleznosci.UstawionyStanZmianyKierunkuSBL.Zaden
+
+                Case Zaleznosci.StanZmianyKierunku.ZadanieWlaczenia
+                    kier.UstawionyStanZmiany = Zaleznosci.UstawionyStanZmianyKierunkuSBL.OczekiwanieNaPotwierdzenie
+
+                Case Zaleznosci.StanZmianyKierunku.ZadanieWlaczenia
+                Case Zaleznosci.StanZmianyKierunku.AnulowanieWlaczenia
+                    kier.UstawionyStanZmiany = Zaleznosci.UstawionyStanZmianyKierunkuSBL.Wlaczanie
+
+                Case Zaleznosci.StanZmianyKierunku.Zwalnianie
+                    kier.UstawionyStanZmiany = Zaleznosci.UstawionyStanZmianyKierunkuSBL.Wylaczanie
+
+            End Select
+
+            plpPulpit.Invalidate()
+        End If
+    End Sub
+
     Private Sub Klient_OdebranoZmienionoJasnoscLamp(kom As Zaleznosci.ZmienionoJasnoscLamp) Handles Klient.OdebranoZmienionoJasnoscLamp
         Dim l As Zaleznosci.Lampa = Nothing
         Dim zaznaczona As Integer = -1
@@ -347,6 +378,7 @@ Public Class wndNastawnia
 
         Sygnalizatory = pulpit.PobierzSygnalizatory()
         Rozjazdy = pulpit.PobierzRozjazdy()
+        Kierunki = pulpit.PobierzKierunkiPoAdresieOdcinka()
         Lampy = pulpit.PobierzLampy()
     End Sub
 

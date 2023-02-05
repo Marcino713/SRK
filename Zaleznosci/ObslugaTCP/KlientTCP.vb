@@ -29,7 +29,6 @@ Public Class KlientTCP
     Public Event OdebranoUwierzytelnionoPoprawnie(kom As UwierzytelnionoPoprawnie)
     Public Event OdebranoWybranoPosterunek(kom As WybranoPosterunek)
     Public Event OdebranoZakonczonoSesjeKlienta(kom As ZakonczonoSesjeKlienta)
-    Public Event OdebranoZazadanoUstawieniaKierunku(kom As ZazadanoUstawieniaKierunku)
     Public Event OdebranoZmienionoJasnoscLamp(kom As ZmienionoJasnoscLamp)
     Public Event OdebranoZmienionoKierunek(kom As ZmienionoKierunek)
     Public Event OdebranoZmienionoPredkoscDozwolona(kom As ZmienionoPredkoscDozwolona)
@@ -82,11 +81,6 @@ Public Class KlientTCP
         DaneFabrykiObiektow.Add(TypKomunikatu.ZAKONCZONO_SESJE_KLIENTA, New PrzetwOdebrKomunikatu(
             AddressOf ZakonczonoSesjeKlienta.Otworz,
             AddressOf ZakSesjeKlienta
-        ))
-
-        DaneFabrykiObiektow.Add(TypKomunikatu.ZAZADANO_USTAWIENIA_KIERUNKU, New PrzetwOdebrKomunikatu(
-            AddressOf ZazadanoUstawieniaKierunku.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoZazadanoUstawieniaKierunku(CType(kom, ZazadanoUstawieniaKierunku))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_JASNOSC_LAMP, New PrzetwOdebrKomunikatu(
@@ -159,6 +153,10 @@ Public Class KlientTCP
     End Sub
 
     Public Sub WyslijUstawKierunek(kom As UstawKierunek)
+        Klient?.WyslijKomunikat(kom)
+    End Sub
+
+    Public Sub WyslijPotwierdzKierunek(kom As PotwierdzKierunek)
         Klient?.WyslijKomunikat(kom)
     End Sub
 

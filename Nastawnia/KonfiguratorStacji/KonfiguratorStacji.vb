@@ -8,6 +8,7 @@
     Private Const BRAK_ODCINKA As String = "(brak odcinka)"
     Private Shared ReadOnly PUSTY_CBO_KOSTKA As New ObiektComboBox(Of Zaleznosci.Kostka)(Nothing, "")
     Private Shared ReadOnly PUSTY_CBO_ODCINEK_TORU As New ObiektComboBox(Of Zaleznosci.OdcinekToru)(Nothing, "")
+    Private ReadOnly STAWNOSC_SBL As New Dictionary(Of Zaleznosci.StawnoscSBL, ObiektStawnosciSBL)
 
     Private WyswietlonyPanelKonf As Panel
     Private ZdarzeniaWlaczone As Boolean = True
@@ -48,6 +49,8 @@
         UstawAktywnoscPolPrzejazdAutomatyzacja(False)
         UstawAktywnoscPolPrzejazdRogatka(False)
         UstawAktywnoscPolPrzejazdSygnDrog(False)
+
+        PokazStawnoscSBL()
 
         pnlTorKolorTenOdcinek.BackColor = plpPulpit.Rysownik.KOLOR_TOR_TEN_ODCINEK
         pnlTorKolorInnyOdcinek.BackColor = plpPulpit.Rysownik.KOLOR_TOR_PRZYPISANY
@@ -610,20 +613,33 @@
 
 
     'Kierunek
+    Private Sub txtKonfKierNazwa_TextChanged() Handles txtKonfKierNazwa.TextChanged
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).Nazwa = txtKonfKierNazwa.Text
+        plpPulpit.Invalidate()
+    End Sub
+
     Private Sub txtKonfKierPredkosc_TextChanged() Handles txtKonfKierPredkosc.TextChanged
         DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).PredkoscZasadnicza = PobierzKrotkaLiczbeNieujemna(txtKonfKierPredkosc)
     End Sub
 
-    Private Sub rbKonfKierZasadniczy_CheckedChanged() Handles rbKonfKierZasadniczy.CheckedChanged
-        If rbKonfKierZasadniczy.Checked Then
-            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWlaczany = Zaleznosci.KierunekWlaczanyEnum.Zasadniczy
+    Private Sub rbKonfKierWyjazdLewo_CheckedChanged() Handles rbKonfKierWyjazdLewo.CheckedChanged
+        If rbKonfKierWyjazdLewo.Checked Then
+            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Lewo
+            plpPulpit.Invalidate()
         End If
     End Sub
 
-    Private Sub rbKonfKierPrzeciwny_CheckedChanged() Handles rbKonfKierPrzeciwny.CheckedChanged
-        If rbKonfKierPrzeciwny.Checked Then
-            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWlaczany = Zaleznosci.KierunekWlaczanyEnum.Przeciwny
+    Private Sub rbKonfKierWyjazdPrawo_CheckedChanged() Handles rbKonfKierWyjazdPrawo.CheckedChanged
+        If rbKonfKierWyjazdPrawo.Checked Then
+            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Prawo
+            plpPulpit.Invalidate()
         End If
+    End Sub
+
+    Private Sub cboKonfKierStawnosc_SelectedIndexChanged() Handles cboKonfKierStawnosc.SelectedIndexChanged
+        If cboKonfKierStawnosc.SelectedItem Is Nothing Then Exit Sub
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).Stawnosc =
+            DirectCast(cboKonfKierStawnosc.SelectedItem, ObiektComboBox(Of ObiektStawnosciSBL)).Wartosc.Stawnosc
     End Sub
 
 
@@ -804,17 +820,32 @@
     Private Function PokazKonfKier() As Panel
         Dim kierunek As Zaleznosci.Kierunek = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek)
 
+        txtKonfKierNazwa.Text = kierunek.Nazwa
         txtKonfKierPredkosc.Text = kierunek.PredkoscZasadnicza.ToString
-        If kierunek.KierunekWlaczany = Zaleznosci.KierunekWlaczanyEnum.Zasadniczy Then
-            rbKonfKierZasadniczy.Checked = True
+        If kierunek.KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Lewo Then
+            rbKonfKierWyjazdLewo.Checked = True
         Else
-            rbKonfKierPrzeciwny.Checked = True
+            rbKonfKierWyjazdPrawo.Checked = True
         End If
+        ZaznaczElement(cboKonfKierStawnosc, STAWNOSC_SBL(kierunek.Stawnosc))
 
         Return pnlKonfKier
     End Function
 
     'Inne
+    Private Sub PokazStawnoscSBL()
+        cboKonfKierStawnosc.Items.Clear()
+        DodajRodzajStawnosciSBL(Zaleznosci.StawnoscSBL.Dwustawna, "Dwustawna")
+        DodajRodzajStawnosciSBL(Zaleznosci.StawnoscSBL.Trzystawna, "Trzystawna")
+        DodajRodzajStawnosciSBL(Zaleznosci.StawnoscSBL.Czterostawna, "Czterostawna")
+    End Sub
+
+    Private Sub DodajRodzajStawnosciSBL(stawnosc As Zaleznosci.StawnoscSBL, opis As String)
+        Dim st As New ObiektStawnosciSBL() With {.Stawnosc = stawnosc}
+        STAWNOSC_SBL.Add(stawnosc, st)
+        cboKonfKierStawnosc.Items.Add(New ObiektComboBox(Of ObiektStawnosciSBL)(st, opis))
+    End Sub
+
     Private Function PrzetworzZaznaczenieRozjazduZaleznego(cbo As ComboBox, rbPlus As RadioButton, rbMinus As RadioButton, ByRef rozjazd As Zaleznosci.Rozjazd) As Boolean
         If cbo.SelectedItem Is Nothing Then Return False
 
@@ -1901,6 +1932,9 @@
         Return liczba
     End Function
 
+    Private Class ObiektStawnosciSBL
+        Public Stawnosc As Zaleznosci.StawnoscSBL
+    End Class
 #End Region 'Reszta
 
 End Class

@@ -162,6 +162,25 @@ Public Class Pulpit
         Return PobierzKostki(Of Rozjazd)(AddressOf Kostka.CzyRozjazd)
     End Function
 
+    Public Function PobierzKierunkiPoAdresieOdcinka() As Dictionary(Of UShort, Kierunek)
+        Dim slownik As New Dictionary(Of UShort, Kierunek)
+
+        PrzeiterujKostki(Sub(x, y, k)
+                             If k.Typ = TypKostki.Kierunek Then
+                                 Dim kier As Kierunek = CType(k, Kierunek)
+
+                                 If kier.NalezyDoOdcinka IsNot Nothing Then
+                                     Dim adr As UShort = kier.NalezyDoOdcinka.Adres
+                                     If Not slownik.ContainsKey(adr) Then
+                                         slownik.Add(adr, kier)
+                                     End If
+                                 End If
+                             End If
+                         End Sub)
+
+        Return slownik
+    End Function
+
     Public Function PobierzLampy() As Dictionary(Of UShort, Lampa)
         Dim dict As New Dictionary(Of UShort, Lampa)
 

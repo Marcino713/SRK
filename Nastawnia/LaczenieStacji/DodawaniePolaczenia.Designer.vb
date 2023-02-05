@@ -76,10 +76,10 @@ Partial Class wndDodawaniePolaczenia
         Me.Label5.AutoSize = True
         Me.Label5.Location = New System.Drawing.Point(9, 9)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(371, 26)
+        Me.Label5.Size = New System.Drawing.Size(254, 26)
         Me.Label5.TabIndex = 4
-        Me.Label5.Text = "Na listach wyświetlane są odcinki torów posiadające dwa przeciwne przyciski" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "usta" &
-    "wiania kierunku."
+        Me.Label5.Text = "Na listach wyświetlane są odcinki torów posiadające" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "jedną kostkę ustawiania kier" &
+    "unku blokady."
         '
         'cboPosterunek1
         '

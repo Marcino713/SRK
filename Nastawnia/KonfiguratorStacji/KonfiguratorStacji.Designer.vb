@@ -36,7 +36,6 @@ Partial Class wndKonfiguratorStacji
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuNazwa = New System.Windows.Forms.ToolStripMenuItem()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
-        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
         Me.Label36 = New System.Windows.Forms.Label()
         Me.tabUstawienia = New System.Windows.Forms.TabControl()
         Me.tbpPulpit = New System.Windows.Forms.TabPage()
@@ -82,8 +81,12 @@ Partial Class wndKonfiguratorStacji
         Me.Label14 = New System.Windows.Forms.Label()
         Me.Label13 = New System.Windows.Forms.Label()
         Me.pnlKonfKier = New System.Windows.Forms.Panel()
-        Me.rbKonfKierPrzeciwny = New System.Windows.Forms.RadioButton()
-        Me.rbKonfKierZasadniczy = New System.Windows.Forms.RadioButton()
+        Me.cboKonfKierStawnosc = New System.Windows.Forms.ComboBox()
+        Me.rbKonfKierWyjazdPrawo = New System.Windows.Forms.RadioButton()
+        Me.rbKonfKierWyjazdLewo = New System.Windows.Forms.RadioButton()
+        Me.txtKonfKierNazwa = New System.Windows.Forms.TextBox()
+        Me.Label60 = New System.Windows.Forms.Label()
+        Me.Label59 = New System.Windows.Forms.Label()
         Me.Label35 = New System.Windows.Forms.Label()
         Me.txtKonfKierPredkosc = New System.Windows.Forms.TextBox()
         Me.Label34 = New System.Windows.Forms.Label()
@@ -270,6 +273,7 @@ Partial Class wndKonfiguratorStacji
         Me.Label53 = New System.Windows.Forms.Label()
         Me.btnPrzejazdSygnDrogUsun = New System.Windows.Forms.Button()
         Me.btnPrzejazdSygnDrogDodaj = New System.Windows.Forms.Button()
+        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
         Me.mnuMenu.SuspendLayout()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
@@ -431,35 +435,6 @@ Partial Class wndKonfiguratorStacji
         Me.splOkno.Size = New System.Drawing.Size(1006, 670)
         Me.splOkno.SplitterDistance = 788
         Me.splOkno.TabIndex = 1
-        '
-        'plpPulpit
-        '
-        Me.plpPulpit.AllowDrop = True
-        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
-        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
-        Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
-        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
-        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
-        Me.plpPulpit.Name = "plpPulpit"
-        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
-        Me.plpPulpit.projZaznaczonaLampa = Nothing
-        Me.plpPulpit.projZaznaczonyLicznik = Nothing
-        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
-        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit1.Adres = CType(0US, UShort)
-        Pulpit1.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit1
-        Me.plpPulpit.Size = New System.Drawing.Size(785, 645)
-        Me.plpPulpit.TabIndex = 4
-        Me.plpPulpit.TrybProjektowy = True
-        Me.plpPulpit.ZaznaczonaKostka = Nothing
         '
         'Label36
         '
@@ -957,61 +932,103 @@ Partial Class wndKonfiguratorStacji
         '
         Me.pnlKonfKier.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.pnlKonfKier.Controls.Add(Me.rbKonfKierPrzeciwny)
-        Me.pnlKonfKier.Controls.Add(Me.rbKonfKierZasadniczy)
+        Me.pnlKonfKier.Controls.Add(Me.cboKonfKierStawnosc)
+        Me.pnlKonfKier.Controls.Add(Me.rbKonfKierWyjazdPrawo)
+        Me.pnlKonfKier.Controls.Add(Me.rbKonfKierWyjazdLewo)
+        Me.pnlKonfKier.Controls.Add(Me.txtKonfKierNazwa)
+        Me.pnlKonfKier.Controls.Add(Me.Label60)
+        Me.pnlKonfKier.Controls.Add(Me.Label59)
         Me.pnlKonfKier.Controls.Add(Me.Label35)
         Me.pnlKonfKier.Controls.Add(Me.txtKonfKierPredkosc)
         Me.pnlKonfKier.Controls.Add(Me.Label34)
         Me.pnlKonfKier.Location = New System.Drawing.Point(3, 30)
         Me.pnlKonfKier.Name = "pnlKonfKier"
-        Me.pnlKonfKier.Size = New System.Drawing.Size(167, 81)
+        Me.pnlKonfKier.Size = New System.Drawing.Size(167, 162)
         Me.pnlKonfKier.TabIndex = 1
         Me.pnlKonfKier.Visible = False
         '
-        'rbKonfKierPrzeciwny
+        'cboKonfKierStawnosc
         '
-        Me.rbKonfKierPrzeciwny.AutoSize = True
-        Me.rbKonfKierPrzeciwny.Location = New System.Drawing.Point(85, 55)
-        Me.rbKonfKierPrzeciwny.Name = "rbKonfKierPrzeciwny"
-        Me.rbKonfKierPrzeciwny.Size = New System.Drawing.Size(73, 17)
-        Me.rbKonfKierPrzeciwny.TabIndex = 12
-        Me.rbKonfKierPrzeciwny.TabStop = True
-        Me.rbKonfKierPrzeciwny.Text = "Przeciwny"
-        Me.rbKonfKierPrzeciwny.UseVisualStyleBackColor = True
+        Me.cboKonfKierStawnosc.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfKierStawnosc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfKierStawnosc.FormattingEnabled = True
+        Me.cboKonfKierStawnosc.Location = New System.Drawing.Point(0, 133)
+        Me.cboKonfKierStawnosc.Name = "cboKonfKierStawnosc"
+        Me.cboKonfKierStawnosc.Size = New System.Drawing.Size(167, 21)
+        Me.cboKonfKierStawnosc.TabIndex = 14
         '
-        'rbKonfKierZasadniczy
+        'rbKonfKierWyjazdPrawo
         '
-        Me.rbKonfKierZasadniczy.AutoSize = True
-        Me.rbKonfKierZasadniczy.Location = New System.Drawing.Point(0, 55)
-        Me.rbKonfKierZasadniczy.Name = "rbKonfKierZasadniczy"
-        Me.rbKonfKierZasadniczy.Size = New System.Drawing.Size(79, 17)
-        Me.rbKonfKierZasadniczy.TabIndex = 11
-        Me.rbKonfKierZasadniczy.TabStop = True
-        Me.rbKonfKierZasadniczy.Text = "Zasadniczy"
-        Me.rbKonfKierZasadniczy.UseVisualStyleBackColor = True
+        Me.rbKonfKierWyjazdPrawo.AutoSize = True
+        Me.rbKonfKierWyjazdPrawo.Location = New System.Drawing.Point(57, 94)
+        Me.rbKonfKierWyjazdPrawo.Name = "rbKonfKierWyjazdPrawo"
+        Me.rbKonfKierWyjazdPrawo.Size = New System.Drawing.Size(55, 17)
+        Me.rbKonfKierWyjazdPrawo.TabIndex = 13
+        Me.rbKonfKierWyjazdPrawo.TabStop = True
+        Me.rbKonfKierWyjazdPrawo.Text = "Prawo"
+        Me.rbKonfKierWyjazdPrawo.UseVisualStyleBackColor = True
+        '
+        'rbKonfKierWyjazdLewo
+        '
+        Me.rbKonfKierWyjazdLewo.AutoSize = True
+        Me.rbKonfKierWyjazdLewo.Location = New System.Drawing.Point(0, 94)
+        Me.rbKonfKierWyjazdLewo.Name = "rbKonfKierWyjazdLewo"
+        Me.rbKonfKierWyjazdLewo.Size = New System.Drawing.Size(51, 17)
+        Me.rbKonfKierWyjazdLewo.TabIndex = 12
+        Me.rbKonfKierWyjazdLewo.TabStop = True
+        Me.rbKonfKierWyjazdLewo.Text = "Lewo"
+        Me.rbKonfKierWyjazdLewo.UseVisualStyleBackColor = True
+        '
+        'txtKonfKierNazwa
+        '
+        Me.txtKonfKierNazwa.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfKierNazwa.Location = New System.Drawing.Point(0, 16)
+        Me.txtKonfKierNazwa.Name = "txtKonfKierNazwa"
+        Me.txtKonfKierNazwa.Size = New System.Drawing.Size(167, 20)
+        Me.txtKonfKierNazwa.TabIndex = 10
+        '
+        'Label60
+        '
+        Me.Label60.AutoSize = True
+        Me.Label60.Location = New System.Drawing.Point(-3, 114)
+        Me.Label60.Name = "Label60"
+        Me.Label60.Size = New System.Drawing.Size(57, 13)
+        Me.Label60.TabIndex = 13
+        Me.Label60.Text = "Stawność:"
+        '
+        'Label59
+        '
+        Me.Label59.AutoSize = True
+        Me.Label59.Location = New System.Drawing.Point(0, 78)
+        Me.Label59.Name = "Label59"
+        Me.Label59.Size = New System.Drawing.Size(211, 13)
+        Me.Label59.TabIndex = 12
+        Me.Label59.Text = "Kierunek wyjazdu (dla kostki nieobróconej):"
         '
         'Label35
         '
         Me.Label35.AutoSize = True
-        Me.Label35.Location = New System.Drawing.Point(0, 39)
+        Me.Label35.Location = New System.Drawing.Point(0, 0)
         Me.Label35.Name = "Label35"
-        Me.Label35.Size = New System.Drawing.Size(102, 13)
-        Me.Label35.TabIndex = 2
-        Me.Label35.Text = "Kierunek ustawiany:"
+        Me.Label35.Size = New System.Drawing.Size(43, 13)
+        Me.Label35.TabIndex = 11
+        Me.Label35.Text = "Nazwa:"
         '
         'txtKonfKierPredkosc
         '
         Me.txtKonfKierPredkosc.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtKonfKierPredkosc.Location = New System.Drawing.Point(0, 16)
+        Me.txtKonfKierPredkosc.Location = New System.Drawing.Point(0, 55)
         Me.txtKonfKierPredkosc.Name = "txtKonfKierPredkosc"
         Me.txtKonfKierPredkosc.Size = New System.Drawing.Size(167, 20)
-        Me.txtKonfKierPredkosc.TabIndex = 10
+        Me.txtKonfKierPredkosc.TabIndex = 11
         '
         'Label34
         '
         Me.Label34.AutoSize = True
-        Me.Label34.Location = New System.Drawing.Point(0, 0)
+        Me.Label34.Location = New System.Drawing.Point(0, 39)
         Me.Label34.Name = "Label34"
         Me.Label34.Size = New System.Drawing.Size(116, 13)
         Me.Label34.TabIndex = 0
@@ -2791,6 +2808,35 @@ Partial Class wndKonfiguratorStacji
         Me.btnPrzejazdSygnDrogDodaj.Text = "Dodaj"
         Me.btnPrzejazdSygnDrogDodaj.UseVisualStyleBackColor = True
         '
+        'plpPulpit
+        '
+        Me.plpPulpit.AllowDrop = True
+        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
+        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
+        Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
+        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
+        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
+        Me.plpPulpit.Name = "plpPulpit"
+        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projZaznaczonaLampa = Nothing
+        Me.plpPulpit.projZaznaczonyLicznik = Nothing
+        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
+        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
+        Pulpit1.Adres = CType(0US, UShort)
+        Pulpit1.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit1
+        Me.plpPulpit.Size = New System.Drawing.Size(785, 645)
+        Me.plpPulpit.TabIndex = 4
+        Me.plpPulpit.TrybProjektowy = True
+        Me.plpPulpit.ZaznaczonaKostka = Nothing
+        '
         'wndKonfiguratorStacji
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -3046,9 +3092,6 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents txtKonfNapisTekst As TextBox
     Friend WithEvents Label9 As Label
     Friend WithEvents pnlKonfKier As Panel
-    Friend WithEvents rbKonfKierPrzeciwny As RadioButton
-    Friend WithEvents rbKonfKierZasadniczy As RadioButton
-    Friend WithEvents Label35 As Label
     Friend WithEvents txtKonfKierPredkosc As TextBox
     Friend WithEvents Label34 As Label
     Friend WithEvents ctxSortowanie As ContextMenuStrip
@@ -3150,4 +3193,11 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents pnlPrzejazdAutomatyzacjaKolorSygnalizator As Panel
     Friend WithEvents ctxSortowaniePrzejazdy As ContextMenuStrip
     Friend WithEvents ctxSortujPrzejazdy As ToolStripMenuItem
+    Friend WithEvents txtKonfKierNazwa As TextBox
+    Friend WithEvents Label60 As Label
+    Friend WithEvents Label59 As Label
+    Friend WithEvents Label35 As Label
+    Friend WithEvents cboKonfKierStawnosc As ComboBox
+    Friend WithEvents rbKonfKierWyjazdPrawo As RadioButton
+    Friend WithEvents rbKonfKierWyjazdLewo As RadioButton
 End Class

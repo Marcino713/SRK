@@ -44,6 +44,7 @@ Public Class SerwerTCP
     Public Event ZmianaCzasuPodlaczenia(post As String, dataPodlaczenia As String)
     Public Event OdebranoUstawJasnoscLamp(post As UShort, kom As UstawJasnoscLamp)
     Public Event OdebranoUstawKierunek(post As UShort, kom As UstawKierunek)
+    Public Event OdebranoPotwierdzKierunek(post As UShort, kom As PotwierdzKierunek)
     Public Event OdebranoDodajPociag(post As UShort, kom As DodajPociag)
     Public Event OdebranoUstawPredkoscPociagu(post As UShort, kom As UstawPredkoscPociagu)
     Public Event OdebranoUstawStanSygnalizatora(post As UShort, kom As UstawStanSygnalizatora)
@@ -84,7 +85,20 @@ Public Class SerwerTCP
 
         DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_KIERUNEK, New PrzetwOdebrKomunikatu(
             AddressOf UstawKierunek.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoUstawKierunek(pol.AdresStacji, CType(kom, UstawKierunek))
+            Sub(pol, kom)
+                Dim k As UstawKierunek = CType(kom, UstawKierunek)
+                pol.WyslijKomunikat(New ZmienionoKierunek() With {.Adres = k.Adres, .Stan = ObecnyStanKierunku.Wyjazd})
+                RaiseEvent OdebranoUstawKierunek(pol.AdresStacji, k)
+            End Sub
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.POTWIERDZ_KIERUNEK, New PrzetwOdebrKomunikatu(
+            AddressOf PotwierdzKierunek.Otworz,
+            Sub(pol, kom)
+                Dim k As PotwierdzKierunek = CType(kom, PotwierdzKierunek)
+                pol.WyslijKomunikat(New ZmienionoKierunek() With {.Adres = k.Adres, .Stan = ObecnyStanKierunku.Przyjazd})
+                RaiseEvent OdebranoPotwierdzKierunek(pol.AdresStacji, k)
+            End Sub
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.DODAJ_POCIAG, New PrzetwOdebrKomunikatu(
@@ -351,10 +365,6 @@ Public Class SerwerTCP
     End Sub
 
     Public Sub WyslijZakonczonoSesjeKlienta(post As UShort, kom As ZakonczonoSesjeKlienta)
-        WyslijDoKlienta(post, kom)
-    End Sub
-
-    Public Sub WyslijZazadanoUstawieniaKierunku(post As UShort, kom As ZazadanoUstawieniaKierunku)
         WyslijDoKlienta(post, kom)
     End Sub
 

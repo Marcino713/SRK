@@ -103,7 +103,7 @@
     <Compile Include="Komunikaty\UstawKierunek.vb" />
     <Compile Include="Komunikaty\UstawPredkoscPociagu.vb" />
     <Compile Include="Komunikaty\UstawStanSygnalizatora.vb" />
-    <Compile Include="Komunikaty\ZazadanoUstawieniaKierunku.vb" />
+    <Compile Include="Komunikaty\PotwierdzKierunek.vb" />
     <Compile Include="Komunikaty\ZmienionoJasnoscLamp.vb" />
     <Compile Include="Komunikaty\ZmienionoPredkoscDozwolona.vb" />
     <Compile Include="Komunikaty\ZmienionoStanSygnalizatora.vb" />

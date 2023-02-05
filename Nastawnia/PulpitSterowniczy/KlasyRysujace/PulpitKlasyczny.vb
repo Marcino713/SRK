@@ -17,7 +17,7 @@
     Private Const SZCZEL_MARG_POZIOM_ZAKRET As Single = 0.05F   'margines szczeliny w poziomie toru ukośnego
     Private Const SZCZEL_MARG_POZIOM_ROZJ As Single = 0.08F     'margines szczeliny w poziomie toru bocznego rozjazdu, na końcu przylegającym do toru prostego
     Private Const SZCZELINA_MARGINES_PION As Single = 0.04F     'margines szczeliny w pionie
-    Private Const SZCZELINA_MARGINES_KIER As Single = 0.06F     'margines szczeliny na kostce z kierunkiem
+    Private Const SZCZELINA_MARGINES_KIER As Single = 0.04F     'margines szczeliny na kostce z kierunkiem
     Private Const ROZJAZD_ZNAK_SZER As Single = 0.01F    'szerokość linii plusa/minusa obok rozjazdu
     Private Const ROZJAZD_ZNAK_POL_DL As Single = 0.05F  'połowa długości linii plusa/minusa obok rozjazdu
     Private Const ROZJAZD_PLUS_X As Single = 0.12F       'współrzędna X środka plusa obok rozjazdu
@@ -31,7 +31,9 @@
     Private Const SYGN_SLUP_SZER_MALA As Single = 0.05F  'szerokosć słupa sygnalizatora w węższym miejscu
     Private Const SYGN_SLUP_DLUG As Single = 0.04F       'długość poszczególnych segmentów słupa
     Private Const SYGN_KRAWEDZ As Single = 0.01F         'grubość krawędzi słupa sygnalizatora
-    Private Const KIER_SZER As Single = 0.4F             'rozmiar strzałki na przycisku kierunku
+    Private Const KIER_SZER As Single = 0.3F             'rozmiar trójkąta na kostce kierunku
+    Private Const KIER_POZ_X As Single = 0.25F           'pozycja trójkąta kierunku na osi X
+    Private Const KIER_POZ_Y As Single = 0.78F           'pozycja trójkąta kierunku na osi Y
     Private Const PRZEJAZD_POZ As Single = 0.35F         'odległość linii przejazdu kolejowego od krawędzi bocznych
     Private Const PRZEJAZD_SZER_LINII As Single = 0.02F  'szerokość linii przejazdu kolejowego
     Private Const PRZEJAZD_KONTR_POZ As Single = 0.17F   'pozycja na osi X kontrolek przejazdu kolejowego
@@ -96,6 +98,7 @@
     Private Const NAZWA_SZ As String = "Sz"     'Sygnał zastępczy
     Private Const NAZWA_ZW As String = "Zw"     'Zwolnienie przebiegów
     Private Const NAZWA_M As String = "m"       'Sygnał manewrowy
+    Private Const NAZWA_WBL As String = "Wbl"   'Włączenie blokady
 
     Protected urz As IUrzadzenieRysujace(Of TOlowek, TPedzel, TMacierz, TCzcionka)
     Private pedzelToru As TPedzel
@@ -634,10 +637,16 @@
     End Sub
 
     Private Sub RysujKierunek(kier As Zaleznosci.Kierunek)
-        urz.WypelnijFigure(pedzelToru, PUNKTY_KIERUNKU)
-        If rysujSzczeliny Then urz.WypelnijFigure(PEDZEL_SZCZELINA_WOLNY, PUNKTY_SZCZELINY_KIERUNKU)
+        RysujNazwe(kier.Nazwa, TEKST_POZ_X, TEKST_POZ_Y, przywrocTransformacje:=True)
+        RysujTorProsty(kier.RysowanieDodatkowychTrojkatow)
+        RysujTrojkatKierunku(kier, Zaleznosci.KierunekWyjazduSBL.Lewo, Zaleznosci.UstawionyKierunekSBL.Lewo)
 
-        RysujPrzycisk((Not trybProjektowy) And kier.Wcisniety)
+        Dim tr As TMacierz = urz.TransformacjaPobierz
+        urz.TransformacjaResetuj()
+        urz.TransformacjaObroc(2 * KAT_PROSTY, POL, KIER_POZ_Y)
+        urz.TransformacjaDolacz(tr)
+
+        RysujTrojkatKierunku(kier, Zaleznosci.KierunekWyjazduSBL.Prawo, Zaleznosci.UstawionyKierunekSBL.Prawo)
     End Sub
 
     Private Sub RysujKostkeNapis(napis As Zaleznosci.Napis)
@@ -663,6 +672,19 @@
         urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, SYGN_KRAWEDZ, x2, y4, x2, y3)
         urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, SYGN_KRAWEDZ, x2, y3, x1, y3)
         urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, SYGN_KRAWEDZ, x1, y3, x1, y2)
+    End Sub
+
+    Private Sub RysujTrojkatKierunku(kier As Zaleznosci.Kierunek, kierProj As Zaleznosci.KierunekWyjazduSBL, kierDzialanie As Zaleznosci.UstawionyKierunekSBL)
+        urz.WypelnijFigure(PEDZEL_TOR_WOLNY, PUNKTY_KIERUNKU)
+
+        Dim pedzel As TPedzel
+        If trybProjektowy Then
+            pedzel = If(kier.KierunekWyjazdu = kierProj, PEDZEL_SZCZELINA_UTWIERDZONY, PEDZEL_SZCZELINA_WOLNY)
+        Else
+            pedzel = If(kier.UstawionyKierunek = kierDzialanie, PEDZEL_SZCZELINA_UTWIERDZONY, PEDZEL_SZCZELINA_WOLNY)
+        End If
+
+        urz.WypelnijFigure(pedzel, PUNKTY_SZCZELINY_KIERUNKU)
     End Sub
 
     Private Sub RysujKolko(pedzel As TPedzel, x As Single, y As Single)
@@ -785,7 +807,8 @@
         Select Case zajetosc
             Case Zaleznosci.ZajetoscToru.Zajety
                 Return PEDZEL_SZCZELINA_ZAJETY
-            Case Zaleznosci.ZajetoscToru.PrzebiegUtwierdzony
+            Case Zaleznosci.ZajetoscToru.PrzebiegUtwierdzony,
+                 Zaleznosci.ZajetoscToru.BlokadaNieustawiona
                 Return PEDZEL_SZCZELINA_UTWIERDZONY
         End Select
 
@@ -794,9 +817,9 @@
     End Function
 
     Private Function ObliczWspolrzedneKierunku() As PointF()
-        Dim A As New PointF(POL + KIER_SZER / 2, POL - KIER_SZER / 2)
-        Dim B As New PointF(POL - KIER_SZER / 2, POL)
-        Dim C As New PointF(POL + KIER_SZER / 2, POL + KIER_SZER / 2)
+        Dim A As New PointF(KIER_POZ_X + KIER_SZER / 2, KIER_POZ_Y - KIER_SZER / 2)
+        Dim B As New PointF(KIER_POZ_X - KIER_SZER / 2, KIER_POZ_Y)
+        Dim C As New PointF(KIER_POZ_X + KIER_SZER / 2, KIER_POZ_Y + KIER_SZER / 2)
 
         Return New PointF() {A, B, C}
     End Function

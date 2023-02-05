@@ -48,21 +48,15 @@ Public Class LaczonyPlikStacji
         Dim dostepneTory As New List(Of OdcinekToru)
 
         For Each tor As OdcinekToru In tory
-            Dim kierZasadniczy As Integer = 0
-            Dim kierPrzeciwny As Integer = 0
+            Dim kierunek As Integer = 0
 
             For Each kostkaTor As Tor In tor.KostkiTory
                 If kostkaTor.Typ = TypKostki.Kierunek Then
-                    Dim kier As Kierunek = DirectCast(kostkaTor, Kierunek)
-                    If kier.KierunekWlaczany = KierunekWlaczanyEnum.Zasadniczy Then
-                        kierZasadniczy += 1
-                    Else
-                        kierPrzeciwny += 1
-                    End If
+                    kierunek += 1
                 End If
             Next
 
-            If kierZasadniczy = 1 And kierPrzeciwny = 1 Then dostepneTory.Add(tor)
+            If kierunek = 1 Then dostepneTory.Add(tor)
         Next
 
         Return dostepneTory.OrderBy(Function(t As OdcinekToru) t.Nazwa).ToArray()
