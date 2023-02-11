@@ -41,6 +41,7 @@ Public Class KlientTCP
     Public Event OdebranoWysiadznietoZPociagu(kom As WysiadznietoZPociagu)
     Public Event OdebranoUsunietoPociag(kom As UsunietoPociag)
     Public Event OdebranoZmienionoNazwePociagu(kom As ZmienionoNazwePociagu)
+    Public Event OdebranoZmienionoStanPrzejazdu(kom As ZmienionoStanPrzejazdu)
 
     Public Sub New()
         DaneFabrykiObiektow.Add(TypKomunikatu.DH_ZAINICJALIZOWANO, New PrzetwOdebrKomunikatu(
@@ -142,6 +143,11 @@ Public Class KlientTCP
             AddressOf ZmienionoNazwePociagu.Otworz,
             Sub(pol, kom) RaiseEvent OdebranoZmienionoNazwePociagu(CType(kom, ZmienionoNazwePociagu))
         ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_STAN_PRZEJAZDU, New PrzetwOdebrKomunikatu(
+            AddressOf ZmienionoStanPrzejazdu.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoStanPrzejazdu(CType(kom, ZmienionoStanPrzejazdu))
+        ))
     End Sub
 
     Public Sub WyslijZakonczDzialanieKlienta(kom As ZakonczDzialanieKlienta)
@@ -184,7 +190,7 @@ Public Class KlientTCP
         Klient?.WyslijKomunikat(kom)
     End Sub
 
-    Public Sub WyslijZwolnijPrzebiegi(kom As ZwolnijPrzebiegi)
+    Public Sub WyslijZwolnijPrzebieg(kom As ZwolnijPrzebieg)
         Klient?.WyslijKomunikat(kom)
     End Sub
 
@@ -201,6 +207,10 @@ Public Class KlientTCP
     End Sub
 
     Public Sub WyslijUsunPociag(kom As UsunPociag)
+        Klient?.WyslijKomunikat(kom)
+    End Sub
+
+    Public Sub WyslijUstawStanPrzejazdu(kom As UstawStanPrzejazdu)
         Klient?.WyslijKomunikat(kom)
     End Sub
 

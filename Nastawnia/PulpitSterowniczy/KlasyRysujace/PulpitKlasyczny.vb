@@ -4,46 +4,49 @@
     Private Const COS45 As Single = 0.707F
     Private Const KAT_PROSTY As Integer = 90
     Private Const POL As Single = 0.5F
-    Private Const KRAWEDZ_SZER As Single = 0.02F         'grubość krawędzi między kostkami
-    Private Const KOLKO_PROMIEN As Single = 0.125F       'promień kółka (lampy/licznika osi)
-    Private Const KOLKO_TEKST_PROMIEN As Single = 0.06F  'promień kółka obok tekstu
-    Private Const KOLKO_TEKST_POZ As Single = 0.1F       'położenie kółka obok tekstu
-    Private Const TOR_SZEROKOSC As Single = 0.16F        'szerokość toru na kostce
+    Private Const KRAWEDZ_SZER As Single = 0.02F           'grubość krawędzi między kostkami
+    Private Const KOLKO_PROMIEN As Single = 0.125F         'promień kółka (lampy/licznika osi)
+    Private Const KOLKO_TEKST_PROMIEN As Single = 0.06F    'promień kółka obok tekstu
+    Private Const KOLKO_TEKST_POZ As Single = 0.1F         'położenie kółka obok tekstu
+    Private Const TOR_SZEROKOSC As Single = 0.16F          'szerokość toru na kostce
     Private Const TOR_SZER_ZAKRET As Single = TOR_SZEROKOSC / COS45
     Private Const TOR_TROJKAT As Single = (TOR_SZER_ZAKRET - TOR_SZEROKOSC) / 2.0F  'długość przyprostokątnej trójkąta do ścięcia/narysowania przy granicy toru ukośnego i prostego
-    Private Const TOR_KONC_DLUGOSC As Single = 0.27F     'długość toru na kostce z końcem
-    Private Const TOR_KONC_SZEROKOSC As Single = 0.5F    'szerokość odcinka prostopadłego na kostce z końcem
+    Private Const TOR_KONC_DLUGOSC As Single = 0.27F       'długość toru na kostce z końcem
+    Private Const TOR_KONC_SZEROKOSC As Single = 0.5F      'szerokość odcinka prostopadłego na kostce z końcem
     Private Const SZCZELINA_MARGINES_POZIOM As Single = 0.1F    'margines szczeliny w poziomie
     Private Const SZCZEL_MARG_POZIOM_ZAKRET As Single = 0.05F   'margines szczeliny w poziomie toru ukośnego
     Private Const SZCZEL_MARG_POZIOM_ROZJ As Single = 0.08F     'margines szczeliny w poziomie toru bocznego rozjazdu, na końcu przylegającym do toru prostego
     Private Const SZCZELINA_MARGINES_PION As Single = 0.04F     'margines szczeliny w pionie
     Private Const SZCZELINA_MARGINES_KIER As Single = 0.04F     'margines szczeliny na kostce z kierunkiem
-    Private Const ROZJAZD_ZNAK_SZER As Single = 0.01F    'szerokość linii plusa/minusa obok rozjazdu
-    Private Const ROZJAZD_ZNAK_POL_DL As Single = 0.05F  'połowa długości linii plusa/minusa obok rozjazdu
-    Private Const ROZJAZD_PLUS_X As Single = 0.12F       'współrzędna X środka plusa obok rozjazdu
-    Private Const ROZJAZD_PLUS_Y As Single = 0.7F        'współrzędna Y środka plusa obok rozjazdu
-    Private Const ROZJAZD_MINUS_X As Single = 0.85F      'współrzędna X środka minusa obok rozjazdu
-    Private Const ROZJAZD_MINUS_Y As Single = 0.9F       'współrzędna Y środka minusa obok rozjazdu
-    Private Const SYGN_POZ As Single = 0.25F             'wielokorotność stałej oznacza położenie środków kolejnych świateł sygnałów na osi X
-    Private Const SYGN_PROMIEN As Single = 0.09F         'promień sygnału
-    Private Const SYGN_TLO_PROMIEN As Single = 0.14F     'promień okręgu stanowiącego tło sygnału
-    Private Const SYGN_SLUP_SZER_DUZA As Single = 0.15F  'szerokość słupa sygnalizatora w szerszym miejscu
-    Private Const SYGN_SLUP_SZER_MALA As Single = 0.05F  'szerokosć słupa sygnalizatora w węższym miejscu
-    Private Const SYGN_SLUP_DLUG As Single = 0.04F       'długość poszczególnych segmentów słupa
-    Private Const SYGN_KRAWEDZ As Single = 0.01F         'grubość krawędzi słupa sygnalizatora
-    Private Const KIER_SZER As Single = 0.3F             'rozmiar trójkąta na kostce kierunku
-    Private Const KIER_POZ_X As Single = 0.25F           'pozycja trójkąta kierunku na osi X
-    Private Const KIER_POZ_Y As Single = 0.78F           'pozycja trójkąta kierunku na osi Y
-    Private Const PRZEJAZD_POZ As Single = 0.35F         'odległość linii przejazdu kolejowego od krawędzi bocznych
-    Private Const PRZEJAZD_SZER_LINII As Single = 0.02F  'szerokość linii przejazdu kolejowego
-    Private Const PRZEJAZD_KONTR_POZ As Single = 0.17F   'pozycja na osi X kontrolek przejazdu kolejowego
-    Private Const TEKST_POZ_X_PRZYCISK As Single = 0.17F 'dodatkowy margines dla tekstu obok przycisku
-    Private Const TEKST_POZ_X As Single = 0.1F           'dodatkowy margines dla tekstu
-    Private Const TEKST_POZ_Y As Single = 0.12F          'dodatkowy margines dla tekstu
-    Private Const TEKST_NAPIS_POZ As Single = 0.12F      'pozycja tekstu w kostce z napisem
-    Private Const TEKST_WYS As Single = 0.78F            'wysokość tekstu w kostce z napisem
-    Private Const KRAWEDZ_RAMKA_ZAZN As Single = 0.04F   'grubość krawędzi ramki zaznaczenia lamp
-    Private Const DODATKOWY_MARGINES As Single = 0.01F   'margines uwzględniany w elementach, aby te lekko nachodziły na siebie i nie rysowały się przerwy między nimi
+    Private Const ROZJAZD_ZNAK_SZER As Single = 0.01F      'szerokość linii plusa/minusa obok rozjazdu
+    Private Const ROZJAZD_ZNAK_POL_DL As Single = 0.05F    'połowa długości linii plusa/minusa obok rozjazdu
+    Private Const ROZJAZD_PLUS_X As Single = 0.12F         'współrzędna X środka plusa obok rozjazdu
+    Private Const ROZJAZD_PLUS_Y As Single = 0.7F          'współrzędna Y środka plusa obok rozjazdu
+    Private Const ROZJAZD_MINUS_X As Single = 0.85F        'współrzędna X środka minusa obok rozjazdu
+    Private Const ROZJAZD_MINUS_Y As Single = 0.9F         'współrzędna Y środka minusa obok rozjazdu
+    Private Const SYGN_POZ As Single = 0.25F               'wielokorotność stałej oznacza położenie środków kolejnych świateł sygnałów na osi X
+    Private Const SYGN_PROMIEN As Single = 0.09F           'promień sygnału
+    Private Const SYGN_TLO_PROMIEN As Single = 0.14F       'promień okręgu stanowiącego tło sygnału
+    Private Const SYGN_SLUP_SZER_DUZA As Single = 0.15F    'szerokość słupa sygnalizatora w szerszym miejscu
+    Private Const SYGN_SLUP_SZER_MALA As Single = 0.05F    'szerokosć słupa sygnalizatora w węższym miejscu
+    Private Const SYGN_SLUP_DLUG As Single = 0.04F         'długość poszczególnych segmentów słupa
+    Private Const SYGN_KRAWEDZ As Single = 0.01F           'grubość krawędzi słupa sygnalizatora
+    Private Const PRZYCISK_TLO_PROMIEN As Single = 0.115F  'promień tła przycisku
+    Private Const PRZYCISK_RAMKA_PROMIEN As Single = 0.08F 'promień obramowania wciskanej części przycisku
+    Private Const PRZYCISK_PROMIEN As Single = 0.055F      'promień wciskanej części przycisku
+    Private Const KIER_SZER As Single = 0.3F               'rozmiar trójkąta na kostce kierunku
+    Private Const KIER_POZ_X As Single = 0.25F             'pozycja trójkąta kierunku na osi X
+    Private Const KIER_POZ_Y As Single = 0.78F             'pozycja trójkąta kierunku na osi Y
+    Private Const PRZEJAZD_POZ As Single = 0.35F           'odległość linii przejazdu kolejowego od krawędzi bocznych
+    Private Const PRZEJAZD_SZER_LINII As Single = 0.02F    'szerokość linii przejazdu kolejowego
+    Private Const PRZEJAZD_KONTR_POZ As Single = 0.17F     'pozycja na osi X kontrolek przejazdu kolejowego
+    Private Const TEKST_POZ_X_PRZYCISK As Single = 0.17F   'dodatkowy margines dla tekstu obok przycisku
+    Private Const TEKST_POZ_X As Single = 0.1F             'dodatkowy margines dla tekstu
+    Private Const TEKST_POZ_Y As Single = 0.12F            'dodatkowy margines dla tekstu
+    Private Const TEKST_NAPIS_POZ As Single = 0.12F        'pozycja tekstu w kostce z napisem
+    Private Const TEKST_WYS As Single = 0.78F              'wysokość tekstu w kostce z napisem
+    Private Const KRAWEDZ_RAMKA_ZAZN As Single = 0.04F     'grubość krawędzi ramki zaznaczenia lamp
+    Private Const DODATKOWY_MARGINES As Single = 0.01F     'margines uwzględniany w elementach, aby te lekko nachodziły na siebie i nie rysowały się przerwy między nimi
 
     Private ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")          'tor przypisany do innego odcinka
     Private ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")         'tor przypisany do zaznaczonego odcinka
@@ -74,7 +77,12 @@
     Private PEDZEL_SYGN_POMC_JASNY As TPedzel
     Private PEDZEL_SYGN_TLO As TPedzel
     Private PEDZEL_SYGN_KRAWEDZ As TOlowek
-    Private PEDZEL_PRZYCISK As TPedzel
+    Private PEDZEL_PRZYCISK_CZERWONY As TPedzel
+    Private PEDZEL_PRZYCISK_ZIELONY As TPedzel
+    Private PEDZEL_PRZYCISK_CZARNY As TPedzel
+    Private PEDZEL_PRZYCISK_BIALY As TPedzel
+    Private PEDZEL_PRZYCISK_ZOLTY As TPedzel
+    Private PEDZEL_PRZYCISK_RAMKA As TPedzel
     Private PEDZEL_PRZYCISK_WCISNIETY As TPedzel
     Private PEDZEL_TEKST As TPedzel
     Private PEDZEL_ZAZN_KOSTKA As TPedzel
@@ -96,9 +104,14 @@
 
     Private Const NAZWA_SP As String = "Sp"     'Sygnalizator powtarzający
     Private Const NAZWA_SZ As String = "Sz"     'Sygnał zastępczy
-    Private Const NAZWA_ZW As String = "Zw"     'Zwolnienie przebiegów
+    Private Const NAZWA_Z As String = "z"       'Zwolnienie przebiegu
     Private Const NAZWA_M As String = "m"       'Sygnał manewrowy
+    Private Const NAZWA_KR As String = "Kr"     'Kasowanie rozprucia
     Private Const NAZWA_WBL As String = "Wbl"   'Włączenie blokady
+    Private Const NAZWA_PZK As String = "Pzk"   'Potwierdzenie zmiany kierunku blokady
+    Private Const NAZWA_ZWBL As String = "Zwbl" 'Zwolnienie blokady
+    Private Const NAZWA_OTW As String = "Otw"   'Otwarcie przejazdu
+    Private Const NAZWA_ZAM As String = "Zam"   'Zamknięcie przejazdu
 
     Protected urz As IUrzadzenieRysujace(Of TOlowek, TPedzel, TMacierz, TCzcionka)
     Private pedzelToru As TPedzel
@@ -186,8 +199,13 @@
         PEDZEL_SYGN_POMC_JASNY = urz.UtworzPedzel(KolorRGB("#FF9900"))
         PEDZEL_SYGN_TLO = urz.UtworzPedzel(KolorRGB("#808080"))
         PEDZEL_SYGN_KRAWEDZ = urz.UtworzOlowek(KolorRGB("#000000"))
-        PEDZEL_PRZYCISK = urz.UtworzPedzel(KolorRGB("#000000"))
-        PEDZEL_PRZYCISK_WCISNIETY = urz.UtworzPedzel(KolorRGB("#EDEDED"))
+        PEDZEL_PRZYCISK_CZERWONY = urz.UtworzPedzel(KolorRGB("#CA3E43"))
+        PEDZEL_PRZYCISK_ZIELONY = urz.UtworzPedzel(KolorRGB("#62965E"))
+        PEDZEL_PRZYCISK_CZARNY = urz.UtworzPedzel(KolorRGB("#1D1D1D"))
+        PEDZEL_PRZYCISK_BIALY = urz.UtworzPedzel(KolorRGB("#FFFFFF"))
+        PEDZEL_PRZYCISK_ZOLTY = urz.UtworzPedzel(KolorRGB("#CABF3F"))
+        PEDZEL_PRZYCISK_RAMKA = urz.UtworzPedzel(KolorRGB("#555555", 120))
+        PEDZEL_PRZYCISK_WCISNIETY = urz.UtworzPedzel(KolorRGB("#42FFFC"))
         PEDZEL_TEKST = urz.UtworzPedzel(KolorRGB("#000000"))
         PEDZEL_ZAZN_KOSTKA = urz.UtworzPedzel(KolorRGB("#009DFF"))
         PEDZEL_LAMPA_TLO = urz.UtworzPedzel(KolorRGB("#FFEA00"))
@@ -484,7 +502,7 @@
         RysujTor(rozjazd.RysowanieDodatkowychTrojkatow, 1)
         RysujSzczelineZakretu(pedzelSzczelinyBok, margines_prawy:=SZCZEL_MARG_POZIOM_ROZJ)
         RysujSzczelineToru(1)
-        RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, 2)
+        RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, PEDZEL_PRZYCISK_CZARNY, 2)
         RysujPlus(ROZJAZD_PLUS_Y)
         RysujMinus(ROZJAZD_MINUS_Y)
         RysujNazwe(rozjazd.Nazwa, TEKST_POZ_X, TEKST_POZ_Y, dodatkowyMarginesSzer:=2.0F * SYGN_TLO_PROMIEN + TEKST_POZ_X)
@@ -501,7 +519,7 @@
         urz.TransformacjaResetuj()
         urz.TransformacjaDolacz(transformacja)
         RysujSzczelineToru(1)
-        RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, 2, 2)
+        RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, PEDZEL_PRZYCISK_CZARNY, 2, 2)
         RysujPlus(1.0F - ROZJAZD_PLUS_Y)
         RysujMinus(1.0F - ROZJAZD_MINUS_Y)
         RysujNazwe(rozjazd.Nazwa, TEKST_POZ_X, 2.0F * SYGN_POZ + TEKST_POZ_Y, dodatkowyMarginesSzer:=2.0F * SYGN_TLO_PROMIEN + TEKST_POZ_X)
@@ -603,37 +621,94 @@
         urz.WypelnijKolo(pedzStan, PRZEJAZD_KONTR_POZ, 3 * SYGN_POZ, SYGN_PROMIEN)
     End Sub
 
-    Private Sub RysujPrzycisk(wcisniety As Boolean, Optional poczx As Single = 0.0F, Optional poczy As Single = 0.0F)
-        Dim pedzel As TPedzel = If(wcisniety, PEDZEL_PRZYCISK_WCISNIETY, PEDZEL_PRZYCISK)
-
+    Private Sub RysujPrzycisk(wcisniety As Boolean, pedzel As TPedzel, Optional poczx As Single = 0.0F, Optional poczy As Single = 0.0F)
         Dim x As Single = (poczx + 1.0F) * SYGN_POZ
         Dim y As Single = (poczy + 1.0F) * SYGN_POZ
-        urz.WypelnijKolo(PEDZEL_SYGN_TLO, x, y, SYGN_TLO_PROMIEN)
-        urz.WypelnijKolo(pedzel, x, y, SYGN_PROMIEN)
+
+        urz.WypelnijKolo(pedzel, x, y, PRZYCISK_TLO_PROMIEN)
+        urz.WypelnijKolo(PEDZEL_PRZYCISK_RAMKA, x, y, PRZYCISK_RAMKA_PROMIEN)
+        urz.WypelnijKolo(If(wcisniety, PEDZEL_PRZYCISK_WCISNIETY, pedzel), x, y, PRZYCISK_PROMIEN)
     End Sub
 
     Private Sub RysujPrzyciskZwykly(przycisk As Zaleznosci.Przycisk)
-        RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety)
+        Dim pedzel As TPedzel = PEDZEL_PRZYCISK_CZARNY
+        Dim nazwaPrzycisku As String = Nothing
+        Dim nazwaElementu As String = Nothing
 
         Select Case przycisk.TypPrzycisku
             Case Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy
-                RysujNazwe(NAZWA_SZ, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y, przywrocTransformacje:=True)
-                RysujNazweSygnalizatora(przycisk.ObslugiwanySygnalizator?.Nazwa)
+                nazwaPrzycisku = NAZWA_SZ
+                nazwaElementu = przycisk.SygnalizatorPolsamoczynny?.Nazwa
 
-            Case Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegow
-                RysujNazwe(NAZWA_ZW, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y)
+            Case Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegu
+                nazwaPrzycisku = NAZWA_Z
+                nazwaElementu = przycisk.SygnalizatorPolsamoczynny?.Nazwa
+
+            Case Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego
+                nazwaPrzycisku = NAZWA_Z & NAZWA_M
+                nazwaElementu = przycisk.SygnalizatorPolsamoczynny?.Nazwa
+
+            Case Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnManewrowego
+                nazwaPrzycisku = NAZWA_Z & NAZWA_M
+                nazwaElementu = przycisk.SygnalizatorManewrowy?.Nazwa
+
+            Case Zaleznosci.TypPrzyciskuEnum.WlaczenieSBL
+                pedzel = PEDZEL_PRZYCISK_CZERWONY
+                nazwaPrzycisku = NAZWA_WBL
+                nazwaElementu = przycisk.Kierunek?.Nazwa
+
+            Case Zaleznosci.TypPrzyciskuEnum.PotwierdzenieSBL
+                pedzel = PEDZEL_PRZYCISK_CZERWONY
+                nazwaPrzycisku = NAZWA_PZK
+                nazwaElementu = przycisk.Kierunek?.Nazwa
+
+            Case Zaleznosci.TypPrzyciskuEnum.ZwolnienieSBL
+                pedzel = PEDZEL_PRZYCISK_CZERWONY
+                nazwaPrzycisku = NAZWA_ZWBL
+                nazwaElementu = przycisk.Kierunek?.Nazwa
+
+            Case Zaleznosci.TypPrzyciskuEnum.KasowanieRozprucia
+                nazwaPrzycisku = NAZWA_KR
+                nazwaElementu = przycisk.Rozjazd?.Nazwa
+
+            Case Zaleznosci.TypPrzyciskuEnum.ZamknieciePrzejazdu
+                pedzel = PEDZEL_PRZYCISK_ZOLTY
+                nazwaPrzycisku = NAZWA_ZAM
+                nazwaElementu = przycisk.Przejazd?.Nazwa
+
+            Case Zaleznosci.TypPrzyciskuEnum.OtwarciePrzejazdu
+                pedzel = PEDZEL_PRZYCISK_ZOLTY
+                nazwaPrzycisku = NAZWA_OTW
+                nazwaElementu = przycisk.Przejazd?.Nazwa
+
         End Select
+
+        RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety, pedzel)
+        RysujNazwe(nazwaPrzycisku, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y, przywrocTransformacje:=True)
+        RysujNazweSygnalizatora(nazwaElementu)
     End Sub
 
     Private Sub RysujPrzyciskTor(przycisk As Zaleznosci.PrzyciskTor)
-        RysujTorProsty(przycisk.RysowanieDodatkowychTrojkatow)
-        RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety)
+        Dim pedzel As TPedzel
 
-        If przycisk.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy Or przycisk.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalManewrowy Then
+        If przycisk.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.JazdaSygnalizatorPolsamoczynny Then
+            pedzel = PEDZEL_PRZYCISK_ZIELONY
+        Else
             RysujNazwe(NAZWA_M, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y, przywrocTransformacje:=True)
+            pedzel = PEDZEL_PRZYCISK_BIALY
         End If
 
-        RysujNazweSygnalizatora(przycisk.ObslugiwanySygnalizator?.Nazwa)
+        RysujTorProsty(przycisk.RysowanieDodatkowychTrojkatow)
+        RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety, pedzel)
+
+        Dim nazwa As String
+        If przycisk.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy Then
+            nazwa = przycisk.SygnalizatorManewrowy?.Nazwa
+        Else
+            nazwa = przycisk.SygnalizatorPolsamoczynny?.Nazwa
+        End If
+
+        RysujNazweSygnalizatora(nazwa)
     End Sub
 
     Private Sub RysujKierunek(kier As Zaleznosci.Kierunek)
@@ -785,7 +860,7 @@
                 If Not pedzelUstawiony Then
                     If roz.Rozprucie Then
                         pedzelSzczelinyWprost = PEDZEL_SZCZELINA_ROZPRUCIE
-                    ElseIf roz.Stan = Zaleznosci.UstawienieZwrotnicy.Wprost Then
+                    ElseIf roz.Stan = Zaleznosci.StanRozjazdu.Wprost Then
                         pedzelSzczelinyWprost = PEDZEL_SZCZELINA_ZWROTNICA
                     End If
                 End If
@@ -794,7 +869,7 @@
                 If Not pedzelUstawiony Then
                     If roz.Rozprucie Then
                         pedzelSzczelinyBok = PEDZEL_SZCZELINA_ROZPRUCIE
-                    ElseIf roz.Stan = Zaleznosci.UstawienieZwrotnicy.Bok Then
+                    ElseIf roz.Stan = Zaleznosci.StanRozjazdu.Bok Then
                         pedzelSzczelinyBok = PEDZEL_SZCZELINA_ZWROTNICA
                     End If
                 End If

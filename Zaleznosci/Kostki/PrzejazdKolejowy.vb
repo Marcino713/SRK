@@ -5,7 +5,7 @@ Public Class PrzejazdKolejowy
 
     Public Property NalezyDoPrzejazdu As PrzejazdKolejowoDrogowy
 
-    Public Property Stan As StanPrzejazduKolejowego
+    Public Property Stan As StanPrzejazduKolejowego = StanPrzejazduKolejowego.Otwarty
     Public Property Awaria As Boolean = False
 
     Public Sub New()

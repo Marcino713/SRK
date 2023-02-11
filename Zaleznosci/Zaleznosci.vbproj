@@ -83,6 +83,7 @@
     <Compile Include="Komunikaty\WysiadznietoZPociagu.vb" />
     <Compile Include="Komunikaty\WysiadzZPociagu.vb" />
     <Compile Include="Komunikaty\ZmienionoNazwePociagu.vb" />
+    <Compile Include="Komunikaty\ZmienionoStanPrzejazdu.vb" />
     <Compile Include="Kostki\IAdres.vb" />
     <Compile Include="Kostki\IPrzycisk.vb" />
     <Compile Include="Kostki\IZakret.vb" />
@@ -107,7 +108,7 @@
     <Compile Include="Komunikaty\ZmienionoJasnoscLamp.vb" />
     <Compile Include="Komunikaty\ZmienionoPredkoscDozwolona.vb" />
     <Compile Include="Komunikaty\ZmienionoStanSygnalizatora.vb" />
-    <Compile Include="Komunikaty\ZwolnijPrzebiegi.vb" />
+    <Compile Include="Komunikaty\ZwolnijPrzebieg.vb" />
     <Compile Include="Komunikaty\DodajPociag.vb" />
     <Compile Include="Komunikaty\UwierzytelnijSie.vb" />
     <Compile Include="Komunikaty\UstawJasnoscLamp.vb" />
@@ -171,6 +172,7 @@
     <Compile Include="ObslugaPlikow\OtwieraniePlikuException.vb" />
     <Compile Include="ObslugaPlikow\SegmentPliku.vb" />
     <Compile Include="Pulpit\PrzejazdKolejowoDrogowy.vb" />
+    <Compile Include="Komunikaty\UstawStanPrzejazdu.vb" />
     <Compile Include="WersjaPliku.vb" />
     <Compile Include="Pulpit\Lampa.vb" />
     <Compile Include="Pulpit\ParaLicznikowOsi.vb" />

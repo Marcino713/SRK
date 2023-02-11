@@ -13,6 +13,7 @@ Public Class wndNastawnia
     Private Rozjazdy As New Dictionary(Of UShort, Zaleznosci.Rozjazd)
     Private Kierunki As New Dictionary(Of UShort, Zaleznosci.Kierunek)
     Private Lampy As New Dictionary(Of UShort, Zaleznosci.Lampa)
+    Private Przejazdy As New Dictionary(Of UShort, Zaleznosci.PrzejazdKolejowoDrogowy)
     Private PredkoscMaksymalna As UShort
     Private KursorDomyslny As Cursor
     Private OknaSterowaniaPociagami As New HashSet(Of wndSterowaniePociagiem)
@@ -156,38 +157,112 @@ Public Class wndNastawnia
 
             Case Zaleznosci.TypKostki.RozjazdLewo, Zaleznosci.TypKostki.RozjazdPrawo
                 Dim roz As Zaleznosci.Rozjazd = DirectCast(kostka, Zaleznosci.Rozjazd)
-                Dim stan As Zaleznosci.UstawienieRozjazduEnum
-                If roz.Stan = Zaleznosci.UstawienieZwrotnicy.Wprost Then
-                    stan = Zaleznosci.UstawienieRozjazduEnum.Bok
+                Dim stan As Zaleznosci.UstawianyStanRozjazdu
+                If roz.Stan = Zaleznosci.StanRozjazdu.Wprost Then
+                    stan = Zaleznosci.UstawianyStanRozjazdu.Bok
                 Else
-                    stan = Zaleznosci.UstawienieRozjazduEnum.Wprost
+                    stan = Zaleznosci.UstawianyStanRozjazdu.Wprost
                 End If
                 Klient.WyslijUstawZwrotnice(New Zaleznosci.UstawZwrotnice() With {.Adres = roz.Adres, .Ustawienie = stan})
 
             Case Zaleznosci.TypKostki.Przycisk
                 Dim prz As Zaleznosci.Przycisk = DirectCast(kostka, Zaleznosci.Przycisk)
-                If prz.TypPrzycisku = Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegow Then
-                    Klient.WyslijZwolnijPrzebiegi(New Zaleznosci.ZwolnijPrzebiegi())
-                ElseIf prz.TypPrzycisku = Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy Then
 
-                    If prz.ObslugiwanySygnalizator IsNot Nothing Then
-                        Klient.WyslijUstawStanSygnalizatora(New Zaleznosci.UstawStanSygnalizatora() With {
-                                                            .Adres = prz.ObslugiwanySygnalizator.Adres,
-                                                            .Stan = Zaleznosci.UstawianyStanSygnalizatora.Zastepczy})
-                    End If
-                End If
+                Select Case prz.TypPrzycisku
+                    Case Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy
+                        If prz.SygnalizatorPolsamoczynny IsNot Nothing Then
+                            Klient.WyslijUstawStanSygnalizatora(New Zaleznosci.UstawStanSygnalizatora() With {
+                                                                .Adres = prz.SygnalizatorPolsamoczynny.Adres,
+                                                                .Stan = Zaleznosci.UstawianyStanSygnalizatora.Zastepczy})
+                        End If
+
+                    Case Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegu
+                        If prz.SygnalizatorPolsamoczynny IsNot Nothing Then
+                            Klient.WyslijZwolnijPrzebieg(New Zaleznosci.ZwolnijPrzebieg() With {
+                                                          .Adres = prz.SygnalizatorPolsamoczynny.Adres,
+                                                          .Przebieg = Zaleznosci.ZwalnianyPrzebieg.Zezwalajacy})
+                        End If
+
+                    Case Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego
+                        If prz.SygnalizatorPolsamoczynny IsNot Nothing Then
+                            Klient.WyslijZwolnijPrzebieg(New Zaleznosci.ZwolnijPrzebieg() With {
+                                                          .Adres = prz.SygnalizatorPolsamoczynny.Adres,
+                                                          .Przebieg = Zaleznosci.ZwalnianyPrzebieg.Manewrowy})
+                        End If
+
+                    Case Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnManewrowego
+                        If prz.SygnalizatorManewrowy IsNot Nothing Then
+                            Klient.WyslijZwolnijPrzebieg(New Zaleznosci.ZwolnijPrzebieg() With {
+                                                          .Adres = prz.SygnalizatorManewrowy.Adres,
+                                                          .Przebieg = Zaleznosci.ZwalnianyPrzebieg.Manewrowy})
+                        End If
+
+                    Case Zaleznosci.TypPrzyciskuEnum.WlaczenieSBL
+                        If prz.Kierunek?.NalezyDoOdcinka IsNot Nothing Then
+                            Klient.WyslijUstawKierunek(New Zaleznosci.UstawKierunek() With {
+                                                       .Adres = prz.Kierunek.NalezyDoOdcinka.Adres,
+                                                       .Stan = Zaleznosci.UstawianyStanKierunku.Wlacz})
+                        End If
+
+                    Case Zaleznosci.TypPrzyciskuEnum.PotwierdzenieSBL
+                        If prz.Kierunek?.NalezyDoOdcinka IsNot Nothing Then
+                            Klient.WyslijPotwierdzKierunek(New Zaleznosci.PotwierdzKierunek() With {
+                                                           .Adres = prz.Kierunek.NalezyDoOdcinka.Adres})
+                        End If
+
+                    Case Zaleznosci.TypPrzyciskuEnum.ZwolnienieSBL
+                        If prz.Kierunek?.NalezyDoOdcinka IsNot Nothing Then
+                            Klient.WyslijUstawKierunek(New Zaleznosci.UstawKierunek() With {
+                                                       .Adres = prz.Kierunek.NalezyDoOdcinka.Adres,
+                                                       .Stan = Zaleznosci.UstawianyStanKierunku.Wylacz})
+                        End If
+
+                    Case Zaleznosci.TypPrzyciskuEnum.KasowanieRozprucia
+                        If prz.Rozjazd IsNot Nothing Then
+                            Klient.WyslijUstawZwrotnice(New Zaleznosci.UstawZwrotnice() With {
+                                                        .Adres = prz.Rozjazd.Adres,
+                                                        .Ustawienie = Zaleznosci.UstawianyStanRozjazdu.KasujRozprucie})
+                        End If
+
+                    Case Zaleznosci.TypPrzyciskuEnum.ZamknieciePrzejazdu
+                        If prz.Przejazd IsNot Nothing Then
+                            Klient.WyslijUstawStanPrzejazdu(New Zaleznosci.UstawStanPrzejazdu() With {
+                                                            .Numer = prz.Przejazd.Numer,
+                                                            .Stan = Zaleznosci.UstawianyStanPrzejazdu.Zamkniety})
+                        End If
+
+                    Case Zaleznosci.TypPrzyciskuEnum.OtwarciePrzejazdu
+                        If prz.Przejazd IsNot Nothing Then
+                            Klient.WyslijUstawStanPrzejazdu(New Zaleznosci.UstawStanPrzejazdu() With {
+                                                            .Numer = prz.Przejazd.Numer,
+                                                            .Stan = Zaleznosci.UstawianyStanPrzejazdu.Otwarty})
+                        End If
+
+                End Select
 
             Case Zaleznosci.TypKostki.PrzyciskTor
                 Dim prz As Zaleznosci.PrzyciskTor = DirectCast(kostka, Zaleznosci.PrzyciskTor)
-                If prz.ObslugiwanySygnalizator IsNot Nothing Then
-                    Dim stan As Zaleznosci.UstawianyStanSygnalizatora
-                    Select Case prz.TypPrzycisku
-                        Case Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorPolsamoczynny
-                            stan = Zaleznosci.UstawianyStanSygnalizatora.Zezwalajacy
-                        Case Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy, Zaleznosci.TypPrzyciskuTorEnum.SygnalManewrowy
-                            stan = Zaleznosci.UstawianyStanSygnalizatora.Manewrowy
-                    End Select
-                    Klient.WyslijUstawStanSygnalizatora(New Zaleznosci.UstawStanSygnalizatora() With {.Adres = prz.ObslugiwanySygnalizator.Adres, .Stan = stan})
+
+                Dim stan As Zaleznosci.UstawianyStanSygnalizatora
+                Dim adres As UShort?
+
+                Select Case prz.TypPrzycisku
+                    Case Zaleznosci.TypPrzyciskuTorEnum.JazdaSygnalizatorPolsamoczynny
+                        stan = Zaleznosci.UstawianyStanSygnalizatora.Zezwalajacy
+                        adres = prz.SygnalizatorPolsamoczynny?.Adres
+
+                    Case Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorPolsamoczynny
+                        stan = Zaleznosci.UstawianyStanSygnalizatora.Manewrowy
+                        adres = prz.SygnalizatorPolsamoczynny?.Adres
+
+                    Case Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy
+                        stan = Zaleznosci.UstawianyStanSygnalizatora.Manewrowy
+                        adres = prz.SygnalizatorManewrowy?.Adres
+
+                End Select
+
+                If adres.HasValue Then
+                    Klient.WyslijUstawStanSygnalizatora(New Zaleznosci.UstawStanSygnalizatora() With {.Adres = adres.Value, .Stan = stan})
                 End If
 
         End Select
@@ -330,6 +405,19 @@ Public Class wndNastawnia
         Next
     End Sub
 
+    Private Sub Klient_OdebranoZmienionoStanPrzejazdu(kom As Zaleznosci.ZmienionoStanPrzejazdu) Handles Klient.OdebranoZmienionoStanPrzejazdu
+        Dim prz As Zaleznosci.PrzejazdKolejowoDrogowy = Nothing
+
+        If kom.Blad = Zaleznosci.BladZmianyStanuPrzejazdu.Brak AndAlso Przejazdy.TryGetValue(kom.Numer, prz) Then
+            For Each k As Zaleznosci.PrzejazdKolejowy In prz.KostkiPrzejazdy
+                k.Stan = kom.Stan
+                k.Awaria = kom.Awaria
+            Next
+
+            plpPulpit.Invalidate()
+        End If
+    End Sub
+
     Private Sub WczytajPolaczenia(Okno As FileDialog, MetodaOtwierajaca As Func(Of String, Zaleznosci.PolaczeniaStacji), KomunikatBledu As String)
         Okno.Filter = FILTR_PLIKU
 
@@ -380,6 +468,7 @@ Public Class wndNastawnia
         Rozjazdy = pulpit.PobierzRozjazdy()
         Kierunki = pulpit.PobierzKierunkiPoAdresieOdcinka()
         Lampy = pulpit.PobierzLampy()
+        Przejazdy = pulpit.PobierzPrzejazdyKolejowoDrogowe()
     End Sub
 
     Private Sub ZamknijOknaSterowaniaPociagami()

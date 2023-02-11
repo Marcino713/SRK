@@ -23,7 +23,7 @@ Partial Class wndKonfiguratorStacji
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim Pulpit1 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
+        Dim Pulpit2 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
         Me.mnuMenu = New System.Windows.Forms.MenuStrip()
         Me.mnuNarzedzia = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuNowy = New System.Windows.Forms.ToolStripMenuItem()
@@ -94,7 +94,7 @@ Partial Class wndKonfiguratorStacji
         Me.pnlKonfPrzyciskPredkosc = New System.Windows.Forms.Panel()
         Me.txtKonfPrzyciskPredkosc = New System.Windows.Forms.TextBox()
         Me.Label27 = New System.Windows.Forms.Label()
-        Me.cboKonfPrzyciskSygnalizator = New System.Windows.Forms.ComboBox()
+        Me.cboKonfPrzyciskObiekt = New System.Windows.Forms.ComboBox()
         Me.cboKonfPrzyciskTyp = New System.Windows.Forms.ComboBox()
         Me.Label22 = New System.Windows.Forms.Label()
         Me.Label21 = New System.Windows.Forms.Label()
@@ -274,6 +274,8 @@ Partial Class wndKonfiguratorStacji
         Me.btnPrzejazdSygnDrogUsun = New System.Windows.Forms.Button()
         Me.btnPrzejazdSygnDrogDodaj = New System.Windows.Forms.Button()
         Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
+        Me.Label61 = New System.Windows.Forms.Label()
+        Me.txtPrzejazdNumer = New System.Windows.Forms.TextBox()
         Me.mnuMenu.SuspendLayout()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
@@ -1039,7 +1041,7 @@ Partial Class wndKonfiguratorStacji
         Me.pnlKonfPrzycisk.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.pnlKonfPrzycisk.Controls.Add(Me.pnlKonfPrzyciskPredkosc)
-        Me.pnlKonfPrzycisk.Controls.Add(Me.cboKonfPrzyciskSygnalizator)
+        Me.pnlKonfPrzycisk.Controls.Add(Me.cboKonfPrzyciskObiekt)
         Me.pnlKonfPrzycisk.Controls.Add(Me.cboKonfPrzyciskTyp)
         Me.pnlKonfPrzycisk.Controls.Add(Me.Label22)
         Me.pnlKonfPrzycisk.Controls.Add(Me.Label21)
@@ -1078,16 +1080,16 @@ Partial Class wndKonfiguratorStacji
         Me.Label27.TabIndex = 6
         Me.Label27.Text = "Prędkość maksymalna toru przyległego:"
         '
-        'cboKonfPrzyciskSygnalizator
+        'cboKonfPrzyciskObiekt
         '
-        Me.cboKonfPrzyciskSygnalizator.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+        Me.cboKonfPrzyciskObiekt.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cboKonfPrzyciskSygnalizator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboKonfPrzyciskSygnalizator.FormattingEnabled = True
-        Me.cboKonfPrzyciskSygnalizator.Location = New System.Drawing.Point(0, 56)
-        Me.cboKonfPrzyciskSygnalizator.Name = "cboKonfPrzyciskSygnalizator"
-        Me.cboKonfPrzyciskSygnalizator.Size = New System.Drawing.Size(185, 21)
-        Me.cboKonfPrzyciskSygnalizator.TabIndex = 11
+        Me.cboKonfPrzyciskObiekt.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfPrzyciskObiekt.FormattingEnabled = True
+        Me.cboKonfPrzyciskObiekt.Location = New System.Drawing.Point(0, 56)
+        Me.cboKonfPrzyciskObiekt.Name = "cboKonfPrzyciskObiekt"
+        Me.cboKonfPrzyciskObiekt.Size = New System.Drawing.Size(185, 21)
+        Me.cboKonfPrzyciskObiekt.TabIndex = 11
         '
         'cboKonfPrzyciskTyp
         '
@@ -1105,9 +1107,9 @@ Partial Class wndKonfiguratorStacji
         Me.Label22.AutoSize = True
         Me.Label22.Location = New System.Drawing.Point(0, 40)
         Me.Label22.Name = "Label22"
-        Me.Label22.Size = New System.Drawing.Size(119, 13)
+        Me.Label22.Size = New System.Drawing.Size(93, 13)
         Me.Label22.TabIndex = 1
-        Me.Label22.Text = "Powiązany sygnalizator:"
+        Me.Label22.Text = "Powiązany obiekt:"
         '
         'Label21
         '
@@ -2179,6 +2181,8 @@ Partial Class wndKonfiguratorStacji
         '
         'tbpPrzejazdOgolne
         '
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.txtPrzejazdNumer)
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.Label61)
         Me.tbpPrzejazdOgolne.Controls.Add(Me.cbPrzejazdTrybReczny)
         Me.tbpPrzejazdOgolne.Controls.Add(Me.cbPrzejazdTrybAutomatyczny)
         Me.tbpPrzejazdOgolne.Controls.Add(Me.Label49)
@@ -2208,27 +2212,27 @@ Partial Class wndKonfiguratorStacji
         'cbPrzejazdTrybReczny
         '
         Me.cbPrzejazdTrybReczny.AutoSize = True
-        Me.cbPrzejazdTrybReczny.Location = New System.Drawing.Point(97, 58)
+        Me.cbPrzejazdTrybReczny.Location = New System.Drawing.Point(97, 97)
         Me.cbPrzejazdTrybReczny.Name = "cbPrzejazdTrybReczny"
         Me.cbPrzejazdTrybReczny.Size = New System.Drawing.Size(57, 17)
-        Me.cbPrzejazdTrybReczny.TabIndex = 8
+        Me.cbPrzejazdTrybReczny.TabIndex = 9
         Me.cbPrzejazdTrybReczny.Text = "ręczny"
         Me.cbPrzejazdTrybReczny.UseVisualStyleBackColor = True
         '
         'cbPrzejazdTrybAutomatyczny
         '
         Me.cbPrzejazdTrybAutomatyczny.AutoSize = True
-        Me.cbPrzejazdTrybAutomatyczny.Location = New System.Drawing.Point(0, 58)
+        Me.cbPrzejazdTrybAutomatyczny.Location = New System.Drawing.Point(0, 97)
         Me.cbPrzejazdTrybAutomatyczny.Name = "cbPrzejazdTrybAutomatyczny"
         Me.cbPrzejazdTrybAutomatyczny.Size = New System.Drawing.Size(91, 17)
-        Me.cbPrzejazdTrybAutomatyczny.TabIndex = 7
+        Me.cbPrzejazdTrybAutomatyczny.TabIndex = 8
         Me.cbPrzejazdTrybAutomatyczny.Text = "automatyczny"
         Me.cbPrzejazdTrybAutomatyczny.UseVisualStyleBackColor = True
         '
         'Label49
         '
         Me.Label49.AutoSize = True
-        Me.Label49.Location = New System.Drawing.Point(22, 252)
+        Me.Label49.Location = New System.Drawing.Point(22, 291)
         Me.Label49.Name = "Label49"
         Me.Label49.Size = New System.Drawing.Size(214, 13)
         Me.Label49.TabIndex = 18
@@ -2236,21 +2240,21 @@ Partial Class wndKonfiguratorStacji
         '
         'pnlPrzejazdKolorInny
         '
-        Me.pnlPrzejazdKolorInny.Location = New System.Drawing.Point(3, 233)
+        Me.pnlPrzejazdKolorInny.Location = New System.Drawing.Point(3, 272)
         Me.pnlPrzejazdKolorInny.Name = "pnlPrzejazdKolorInny"
         Me.pnlPrzejazdKolorInny.Size = New System.Drawing.Size(13, 13)
         Me.pnlPrzejazdKolorInny.TabIndex = 17
         '
         'pnlPrzejazdKolorNieprzypisany
         '
-        Me.pnlPrzejazdKolorNieprzypisany.Location = New System.Drawing.Point(3, 252)
+        Me.pnlPrzejazdKolorNieprzypisany.Location = New System.Drawing.Point(3, 291)
         Me.pnlPrzejazdKolorNieprzypisany.Name = "pnlPrzejazdKolorNieprzypisany"
         Me.pnlPrzejazdKolorNieprzypisany.Size = New System.Drawing.Size(13, 13)
         Me.pnlPrzejazdKolorNieprzypisany.TabIndex = 16
         '
         'pnlPrzejazdKolorPrzypisany
         '
-        Me.pnlPrzejazdKolorPrzypisany.Location = New System.Drawing.Point(3, 214)
+        Me.pnlPrzejazdKolorPrzypisany.Location = New System.Drawing.Point(3, 253)
         Me.pnlPrzejazdKolorPrzypisany.Name = "pnlPrzejazdKolorPrzypisany"
         Me.pnlPrzejazdKolorPrzypisany.Size = New System.Drawing.Size(13, 13)
         Me.pnlPrzejazdKolorPrzypisany.TabIndex = 15
@@ -2258,7 +2262,7 @@ Partial Class wndKonfiguratorStacji
         'Label48
         '
         Me.Label48.AutoSize = True
-        Me.Label48.Location = New System.Drawing.Point(22, 233)
+        Me.Label48.Location = New System.Drawing.Point(22, 272)
         Me.Label48.Name = "Label48"
         Me.Label48.Size = New System.Drawing.Size(191, 13)
         Me.Label48.TabIndex = 14
@@ -2267,7 +2271,7 @@ Partial Class wndKonfiguratorStacji
         'Label47
         '
         Me.Label47.AutoSize = True
-        Me.Label47.Location = New System.Drawing.Point(22, 214)
+        Me.Label47.Location = New System.Drawing.Point(22, 253)
         Me.Label47.Name = "Label47"
         Me.Label47.Size = New System.Drawing.Size(180, 13)
         Me.Label47.TabIndex = 13
@@ -2276,7 +2280,7 @@ Partial Class wndKonfiguratorStacji
         'Label46
         '
         Me.Label46.AutoSize = True
-        Me.Label46.Location = New System.Drawing.Point(0, 198)
+        Me.Label46.Location = New System.Drawing.Point(0, 237)
         Me.Label46.Name = "Label46"
         Me.Label46.Size = New System.Drawing.Size(49, 13)
         Me.Label46.TabIndex = 12
@@ -2286,42 +2290,42 @@ Partial Class wndKonfiguratorStacji
         '
         Me.txtPrzejazdCzasPodnoszenie.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtPrzejazdCzasPodnoszenie.Location = New System.Drawing.Point(0, 172)
+        Me.txtPrzejazdCzasPodnoszenie.Location = New System.Drawing.Point(0, 211)
         Me.txtPrzejazdCzasPodnoszenie.Name = "txtPrzejazdCzasPodnoszenie"
         Me.txtPrzejazdCzasPodnoszenie.Size = New System.Drawing.Size(192, 20)
-        Me.txtPrzejazdCzasPodnoszenie.TabIndex = 11
+        Me.txtPrzejazdCzasPodnoszenie.TabIndex = 12
         '
         'txtPrzejazdCzasOpuszczanie
         '
         Me.txtPrzejazdCzasOpuszczanie.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtPrzejazdCzasOpuszczanie.Location = New System.Drawing.Point(0, 133)
+        Me.txtPrzejazdCzasOpuszczanie.Location = New System.Drawing.Point(0, 172)
         Me.txtPrzejazdCzasOpuszczanie.Name = "txtPrzejazdCzasOpuszczanie"
         Me.txtPrzejazdCzasOpuszczanie.Size = New System.Drawing.Size(192, 20)
-        Me.txtPrzejazdCzasOpuszczanie.TabIndex = 10
+        Me.txtPrzejazdCzasOpuszczanie.TabIndex = 11
         '
         'txtPrzejazdCzasSwiatla
         '
         Me.txtPrzejazdCzasSwiatla.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtPrzejazdCzasSwiatla.Location = New System.Drawing.Point(0, 94)
+        Me.txtPrzejazdCzasSwiatla.Location = New System.Drawing.Point(0, 133)
         Me.txtPrzejazdCzasSwiatla.Name = "txtPrzejazdCzasSwiatla"
         Me.txtPrzejazdCzasSwiatla.Size = New System.Drawing.Size(192, 20)
-        Me.txtPrzejazdCzasSwiatla.TabIndex = 9
+        Me.txtPrzejazdCzasSwiatla.TabIndex = 10
         '
         'txtPrzejazdNazwa
         '
         Me.txtPrzejazdNazwa.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtPrzejazdNazwa.Location = New System.Drawing.Point(0, 19)
+        Me.txtPrzejazdNazwa.Location = New System.Drawing.Point(0, 58)
         Me.txtPrzejazdNazwa.Name = "txtPrzejazdNazwa"
         Me.txtPrzejazdNazwa.Size = New System.Drawing.Size(192, 20)
-        Me.txtPrzejazdNazwa.TabIndex = 6
+        Me.txtPrzejazdNazwa.TabIndex = 7
         '
         'Label45
         '
         Me.Label45.AutoSize = True
-        Me.Label45.Location = New System.Drawing.Point(0, 156)
+        Me.Label45.Location = New System.Drawing.Point(0, 195)
         Me.Label45.Name = "Label45"
         Me.Label45.Size = New System.Drawing.Size(157, 13)
         Me.Label45.TabIndex = 4
@@ -2330,7 +2334,7 @@ Partial Class wndKonfiguratorStacji
         'Label44
         '
         Me.Label44.AutoSize = True
-        Me.Label44.Location = New System.Drawing.Point(0, 117)
+        Me.Label44.Location = New System.Drawing.Point(0, 156)
         Me.Label44.Name = "Label44"
         Me.Label44.Size = New System.Drawing.Size(156, 13)
         Me.Label44.TabIndex = 3
@@ -2339,7 +2343,7 @@ Partial Class wndKonfiguratorStacji
         'Label43
         '
         Me.Label43.AutoSize = True
-        Me.Label43.Location = New System.Drawing.Point(0, 78)
+        Me.Label43.Location = New System.Drawing.Point(0, 117)
         Me.Label43.Name = "Label43"
         Me.Label43.Size = New System.Drawing.Size(269, 13)
         Me.Label43.TabIndex = 2
@@ -2348,7 +2352,7 @@ Partial Class wndKonfiguratorStacji
         'Label42
         '
         Me.Label42.AutoSize = True
-        Me.Label42.Location = New System.Drawing.Point(0, 42)
+        Me.Label42.Location = New System.Drawing.Point(0, 81)
         Me.Label42.Name = "Label42"
         Me.Label42.Size = New System.Drawing.Size(31, 13)
         Me.Label42.TabIndex = 1
@@ -2357,7 +2361,7 @@ Partial Class wndKonfiguratorStacji
         'Label41
         '
         Me.Label41.AutoSize = True
-        Me.Label41.Location = New System.Drawing.Point(0, 3)
+        Me.Label41.Location = New System.Drawing.Point(0, 42)
         Me.Label41.Name = "Label41"
         Me.Label41.Size = New System.Drawing.Size(43, 13)
         Me.Label41.TabIndex = 0
@@ -2829,13 +2833,31 @@ Partial Class wndKonfiguratorStacji
         Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
         Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
         Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit1.Adres = CType(0US, UShort)
-        Pulpit1.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit1
+        Pulpit2.Adres = CType(0US, UShort)
+        Pulpit2.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit2
         Me.plpPulpit.Size = New System.Drawing.Size(785, 645)
         Me.plpPulpit.TabIndex = 4
         Me.plpPulpit.TrybProjektowy = True
         Me.plpPulpit.ZaznaczonaKostka = Nothing
+        '
+        'Label61
+        '
+        Me.Label61.AutoSize = True
+        Me.Label61.Location = New System.Drawing.Point(0, 3)
+        Me.Label61.Name = "Label61"
+        Me.Label61.Size = New System.Drawing.Size(41, 13)
+        Me.Label61.TabIndex = 19
+        Me.Label61.Text = "Numer:"
+        '
+        'txtPrzejazdNumer
+        '
+        Me.txtPrzejazdNumer.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtPrzejazdNumer.Location = New System.Drawing.Point(0, 19)
+        Me.txtPrzejazdNumer.Name = "txtPrzejazdNumer"
+        Me.txtPrzejazdNumer.Size = New System.Drawing.Size(192, 20)
+        Me.txtPrzejazdNumer.TabIndex = 6
         '
         'wndKonfiguratorStacji
         '
@@ -3023,7 +3045,7 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents cboKonfPrzyciskTyp As ComboBox
     Friend WithEvents Label22 As Label
     Friend WithEvents Label21 As Label
-    Friend WithEvents cboKonfPrzyciskSygnalizator As ComboBox
+    Friend WithEvents cboKonfPrzyciskObiekt As ComboBox
     Friend WithEvents GroupBox3 As GroupBox
     Friend WithEvents cboKonfRozjazdBok2 As ComboBox
     Friend WithEvents cboKonfRozjazdBok1 As ComboBox
@@ -3200,4 +3222,6 @@ Partial Class wndKonfiguratorStacji
     Friend WithEvents cboKonfKierStawnosc As ComboBox
     Friend WithEvents rbKonfKierWyjazdPrawo As RadioButton
     Friend WithEvents rbKonfKierWyjazdLewo As RadioButton
+    Friend WithEvents txtPrzejazdNumer As TextBox
+    Friend WithEvents Label61 As Label
 End Class

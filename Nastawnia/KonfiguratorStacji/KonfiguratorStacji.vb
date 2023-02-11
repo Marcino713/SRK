@@ -79,6 +79,7 @@
         If tabUstawienia.SelectedTab Is tbpPulpit Then
             plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
             If WyswietlonyPanelKonf Is pnlKonfSygn Then PokazKonfSygnOdcinki()
+            If WyswietlonyPanelKonf Is pnlKonfPrzycisk Then cboKonfPrzyciskTyp_SelectedIndexChanged()
 
         ElseIf tabUstawienia.SelectedTab Is tbpOdcinki Then
             plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow
@@ -536,62 +537,100 @@
 
     'Przycisk
     Private Sub cboKonfPrzyciskTyp_SelectedIndexChanged() Handles cboKonfPrzyciskTyp.SelectedIndexChanged
-        Dim aktywny As Boolean = False
         Dim el As Object = cboKonfPrzyciskTyp.SelectedItem
 
-        If el Is Nothing Then
-            aktywny = False
-        Else
-            aktywny = True
+        If el IsNot Nothing Then
+            cboKonfPrzyciskObiekt.Items.Clear()
 
             Select Case plpPulpit.ZaznaczonaKostka.Typ
                 Case Zaleznosci.TypKostki.Przycisk
                     Dim typ As Zaleznosci.TypPrzyciskuEnum = DirectCast(el, ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)).Wartosc
                     Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Przycisk)
                     prz.TypPrzycisku = typ
-                    If typ = Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegow Then aktywny = False
-                    cboKonfPrzyciskSygnalizator.Items.Clear()
-                    cboKonfPrzyciskSygnalizator.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweSygnalizatora))
-                    ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskSygnalizator, prz.ObslugiwanySygnalizator)
+
+                    Select Case typ
+                        Case Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegu, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweSygnalizatora))
+                            ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.SygnalizatorPolsamoczynny)
+
+                        Case Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnManewrowego
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzySygnalizatorManewrowy, AddressOf PobierzNazweSygnalizatora))
+                            ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.SygnalizatorManewrowy)
+
+                        Case Zaleznosci.TypPrzyciskuEnum.WlaczenieSBL, Zaleznosci.TypPrzyciskuEnum.PotwierdzenieSBL, Zaleznosci.TypPrzyciskuEnum.ZwolnienieSBL
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzyKierunek, AddressOf PobierzNazweKierunku))
+                            ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.Kierunek)
+
+                        Case Zaleznosci.TypPrzyciskuEnum.KasowanieRozprucia
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzyRozjazd, AddressOf PobierzNazweRozjazdu))
+                            ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.Rozjazd)
+
+                        Case Zaleznosci.TypPrzyciskuEnum.ZamknieciePrzejazdu, Zaleznosci.TypPrzyciskuEnum.OtwarciePrzejazdu
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzPrzejazdyDoComboBox())
+                            ZaznaczElement(cboKonfPrzyciskObiekt, prz.Przejazd)
+
+                    End Select
 
                 Case Zaleznosci.TypKostki.PrzyciskTor
                     Dim typ As Zaleznosci.TypPrzyciskuTorEnum = DirectCast(el, ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)).Wartosc
                     Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
-                    If (prz.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy And (typ = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorPolsamoczynny Or typ = Zaleznosci.TypPrzyciskuTorEnum.SygnalManewrowy)) Or
-                            ((prz.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorPolsamoczynny Or prz.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.SygnalManewrowy) And typ = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy) Then
-                        prz.ObslugiwanySygnalizator = Nothing
-                    End If
                     prz.TypPrzycisku = typ
-                    Dim f As SprawdzTypKostki
-                    If typ = Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy Then
-                        f = AddressOf CzySygnalizatorManewrowy
-                    Else
-                        f = AddressOf CzySygnalizatorPolsamoczynny
-                    End If
-                    cboKonfPrzyciskSygnalizator.Items.Clear()
-                    cboKonfPrzyciskSygnalizator.Items.AddRange(PobierzElementyDoComboBox(f, AddressOf PobierzNazweSygnalizatora))
-                    ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskSygnalizator, prz.ObslugiwanySygnalizator)
+
+                    Select Case typ
+                        Case Zaleznosci.TypPrzyciskuTorEnum.JazdaSygnalizatorPolsamoczynny, Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorPolsamoczynny
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweSygnalizatora))
+                            ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.SygnalizatorPolsamoczynny)
+
+                        Case Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzySygnalizatorManewrowy, AddressOf PobierzNazweSygnalizatora))
+                            ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.SygnalizatorManewrowy)
+
+                    End Select
 
             End Select
-
         End If
 
-        cboKonfPrzyciskSygnalizator.Enabled = aktywny
         plpPulpit.Invalidate()
     End Sub
 
-    Private Sub cboKonfPrzyciskSygnalizator_SelectedIndexChanged() Handles cboKonfPrzyciskSygnalizator.SelectedIndexChanged
-        If cboKonfPrzyciskSygnalizator.SelectedItem Is Nothing Then Exit Sub
+    Private Sub cboKonfPrzyciskObiekt_SelectedIndexChanged() Handles cboKonfPrzyciskObiekt.SelectedIndexChanged
+        If cboKonfPrzyciskObiekt.SelectedItem Is Nothing Then Exit Sub
 
-        Dim sygn As Zaleznosci.Kostka = DirectCast(cboKonfPrzyciskSygnalizator.SelectedItem, ObiektComboBox(Of Zaleznosci.Kostka)).Wartosc
+        Dim zazn As Object = cboKonfPrzyciskObiekt.SelectedItem
         Select Case plpPulpit.ZaznaczonaKostka.Typ
+
             Case Zaleznosci.TypKostki.Przycisk
                 Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Przycisk)
-                prz.ObslugiwanySygnalizator = DirectCast(sygn, Zaleznosci.SygnalizatorPolsamoczynny)
+
+                Select Case prz.TypPrzycisku
+                    Case Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegu, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego
+                        prz.SygnalizatorPolsamoczynny = CType(CType(zazn, ObiektComboBox(Of Zaleznosci.Kostka)).Wartosc, Zaleznosci.SygnalizatorPolsamoczynny)
+
+                    Case Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnManewrowego
+                        prz.SygnalizatorManewrowy = CType(CType(zazn, ObiektComboBox(Of Zaleznosci.Kostka)).Wartosc, Zaleznosci.SygnalizatorManewrowy)
+
+                    Case Zaleznosci.TypPrzyciskuEnum.WlaczenieSBL, Zaleznosci.TypPrzyciskuEnum.PotwierdzenieSBL, Zaleznosci.TypPrzyciskuEnum.ZwolnienieSBL
+                        prz.Kierunek = CType(CType(zazn, ObiektComboBox(Of Zaleznosci.Kostka)).Wartosc, Zaleznosci.Kierunek)
+
+                    Case Zaleznosci.TypPrzyciskuEnum.KasowanieRozprucia
+                        prz.Rozjazd = CType(CType(zazn, ObiektComboBox(Of Zaleznosci.Kostka)).Wartosc, Zaleznosci.Rozjazd)
+
+                    Case Zaleznosci.TypPrzyciskuEnum.ZamknieciePrzejazdu, Zaleznosci.TypPrzyciskuEnum.OtwarciePrzejazdu
+                        prz.Przejazd = CType(zazn, ObiektComboBox(Of Zaleznosci.PrzejazdKolejowoDrogowy)).Wartosc
+
+                End Select
 
             Case Zaleznosci.TypKostki.PrzyciskTor
                 Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
-                prz.ObslugiwanySygnalizator = DirectCast(sygn, Zaleznosci.Sygnalizator)
+
+                Select Case prz.TypPrzycisku
+                    Case Zaleznosci.TypPrzyciskuTorEnum.JazdaSygnalizatorPolsamoczynny, Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorPolsamoczynny
+                        prz.SygnalizatorPolsamoczynny = CType(CType(zazn, ObiektComboBox(Of Zaleznosci.Kostka)).Wartosc, Zaleznosci.SygnalizatorPolsamoczynny)
+
+                    Case Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy
+                        prz.SygnalizatorManewrowy = CType(CType(zazn, ObiektComboBox(Of Zaleznosci.Kostka)).Wartosc, Zaleznosci.SygnalizatorManewrowy)
+
+                End Select
 
         End Select
 
@@ -789,7 +828,15 @@
                 Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Przycisk)
                 cboKonfPrzyciskTyp.Items.AddRange({
                     New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy, "Sygnał zastępczy"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegow, "Zwolnienie przebiegów")
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegu, "Zwolnienie przebiegu pociągowego na sygnalizatorze półsamoczynnym"),
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego, "Zwolnienie przebiegu manewrowego na sygnalizatorze półsamoczynnym"),
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnManewrowego, "Zwolnienie przebiegu manewrowego na sygnalizatorze manewrowym"),
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.WlaczenieSBL, "Włączenie blokady"),
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.PotwierdzenieSBL, "Potwierdzenie kierunku blokady"),
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZwolnienieSBL, "Zwolnienie blokady"),
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.KasowanieRozprucia, "Kasowanie rozprucia"),
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZamknieciePrzejazdu, "Zamknięcie przejazdu kolejowo-drogowego"),
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.OtwarciePrzejazdu, "Otwarcie przejazdu kolejowo-drogowego")
                 })
                 cboKonfPrzyciskTyp.SelectedIndex = prz.TypPrzycisku
                 pnlKonfPrzyciskPredkosc.Visible = False
@@ -797,9 +844,9 @@
             Case Zaleznosci.TypKostki.PrzyciskTor
                 Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
                 cboKonfPrzyciskTyp.Items.AddRange({
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorPolsamoczynny, "Sygnalizator półsamoczynny"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.SygnalizatorManewrowy, "Sygnalizator manewrowy"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.SygnalManewrowy, "Sygnał manewrowy na sygnalizatorze półsamoczynnym")
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.JazdaSygnalizatorPolsamoczynny, "Wyjazd na sygnalizatorze półsamoczynnym"),
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorPolsamoczynny, "Sygnał manewrowy na sygnalizatorze półsamoczynnym"),
+                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy, "Sygnał manewrowy na sygnalizatorze manewrowym")
                 })
                 cboKonfPrzyciskTyp.SelectedIndex = prz.TypPrzycisku
                 pnlKonfPrzyciskPredkosc.Visible = True
@@ -915,8 +962,16 @@
         Return kostka.Typ = Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
     End Function
 
+    Private Function CzyKierunek(kostka As Zaleznosci.Kostka) As Boolean
+        Return kostka.Typ = Zaleznosci.TypKostki.Kierunek
+    End Function
+
     Private Function PobierzNazweSygnalizatora(kostka As Zaleznosci.Kostka) As String
         Return DirectCast(kostka, Zaleznosci.Sygnalizator).Nazwa
+    End Function
+
+    Private Function PobierzNazweKierunku(kostka As Zaleznosci.Kostka) As String
+        Return DirectCast(kostka, Zaleznosci.Kierunek).Nazwa
     End Function
 
     Private Function PobierzElementyDoComboBox(sprawdzanie As SprawdzTypKostki, nazwa As PobierzNazweKostki, Optional obiektUnikany As Zaleznosci.Kostka = Nothing, Optional pominZaznaczony As Boolean = True) As ObiektComboBox(Of Zaleznosci.Kostka)()
@@ -929,6 +984,16 @@
                                           End Sub)
 
         Return kostki.OrderBy(Function(k As ObiektComboBox(Of Zaleznosci.Kostka)) nazwa(k.Wartosc)).ToArray()
+    End Function
+
+    Private Function PobierzPrzejazdyDoComboBox() As ObiektComboBox(Of Zaleznosci.PrzejazdKolejowoDrogowy)()
+        Dim przejazdy As New List(Of ObiektComboBox(Of Zaleznosci.PrzejazdKolejowoDrogowy))
+
+        For Each p As Zaleznosci.PrzejazdKolejowoDrogowy In plpPulpit.Pulpit.Przejazdy
+            przejazdy.Add(New ObiektComboBox(Of Zaleznosci.PrzejazdKolejowoDrogowy)(p, p.Nazwa))
+        Next
+
+        Return przejazdy.OrderBy(Function(p As ObiektComboBox(Of Zaleznosci.PrzejazdKolejowoDrogowy)) p.Wartosc.Nazwa).ToArray
     End Function
 
 #End Region 'Zakładka Pulpit
@@ -1321,6 +1386,7 @@
         Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = PobierzZaznaczonyElement(Of Zaleznosci.PrzejazdKolejowoDrogowy)(lvPrzejazdy)
         plpPulpit.projZaznaczonyPrzejazd = przejazd
         If przejazd Is Nothing Then
+            txtPrzejazdNumer.Text = ""
             txtPrzejazdNazwa.Text = ""
             cbPrzejazdTrybAutomatyczny.Checked = False
             cbPrzejazdTrybReczny.Checked = False
@@ -1329,6 +1395,7 @@
             txtPrzejazdCzasPodnoszenie.Text = ""
             UstawAktywnoscPolPrzejazdu(False)
         Else
+            txtPrzejazdNumer.Text = przejazd.Numer.ToString
             txtPrzejazdNazwa.Text = przejazd.Nazwa
             cbPrzejazdTrybAutomatyczny.Checked = (przejazd.Tryb And Zaleznosci.TrybPrzejazduKolejowego.Automatyczny) <> 0
             cbPrzejazdTrybReczny.Checked = (przejazd.Tryb And Zaleznosci.TrybPrzejazduKolejowego.Reczny) <> 0
@@ -1364,6 +1431,15 @@
         End If
     End Sub
 
+    Private Sub txtPrzejazdNumer_TextChanged() Handles txtPrzejazdNumer.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = plpPulpit.projZaznaczonyPrzejazd
+        If przejazd IsNot Nothing Then
+            przejazd.Numer = PobierzKrotkaLiczbeNieujemna(txtPrzejazdNumer)
+        End If
+    End Sub
+
     Private Sub txtPrzejazdNazwa_TextChanged() Handles txtPrzejazdNazwa.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
@@ -1371,6 +1447,7 @@
         If przejazd IsNot Nothing Then
             przejazd.Nazwa = txtPrzejazdNazwa.Text
             ZaznaczonyPrzejazdNaLiscie.SubItems(0).Text = przejazd.Nazwa
+            plpPulpit.Invalidate()
         End If
     End Sub
 

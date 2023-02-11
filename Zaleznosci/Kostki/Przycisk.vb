@@ -5,7 +5,11 @@ Public Class Przycisk
     Implements IPrzycisk
 
     Public Property TypPrzycisku As TypPrzyciskuEnum
-    Public Property ObslugiwanySygnalizator As SygnalizatorPolsamoczynny
+    Public Property SygnalizatorPolsamoczynny As SygnalizatorPolsamoczynny
+    Public Property SygnalizatorManewrowy As SygnalizatorManewrowy
+    Public Property Kierunek As Kierunek
+    Public Property Rozjazd As Rozjazd
+    Public Property Przejazd As PrzejazdKolejowoDrogowy
 
     Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
 
@@ -14,22 +18,44 @@ Public Class Przycisk
     End Sub
 
     Protected Friend Overrides Sub UsunPowiazanie(kostka As Kostka)
-        If ObslugiwanySygnalizator Is kostka Then ObslugiwanySygnalizator = Nothing
+        If SygnalizatorPolsamoczynny Is kostka Then SygnalizatorPolsamoczynny = Nothing
+        If SygnalizatorManewrowy Is kostka Then SygnalizatorManewrowy = Nothing
+        If Kierunek Is kostka Then Kierunek = Nothing
+        If Rozjazd Is kostka Then Rozjazd = Nothing
+    End Sub
+
+    Protected Friend Overrides Sub UsunPrzejazdZPowiazan(przejazd As PrzejazdKolejowoDrogowy)
+        If Me.Przejazd Is przejazd Then Me.Przejazd = Nothing
     End Sub
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
-        bw.Write(CType(TypPrzycisku, Byte))
-        bw.Write(If(ObslugiwanySygnalizator Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(ObslugiwanySygnalizator)))
+        bw.Write(CByte(TypPrzycisku))
+        bw.Write(If(SygnalizatorPolsamoczynny Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(SygnalizatorPolsamoczynny)))
+        bw.Write(If(SygnalizatorManewrowy Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(SygnalizatorManewrowy)))
+        bw.Write(If(Kierunek Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(Kierunek)))
+        bw.Write(If(Rozjazd Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(Rozjazd)))
+        bw.Write(If(Przejazd Is Nothing, PUSTE_ODWOLANIE, konf.Przejazdy(Przejazd)))
     End Sub
 
     Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
         TypPrzycisku = CType(br.ReadByte, TypPrzyciskuEnum)
-        Dim id As Integer = br.ReadInt32
-        ObslugiwanySygnalizator = CType(konf.Kostki(id), SygnalizatorPolsamoczynny)
+        SygnalizatorPolsamoczynny = CType(konf.Kostki(br.ReadInt32), SygnalizatorPolsamoczynny)
+        SygnalizatorManewrowy = CType(konf.Kostki(br.ReadInt32), SygnalizatorManewrowy)
+        Kierunek = CType(konf.Kostki(br.ReadInt32), Kierunek)
+        Rozjazd = CType(konf.Kostki(br.ReadInt32), Rozjazd)
+        Przejazd = konf.Przejazdy(br.ReadInt32)
     End Sub
 End Class
 
 Public Enum TypPrzyciskuEnum
     SygnalZastepczy
-    ZwolnieniePrzebiegow
+    ZwolnieniePrzebiegu
+    ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego
+    ZwolnieniePrzebieguManewrowegoZSygnManewrowego
+    WlaczenieSBL
+    PotwierdzenieSBL
+    ZwolnienieSBL
+    KasowanieRozprucia
+    ZamknieciePrzejazdu
+    OtwarciePrzejazdu
 End Enum

@@ -191,6 +191,16 @@ Public Class Pulpit
         Return dict
     End Function
 
+    Public Function PobierzPrzejazdyKolejowoDrogowe() As Dictionary(Of UShort, PrzejazdKolejowoDrogowy)
+        Dim slownik As New Dictionary(Of UShort, PrzejazdKolejowoDrogowy)
+
+        For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
+            slownik.Add(p.Numer, p)
+        Next
+
+        Return slownik
+    End Function
+
     Public Sub PrzeiterujKostki(Of T)(metoda As PrzetworzKostkeZObiektem(Of T), obiekt As T)
         For x As Integer = 0 To _Szerokosc - 1
             For y As Integer = 0 To _Wysokosc - 1

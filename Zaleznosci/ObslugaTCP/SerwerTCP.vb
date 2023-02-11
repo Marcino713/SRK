@@ -51,7 +51,8 @@ Public Class SerwerTCP
     Public Event OdebranoUstawZwrotnice(post As UShort, kom As UstawZwrotnice)
     Public Event OdebranoUwierzytelnijSie(post As UShort, kom As UwierzytelnijSie)
     Public Event OdebranoWybierzPosterunek(post As UShort, kom As WybierzPosterunek)
-    Public Event OdebranoZwolnijPrzebiegi(post As UShort, kom As ZwolnijPrzebiegi)
+    Public Event OdebranoZwolnijPrzebieg(post As UShort, kom As ZwolnijPrzebieg)
+    Public Event OdebranoUstawStanPrzejazdu(post As UShort, kom As UstawStanPrzejazdu)
     Public Event DodanoPociag(pociag As StanPociagu)
     Public Event ZmienionNazwePociagu(nrPociagu As UInteger, nazwa As String)
     Public Event ZmienionoLiczbeOsiPociagu(nrPociagu As UInteger, liczbaOsi As UShort)
@@ -224,7 +225,7 @@ Public Class SerwerTCP
             AddressOf UstawZwrotnice.Otworz,
             Sub(pol, kom)
                 Dim k As UstawZwrotnice = CType(kom, UstawZwrotnice)
-                pol.WyslijKomunikat(New ZmienionoStanZwrotnicy() With {.Adres = k.Adres, .Stan = If(k.Ustawienie = UstawienieRozjazduEnum.Wprost, UstawienieZwrotnicy.Wprost, UstawienieZwrotnicy.Bok)})
+                pol.WyslijKomunikat(New ZmienionoStanZwrotnicy() With {.Adres = k.Adres, .Stan = If(k.Ustawienie = UstawienieRozjazduEnum.Wprost, StanRozjazdu.Wprost, StanRozjazdu.Bok)})
                 RaiseEvent OdebranoUstawZwrotnice(pol.AdresStacji, k)
             End Sub
         ))
@@ -239,9 +240,13 @@ Public Class SerwerTCP
             AddressOf ZerezerwujPosterunek
         ))
 
-        DaneFabrykiObiektow.Add(TypKomunikatu.ZWOLNIJ_PRZEBIEGI, New PrzetwOdebrKomunikatu(
-            AddressOf ZwolnijPrzebiegi.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoZwolnijPrzebiegi(pol.AdresStacji, CType(kom, ZwolnijPrzebiegi))
+        DaneFabrykiObiektow.Add(TypKomunikatu.ZWOLNIJ_PRZEBIEG, New PrzetwOdebrKomunikatu(
+            AddressOf ZwolnijPrzebieg.Otworz,
+            Sub(pol, kom)
+                Dim k As ZwolnijPrzebieg = CType(kom, ZwolnijPrzebieg)
+                pol.WyslijKomunikat(New ZmienionoStanSygnalizatora() With {.Adres = k.Adres, .Stan = StanSygnalizatora.BrakWyjazdu})
+                RaiseEvent OdebranoZwolnijPrzebieg(pol.AdresStacji, k)
+            End Sub
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.POBIERZ_POCIAGI, New PrzetwOdebrKomunikatu(
@@ -342,6 +347,17 @@ Public Class SerwerTCP
                 UsunPociagZSieci(k.NrPociagu, pol)
             End Sub
         ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_STAN_PRZEJAZDU, New PrzetwOdebrKomunikatu(
+            AddressOf UstawStanPrzejazdu.Otworz,
+            Sub(pol, kom)
+                Dim k As UstawStanPrzejazdu = CType(kom, UstawStanPrzejazdu)
+                pol.WyslijKomunikat(New ZmienionoStanPrzejazdu() With {
+                                    .Numer = k.Numer,
+                                    .Stan = If(k.Stan = UstawianyStanPrzejazdu.Zamkniety, StanPrzejazduKolejowego.Zamkniety, StanPrzejazduKolejowego.Otwarty)})
+                RaiseEvent OdebranoUstawStanPrzejazdu(pol.AdresStacji, k)
+            End Sub
+        ))
     End Sub
 
     Public Sub WyslijInformacje(post As UShort, kom As Informacja)
@@ -393,6 +409,10 @@ Public Class SerwerTCP
     End Sub
 
     Public Sub WyslijZmienionoStanZwrotnicy(post As UShort, kom As ZmienionoStanZwrotnicy)
+        WyslijDoKlienta(post, kom)
+    End Sub
+
+    Public Sub WysliZmienionoStanPrzejazdu(post As UShort, kom As ZmienionoStanPrzejazdu)
         WyslijDoKlienta(post, kom)
     End Sub
 

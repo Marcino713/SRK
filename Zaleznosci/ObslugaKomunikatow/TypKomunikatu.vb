@@ -13,7 +13,7 @@
     Friend Const ZMIENIONO_STAN_ZWROTNICY As UShort = 13
     Friend Const USTAW_STAN_SYGNALIZATORA As UShort = 14
     Friend Const ZMIENIONO_STAN_SYGNALIZATORA As UShort = 15
-    Friend Const ZWOLNIJ_PRZEBIEGI As UShort = 16
+    Friend Const ZWOLNIJ_PRZEBIEG As UShort = 16
     Friend Const USTAW_KIERUNEK As UShort = 17
     Friend Const POTWIERDZ_KIERUNEK As UShort = 18
     Friend Const ZMIENIONO_KIERUNEK As UShort = 19
@@ -35,6 +35,8 @@
     Friend Const USUN_POCIAG As UShort = 36
     Friend Const USUNIETO_POCIAG As UShort = 37
     Friend Const ZMIENIONO_NAZWE_POCIAGU As UShort = 38
+    Friend Const USTAW_STAN_PRZEJAZDU As UShort = 39
+    Friend Const ZMIENIONO_STAN_PRZEJAZDU As UShort = 40
 
     Friend Shared Function CzyKomunikatDH(typ As UShort) As Boolean
         Return typ = DH_INICJALIZUJ Or typ = DH_ZAINICJALIZOWANO
@@ -50,10 +52,11 @@
 
     Friend Shared Function CzyKomunikatSterowaniaRuchem(typ As UShort) As Boolean
         Return typ = DODAJ_POCIAG Or typ = DODANO_POCIAG Or typ = ZMIENIONO_STAN_TORU Or typ = USTAW_ZWROTNICE Or typ = ZMIENIONO_STAN_ZWROTNICY Or
-               typ = USTAW_STAN_SYGNALIZATORA Or typ = ZMIENIONO_STAN_SYGNALIZATORA Or typ = ZWOLNIJ_PRZEBIEGI Or typ = USTAW_KIERUNEK Or typ = POTWIERDZ_KIERUNEK Or
+               typ = USTAW_STAN_SYGNALIZATORA Or typ = ZMIENIONO_STAN_SYGNALIZATORA Or typ = ZWOLNIJ_PRZEBIEG Or typ = USTAW_KIERUNEK Or typ = POTWIERDZ_KIERUNEK Or
                typ = ZMIENIONO_KIERUNEK Or typ = USTAW_JASNOSC_LAMP Or typ = ZMIENIONO_JASNOSC_LAMP Or typ = USTAW_PREDKOSC_POCIAGU Or typ = ZMIENIONO_PREDKOSC_POCIAGU Or
                typ = ZMIENIONO_PREDKOSC_DOZWOLONA Or typ = INFORMACJA Or typ = POBIERZ_POCIAGI Or typ = POBRANO_POCIAGI Or typ = WYBIERZ_POCIAG Or typ = WYBRANO_POCIAG Or
-               typ = WYSIADZ_Z_POCIAGU Or typ = WYSIADZNIETO_Z_POCIAGU Or typ = USUN_POCIAG Or typ = USUNIETO_POCIAG Or typ = ZMIENIONO_NAZWE_POCIAGU
+               typ = WYSIADZ_Z_POCIAGU Or typ = WYSIADZNIETO_Z_POCIAGU Or typ = USUN_POCIAG Or typ = USUNIETO_POCIAG Or typ = ZMIENIONO_NAZWE_POCIAGU Or
+               typ = USTAW_STAN_PRZEJAZDU Or typ = ZMIENIONO_STAN_PRZEJAZDU
     End Function
 
     Friend Shared Function CzyKomunikatZakonczenia(typ As UShort) As Boolean

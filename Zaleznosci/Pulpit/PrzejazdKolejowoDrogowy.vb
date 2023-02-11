@@ -4,7 +4,8 @@ Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.Kon
 Public Class PrzejazdKolejowoDrogowy
     Implements IObiektPlikuTyp
 
-    Public Property Nazwa As String
+    Public Property Numer As UShort
+    Public Property Nazwa As String = ""
     Public Property Tryb As TrybPrzejazduKolejowego
     Public Property CzasSwiatel As UShort
     Public Property CzasOpuszczania As UShort
@@ -42,6 +43,7 @@ Public Class PrzejazdKolejowoDrogowy
         Using ms As New MemoryStream
             Using bw As New BinaryWriter(ms)
                 bw.Write(konf.Przejazdy(Me))
+                bw.Write(Numer)
                 ZapiszTekst(bw, Nazwa)
                 bw.Write(CByte(Tryb))
                 bw.Write(CzasSwiatel)
@@ -84,6 +86,7 @@ Public Class PrzejazdKolejowoDrogowy
         Using ms As New MemoryStream(dane)
             Using br As New BinaryReader(ms)
                 ms.Seek(4, SeekOrigin.Begin)
+                Numer = br.ReadUInt16
                 Nazwa = OdczytajTekst(br)
                 Tryb = CType(br.ReadByte, TrybPrzejazduKolejowego)
                 CzasSwiatel = br.ReadUInt16

@@ -33,7 +33,7 @@ Public MustInherit Class Rozjazd
     End Property
 
     Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
-    Public Property Stan As UstawienieZwrotnicy = UstawienieZwrotnicy.Niezdefiniowany
+    Public Property Stan As StanRozjazdu = StanRozjazdu.Niezdefiniowany
     Public Property ZajetoscBok As ZajetoscToru = ZajetoscToru.Wolny
     Public Property Rozprucie As Boolean = False
     Public Property PrzytnijZakret As PrzycinanieZakretu Implements IZakret.PrzytnijZakret
@@ -125,7 +125,7 @@ Public Enum UstawienieRozjazduEnum
     Bok
 End Enum
 
-Public Enum UstawienieZwrotnicy As Byte
+Public Enum StanRozjazdu As Byte
     Wprost
     Bok
     Niezdefiniowany

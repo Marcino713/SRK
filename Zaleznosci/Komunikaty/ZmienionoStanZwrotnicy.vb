@@ -3,7 +3,7 @@
 
     Public Property Adres As UShort
     Public Property Rozprucie As Boolean
-    Public Property Stan As UstawienieZwrotnicy
+    Public Property Stan As StanRozjazdu
 
     Public Overrides ReadOnly Property Typ As UShort
         Get
@@ -21,7 +21,7 @@
         Dim kom As New ZmienionoStanZwrotnicy
         kom.Adres = br.ReadUInt16
         kom.Rozprucie = br.ReadBoolean
-        kom.Stan = CType(br.ReadByte, UstawienieZwrotnicy)
+        kom.Stan = CType(br.ReadByte, StanRozjazdu)
 
         Return kom
     End Function
