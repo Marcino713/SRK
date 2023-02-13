@@ -5,12 +5,26 @@ Public Class PrzejazdKolejowy
 
     Public Property NalezyDoPrzejazdu As PrzejazdKolejowoDrogowy
 
-    Public Property Stan As StanPrzejazduKolejowego = StanPrzejazduKolejowego.Otwarty
     Public Property Awaria As Boolean = False
+
+    Private _Stan As StanPrzejazduKolejowego = StanPrzejazduKolejowego.Otwarty
+    Public Property Stan As StanPrzejazduKolejowego
+        Get
+            Return _Stan
+        End Get
+        Set(value As StanPrzejazduKolejowego)
+            _Stan = value
+            Migacz?.UstawKostke(Me)
+        End Set
+    End Property
 
     Public Sub New()
         MyBase.New(TypKostki.PrzejazdKolejowy)
     End Sub
+
+    Public Overrides Function CzyMiga() As Boolean
+        Return MyBase.CzyMiga() OrElse _Stan = StanPrzejazduKolejowego.Otwierany OrElse _Stan = StanPrzejazduKolejowego.Zamykany
+    End Function
 
     Protected Friend Overrides Sub UsunPrzejazdZPowiazan(przejazd As PrzejazdKolejowoDrogowy)
         If NalezyDoPrzejazdu Is przejazd Then NalezyDoPrzejazdu = Nothing

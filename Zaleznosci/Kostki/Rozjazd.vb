@@ -33,16 +33,40 @@ Public MustInherit Class Rozjazd
     End Property
 
     Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
-    Public Property Stan As StanRozjazdu = StanRozjazdu.Niezdefiniowany
-    Public Property ZajetoscBok As ZajetoscToru = ZajetoscToru.Wolny
-    Public Property Rozprucie As Boolean = False
     Public Property PrzytnijZakret As PrzycinanieZakretu Implements IZakret.PrzytnijZakret
+    Public Property Stan As StanRozjazdu = StanRozjazdu.Niezdefiniowany
+
+    Private _ZajetoscBok As ZajetoscToru = ZajetoscToru.Wolny
+    Public Property ZajetoscBok As ZajetoscToru
+        Get
+            Return _ZajetoscBok
+        End Get
+        Set(value As ZajetoscToru)
+            _ZajetoscBok = value
+            Migacz?.UstawKostke(Me)
+        End Set
+    End Property
+
+    Private _Rozprucie As Boolean = False
+    Public Property Rozprucie As Boolean
+        Get
+            Return _Rozprucie
+        End Get
+        Set(value As Boolean)
+            _Rozprucie = value
+            Migacz?.UstawKostke(Me)
+        End Set
+    End Property
 
     Public Sub New(typ As TypKostki)
         MyBase.New(typ)
         _ZaleznosciJesliWprost = PobierzDomyslnaKonfiguracje(LICZBA_ROZJAZDOW_ZALEZNYCH)
         _ZaleznosciJesliBok = PobierzDomyslnaKonfiguracje(LICZBA_ROZJAZDOW_ZALEZNYCH)
     End Sub
+
+    Public Overrides Function CzyMiga() As Boolean
+        Return MyBase.CzyMiga() OrElse _ZajetoscBok = ZajetoscToru.BlokadaNieustawiona Or _Rozprucie
+    End Function
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
         MyBase.ZapiszKostke(bw, konf)

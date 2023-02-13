@@ -5,11 +5,24 @@ Public Class SygnalizatorPolsamoczynny
 
     Public Property DostepneSwiatla As DostepneSwiatlaEnum
 
-    Public Property Stan As StanSygnalizatora = StanSygnalizatora.BrakWyjazdu
+    Private _Stan As StanSygnalizatora = StanSygnalizatora.BrakWyjazdu
+    Public Property Stan As StanSygnalizatora
+        Get
+            Return _Stan
+        End Get
+        Set(value As StanSygnalizatora)
+            _Stan = value
+            Migacz?.UstawKostke(Me)
+        End Set
+    End Property
 
     Public Sub New()
         MyBase.New(TypKostki.SygnalizatorPolsamoczynny)
     End Sub
+
+    Public Overrides Function CzyMiga() As Boolean
+        Return MyBase.CzyMiga() OrElse _Stan = StanSygnalizatora.Zastepczy
+    End Function
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
         MyBase.ZapiszKostke(bw, konf)

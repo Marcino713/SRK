@@ -181,6 +181,12 @@ Public Class Pulpit
         Return slownik
     End Function
 
+    Public Function PobierzKostkiZeWspolrzednymi() As Dictionary(Of Kostka, Punkt)
+        Dim slownik As New Dictionary(Of Kostka, Punkt)
+        PrzeiterujKostki(Sub(x, y, k) slownik.Add(k, New Punkt(x, y)))
+        Return slownik
+    End Function
+
     Public Function PobierzLampy() As Dictionary(Of UShort, Lampa)
         Dim dict As New Dictionary(Of UShort, Lampa)
 
@@ -189,6 +195,16 @@ Public Class Pulpit
         Next
 
         Return dict
+    End Function
+
+    Public Function PobierzOdcinkiTorow() As Dictionary(Of UShort, OdcinekToru)
+        Dim slownik As New Dictionary(Of UShort, OdcinekToru)
+
+        For Each o As OdcinekToru In _Odcinki
+            slownik.Add(o.Adres, o)
+        Next
+
+        Return slownik
     End Function
 
     Public Function PobierzPrzejazdyKolejowoDrogowe() As Dictionary(Of UShort, PrzejazdKolejowoDrogowy)
@@ -220,7 +236,7 @@ Public Class Pulpit
         Dim p As Punkt = Nothing
         PrzeiterujKostki(Sub(x, y, k)
                              If k Is kostka Then
-                                 p = New Punkt() With {.X = CUShort(x), .Y = CUShort(y)}
+                                 p = New Punkt(x, y)
                              End If
                          End Sub)
         Return p

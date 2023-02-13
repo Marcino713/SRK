@@ -23,8 +23,16 @@ Partial Class PulpitSterowniczy
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Me.tmrLicznik = New System.Windows.Forms.Timer(Me.components)
+        Me.tmrPrzycisk = New System.Windows.Forms.Timer(Me.components)
+        Me.tmrMiganie = New System.Windows.Forms.Timer(Me.components)
         Me.SuspendLayout()
+        '
+        'tmrPrzycisk
+        '
+        '
+        'tmrMiganie
+        '
+        Me.tmrMiganie.Interval = 500
         '
         'PulpitSterowniczy
         '
@@ -37,5 +45,6 @@ Partial Class PulpitSterowniczy
 
     End Sub
 
-    Friend WithEvents tmrLicznik As Timer
+    Friend WithEvents tmrPrzycisk As Timer
+    Friend WithEvents tmrMiganie As Timer
 End Class

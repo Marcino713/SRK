@@ -8,11 +8,25 @@ Public Class Kierunek
     Public Property Stawnosc As StawnoscSBL
 
     Public Property UstawionyKierunek As UstawionyKierunekSBL = UstawionyKierunekSBL.Zaden
-    Public Property UstawionyStanZmiany As UstawionyStanZmianyKierunkuSBL = UstawionyStanZmianyKierunkuSBL.Zaden
+
+    Private _UstawionyStanZmiany As UstawionyStanZmianyKierunkuSBL = UstawionyStanZmianyKierunkuSBL.Zaden
+    Public Property UstawionyStanZmiany As UstawionyStanZmianyKierunkuSBL
+        Get
+            Return _UstawionyStanZmiany
+        End Get
+        Set(value As UstawionyStanZmianyKierunkuSBL)
+            _UstawionyStanZmiany = value
+            Migacz?.UstawKostke(Me)
+        End Set
+    End Property
 
     Public Sub New()
         MyBase.New(TypKostki.Kierunek)
     End Sub
+
+    Public Overrides Function CzyMiga() As Boolean
+        Return MyBase.CzyMiga() OrElse _UstawionyStanZmiany <> UstawionyStanZmianyKierunkuSBL.Zaden
+    End Function
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
         MyBase.ZapiszKostke(bw, konf)

@@ -7,6 +7,8 @@ Public MustInherit Class Kostka
     Public ReadOnly Property Typ As TypKostki
     Public Property Obrot As Integer
 
+    Public Property Migacz As IMigacz
+
     Public Shared Function CzyRozjazd(typ As TypKostki) As Boolean
         Return _
             typ = TypKostki.RozjazdLewo Or
@@ -48,6 +50,10 @@ Public MustInherit Class Kostka
     Public Sub New(typ As TypKostki)
         Me.Typ = typ
     End Sub
+
+    Public Overridable Function CzyMiga() As Boolean
+        Return False
+    End Function
 
     Protected Friend Overridable Sub UsunPowiazanie(kostka As Kostka)
     End Sub

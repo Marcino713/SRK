@@ -23,6 +23,10 @@ Friend Class PulpitSterowniczy
     Private PierwszaObslugaPrzeciagania As Boolean = True
     Private WcisnietyPrzycisk As Zaleznosci.IPrzycisk = Nothing
     Private RysowanieWlaczone As Boolean = True
+    Private Migacz As Migacz
+
+    Private actWlaczZegarMigania As Action = Sub() tmrMiganie.Start()
+    Private actWylaczZegarMigania As Action = Sub() tmrMiganie.Stop()
 
     <Browsable(False)>
     Public ReadOnly Property SzerokoscPulpitu As Integer
@@ -43,6 +47,14 @@ Friend Class PulpitSterowniczy
     Public ReadOnly Property Rysownik As IRysownik
         Get
             Return _Rysownik
+        End Get
+    End Property
+
+    <Browsable(False)>
+    Public ReadOnly Property WysokiStanMigania As Boolean
+        Get
+            If Migacz Is Nothing Then Return True
+            Return Migacz.WysokiStanMigania
         End Get
     End Property
 
@@ -349,6 +361,24 @@ Friend Class PulpitSterowniczy
         End If
     End Sub
 
+    Public Sub WlaczZegarMigania()
+        Invoke(actWlaczZegarMigania)
+    End Sub
+
+    Public Sub WylaczZegarMigania()
+        Invoke(actWylaczZegarMigania)
+    End Sub
+
+    Public Sub InicjalizujMigacz()
+        UstawMigacz(New Migacz(Me))
+    End Sub
+
+    Public Sub UsunMigacz()
+        Migacz?.Wylacz()
+        UstawMigacz(Nothing)
+        actWylaczZegarMigania()
+    End Sub
+
     Private Sub PulpitSterowniczy_Load() Handles Me.Load
         _Rysownik.Inicjalizuj(Handle, CUInt(Width), CUInt(Height))
     End Sub
@@ -597,8 +627,8 @@ Friend Class PulpitSterowniczy
                 WcisnietyPrzycisk = DirectCast(k, Zaleznosci.IPrzycisk)
                 WcisnietyPrzycisk.Wcisniety = True
                 Invalidate()
-                tmrLicznik.Interval = CzasWciskaniaPrzyciskuMS
-                tmrLicznik.Start()
+                tmrPrzycisk.Interval = CzasWciskaniaPrzyciskuMS
+                tmrPrzycisk.Start()
             End If
         End If
     End Sub
@@ -645,9 +675,16 @@ Friend Class PulpitSterowniczy
         End If
     End Sub
 
-    Private Sub tmrLicznik_Tick() Handles tmrLicznik.Tick
-        tmrLicznik.Stop()
+    Private Sub tmrPrzycisk_Tick() Handles tmrPrzycisk.Tick
+        tmrPrzycisk.Stop()
         If WcisnietyPrzycisk IsNot Nothing Then RaiseEvent WcisnietoPrzycisk(DirectCast(WcisnietyPrzycisk, Zaleznosci.Kostka))
+    End Sub
+
+    Private Sub tmrMiganie_Tick() Handles tmrMiganie.Tick
+        If Migacz IsNot Nothing Then
+            Migacz.PrzelaczStan()
+            Invalidate()
+        End If
     End Sub
 
     Private Function PobierzPozycjeDlaWysrodkowania() As Point
@@ -722,10 +759,15 @@ Friend Class PulpitSterowniczy
 
     Private Sub WylaczWcisnieciePrzycisku()
         If WcisnietyPrzycisk IsNot Nothing Then
-            tmrLicznik.Stop()
+            tmrPrzycisk.Stop()
             WcisnietyPrzycisk.Wcisniety = False
             WcisnietyPrzycisk = Nothing
             Invalidate()
         End If
+    End Sub
+
+    Private Sub UstawMigacz(migacz As Migacz)
+        Me.Migacz = migacz
+        Pulpit.PrzeiterujKostki(Sub(x, y, k) k.Migacz = migacz)
     End Sub
 End Class

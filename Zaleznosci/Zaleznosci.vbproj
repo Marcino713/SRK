@@ -71,6 +71,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMigacz.vb" />
     <Compile Include="Komunikaty\DHInicjalizuj.vb" />
     <Compile Include="Komunikaty\DHZainicjalizowano.vb" />
     <Compile Include="Komunikaty\Informacja.vb" />

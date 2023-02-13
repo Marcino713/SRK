@@ -30,6 +30,7 @@ Public Class SerwerTCP
     Private PociagiPoNumerze As New Dictionary(Of UInteger, Pociag)
     Private WszyscyKlienci As New List(Of PolaczenieTCP)
     Private SygnalizatoryPowtDlaSygnalizatoraPolsamoczynego As New Dictionary(Of UShort, List(Of SygnalizatorPowtarzajacy))
+    Private DodatkoweDane As New Dictionary(Of UShort, DaneDodatkowePosterunku)
     Private Serwer As TcpListener
     Private WatekSerwera As Thread
     Private WatekZamykaniaPolaczen As Thread
@@ -88,7 +89,42 @@ Public Class SerwerTCP
             AddressOf UstawKierunek.Otworz,
             Sub(pol, kom)
                 Dim k As UstawKierunek = CType(kom, UstawKierunek)
-                pol.WyslijKomunikat(New ZmienionoKierunek() With {.Adres = k.Adres, .Stan = ObecnyStanKierunku.Wyjazd})
+                Dim nowyStan As ObecnyStanKierunku
+                Dim zajetoscToru As ZajetoscToru
+                If k.Stan = UstawianyStanKierunku.Wlacz Then
+                    nowyStan = ObecnyStanKierunku.Wyjazd
+                    zajetoscToru = ZajetoscToru.Wolny
+                Else
+                    nowyStan = ObecnyStanKierunku.Neutralny
+                    zajetoscToru = ZajetoscToru.BlokadaNieustawiona
+                End If
+                pol.WyslijKomunikat(New ZmienionoKierunek() With {.Adres = k.Adres, .Stan = nowyStan})
+
+                Dim dod As DaneDodatkowePosterunku = Nothing
+
+                If DodatkoweDane.TryGetValue(pol.AdresStacji, dod) Then
+                    Dim odc As OdcinekToru = Nothing
+
+                    If dod.OdcinkiTorow.TryGetValue(k.Adres, odc) AndAlso odc.KostkiTory.Count > 0 Then
+                        Dim akt As New List(Of AktualizowanyKawalekToru)(odc.KostkiTory.Count)
+
+                        For Each t As Tor In odc.KostkiTory
+                            Dim p As Punkt = Nothing
+                            If dod.Kostki.TryGetValue(t, p) Then
+                                akt.Add(New AktualizowanyKawalekToru() With {
+                                        .Polozenie = PolozenieToru.TorGlowny,
+                                        .Zajetosc = zajetoscToru,
+                                        .WspolrzedneKostki = p})
+                            End If
+                        Next
+
+                        If akt.Count > 0 Then
+                            pol.WyslijKomunikat(New ZmienionoStanToru() With {.Tory = akt.ToArray})
+                        End If
+
+                    End If
+                End If
+
                 RaiseEvent OdebranoUstawKierunek(pol.AdresStacji, k)
             End Sub
         ))
@@ -536,6 +572,7 @@ Public Class SerwerTCP
 
         KlienciPoAdresieStacji = New Dictionary(Of UShort, ObslugiwanyPosterunek)
         SygnalizatoryPowtDlaSygnalizatoraPolsamoczynego = New Dictionary(Of UShort, List(Of SygnalizatorPowtarzajacy))
+        DodatkoweDane = New Dictionary(Of UShort, DaneDodatkowePosterunku)
         Dim PosterunkiLista As New List(Of ObslugiwanyPosterunek)
 
         MaksymalnaPredkoscSieci = 0
@@ -554,6 +591,9 @@ Public Class SerwerTCP
                 PosterunkiLista.Add(obs)
                 ZnajdzMaksymalnaPredkoscSieci(pol.DanePulpitu)
                 ZnajdzSygnalizatoryPowtarzajace(pol.DanePulpitu)
+                DodatkoweDane.Add(pol.Adres, New DaneDodatkowePosterunku() With {
+                                  .Kostki = pol.DanePulpitu.PobierzKostkiZeWspolrzednymi(),
+                                  .OdcinkiTorow = pol.DanePulpitu.PobierzOdcinkiTorow()})
             Next
         End If
 
@@ -814,4 +854,9 @@ Public Class SerwerTCP
                                End If
                            End Sub)
     End Sub
+
+    Private Class DaneDodatkowePosterunku
+        Friend OdcinkiTorow As Dictionary(Of UShort, OdcinekToru)
+        Friend Kostki As Dictionary(Of Kostka, Punkt)
+    End Class
 End Class

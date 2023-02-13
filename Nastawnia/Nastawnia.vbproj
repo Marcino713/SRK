@@ -76,6 +76,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PulpitSterowniczy\Migacz.vb" />
     <Compile Include="SterowanieRuchem\DodawaniePociagu.Designer.vb">
       <DependentUpon>DodawaniePociagu.vb</DependentUpon>
     </Compile>
@@ -220,6 +221,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PulpitSterowniczy\PulpitSterowniczy.resx">
       <DependentUpon>PulpitSterowniczy.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SterowanieRuchem\PredkoscPociagu.resx">
       <DependentUpon>PredkoscPociagu.vb</DependentUpon>

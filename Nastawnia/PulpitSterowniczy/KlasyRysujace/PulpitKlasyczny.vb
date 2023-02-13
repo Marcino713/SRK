@@ -124,6 +124,7 @@
     Private pulpit As Zaleznosci.Pulpit
     Private rysujSzczeliny As Boolean
     Private sygnTopWyrozniony As Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy
+    Private wysokiStanMigania As Boolean
 
     Private ReadOnly Property IRysownik_KOLKO_SZER As Single Implements IRysownik.KOLKO_SZER
         Get
@@ -232,6 +233,7 @@
 
         pulpit = ps.Pulpit
         sygnTopWyrozniony = If(ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja, ps.projZaznaczonyPrzejazdAutomatyzacja?.Sygnalizator, Nothing)
+        wysokiStanMigania = ps.WysokiStanMigania
         rysujSzczeliny = Not (
             ps.TrybProjektowy And (
                 ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Or
@@ -566,9 +568,9 @@
     End Sub
 
     Private Sub RysujSygnalizatorPolsamoczynny(sygnalizator As Zaleznosci.SygnalizatorPolsamoczynny)
-        Dim pedzCzer As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.BrakWyjazdu Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zastepczy, PEDZEL_SYGN_CZER_JASNY, PEDZEL_SYGN_CZER)
+        Dim pedzCzer As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.BrakWyjazdu, PEDZEL_SYGN_CZER_JASNY, PEDZEL_SYGN_CZER)
         Dim pedzZiel As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zezwalajacy, PEDZEL_SYGN_ZIEL_JASNY, PEDZEL_SYGN_ZIEL)
-        Dim pedzBial As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Manewrowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zastepczy, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
+        Dim pedzBial As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Manewrowy Or (sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zastepczy And wysokiStanMigania), PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
 
         RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
         urz.WypelnijTloSygnalizatora(PEDZEL_SYGN_TLO, SYGN_POZ, 3 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
@@ -610,7 +612,12 @@
 
     Private Sub RysujPrzejazd(przejazd As Zaleznosci.PrzejazdKolejowy)
         Dim pedzAwaria As TPedzel = If(trybProjektowy Or przejazd.Awaria, PEDZEL_SYGN_CZER_JASNY, PEDZEL_SYGN_CZER)
-        Dim pedzStan As TPedzel = If(trybProjektowy Or przejazd.Stan <> Zaleznosci.StanPrzejazduKolejowego.Otwarty, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
+        Dim pedzStan As TPedzel = If(
+                trybProjektowy Or
+                przejazd.Stan = Zaleznosci.StanPrzejazduKolejowego.Zamkniety Or
+                ((przejazd.Stan = Zaleznosci.StanPrzejazduKolejowego.Otwierany Or przejazd.Stan = Zaleznosci.StanPrzejazduKolejowego.Zamykany) And wysokiStanMigania),
+            PEDZEL_SYGN_BIAL_JASNY,
+            PEDZEL_SYGN_BIAL)
 
         urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, PRZEJAZD_SZER_LINII, PRZEJAZD_POZ, 0.0, PRZEJAZD_POZ, 1.0)
         urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, PRZEJAZD_SZER_LINII, 1.0 - PRZEJAZD_POZ, 0.0, 1.0 - PRZEJAZD_POZ, 1.0)
@@ -756,7 +763,7 @@
         If trybProjektowy Then
             pedzel = If(kier.KierunekWyjazdu = kierProj, PEDZEL_SZCZELINA_UTWIERDZONY, PEDZEL_SZCZELINA_WOLNY)
         Else
-            pedzel = If(kier.UstawionyKierunek = kierDzialanie, PEDZEL_SZCZELINA_UTWIERDZONY, PEDZEL_SZCZELINA_WOLNY)
+            pedzel = If(kier.UstawionyKierunek = kierDzialanie Or (kier.UstawionyStanZmiany <> Zaleznosci.UstawionyStanZmianyKierunkuSBL.Zaden And wysokiStanMigania), PEDZEL_SZCZELINA_UTWIERDZONY, PEDZEL_SZCZELINA_WOLNY)
         End If
 
         urz.WypelnijFigure(pedzel, PUNKTY_SZCZELINY_KIERUNKU)
@@ -858,7 +865,7 @@
                 Dim roz As Zaleznosci.Rozjazd = DirectCast(k, Zaleznosci.Rozjazd)
 
                 If Not pedzelUstawiony Then
-                    If roz.Rozprucie Then
+                    If roz.Rozprucie And wysokiStanMigania Then
                         pedzelSzczelinyWprost = PEDZEL_SZCZELINA_ROZPRUCIE
                     ElseIf roz.Stan = Zaleznosci.StanRozjazdu.Wprost Then
                         pedzelSzczelinyWprost = PEDZEL_SZCZELINA_ZWROTNICA
@@ -867,7 +874,7 @@
 
                 pedzelSzczelinyBok = PobierzPedzelToruNiezwolnionego(roz.ZajetoscBok, pedzelUstawiony)
                 If Not pedzelUstawiony Then
-                    If roz.Rozprucie Then
+                    If roz.Rozprucie And wysokiStanMigania Then
                         pedzelSzczelinyBok = PEDZEL_SZCZELINA_ROZPRUCIE
                     ElseIf roz.Stan = Zaleznosci.StanRozjazdu.Bok Then
                         pedzelSzczelinyBok = PEDZEL_SZCZELINA_ZWROTNICA
@@ -879,13 +886,12 @@
 
     Private Function PobierzPedzelToruNiezwolnionego(zajetosc As Zaleznosci.ZajetoscToru, ByRef pedzelUstawiony As Boolean) As TPedzel
         pedzelUstawiony = True
-        Select Case zajetosc
-            Case Zaleznosci.ZajetoscToru.Zajety
-                Return PEDZEL_SZCZELINA_ZAJETY
-            Case Zaleznosci.ZajetoscToru.PrzebiegUtwierdzony,
-                 Zaleznosci.ZajetoscToru.BlokadaNieustawiona
-                Return PEDZEL_SZCZELINA_UTWIERDZONY
-        End Select
+
+        If zajetosc = Zaleznosci.ZajetoscToru.Zajety Then
+            Return PEDZEL_SZCZELINA_ZAJETY
+        ElseIf zajetosc = Zaleznosci.ZajetoscToru.PrzebiegUtwierdzony Or (zajetosc = Zaleznosci.ZajetoscToru.BlokadaNieustawiona And wysokiStanMigania) Then
+            Return PEDZEL_SZCZELINA_UTWIERDZONY
+        End If
 
         pedzelUstawiony = False
         Return PEDZEL_SZCZELINA_WOLNY

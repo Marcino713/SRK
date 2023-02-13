@@ -25,6 +25,7 @@ Public Class wndNastawnia
     Private actUkryjSterowaniePociagami As Action = AddressOf ZamknijOknaSterowaniaPociagami
     Private actUkryjOswietlenie As Action = Sub() OknoOswietlenia?.Close()
     Private actPokazPulpit As Action(Of Zaleznosci.Pulpit) = AddressOf PokazPulpit
+    Private actUsunMigacz As Action = AddressOf UsunMigacz
     Private actPokazBlad As Action(Of String) = AddressOf PokazBlad
     Private actPokazKomunikat As Action(Of String) = AddressOf PokazKomunikat
 
@@ -65,6 +66,7 @@ Public Class wndNastawnia
         If wnd.Pulpit IsNot Nothing Then
             PredkoscMaksymalna = wnd.PredkoscMaksymalnaSieci
             actPokazPulpit(wnd.Pulpit)
+            plpPulpit.InicjalizujMigacz()
             actPokazStatus("Połączono", Color.Green, True)
         End If
     End Sub
@@ -435,6 +437,7 @@ Public Class wndNastawnia
     Private Sub CzyscOkno()
         Invoke(actPokazStatus, "Rozłączono", Color.Red, False)
         Invoke(actPokazPulpit, New Zaleznosci.Pulpit)
+        Invoke(actUsunMigacz)
         Invoke(actUkryjDodawaniePociagu)
         Invoke(actUkryjWybieraniePociagu)
         Invoke(actUkryjSterowaniePociagami)
@@ -469,6 +472,10 @@ Public Class wndNastawnia
         Kierunki = pulpit.PobierzKierunkiPoAdresieOdcinka()
         Lampy = pulpit.PobierzLampy()
         Przejazdy = pulpit.PobierzPrzejazdyKolejowoDrogowe()
+    End Sub
+
+    Private Sub UsunMigacz()
+        plpPulpit.UsunMigacz()
     End Sub
 
     Private Sub ZamknijOknaSterowaniaPociagami()

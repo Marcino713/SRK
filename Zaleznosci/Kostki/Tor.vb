@@ -6,7 +6,17 @@ Public Class Tor
     Public Property PredkoscZasadnicza As UShort
     Public Property NalezyDoOdcinka As OdcinekToru
 
-    Public Property Zajetosc As ZajetoscToru = ZajetoscToru.Wolny
+    Private _Zajetosc As ZajetoscToru = ZajetoscToru.Wolny
+    Public Property Zajetosc As ZajetoscToru
+        Get
+            Return _Zajetosc
+        End Get
+        Set(value As ZajetoscToru)
+            _Zajetosc = value
+            Migacz?.UstawKostke(Me)
+        End Set
+    End Property
+
     Public Overridable Property RysowanieDodatkowychTrojkatow As DodatkoweTrojkatyTor
 
     Public Sub New()
@@ -16,6 +26,10 @@ Public Class Tor
     Public Sub New(Typ As TypKostki)
         MyBase.New(Typ)
     End Sub
+
+    Public Overrides Function CzyMiga() As Boolean
+        Return _Zajetosc = ZajetoscToru.BlokadaNieustawiona
+    End Function
 
     Protected Friend Overrides Sub UsunOdcinekToruZPowiazan(odcinek As OdcinekToru)
         If NalezyDoOdcinka Is odcinek Then NalezyDoOdcinka = Nothing
