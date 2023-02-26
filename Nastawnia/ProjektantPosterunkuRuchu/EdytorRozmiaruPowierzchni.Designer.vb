@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class wndEdytorPowierzchni
+Partial Class wndEdytorRozmiaruPowierzchni
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -127,7 +127,7 @@ Partial Class wndEdytorPowierzchni
         Me.numLiczbaKostek.TabIndex = 6
         Me.numLiczbaKostek.Value = New Decimal(New Integer() {1, 0, 0, 0})
         '
-        'wndEdytorPowierzchni
+        'wndEdytorRozmiaruPowierzchni
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -138,8 +138,8 @@ Partial Class wndEdytorPowierzchni
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.GroupBox2)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
-        Me.Name = "wndEdytorPowierzchni"
-        Me.Text = "Edytor powierzchni pulpitu"
+        Me.Name = "wndEdytorRozmiaruPowierzchni"
+        Me.Text = "Edytor rozmiaru pulpitu"
         Me.GroupBox2.ResumeLayout(False)
         Me.GroupBox2.PerformLayout()
         CType(Me.numLiczbaKostek, System.ComponentModel.ISupportInitialize).EndInit()

@@ -4,12 +4,22 @@ Public Class Przycisk
     Inherits Kostka
     Implements IPrzycisk
 
+    Private Const BLAD As String = "Nie można zmienić własności posiadania przycisku przez kostkę przycisku."
+
     Public Property TypPrzycisku As TypPrzyciskuEnum
     Public Property SygnalizatorPolsamoczynny As SygnalizatorPolsamoczynny
     Public Property SygnalizatorManewrowy As SygnalizatorManewrowy
     Public Property Kierunek As Kierunek
     Public Property Rozjazd As Rozjazd
     Public Property Przejazd As PrzejazdKolejowoDrogowy
+    Public Property PosiadaPrzycisk As Boolean Implements IPrzycisk.PosiadaPrzycisk
+        Get
+            Return True
+        End Get
+        Set(value As Boolean)
+            Throw New NotSupportedException(BLAD)
+        End Set
+    End Property
 
     Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
 

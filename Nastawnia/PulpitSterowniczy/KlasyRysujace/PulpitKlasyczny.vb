@@ -11,6 +11,8 @@
     Private Const TOR_SZEROKOSC As Single = 0.16F          'szerokość toru na kostce
     Private Const TOR_SZER_ZAKRET As Single = TOR_SZEROKOSC / COS45
     Private Const TOR_TROJKAT As Single = (TOR_SZER_ZAKRET - TOR_SZEROKOSC) / 2.0F  'długość przyprostokątnej trójkąta do ścięcia/narysowania przy granicy toru ukośnego i prostego
+    Private Const TOR_ELEKTR As Single = POL - TOR_SZEROKOSC / 2.0F - 0.02F         'współrzędna linii elektryfikacji toru
+    Private Const TOR_ELEKTR_ROZJAZD As Single = 2.0F * TOR_ELEKTR                  'skrócona współrzędna końca linii elektryfikacji na rozjeździe
     Private Const TOR_KONC_DLUGOSC As Single = 0.27F       'długość toru na kostce z końcem
     Private Const TOR_KONC_SZEROKOSC As Single = 0.5F      'szerokość odcinka prostopadłego na kostce z końcem
     Private Const SZCZELINA_MARGINES_POZIOM As Single = 0.1F    'margines szczeliny w poziomie
@@ -20,10 +22,10 @@
     Private Const SZCZELINA_MARGINES_KIER As Single = 0.04F     'margines szczeliny na kostce z kierunkiem
     Private Const ROZJAZD_ZNAK_SZER As Single = 0.01F      'szerokość linii plusa/minusa obok rozjazdu
     Private Const ROZJAZD_ZNAK_POL_DL As Single = 0.05F    'połowa długości linii plusa/minusa obok rozjazdu
-    Private Const ROZJAZD_PLUS_X As Single = 0.12F         'współrzędna X środka plusa obok rozjazdu
-    Private Const ROZJAZD_PLUS_Y As Single = 0.7F          'współrzędna Y środka plusa obok rozjazdu
-    Private Const ROZJAZD_MINUS_X As Single = 0.85F        'współrzędna X środka minusa obok rozjazdu
-    Private Const ROZJAZD_MINUS_Y As Single = 0.9F         'współrzędna Y środka minusa obok rozjazdu
+    Private Const ROZJAZD_ZNAK_WPROST_X As Single = 0.12F  'współrzędna X środka plusa/minusa dla jazdy wprost
+    Private Const ROZJAZD_ZNAK_WPROST_Y As Single = 0.7F   'współrzędna Y środka plusa/minusa dla jazdy wprost
+    Private Const ROZJAZD_ZNAK_BOK_X As Single = 0.85F     'współrzędna X środka plusa/minusa dla jazdy na bok
+    Private Const ROZJAZD_ZNAK_BOK_Y As Single = 0.9F      'współrzędna Y środka plusa/minusa dla jazdy na bok
     Private Const SYGN_POZ As Single = 0.25F               'wielokorotność stałej oznacza położenie środków kolejnych świateł sygnałów na osi X
     Private Const SYGN_PROMIEN As Single = 0.09F           'promień sygnału
     Private Const SYGN_TLO_PROMIEN As Single = 0.14F       'promień okręgu stanowiącego tło sygnału
@@ -34,6 +36,7 @@
     Private Const PRZYCISK_TLO_PROMIEN As Single = 0.115F  'promień tła przycisku
     Private Const PRZYCISK_RAMKA_PROMIEN As Single = 0.08F 'promień obramowania wciskanej części przycisku
     Private Const PRZYCISK_PROMIEN As Single = 0.055F      'promień wciskanej części przycisku
+    Private Const PRZYCISK_TM_DODATEK As Single = 0.09F    'dodatkowe przesunięcie przycisku na kostce sygnalizatora manewrowego
     Private Const KIER_SZER As Single = 0.3F               'rozmiar trójkąta na kostce kierunku
     Private Const KIER_POZ_X As Single = 0.25F             'pozycja trójkąta kierunku na osi X
     Private Const KIER_POZ_Y As Single = 0.78F             'pozycja trójkąta kierunku na osi Y
@@ -44,7 +47,9 @@
     Private Const TEKST_POZ_X As Single = 0.1F             'dodatkowy margines dla tekstu
     Private Const TEKST_POZ_Y As Single = 0.12F            'dodatkowy margines dla tekstu
     Private Const TEKST_NAPIS_POZ As Single = 0.12F        'pozycja tekstu w kostce z napisem
-    Private Const TEKST_WYS As Single = 0.78F              'wysokość tekstu w kostce z napisem
+    Private Const TEKST_WYS_LINIA As Single = 0.27F        'wysokość tekstu jednoliniowego
+    Private Const TEKST_WYS_KOSTKA_NAPIS As Single = 0.78F 'wysokość tekstu w kostce z napisem
+    Private Const WSPOLRZEDNE_ROZM As Single = 0.33F       'długość linii na skali
     Private Const KRAWEDZ_RAMKA_ZAZN As Single = 0.04F     'grubość krawędzi ramki zaznaczenia lamp
     Private Const DODATKOWY_MARGINES As Single = 0.01F     'margines uwzględniany w elementach, aby te lekko nachodziły na siebie i nie rysowały się przerwy między nimi
 
@@ -54,7 +59,8 @@
     Private ReadOnly KOLOR_TOR_LICZNIK_ODCINEK_2 As Color = KolorRGB("#D11AFF")   'drugi odcinek obsługiwany przez parę liczników osi
     Private ReadOnly KOLOR_TLO_SYGNALIZATOR_TOP As Color = KolorRGB("#FF9900")    'tło sygnalizatora ostrzegawczego przejazdowego, który jest przypisany do zaznaczonego obiektu automatyzacji przejazdu
     Private PEDZEL_TLO_KOSTKI As TPedzel
-    Private PEDZEL_KRAWEDZIE As TOlowek
+    Private PEDZEL_KRAWEDZIE_KOSTEK As TOlowek
+    Private PEDZEL_KRAWEDZ As TOlowek
     Private PEDZEL_TOR_WOLNY As TPedzel
     Private PEDZEL_TOR_TEN_ODCINEK As TPedzel
     Private PEDZEL_TOR_NIEPRZYPISANY As TPedzel
@@ -76,7 +82,6 @@
     Private PEDZEL_SYGN_POMC As TPedzel
     Private PEDZEL_SYGN_POMC_JASNY As TPedzel
     Private PEDZEL_SYGN_TLO As TPedzel
-    Private PEDZEL_SYGN_KRAWEDZ As TOlowek
     Private PEDZEL_PRZYCISK_CZERWONY As TPedzel
     Private PEDZEL_PRZYCISK_ZIELONY As TPedzel
     Private PEDZEL_PRZYCISK_CZARNY As TPedzel
@@ -102,7 +107,6 @@
 
     Private CZCIONKA As TCzcionka
 
-    Private Const NAZWA_SP As String = "Sp"     'Sygnalizator powtarzający
     Private Const NAZWA_SZ As String = "Sz"     'Sygnał zastępczy
     Private Const NAZWA_Z As String = "z"       'Zwolnienie przebiegu
     Private Const NAZWA_M As String = "m"       'Sygnał manewrowy
@@ -177,7 +181,8 @@
         urz.Inicjalizuj(uchwyt, szer, wys)
 
         PEDZEL_TLO_KOSTKI = urz.UtworzPedzel(KolorRGB("#99FFCC"))
-        PEDZEL_KRAWEDZIE = urz.UtworzOlowek(Color.White)
+        PEDZEL_KRAWEDZIE_KOSTEK = urz.UtworzOlowek(Color.White)
+        PEDZEL_KRAWEDZ = urz.UtworzOlowek(KolorRGB("#000000"))
         PEDZEL_TOR_WOLNY = urz.UtworzPedzel(KOLOR_TOR_PRZYPISANY)
         PEDZEL_TOR_TEN_ODCINEK = urz.UtworzPedzel(KOLOR_TOR_TEN_ODCINEK)
         PEDZEL_TOR_NIEPRZYPISANY = urz.UtworzPedzel(KOLOR_TOR_NIEPRZYPISANY)
@@ -199,7 +204,6 @@
         PEDZEL_SYGN_POMC = urz.UtworzPedzel(KolorRGB("#663D00"))
         PEDZEL_SYGN_POMC_JASNY = urz.UtworzPedzel(KolorRGB("#FF9900"))
         PEDZEL_SYGN_TLO = urz.UtworzPedzel(KolorRGB("#808080"))
-        PEDZEL_SYGN_KRAWEDZ = urz.UtworzOlowek(KolorRGB("#000000"))
         PEDZEL_PRZYCISK_CZERWONY = urz.UtworzPedzel(KolorRGB("#CA3E43"))
         PEDZEL_PRZYCISK_ZIELONY = urz.UtworzPedzel(KolorRGB("#62965E"))
         PEDZEL_PRZYCISK_CZARNY = urz.UtworzPedzel(KolorRGB("#1D1D1D"))
@@ -261,11 +265,11 @@
 
         If ps.RysujKrawedzieKostek Then
             For x As Integer = 0 To ps.Pulpit.Szerokosc
-                urz.RysujLinie(PEDZEL_KRAWEDZIE, KRAWEDZ_SZER, x, 0, x, ps.Pulpit.Wysokosc)
+                urz.RysujLinie(PEDZEL_KRAWEDZIE_KOSTEK, KRAWEDZ_SZER, x, 0, x, ps.Pulpit.Wysokosc)
             Next
 
             For y As Integer = 0 To ps.Pulpit.Wysokosc
-                urz.RysujLinie(PEDZEL_KRAWEDZIE, KRAWEDZ_SZER, 0, y, ps.Pulpit.Szerokosc, y)
+                urz.RysujLinie(PEDZEL_KRAWEDZIE_KOSTEK, KRAWEDZ_SZER, 0, y, ps.Pulpit.Szerokosc, y)
             Next
         End If
 
@@ -313,6 +317,39 @@
             RysujZaznaczenieLamp(ps.PoczatekZaznaczeniaLamp, ps.KoniecZaznaczeniaLamp)
         End If
 
+        'Rysuj współrzędne
+        If ps.RysujWspolrzedne Then
+            urz.TransformacjaResetuj()
+            urz.TransformacjaSkaluj(ps.Skalowanie)
+            urz.TransformacjaPrzesun(ps.Przesuniecie.X, 0.0F)
+
+            Dim xkonc As Integer = ps.Pulpit.Szerokosc
+            For x As Integer = 0 To xkonc
+                urz.RysujLinie(PEDZEL_KRAWEDZ, KRAWEDZ_SZER, x, 0.0F, x, WSPOLRZEDNE_ROZM)
+
+                If x <> xkonc Then
+                    Dim tekst As String = x.ToString
+                    Dim rozm As SizeF = urz.ZmierzTekst(CZCIONKA, tekst, 1.0F, WSPOLRZEDNE_ROZM)
+                    urz.RysujTekst(PEDZEL_TEKST, CZCIONKA, tekst, x + (1.0F - rozm.Width) / 2.0F, (WSPOLRZEDNE_ROZM - rozm.Height) / 2.0F, 1.0F, WSPOLRZEDNE_ROZM)
+                End If
+            Next
+
+            urz.TransformacjaResetuj()
+            urz.TransformacjaSkaluj(ps.Skalowanie)
+            urz.TransformacjaPrzesun(0.0F, ps.Przesuniecie.Y)
+
+            Dim ykonc As Integer = ps.Pulpit.Wysokosc
+            For y As Integer = 0 To ykonc
+                urz.RysujLinie(PEDZEL_KRAWEDZ, KRAWEDZ_SZER, 0.0F, y, WSPOLRZEDNE_ROZM, y)
+
+                If y <> ykonc Then
+                    Dim tekst As String = y.ToString
+                    Dim rozm As SizeF = urz.ZmierzTekst(CZCIONKA, tekst, WSPOLRZEDNE_ROZM, 1.0F)
+                    urz.RysujTekst(PEDZEL_TEKST, CZCIONKA, tekst, (WSPOLRZEDNE_ROZM - rozm.Width) / 2.0F, y + (1.0F - rozm.Height) / 2.0F, WSPOLRZEDNE_ROZM, 1.0F)
+                End If
+            Next
+        End If
+
         urz.ZakonczRysunek()
     End Sub
 
@@ -334,15 +371,19 @@
 
         obrot = kostka.Obrot
 
-        If zaznaczona Then urz.WypelnijProstokat(PEDZEL_ZAZN_KOSTKA, 0, 0, 1, 1)
+        If zaznaczona Then
+            Dim polKrawedzi As Single = KRAWEDZ_SZER * POL
+            Dim rozm As Single = 1.0F - KRAWEDZ_SZER
+            urz.WypelnijProstokat(PEDZEL_ZAZN_KOSTKA, polKrawedzi, polKrawedzi, rozm, rozm)
+        End If
 
         Select Case kostka.Typ
             Case Zaleznosci.TypKostki.Tor
-                RysujTorProsty(CType(kostka, Zaleznosci.Tor).RysowanieDodatkowychTrojkatow)
+                RysujTorProsty(CType(kostka, Zaleznosci.Tor), True)
             Case Zaleznosci.TypKostki.TorKoniec
                 RysujKoniecToru(CType(kostka, Zaleznosci.TorKoniec).RysowanieDodatkowychTrojkatow)
             Case Zaleznosci.TypKostki.Zakret
-                RysujTorUkosny(CType(kostka, Zaleznosci.IZakret))
+                RysujTorUkosny(CType(kostka, Zaleznosci.Zakret))
             Case Zaleznosci.TypKostki.RozjazdLewo
                 RysujRozjazdLewo(CType(kostka, Zaleznosci.RozjazdLewo))
             Case Zaleznosci.TypKostki.RozjazdPrawo
@@ -370,9 +411,16 @@
         End Select
     End Sub
 
-    Private Sub RysujTorProsty(dodatkoweTrojkaty As Zaleznosci.DodatkoweTrojkatyTor, Optional dlugosc As Single = 1.0F)
-        RysujTor(dodatkoweTrojkaty, dlugosc)
-        RysujSzczelineToru(dlugosc)
+    Private Sub RysujTorProsty(tor As Zaleznosci.Tor, rysujNazwe As Boolean)
+        RysujTor(tor.RysowanieDodatkowychTrojkatow, 1.0F)
+        If tor.KontrolaNiezajetosci Then RysujSzczelineToru()
+        If tor.Zelektryfikowany Then RysujProstaLinieElektryfikacji()
+        If rysujNazwe Then RysujNazweDolKostki(tor.Nazwa)
+    End Sub
+
+    Private Sub RysujProstaLinieElektryfikacji(Optional dlugosc As Single = 1.0F)
+        Dim y As Single = If(CzyObrocicObiekty(), 1.0F - TOR_ELEKTR, TOR_ELEKTR)
+        urz.RysujLinie(PEDZEL_KRAWEDZ, KRAWEDZ_SZER, 0.0F, y, dlugosc, y)
     End Sub
 
     Private Sub RysujTor(dodatkoweTrojkaty As Zaleznosci.DodatkoweTrojkatyTor, dlugosc As Single)
@@ -409,10 +457,10 @@
         urz.WypelnijFigure(pedzelToru, punkty.ToArray)
     End Sub
 
-    Private Sub RysujSzczelineToru(dlugosc As Single)
+    Private Sub RysujSzczelineToru()
         If Not rysujSzczeliny Then Exit Sub
 
-        urz.WypelnijProstokat(pedzelSzczelinyWprost, SZCZELINA_MARGINES_POZIOM, POL - TOR_SZEROKOSC / 2 + SZCZELINA_MARGINES_PION, dlugosc - 2 * SZCZELINA_MARGINES_POZIOM, TOR_SZEROKOSC - 2 * SZCZELINA_MARGINES_PION)
+        urz.WypelnijProstokat(pedzelSzczelinyWprost, SZCZELINA_MARGINES_POZIOM, POL - TOR_SZEROKOSC / 2.0F + SZCZELINA_MARGINES_PION, 1.0F - 2.0F * SZCZELINA_MARGINES_POZIOM, TOR_SZEROKOSC - 2.0F * SZCZELINA_MARGINES_PION)
     End Sub
 
     Private Sub RysujKoniecToru(dodatkoweTrojkaty As Zaleznosci.DodatkoweTrojkatyTorKoniec)
@@ -420,9 +468,38 @@
         urz.WypelnijProstokat(pedzelToru, TOR_KONC_DLUGOSC - DODATKOWY_MARGINES, POL - TOR_KONC_SZEROKOSC / 2, TOR_SZEROKOSC, TOR_KONC_SZEROKOSC)
     End Sub
 
-    Private Sub RysujTorUkosny(zakret As Zaleznosci.IZakret)
+    Private Sub RysujTorUkosny(zakret As Zaleznosci.Zakret)
         RysujZakret(zakret)
-        RysujSzczelineZakretu(pedzelSzczelinyWprost)
+        If zakret.KontrolaNiezajetosci Then RysujSzczelineZakretu(pedzelSzczelinyWprost)
+        If zakret.Zelektryfikowany Then RysujUkosnaLinieElektryfikacji(False, False)
+        RysujNazwe(zakret.Nazwa, TEKST_POZ_X, TEKST_POZ_Y)
+    End Sub
+
+    Private Sub RysujUkosnaLinieElektryfikacji(rozjLewo As Boolean, rozjPrawo As Boolean)
+        Dim x1, y1, x2, y2 As Single
+
+        If rozjLewo Then
+            x1 = If(CzyObrocicObiekty(), 1.0F, TOR_ELEKTR_ROZJAZD)
+            y1 = 1.0F - TOR_ELEKTR
+            x2 = If(CzyObrocicObiekty(), 1.0F - TOR_ELEKTR, TOR_ELEKTR)
+            y2 = 1.0F
+
+        ElseIf rozjPrawo Then
+            Dim przesun As Boolean = obrot = 0 Or obrot = 3 * KAT_PROSTY
+            x1 = 1.0F
+            y1 = If(przesun, 1.0F - TOR_ELEKTR, TOR_ELEKTR)
+            x2 = 1.0F - TOR_ELEKTR
+            y2 = If(przesun, 1.0F, TOR_ELEKTR_ROZJAZD)
+
+        Else
+            x1 = 1.0F
+            y1 = If(CzyObrocicObiekty(), 1.0F - TOR_ELEKTR, TOR_ELEKTR)
+            x2 = y1
+            y2 = 1.0F
+
+        End If
+
+        urz.RysujLinie(PEDZEL_KRAWEDZ, KRAWEDZ_SZER, x1, y1, x2, y2)
     End Sub
 
     Private Sub RysujZakret(zakret As Zaleznosci.IZakret)
@@ -474,12 +551,14 @@
         urz.WypelnijFigure(pedzel, {Aprim, Bprim, Cprim, Dprim})
     End Sub
 
-    Private Sub RysujNazwe(nazwa As String, x As Single, y As Single, Optional wys As Single = SYGN_POZ, Optional dodatkowyMarginesSzer As Single = TEKST_POZ_X, Optional przywrocTransformacje As Boolean = False)
+    Private Sub RysujNazwe(nazwa As String, x As Single, y As Single, Optional wys As Single = TEKST_WYS_LINIA, Optional dodatkowyMarginesSzer As Single = TEKST_POZ_X, Optional przywrocTransformacje As Boolean = False)
+        If String.IsNullOrEmpty(nazwa) Then Exit Sub
+
         Dim rect As New RectangleF(x, y, 1 - x - dodatkowyMarginesSzer, wys)
         Dim zmienionoTransformacje As Boolean = False
         Dim transformacja As TMacierz
 
-        If obrot >= 2 * KAT_PROSTY And obrot < 4 * KAT_PROSTY Then
+        If CzyObrocicObiekty() Then
             Dim rozm As SizeF = urz.ZmierzTekst(CZCIONKA, nazwa, rect.Width, rect.Height)
             Dim x1 As Single = rect.X + rozm.Width / 2
             Dim y1 As Single = rect.Y + rozm.Height / 2
@@ -499,72 +578,91 @@
         End If
     End Sub
 
+    Private Sub RysujNazweDolKostki(nazwa As String)
+        RysujNazwe(nazwa, TEKST_POZ_X, 2.0F * SYGN_POZ + TEKST_POZ_Y)
+    End Sub
+
     Private Sub RysujRozjazdLewo(rozjazd As Zaleznosci.RozjazdLewo)
+        Dim dodMargines As Single = TEKST_POZ_X
         RysujZakret(rozjazd)
         RysujTor(rozjazd.RysowanieDodatkowychTrojkatow, 1)
-        RysujSzczelineZakretu(pedzelSzczelinyBok, margines_prawy:=SZCZEL_MARG_POZIOM_ROZJ)
-        RysujSzczelineToru(1)
-        RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, PEDZEL_PRZYCISK_CZARNY, 2)
-        RysujPlus(ROZJAZD_PLUS_Y)
-        RysujMinus(ROZJAZD_MINUS_Y)
-        RysujNazwe(rozjazd.Nazwa, TEKST_POZ_X, TEKST_POZ_Y, dodatkowyMarginesSzer:=2.0F * SYGN_TLO_PROMIEN + TEKST_POZ_X)
+        If rozjazd.KontrolaNiezajetosci Then RysujSzczelineToru()
+        If rozjazd.KontrolaNiezajetosciBok Then RysujSzczelineZakretu(pedzelSzczelinyBok, margines_prawy:=SZCZEL_MARG_POZIOM_ROZJ)
+        If rozjazd.Zelektryfikowany Then RysujProstaLinieElektryfikacji(If(CzyObrocicObiekty(), TOR_ELEKTR_ROZJAZD, 1.0F))
+        If rozjazd.ZelektryfikowanyBok Then RysujUkosnaLinieElektryfikacji(True, False)
+        If rozjazd.PosiadaPrzycisk Then
+            RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, PEDZEL_PRZYCISK_CZARNY, 2)
+            dodMargines += 2.0F * SYGN_TLO_PROMIEN
+        End If
+        If rozjazd.KierunekZasadniczy = Zaleznosci.UstawienieRozjazduEnum.Wprost Then
+            RysujPlus(ROZJAZD_ZNAK_WPROST_X, ROZJAZD_ZNAK_WPROST_Y)
+            RysujMinus(ROZJAZD_ZNAK_BOK_X, ROZJAZD_ZNAK_BOK_Y)
+        Else
+            RysujPlus(ROZJAZD_ZNAK_BOK_X, ROZJAZD_ZNAK_BOK_Y)
+            RysujMinus(ROZJAZD_ZNAK_WPROST_X, ROZJAZD_ZNAK_WPROST_Y)
+        End If
+        RysujNazwe(rozjazd.Nazwa, TEKST_POZ_X, TEKST_POZ_Y, dodatkowyMarginesSzer:=dodMargines)
     End Sub
 
     Private Sub RysujRozjazdPrawo(rozjazd As Zaleznosci.RozjazdPrawo)
+        Dim dodMargines As Single = TEKST_POZ_X
         RysujTor(rozjazd.RysowanieDodatkowychTrojkatow, 1)
         Dim transformacja As TMacierz = urz.TransformacjaPobierz
         urz.TransformacjaResetuj()
         urz.TransformacjaObroc(3 * KAT_PROSTY, POL, POL)
         urz.TransformacjaDolacz(transformacja)
         RysujZakret(rozjazd)
-        RysujSzczelineZakretu(pedzelSzczelinyBok, margines_lewy:=SZCZEL_MARG_POZIOM_ROZJ)
+        If rozjazd.KontrolaNiezajetosciBok Then RysujSzczelineZakretu(pedzelSzczelinyBok, margines_lewy:=SZCZEL_MARG_POZIOM_ROZJ)
+        If rozjazd.ZelektryfikowanyBok Then RysujUkosnaLinieElektryfikacji(False, True)
         urz.TransformacjaResetuj()
         urz.TransformacjaDolacz(transformacja)
-        RysujSzczelineToru(1)
-        RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, PEDZEL_PRZYCISK_CZARNY, 2, 2)
-        RysujPlus(1.0F - ROZJAZD_PLUS_Y)
-        RysujMinus(1.0F - ROZJAZD_MINUS_Y)
-        RysujNazwe(rozjazd.Nazwa, TEKST_POZ_X, 2.0F * SYGN_POZ + TEKST_POZ_Y, dodatkowyMarginesSzer:=2.0F * SYGN_TLO_PROMIEN + TEKST_POZ_X)
+        If rozjazd.KontrolaNiezajetosci Then RysujSzczelineToru()
+        If rozjazd.Zelektryfikowany Then RysujProstaLinieElektryfikacji(If(Not CzyObrocicObiekty(), TOR_ELEKTR_ROZJAZD, 1.0F))
+        If rozjazd.PosiadaPrzycisk Then
+            RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, PEDZEL_PRZYCISK_CZARNY, 2, 2)
+            dodMargines += 2.0F * SYGN_TLO_PROMIEN
+        End If
+        If rozjazd.KierunekZasadniczy = Zaleznosci.UstawienieRozjazduEnum.Wprost Then
+            RysujPlus(ROZJAZD_ZNAK_WPROST_X, 1.0F - ROZJAZD_ZNAK_WPROST_Y)
+            RysujMinus(ROZJAZD_ZNAK_BOK_X, 1.0F - ROZJAZD_ZNAK_BOK_Y)
+        Else
+            RysujPlus(ROZJAZD_ZNAK_BOK_X, 1.0F - ROZJAZD_ZNAK_BOK_Y)
+            RysujMinus(ROZJAZD_ZNAK_WPROST_X, 1.0F - ROZJAZD_ZNAK_WPROST_Y)
+        End If
+        RysujNazwe(rozjazd.Nazwa, TEKST_POZ_X, 2.0F * SYGN_POZ + TEKST_POZ_Y, dodatkowyMarginesSzer:=dodMargines)
     End Sub
 
-    Private Sub RysujPlus(y As Single)
-        urz.RysujLinie(PEDZEL_ROZJAZD_ZNAK, ROZJAZD_ZNAK_SZER, ROZJAZD_PLUS_X - ROZJAZD_ZNAK_POL_DL, y, ROZJAZD_PLUS_X + ROZJAZD_ZNAK_POL_DL, y)
-        urz.RysujLinie(PEDZEL_ROZJAZD_ZNAK, ROZJAZD_ZNAK_SZER, ROZJAZD_PLUS_X, y - ROZJAZD_ZNAK_POL_DL, ROZJAZD_PLUS_X, y + ROZJAZD_ZNAK_POL_DL)
+    Private Sub RysujPlus(x As Single, y As Single)
+        urz.RysujLinie(PEDZEL_ROZJAZD_ZNAK, ROZJAZD_ZNAK_SZER, x - ROZJAZD_ZNAK_POL_DL, y, x + ROZJAZD_ZNAK_POL_DL, y)
+        urz.RysujLinie(PEDZEL_ROZJAZD_ZNAK, ROZJAZD_ZNAK_SZER, x, y - ROZJAZD_ZNAK_POL_DL, x, y + ROZJAZD_ZNAK_POL_DL)
     End Sub
 
-    Private Sub RysujMinus(y As Single)
-        urz.RysujLinie(PEDZEL_ROZJAZD_ZNAK, ROZJAZD_ZNAK_SZER, ROZJAZD_MINUS_X - ROZJAZD_ZNAK_POL_DL, y, ROZJAZD_MINUS_X + ROZJAZD_ZNAK_POL_DL, y)
-    End Sub
-
-    Private Sub RysujNazweSygnalizatora(nazwa As String)
-        RysujNazwe(nazwa, TEKST_POZ_X, 2 * SYGN_POZ + TEKST_POZ_Y)
+    Private Sub RysujMinus(x As Single, y As Single)
+        urz.RysujLinie(PEDZEL_ROZJAZD_ZNAK, ROZJAZD_ZNAK_SZER, x - ROZJAZD_ZNAK_POL_DL, y, x + ROZJAZD_ZNAK_POL_DL, y)
     End Sub
 
     Private Sub RysujSygnalizatorManewrowy(sygnalizator As Zaleznosci.SygnalizatorManewrowy)
         Dim pedzNiebieski As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraManewrowego.BrakWyjazdu, PEDZEL_SYGN_NIEB_JASNY, PEDZEL_SYGN_NIEB)
         Dim pedzBialy As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraManewrowego.Manewrowy, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
 
-        RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
         urz.WypelnijTloSygnalizatora(PEDZEL_SYGN_TLO, SYGN_POZ, 2 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
         urz.WypelnijKolo(pedzNiebieski, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         urz.WypelnijKolo(pedzBialy, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         RysujSlupSygnalizatora(2)
-        RysujNazweSygnalizatora(sygnalizator.Nazwa)
+        If sygnalizator.PosiadaPrzycisk Then RysujPrzycisk((Not trybProjektowy) And sygnalizator.Wcisniety, PEDZEL_PRZYCISK_BIALY, 2.0F, dodatekX:=PRZYCISK_TM_DODATEK)
+        RysujTorProsty(sygnalizator, True)
     End Sub
 
     Private Sub RysujSygnalizatorPowtarzajacy(sygnalizator As Zaleznosci.SygnalizatorPowtarzajacy)
         Dim pedzPomc As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.BrakWyjazdu, PEDZEL_SYGN_POMC_JASNY, PEDZEL_SYGN_POMC)
         Dim pedzZiel As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.Zezwalajacy, PEDZEL_SYGN_ZIEL_JASNY, PEDZEL_SYGN_ZIEL)
 
-        Dim nazwa As String = KolejnoscSygnPowtToString(sygnalizator.Kolejnosc) & NAZWA_SP
-        If sygnalizator.SygnalizatorPowtarzany IsNot Nothing Then nazwa &= sygnalizator.SygnalizatorPowtarzany.Nazwa
-
-        RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
         urz.WypelnijTloSygnalizatora(PEDZEL_SYGN_TLO, SYGN_POZ, 2 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
         urz.WypelnijKolo(pedzPomc, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         urz.WypelnijKolo(pedzZiel, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         RysujSlupSygnalizatora(2)
-        RysujNazweSygnalizatora(nazwa)
+        RysujTorProsty(sygnalizator, False)
+        RysujNazweDolKostki(sygnalizator.Nazwa)
     End Sub
 
     Private Sub RysujSygnalizatorPolsamoczynny(sygnalizator As Zaleznosci.SygnalizatorPolsamoczynny)
@@ -572,30 +670,27 @@
         Dim pedzZiel As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zezwalajacy, PEDZEL_SYGN_ZIEL_JASNY, PEDZEL_SYGN_ZIEL)
         Dim pedzBial As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Manewrowy Or (sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zastepczy And wysokiStanMigania), PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
 
-        RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
         urz.WypelnijTloSygnalizatora(PEDZEL_SYGN_TLO, SYGN_POZ, 3 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
         urz.WypelnijKolo(pedzCzer, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         urz.WypelnijKolo(pedzZiel, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         urz.WypelnijKolo(pedzBial, 3 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         RysujSlupSygnalizatora(3)
-        RysujNazweSygnalizatora(sygnalizator.Nazwa)
+        RysujTorProsty(sygnalizator, True)
     End Sub
 
     Private Sub RysujSygnalizatorSamoczynny(sygnalizator As Zaleznosci.SygnalizatorSamoczynny)
         Dim pedz As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraSamoczynnego.BrakWyjazdu, PEDZEL_SYGN_CZER_JASNY, PEDZEL_SYGN_CZER)
 
-        RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
         urz.WypelnijKolo(PEDZEL_SYGN_TLO, SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
         urz.WypelnijKolo(pedz, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         RysujSlupSygnalizatora(1)
-        RysujNazweSygnalizatora(sygnalizator.Nazwa)
+        RysujTorProsty(sygnalizator, True)
     End Sub
 
     Private Sub RysujSygnalizatorTOP(sygnalizator As Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy)
         Dim wyrozniony As Boolean = sygnalizator Is sygnTopWyrozniony
         Dim pedzTlo As TPedzel = If(wyrozniony, PEDZEL_PRZEJAZD_SYGN_TOP, PEDZEL_SYGN_TLO)
 
-        RysujTorProsty(sygnalizator.RysowanieDodatkowychTrojkatow)
         urz.WypelnijTloSygnalizatora(pedzTlo, SYGN_POZ, 2 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
 
         If Not wyrozniony Then
@@ -607,7 +702,7 @@
         End If
 
         RysujSlupSygnalizatora(2)
-        RysujNazweSygnalizatora(sygnalizator.Nazwa)
+        RysujTorProsty(sygnalizator, True)
     End Sub
 
     Private Sub RysujPrzejazd(przejazd As Zaleznosci.PrzejazdKolejowy)
@@ -619,17 +714,17 @@
             PEDZEL_SYGN_BIAL_JASNY,
             PEDZEL_SYGN_BIAL)
 
-        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, PRZEJAZD_SZER_LINII, PRZEJAZD_POZ, 0.0, PRZEJAZD_POZ, 1.0)
-        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, PRZEJAZD_SZER_LINII, 1.0 - PRZEJAZD_POZ, 0.0, 1.0 - PRZEJAZD_POZ, 1.0)
-        RysujTorProsty(przejazd.RysowanieDodatkowychTrojkatow)
+        urz.RysujLinie(PEDZEL_KRAWEDZ, PRZEJAZD_SZER_LINII, PRZEJAZD_POZ, 0.0F, PRZEJAZD_POZ, 1.0F)
+        urz.RysujLinie(PEDZEL_KRAWEDZ, PRZEJAZD_SZER_LINII, 1.0F - PRZEJAZD_POZ, 0.0F, 1.0F - PRZEJAZD_POZ, 1.0F)
+        RysujTorProsty(przejazd, False)
         urz.WypelnijKolo(PEDZEL_SYGN_TLO, PRZEJAZD_KONTR_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
         urz.WypelnijKolo(pedzAwaria, PRZEJAZD_KONTR_POZ, SYGN_POZ, SYGN_PROMIEN)
         urz.WypelnijKolo(PEDZEL_SYGN_TLO, PRZEJAZD_KONTR_POZ, 3 * SYGN_POZ, SYGN_TLO_PROMIEN)
         urz.WypelnijKolo(pedzStan, PRZEJAZD_KONTR_POZ, 3 * SYGN_POZ, SYGN_PROMIEN)
     End Sub
 
-    Private Sub RysujPrzycisk(wcisniety As Boolean, pedzel As TPedzel, Optional poczx As Single = 0.0F, Optional poczy As Single = 0.0F)
-        Dim x As Single = (poczx + 1.0F) * SYGN_POZ
+    Private Sub RysujPrzycisk(wcisniety As Boolean, pedzel As TPedzel, Optional poczx As Single = 0.0F, Optional poczy As Single = 0.0F, Optional dodatekX As Single = 0.0F)
+        Dim x As Single = (poczx + 1.0F) * SYGN_POZ + dodatekX
         Dim y As Single = (poczy + 1.0F) * SYGN_POZ
 
         urz.WypelnijKolo(pedzel, x, y, PRZYCISK_TLO_PROMIEN)
@@ -692,7 +787,7 @@
 
         RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety, pedzel)
         RysujNazwe(nazwaPrzycisku, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y, przywrocTransformacje:=True)
-        RysujNazweSygnalizatora(nazwaElementu)
+        RysujNazweDolKostki(nazwaElementu)
     End Sub
 
     Private Sub RysujPrzyciskTor(przycisk As Zaleznosci.PrzyciskTor)
@@ -705,7 +800,7 @@
             pedzel = PEDZEL_PRZYCISK_BIALY
         End If
 
-        RysujTorProsty(przycisk.RysowanieDodatkowychTrojkatow)
+        RysujTorProsty(przycisk, False)
         RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety, pedzel)
 
         Dim nazwa As String
@@ -715,12 +810,12 @@
             nazwa = przycisk.SygnalizatorPolsamoczynny?.Nazwa
         End If
 
-        RysujNazweSygnalizatora(nazwa)
+        RysujNazweDolKostki(nazwa)
     End Sub
 
     Private Sub RysujKierunek(kier As Zaleznosci.Kierunek)
         RysujNazwe(kier.Nazwa, TEKST_POZ_X, TEKST_POZ_Y, przywrocTransformacje:=True)
-        RysujTorProsty(kier.RysowanieDodatkowychTrojkatow)
+        RysujTorProsty(kier, False)
         RysujTrojkatKierunku(kier, Zaleznosci.KierunekWyjazduSBL.Lewo, Zaleznosci.UstawionyKierunekSBL.Lewo)
 
         Dim tr As TMacierz = urz.TransformacjaPobierz
@@ -733,7 +828,7 @@
 
     Private Sub RysujKostkeNapis(napis As Zaleznosci.Napis)
         urz.WypelnijKolo(PEDZEL_KOLKO_TEKST, KOLKO_TEKST_POZ, KOLKO_TEKST_POZ, KOLKO_TEKST_PROMIEN)
-        RysujNazwe(napis.Tekst, TEKST_NAPIS_POZ, TEKST_NAPIS_POZ, TEKST_WYS, TEKST_POZ_X)
+        RysujNazwe(napis.Tekst, TEKST_NAPIS_POZ, TEKST_NAPIS_POZ, TEKST_WYS_KOSTKA_NAPIS, TEKST_POZ_X)
     End Sub
 
     Private Sub RysujSlupSygnalizatora(poczx As Single)
@@ -746,14 +841,14 @@
         Dim y3 As Single = SYGN_POZ + SYGN_SLUP_SZER_MALA / 2
         Dim y4 As Single = SYGN_POZ + SYGN_SLUP_SZER_DUZA / 2
 
-        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, SYGN_KRAWEDZ, x1, y2, x2, y2)
-        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, SYGN_KRAWEDZ, x2, y2, x2, y1)
-        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, SYGN_KRAWEDZ, x2, y1, x3, y1)
-        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, SYGN_KRAWEDZ, x3, y1, x3, y4)
-        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, SYGN_KRAWEDZ, x3, y4, x2, y4)
-        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, SYGN_KRAWEDZ, x2, y4, x2, y3)
-        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, SYGN_KRAWEDZ, x2, y3, x1, y3)
-        urz.RysujLinie(PEDZEL_SYGN_KRAWEDZ, SYGN_KRAWEDZ, x1, y3, x1, y2)
+        urz.RysujLinie(PEDZEL_KRAWEDZ, SYGN_KRAWEDZ, x1, y2, x2, y2)
+        urz.RysujLinie(PEDZEL_KRAWEDZ, SYGN_KRAWEDZ, x2, y2, x2, y1)
+        urz.RysujLinie(PEDZEL_KRAWEDZ, SYGN_KRAWEDZ, x2, y1, x3, y1)
+        urz.RysujLinie(PEDZEL_KRAWEDZ, SYGN_KRAWEDZ, x3, y1, x3, y4)
+        urz.RysujLinie(PEDZEL_KRAWEDZ, SYGN_KRAWEDZ, x3, y4, x2, y4)
+        urz.RysujLinie(PEDZEL_KRAWEDZ, SYGN_KRAWEDZ, x2, y4, x2, y3)
+        urz.RysujLinie(PEDZEL_KRAWEDZ, SYGN_KRAWEDZ, x2, y3, x1, y3)
+        urz.RysujLinie(PEDZEL_KRAWEDZ, SYGN_KRAWEDZ, x1, y3, x1, y2)
     End Sub
 
     Private Sub RysujTrojkatKierunku(kier As Zaleznosci.Kierunek, kierProj As Zaleznosci.KierunekWyjazduSBL, kierDzialanie As Zaleznosci.UstawionyKierunekSBL)
@@ -789,6 +884,10 @@
         urz.WypelnijProstokat(PEDZEL_OBSZAR_ZAZN_TLO, rect.X, rect.Y, rect.Width, rect.Height)
         urz.RysujProstokat(PEDZEL_OBSZAR_ZAZN_RAMKA, KRAWEDZ_RAMKA_ZAZN, rect.X, rect.Y, rect.Width, rect.Height)
     End Sub
+
+    Private Function CzyObrocicObiekty() As Boolean
+        Return obrot >= 2 * KAT_PROSTY And obrot < 4 * KAT_PROSTY
+    End Function
 
     Private Sub UstawKolorToru(k As Zaleznosci.Kostka, zazn As Zaleznosci.OdcinekToru)
         pedzelToru = PEDZEL_TOR_WOLNY
@@ -961,18 +1060,5 @@
         Dim Cprim As New PointF(x, y)
 
         Return New PointF() {Aprim, Bprim, Cprim}
-    End Function
-
-    Private Function KolejnoscSygnPowtToString(kolejnosc As Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego) As String
-        Select Case kolejnosc
-            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Pierwszy
-                Return "I"
-            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Drugi
-                Return "II"
-            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Trzeci
-                Return "III"
-            Case Else
-                Return ""
-        End Select
     End Function
 End Class

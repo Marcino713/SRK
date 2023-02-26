@@ -3,7 +3,6 @@
 Public Class Kierunek
     Inherits Tor
 
-    Public Property Nazwa As String
     Public Property KierunekWyjazdu As KierunekWyjazduSBL
     Public Property Stawnosc As StawnoscSBL
 
@@ -30,14 +29,12 @@ Public Class Kierunek
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
         MyBase.ZapiszKostke(bw, konf)
-        ZapiszTekst(bw, Nazwa)
         bw.Write(CByte(KierunekWyjazdu))
         bw.Write(CByte(Stawnosc))
     End Sub
 
     Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
         MyBase.OtworzKostke(br, konf)
-        Nazwa = OdczytajTekst(br)
         KierunekWyjazdu = CType(br.ReadByte, KierunekWyjazduSBL)
         Stawnosc = CType(br.ReadByte, StawnoscSBL)
     End Sub

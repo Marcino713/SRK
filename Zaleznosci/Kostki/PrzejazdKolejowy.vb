@@ -3,7 +3,18 @@
 Public Class PrzejazdKolejowy
     Inherits Tor
 
+    Private Const BLAD As String = "Kostka przejazdu kolejowego nie obsługuje właściwości Nazwa."
+
     Public Property NalezyDoPrzejazdu As PrzejazdKolejowoDrogowy
+    Public Overloads Property Nazwa As String
+        Get
+            Throw New NotSupportedException(BLAD)
+        End Get
+        Set(value As String)
+            Throw New NotSupportedException(BLAD)
+        End Set
+    End Property
+
 
     Public Property Awaria As Boolean = False
 

@@ -6,9 +6,13 @@ Public MustInherit Class Rozjazd
 
     Private Const LICZBA_ROZJAZDOW_ZALEZNYCH As Integer = 2
 
-    Public Property PredkoscBoczna As UShort = 0
-    Public Property Nazwa As String = ""
     Public Property Adres As UShort = 0 Implements IAdres.Adres
+    Public Property PredkoscBoczna As UShort = 0
+    Public Property DlugoscBok As Single = 0.0F
+    Public Property ZelektryfikowanyBok As Boolean = True
+    Public Property KontrolaNiezajetosciBok As Boolean = True
+    Public Property KierunekZasadniczy As UstawienieRozjazduEnum = UstawienieRozjazduEnum.Wprost
+    Public Property PosiadaPrzycisk As Boolean = True Implements IPrzycisk.PosiadaPrzycisk
 
     Private _ZaleznosciJesliWprost As KonfiguracjaRozjazduZaleznego()
     Public Property ZaleznosciJesliWprost As KonfiguracjaRozjazduZaleznego()
@@ -58,6 +62,7 @@ Public MustInherit Class Rozjazd
         End Set
     End Property
 
+
     Public Sub New(typ As TypKostki)
         MyBase.New(typ)
         _ZaleznosciJesliWprost = PobierzDomyslnaKonfiguracje(LICZBA_ROZJAZDOW_ZALEZNYCH)
@@ -71,8 +76,12 @@ Public MustInherit Class Rozjazd
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
         MyBase.ZapiszKostke(bw, konf)
         bw.Write(Adres)
-        ZapiszTekst(bw, Nazwa)
         bw.Write(PredkoscBoczna)
+        bw.Write(DlugoscBok)
+        bw.Write(ZelektryfikowanyBok)
+        bw.Write(KontrolaNiezajetosciBok)
+        bw.Write(CByte(KierunekZasadniczy))
+        bw.Write(PosiadaPrzycisk)
         ZapiszZaleznosci(_ZaleznosciJesliWprost, bw, konf)
         ZapiszZaleznosci(_ZaleznosciJesliBok, bw, konf)
     End Sub
@@ -80,8 +89,12 @@ Public MustInherit Class Rozjazd
     Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
         MyBase.OtworzKostke(br, konf)
         Adres = br.ReadUInt16
-        Nazwa = OdczytajTekst(br)
         PredkoscBoczna = br.ReadUInt16
+        DlugoscBok = br.ReadSingle
+        ZelektryfikowanyBok = br.ReadBoolean
+        KontrolaNiezajetosciBok = br.ReadBoolean
+        KierunekZasadniczy = CType(br.ReadByte, UstawienieRozjazduEnum)
+        PosiadaPrzycisk = br.ReadBoolean
         ZaleznosciJesliWprost = OtworzZaleznosci(br, konf)
         ZaleznosciJesliBok = OtworzZaleznosci(br, konf)
     End Sub

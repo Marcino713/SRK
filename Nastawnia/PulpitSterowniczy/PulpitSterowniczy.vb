@@ -18,9 +18,7 @@ Friend Class PulpitSterowniczy
     Private PoprzZaznLampyWObszarze As HashSet(Of Zaleznosci.Lampa)     'Nothing - tryb zaznaczania pojedynczej lampy; niepusty obiekt - tryb zaznaczania obszarem
     Private KolejnoscZaznaczeniaLamp As New List(Of Zaleznosci.Lampa)
     Private PoprzedniPunkt As New Point(PUSTA_WSPOLRZEDNA, PUSTA_WSPOLRZEDNA)
-    Private AkceptowaniePrzeciagania As DragDropEffects = DragDropEffects.None
     Private PoprzLokalizacjaKostki As New Point(PUSTA_WSPOLRZEDNA, PUSTA_WSPOLRZEDNA)
-    Private PierwszaObslugaPrzeciagania As Boolean = True
     Private WcisnietyPrzycisk As Zaleznosci.IPrzycisk = Nothing
     Private RysowanieWlaczone As Boolean = True
     Private Migacz As Migacz
@@ -69,6 +67,18 @@ Friend Class PulpitSterowniczy
         End Get
         Set(value As Boolean)
             _RysujKrawedzieKostek = value
+            Invalidate()
+        End Set
+    End Property
+
+    Private _RysujWspolrzedne As Boolean = True
+    <Description("Czy rysować współrzędne pulpitu"), Category(KATEG_KONF), DefaultValue(True)>
+    Public Property RysujWspolrzedne As Boolean
+        Get
+            Return _RysujWspolrzedne
+        End Get
+        Set(value As Boolean)
+            _RysujWspolrzedne = value
             Invalidate()
         End Set
     End Property
@@ -615,16 +625,18 @@ Friend Class PulpitSterowniczy
         If TrybProjektowy And projDodatkoweObiekty = RysujDodatkoweObiekty.Nic And ((ModifierKeys And Keys.Shift) <> 0) Then      'Przesuń kostkę
             If _Pulpit.CzyKostkaNiepusta(p) Then
                 PoprzLokalizacjaKostki = p
-                DoDragDrop(Pulpit.Kostki(p.X, p.Y), DragDropEffects.Move)
+                ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
+                DoDragDrop(New PrzeciaganaKostka(_ZaznaczonaKostka, Handle), DragDropEffects.Move)
             End If
         Else        'Przesuń cały pulpit
             PoprzedniPunkt = e.Location
         End If
 
         If Not TrybProjektowy AndAlso _MozliwoscWcisnieciaPrzycisku AndAlso _Pulpit.CzyKostkaNiepusta(p) Then
-            Dim k As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-            If Zaleznosci.Kostka.CzyPrzycisk(k.Typ) Then
-                WcisnietyPrzycisk = DirectCast(k, Zaleznosci.IPrzycisk)
+            Dim prz As Zaleznosci.IPrzycisk = TryCast(Pulpit.Kostki(p.X, p.Y), Zaleznosci.IPrzycisk)
+
+            If prz?.PosiadaPrzycisk = True Then
+                WcisnietyPrzycisk = prz
                 WcisnietyPrzycisk.Wcisniety = True
                 Invalidate()
                 tmrPrzycisk.Interval = CzasWciskaniaPrzyciskuMS
@@ -634,44 +646,36 @@ Friend Class PulpitSterowniczy
     End Sub
 
     Private Sub PulpitSterowniczy_DragOver(sender As Object, e As DragEventArgs) Handles Me.DragOver
-        If Not TrybProjektowy Or Not e.Data.GetFormats()(0).StartsWith("Zaleznosci.") Then
-            e.Effect = DragDropEffects.None
-            Exit Sub
-        End If
+        e.Effect = DragDropEffects.None
+        If Not TrybProjektowy Then Exit Sub
+
+        Dim przeciaganaKostka As Zaleznosci.Kostka = PobierzPrzeciaganaKostke(e)
+        If przeciaganaKostka Is Nothing Then Exit Sub
 
         Dim p As Point = PobierzKliknieteWspolrzedneKostki(PointToClient(New Point(e.X, e.Y)))
 
-        If _Pulpit.CzyKostkaWZakresiePulpitu(p) AndAlso (
-            (PierwszaObslugaPrzeciagania AndAlso (Pulpit.Kostki(p.X, p.Y) Is Nothing Or Pulpit.Kostki(p.X, p.Y) Is PobierzDodawanaKostke(e))) Or
-            (p <> PoprzLokalizacjaKostki AndAlso Pulpit.Kostki(p.X, p.Y) Is Nothing)
-            ) Then
+        If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
+            Dim polozonaKostka As Zaleznosci.Kostka = _Pulpit.Kostki(p.X, p.Y)
+            If polozonaKostka IsNot Nothing AndAlso polozonaKostka IsNot przeciaganaKostka Then Exit Sub
 
-            If PierwszaObslugaPrzeciagania Then
-                AkceptowaniePrzeciagania = DragDropEffects.All
-                ZaznaczonaKostka = PobierzDodawanaKostke(e)
-                PierwszaObslugaPrzeciagania = False
+            Dim dodajKostke As Boolean = _ZaznaczonaKostka IsNot przeciaganaKostka
+            Dim przesunKostke As Boolean = PoprzLokalizacjaKostki <> p
+
+            If dodajKostke Or przesunKostke Then
+                If dodajKostke Then
+                    ZaznaczonaKostka = przeciaganaKostka
+                Else
+                    _Pulpit.Kostki(PoprzLokalizacjaKostki.X, PoprzLokalizacjaKostki.Y) = Nothing
+                End If
+
+                _Pulpit.Kostki(p.X, p.Y) = _ZaznaczonaKostka
+                PoprzLokalizacjaKostki = p
+                _Rysownik.UniewaznioneSasiedztwoTorow = True
+                Invalidate()
+                Focus()
             End If
 
-            If _Pulpit.CzyKostkaWZakresiePulpitu(PoprzLokalizacjaKostki) AndAlso Pulpit.Kostki(PoprzLokalizacjaKostki.X, PoprzLokalizacjaKostki.Y) Is ZaznaczonaKostka Then
-                Pulpit.Kostki(PoprzLokalizacjaKostki.X, PoprzLokalizacjaKostki.Y) = Nothing
-            End If
-
-            Pulpit.Kostki(p.X, p.Y) = ZaznaczonaKostka
-            PoprzLokalizacjaKostki = p
-            _Rysownik.UniewaznioneSasiedztwoTorow = True
-            Invalidate()
-            Focus()
-        End If
-
-        e.Effect = AkceptowaniePrzeciagania
-    End Sub
-
-    Private Sub PulpitSterowniczy_DragEnter(sender As Object, e As DragEventArgs) Handles Me.DragEnter
-        If Not TrybProjektowy Then Exit Sub
-
-        If _ZaznaczonaKostka IsNot PobierzDodawanaKostke(e) Then
-            AkceptowaniePrzeciagania = DragDropEffects.None
-            PierwszaObslugaPrzeciagania = True
+            e.Effect = DragDropEffects.All
         End If
     End Sub
 
@@ -693,8 +697,13 @@ Friend Class PulpitSterowniczy
             (Height - WysokoscPulpitu) \ 2)
     End Function
 
-    Private Function PobierzDodawanaKostke(e As DragEventArgs) As Zaleznosci.Kostka
-        Return DirectCast(e.Data.GetData(e.Data.GetFormats()(0)), Zaleznosci.Kostka)
+    Private Function PobierzPrzeciaganaKostke(e As DragEventArgs) As Zaleznosci.Kostka
+        Dim dane As PrzeciaganaKostka = TryCast(e.Data.GetData(GetType(PrzeciaganaKostka)), PrzeciaganaKostka)
+        If dane IsNot Nothing AndAlso dane.Zrodlo = Handle Then
+            Return dane.Kostka
+        Else
+            Return Nothing
+        End If
     End Function
 
     Private Function WspolrzedneEkranuDoPulpitu(klik As Point) As PointF

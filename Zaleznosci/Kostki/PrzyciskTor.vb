@@ -4,10 +4,31 @@ Public Class PrzyciskTor
     Inherits Tor
     Implements IPrzycisk
 
-    Public Property TypPrzycisku As TypPrzyciskuTorEnum
+    Private Const BLAD_NAZWA As String = "Kostka przycisku z torem nie obsługuje własności Nazwa."
+    Private Const BLAD_PRZYCISK As String = "Kostka przycisku z torem zawsze posiada przycisk, dlatego nie można zmienić własności posiadania przycisku."
 
+    Public Property TypPrzycisku As TypPrzyciskuTorEnum
     Public Property SygnalizatorPolsamoczynny As SygnalizatorPolsamoczynny
     Public Property SygnalizatorManewrowy As SygnalizatorManewrowy
+
+    Public Overloads Property Nazwa As String
+        Get
+            Throw New NotSupportedException(BLAD_NAZWA)
+        End Get
+        Set(value As String)
+            Throw New NotSupportedException(BLAD_NAZWA)
+        End Set
+    End Property
+
+    Public Property PosiadaPrzycisk As Boolean Implements IPrzycisk.PosiadaPrzycisk
+        Get
+            Return True
+        End Get
+        Set(value As Boolean)
+            Throw New NotSupportedException(BLAD_PRZYCISK)
+        End Set
+    End Property
+
 
     Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
 

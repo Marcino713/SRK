@@ -36,13 +36,14 @@ Public Class SygnalizatorPolsamoczynny
 End Class
 
 Public Enum DostepneSwiatlaEnum
-    Zielone = 1 << 1
-    PomaranczoweGora = 1 << 2
-    Czerwone = 1 << 3
-    PomaranczoweDol = 1 << 4
-    Biale = 1 << 5
-    ZielonyPas = 1 << 6
-    PomaranczowyPas = 1 << 7
+    Zielone = 1 << 0
+    PomaranczoweGora = 1 << 1
+    Czerwone = 1 << 2
+    PomaranczoweDol = 1 << 3
+    Biale = 1 << 4
+    ZielonyPas = 1 << 5
+    PomaranczowyPas = 1 << 6
+    WskaznikKierunkuPrzeciwnego = 1 << 7
 End Enum
 
 Public Enum StanSygnalizatora As Byte

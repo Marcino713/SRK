@@ -19,7 +19,8 @@ Public MustInherit Class Kostka
         Return _
             CzyRozjazd(typ) Or
             typ = TypKostki.Przycisk Or
-            typ = TypKostki.PrzyciskTor
+            typ = TypKostki.PrzyciskTor Or
+            typ = TypKostki.SygnalizatorManewrowy
     End Function
 
     Public Shared Function CzySygnalizator(typ As TypKostki) As Boolean

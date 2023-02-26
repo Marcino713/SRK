@@ -1,4 +1,4 @@
-﻿Public Class wndEdytorPowierzchni
+﻿Public Class wndEdytorRozmiaruPowierzchni
     Private Const NAZWA_DODAJ As String = "Dodawanie kostek"
     Private Const NAZWA_USUN As String = "Usuwanie kostek"
 

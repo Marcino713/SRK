@@ -118,8 +118,8 @@ Public Class wndNastawnia
         End If
     End Sub
 
-    Private Sub mnuKonfiguratorStacji_Click() Handles mnuKonfiguratorStacji.Click
-        Dim wnd As New wndKonfiguratorStacji()
+    Private Sub mnuProjektantPosterunku_Click() Handles mnuProjektantPosterunku.Click
+        Dim wnd As New wndProjektantPosterunku()
         wnd.Show()
     End Sub
 
@@ -266,6 +266,10 @@ Public Class wndNastawnia
                 If adres.HasValue Then
                     Klient.WyslijUstawStanSygnalizatora(New Zaleznosci.UstawStanSygnalizatora() With {.Adres = adres.Value, .Stan = stan})
                 End If
+
+            Case Zaleznosci.TypKostki.SygnalizatorManewrowy
+                Dim tm As Zaleznosci.SygnalizatorManewrowy = DirectCast(kostka, Zaleznosci.SygnalizatorManewrowy)
+                Klient.WyslijUstawStanSygnalizatora(New Zaleznosci.UstawStanSygnalizatora() With {.Adres = tm.Adres, .Stan = Zaleznosci.UstawianyStanSygnalizatora.Manewrowy})
 
         End Select
     End Sub

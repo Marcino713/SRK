@@ -4,9 +4,34 @@ Public Class SygnalizatorPowtarzajacy
     Inherits Tor
     Implements IAdres
 
+    Private Const BLAD As String = "Dla kostki sygnalizatora powtarzającego nie można zdefiniować nazwy."
+    Private Const NAZWA_SP As String = "Sp"
+
     Public Property Adres As UShort = 0 Implements IAdres.Adres
     Public Property Kolejnosc As KolejnoscSygnalizatoraPowtarzajacego
     Public Property SygnalizatorPowtarzany As SygnalizatorPolsamoczynny
+    Public Overloads Property Nazwa As String
+        Get
+            Dim n As String = ""
+
+            Select Case Kolejnosc
+                Case KolejnoscSygnalizatoraPowtarzajacego.Pierwszy
+                    n = "I"
+                Case KolejnoscSygnalizatoraPowtarzajacego.Drugi
+                    n = "II"
+                Case KolejnoscSygnalizatoraPowtarzajacego.Trzeci
+                    n = "III"
+            End Select
+
+            n &= NAZWA_SP
+            If SygnalizatorPowtarzany IsNot Nothing Then n &= SygnalizatorPowtarzany.Nazwa
+            Return n
+        End Get
+        Set(value As String)
+            Throw New NotSupportedException(BLAD)
+        End Set
+    End Property
+
 
     Public Property Stan As StanSygnalizatoraPowtarzajacego = StanSygnalizatoraPowtarzajacego.BrakWyjazdu
 

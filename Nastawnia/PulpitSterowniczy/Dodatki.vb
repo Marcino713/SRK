@@ -11,4 +11,14 @@
             Integer.Parse(wartosc(5) & wartosc(6), Globalization.NumberStyles.HexNumber)
             )
     End Function
+
+    Public Class PrzeciaganaKostka
+        Public Kostka As Zaleznosci.Kostka
+        Public Zrodlo As IntPtr
+
+        Public Sub New(kostka As Zaleznosci.Kostka, zrodlo As IntPtr)
+            Me.Kostka = kostka
+            Me.Zrodlo = zrodlo
+        End Sub
+    End Class
 End Module
