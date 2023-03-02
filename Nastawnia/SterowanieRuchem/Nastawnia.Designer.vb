@@ -22,7 +22,7 @@ Partial Class wndNastawnia
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim Pulpit1 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
+        Dim Pulpit2 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
         Me.mnuMenu = New System.Windows.Forms.MenuStrip()
         Me.mnuNarzedzia = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuPolaczZSerwerem = New System.Windows.Forms.ToolStripMenuItem()
@@ -41,6 +41,8 @@ Partial Class wndNastawnia
         Me.stStan = New System.Windows.Forms.StatusStrip()
         Me.tslStanPolaczenia = New System.Windows.Forms.ToolStripStatusLabel()
         Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
+        Me.mnuEdytorWyswietlaczaPeronowego = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuMenu.SuspendLayout()
         Me.stStan.SuspendLayout()
         Me.SuspendLayout()
@@ -56,7 +58,7 @@ Partial Class wndNastawnia
         '
         'mnuNarzedzia
         '
-        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPolaczZSerwerem, Me.mnuRozlaczZSerwerem, Me.mnuZarzadzajSerwerem, Me.ToolStripSeparator3, Me.mnuDodajPociag, Me.mnuSterujPociagiem, Me.ToolStripSeparator4, Me.mnuOswietlenie, Me.ToolStripSeparator2, Me.mnuProjektantPosterunku, Me.ToolStripSeparator1, Me.mnuNowePolaczenia, Me.mnuOtworzPolaczenia})
+        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPolaczZSerwerem, Me.mnuRozlaczZSerwerem, Me.mnuZarzadzajSerwerem, Me.ToolStripSeparator3, Me.mnuDodajPociag, Me.mnuSterujPociagiem, Me.ToolStripSeparator4, Me.mnuOswietlenie, Me.ToolStripSeparator5, Me.mnuEdytorWyswietlaczaPeronowego, Me.ToolStripSeparator2, Me.mnuProjektantPosterunku, Me.ToolStripSeparator1, Me.mnuNowePolaczenia, Me.mnuOtworzPolaczenia})
         Me.mnuNarzedzia.Name = "mnuNarzedzia"
         Me.mnuNarzedzia.Size = New System.Drawing.Size(70, 20)
         Me.mnuNarzedzia.Text = "Narzędzia"
@@ -175,12 +177,23 @@ Partial Class wndNastawnia
         Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
         Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
         Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit1.Adres = CType(0US, UShort)
-        Pulpit1.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit1
+        Pulpit2.Adres = CType(0US, UShort)
+        Pulpit2.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit2
         Me.plpPulpit.Size = New System.Drawing.Size(645, 504)
         Me.plpPulpit.TabIndex = 2
         Me.plpPulpit.ZaznaczonaKostka = Nothing
+        '
+        'mnuEdytorWyswietlaczaPeronowego
+        '
+        Me.mnuEdytorWyswietlaczaPeronowego.Name = "mnuEdytorWyswietlaczaPeronowego"
+        Me.mnuEdytorWyswietlaczaPeronowego.Size = New System.Drawing.Size(258, 22)
+        Me.mnuEdytorWyswietlaczaPeronowego.Text = "Edytor wyświetlacza peronowego..."
+        '
+        'ToolStripSeparator5
+        '
+        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(231, 6)
         '
         'wndNastawnia
         '
@@ -220,4 +233,6 @@ Partial Class wndNastawnia
     Friend WithEvents mnuOswietlenie As ToolStripMenuItem
     Friend WithEvents mnuSterujPociagiem As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator4 As ToolStripSeparator
+    Friend WithEvents ToolStripSeparator5 As ToolStripSeparator
+    Friend WithEvents mnuEdytorWyswietlaczaPeronowego As ToolStripMenuItem
 End Class

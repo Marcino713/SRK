@@ -118,6 +118,11 @@ Public Class wndNastawnia
         End If
     End Sub
 
+    Private Sub mnuEdytorWyswietlaczaPeronowego_Click() Handles mnuEdytorWyswietlaczaPeronowego.Click
+        Dim wnd As New wndEdytorWyswietlaczaPeronowego
+        wnd.Show()
+    End Sub
+
     Private Sub mnuProjektantPosterunku_Click() Handles mnuProjektantPosterunku.Click
         Dim wnd As New wndProjektantPosterunku()
         wnd.Show()

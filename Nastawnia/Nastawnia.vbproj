@@ -77,6 +77,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PulpitSterowniczy\Migacz.vb" />
+    <Compile Include="Rozklady\EdytorWyswietlaczaPeronowego.Designer.vb">
+      <DependentUpon>EdytorWyswietlaczaPeronowego.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Rozklady\EdytorWyswietlaczaPeronowego.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="SterowanieRuchem\DodawaniePociagu.Designer.vb">
       <DependentUpon>DodawaniePociagu.vb</DependentUpon>
     </Compile>
@@ -183,8 +189,14 @@
     <Compile Include="SterowanieRuchem\WyborStacji.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="TworzycieleWyswietlaczyPeronowych\DaneWyswietlaczaPeronowego.vb" />
+    <Compile Include="TworzycieleWyswietlaczyPeronowych\WyswietlaczAustriacki.vb" />
+    <Compile Include="TworzycieleWyswietlaczyPeronowych\WyswietlaczPeronowy.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Rozklady\EdytorWyswietlaczaPeronowego.resx">
+      <DependentUpon>EdytorWyswietlaczaPeronowego.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SterowanieRuchem\DodawaniePociagu.resx">
       <DependentUpon>DodawaniePociagu.vb</DependentUpon>
       <SubType>Designer</SubType>
