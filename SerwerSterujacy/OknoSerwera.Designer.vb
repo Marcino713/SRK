@@ -22,6 +22,7 @@ Partial Class wndOknoSerwera
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.lblStanWczytania = New System.Windows.Forms.Label()
         Me.btnWczytaj = New System.Windows.Forms.Button()
@@ -34,7 +35,7 @@ Partial Class wndOknoSerwera
         Me.btnStart = New System.Windows.Forms.Button()
         Me.txtHaslo = New System.Windows.Forms.TextBox()
         Me.Label4 = New System.Windows.Forms.Label()
-        Me.txtPort = New System.Windows.Forms.TextBox()
+        Me.txtPortTCP = New System.Windows.Forms.TextBox()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
         Me.btnRozlacz = New System.Windows.Forms.Button()
@@ -48,10 +49,18 @@ Partial Class wndOknoSerwera
         Me.Label6 = New System.Windows.Forms.Label()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.btnPociagi = New System.Windows.Forms.Button()
+        Me.GroupBox5 = New System.Windows.Forms.GroupBox()
+        Me.lblUartStan = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.btnUartPolacz = New System.Windows.Forms.Button()
+        Me.txtUartPort = New System.Windows.Forms.TextBox()
+        Me.spKomunikacja = New System.IO.Ports.SerialPort(Me.components)
+        Me.btnUartRozlacz = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
+        Me.GroupBox5.SuspendLayout()
         Me.SuspendLayout()
         '
         'GroupBox1
@@ -123,14 +132,14 @@ Partial Class wndOknoSerwera
         Me.GroupBox2.Controls.Add(Me.btnStart)
         Me.GroupBox2.Controls.Add(Me.txtHaslo)
         Me.GroupBox2.Controls.Add(Me.Label4)
-        Me.GroupBox2.Controls.Add(Me.txtPort)
+        Me.GroupBox2.Controls.Add(Me.txtPortTCP)
         Me.GroupBox2.Controls.Add(Me.Label3)
         Me.GroupBox2.Location = New System.Drawing.Point(12, 95)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Size = New System.Drawing.Size(147, 172)
-        Me.GroupBox2.TabIndex = 1
+        Me.GroupBox2.TabIndex = 4
         Me.GroupBox2.TabStop = False
-        Me.GroupBox2.Text = "Kontrola"
+        Me.GroupBox2.Text = "Zarządzanie serwerem"
         '
         'lblStanSerwera
         '
@@ -148,7 +157,7 @@ Partial Class wndOknoSerwera
         Me.btnStop.Location = New System.Drawing.Point(5, 126)
         Me.btnStop.Name = "btnStop"
         Me.btnStop.Size = New System.Drawing.Size(137, 23)
-        Me.btnStop.TabIndex = 7
+        Me.btnStop.TabIndex = 8
         Me.btnStop.Text = "Zatrzymaj serwer"
         Me.btnStop.UseVisualStyleBackColor = True
         '
@@ -157,7 +166,7 @@ Partial Class wndOknoSerwera
         Me.btnStart.Location = New System.Drawing.Point(5, 97)
         Me.btnStart.Name = "btnStart"
         Me.btnStart.Size = New System.Drawing.Size(137, 23)
-        Me.btnStart.TabIndex = 6
+        Me.btnStart.TabIndex = 7
         Me.btnStart.Text = "Uruchom serwer"
         Me.btnStart.UseVisualStyleBackColor = True
         '
@@ -167,7 +176,7 @@ Partial Class wndOknoSerwera
         Me.txtHaslo.Name = "txtHaslo"
         Me.txtHaslo.PasswordChar = Global.Microsoft.VisualBasic.ChrW(9679)
         Me.txtHaslo.Size = New System.Drawing.Size(135, 20)
-        Me.txtHaslo.TabIndex = 5
+        Me.txtHaslo.TabIndex = 6
         Me.txtHaslo.Text = "a"
         '
         'Label4
@@ -179,13 +188,13 @@ Partial Class wndOknoSerwera
         Me.Label4.TabIndex = 2
         Me.Label4.Text = "Hasło:"
         '
-        'txtPort
+        'txtPortTCP
         '
-        Me.txtPort.Location = New System.Drawing.Point(6, 32)
-        Me.txtPort.Name = "txtPort"
-        Me.txtPort.Size = New System.Drawing.Size(135, 20)
-        Me.txtPort.TabIndex = 4
-        Me.txtPort.Text = "100"
+        Me.txtPortTCP.Location = New System.Drawing.Point(6, 32)
+        Me.txtPortTCP.Name = "txtPortTCP"
+        Me.txtPortTCP.Size = New System.Drawing.Size(135, 20)
+        Me.txtPortTCP.TabIndex = 5
+        Me.txtPortTCP.Text = "100"
         '
         'Label3
         '
@@ -208,7 +217,7 @@ Partial Class wndOknoSerwera
         Me.GroupBox3.Location = New System.Drawing.Point(165, 95)
         Me.GroupBox3.Name = "GroupBox3"
         Me.GroupBox3.Size = New System.Drawing.Size(676, 421)
-        Me.GroupBox3.TabIndex = 2
+        Me.GroupBox3.TabIndex = 15
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Posterunki i klienci"
         '
@@ -218,7 +227,7 @@ Partial Class wndOknoSerwera
         Me.btnRozlacz.Location = New System.Drawing.Point(515, 392)
         Me.btnRozlacz.Name = "btnRozlacz"
         Me.btnRozlacz.Size = New System.Drawing.Size(75, 23)
-        Me.btnRozlacz.TabIndex = 22
+        Me.btnRozlacz.TabIndex = 17
         Me.btnRozlacz.Text = "Rozłącz"
         Me.btnRozlacz.UseVisualStyleBackColor = True
         '
@@ -228,7 +237,7 @@ Partial Class wndOknoSerwera
         Me.btnOdswiez.Location = New System.Drawing.Point(596, 392)
         Me.btnOdswiez.Name = "btnOdswiez"
         Me.btnOdswiez.Size = New System.Drawing.Size(75, 23)
-        Me.btnOdswiez.TabIndex = 23
+        Me.btnOdswiez.TabIndex = 18
         Me.btnOdswiez.Text = "Odśwież"
         Me.btnOdswiez.UseVisualStyleBackColor = True
         '
@@ -244,7 +253,7 @@ Partial Class wndOknoSerwera
         Me.lvPosterunki.MultiSelect = False
         Me.lvPosterunki.Name = "lvPosterunki"
         Me.lvPosterunki.Size = New System.Drawing.Size(664, 354)
-        Me.lvPosterunki.TabIndex = 21
+        Me.lvPosterunki.TabIndex = 16
         Me.lvPosterunki.UseCompatibleStateImageBehavior = False
         Me.lvPosterunki.View = System.Windows.Forms.View.Details
         '
@@ -287,10 +296,10 @@ Partial Class wndOknoSerwera
         Me.GroupBox4.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.GroupBox4.Controls.Add(Me.btnPociagi)
-        Me.GroupBox4.Location = New System.Drawing.Point(12, 273)
+        Me.GroupBox4.Location = New System.Drawing.Point(12, 413)
         Me.GroupBox4.Name = "GroupBox4"
-        Me.GroupBox4.Size = New System.Drawing.Size(147, 243)
-        Me.GroupBox4.TabIndex = 3
+        Me.GroupBox4.Size = New System.Drawing.Size(147, 103)
+        Me.GroupBox4.TabIndex = 13
         Me.GroupBox4.TabStop = False
         Me.GroupBox4.Text = "Zarządzanie obiektami"
         '
@@ -300,15 +309,78 @@ Partial Class wndOknoSerwera
         Me.btnPociagi.Location = New System.Drawing.Point(5, 19)
         Me.btnPociagi.Name = "btnPociagi"
         Me.btnPociagi.Size = New System.Drawing.Size(137, 23)
-        Me.btnPociagi.TabIndex = 8
+        Me.btnPociagi.TabIndex = 14
         Me.btnPociagi.Text = "Pociągi..."
         Me.btnPociagi.UseVisualStyleBackColor = True
+        '
+        'GroupBox5
+        '
+        Me.GroupBox5.Controls.Add(Me.btnUartRozlacz)
+        Me.GroupBox5.Controls.Add(Me.lblUartStan)
+        Me.GroupBox5.Controls.Add(Me.Label2)
+        Me.GroupBox5.Controls.Add(Me.btnUartPolacz)
+        Me.GroupBox5.Controls.Add(Me.txtUartPort)
+        Me.GroupBox5.Location = New System.Drawing.Point(12, 273)
+        Me.GroupBox5.Name = "GroupBox5"
+        Me.GroupBox5.Size = New System.Drawing.Size(147, 134)
+        Me.GroupBox5.TabIndex = 9
+        Me.GroupBox5.TabStop = False
+        Me.GroupBox5.Text = "Komunikacja UART"
+        '
+        'lblUartStan
+        '
+        Me.lblUartStan.AutoSize = True
+        Me.lblUartStan.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
+        Me.lblUartStan.Location = New System.Drawing.Point(6, 113)
+        Me.lblUartStan.Name = "lblUartStan"
+        Me.lblUartStan.Size = New System.Drawing.Size(0, 13)
+        Me.lblUartStan.TabIndex = 4
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(6, 16)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(29, 13)
+        Me.Label2.TabIndex = 3
+        Me.Label2.Text = "Port:"
+        '
+        'btnUartPolacz
+        '
+        Me.btnUartPolacz.Location = New System.Drawing.Point(5, 58)
+        Me.btnUartPolacz.Name = "btnUartPolacz"
+        Me.btnUartPolacz.Size = New System.Drawing.Size(137, 23)
+        Me.btnUartPolacz.TabIndex = 11
+        Me.btnUartPolacz.Text = "Połącz"
+        Me.btnUartPolacz.UseVisualStyleBackColor = True
+        '
+        'txtUartPort
+        '
+        Me.txtUartPort.Location = New System.Drawing.Point(6, 32)
+        Me.txtUartPort.Name = "txtUartPort"
+        Me.txtUartPort.Size = New System.Drawing.Size(135, 20)
+        Me.txtUartPort.TabIndex = 10
+        '
+        'spKomunikacja
+        '
+        Me.spKomunikacja.BaudRate = 19200
+        '
+        'btnUartRozlacz
+        '
+        Me.btnUartRozlacz.Enabled = False
+        Me.btnUartRozlacz.Location = New System.Drawing.Point(5, 87)
+        Me.btnUartRozlacz.Name = "btnUartRozlacz"
+        Me.btnUartRozlacz.Size = New System.Drawing.Size(137, 23)
+        Me.btnUartRozlacz.TabIndex = 12
+        Me.btnUartRozlacz.Text = "Rozłącz"
+        Me.btnUartRozlacz.UseVisualStyleBackColor = True
         '
         'wndOknoSerwera
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(853, 528)
+        Me.Controls.Add(Me.GroupBox5)
         Me.Controls.Add(Me.GroupBox4)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.GroupBox2)
@@ -322,6 +394,8 @@ Partial Class wndOknoSerwera
         Me.GroupBox3.ResumeLayout(False)
         Me.GroupBox3.PerformLayout()
         Me.GroupBox4.ResumeLayout(False)
+        Me.GroupBox5.ResumeLayout(False)
+        Me.GroupBox5.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -338,7 +412,7 @@ Partial Class wndOknoSerwera
     Friend WithEvents btnStart As Button
     Friend WithEvents txtHaslo As TextBox
     Friend WithEvents Label4 As Label
-    Friend WithEvents txtPort As TextBox
+    Friend WithEvents txtPortTCP As TextBox
     Friend WithEvents Label3 As Label
     Friend WithEvents GroupBox3 As GroupBox
     Friend WithEvents btnOdswiez As Button
@@ -352,4 +426,11 @@ Partial Class wndOknoSerwera
     Friend WithEvents btnRozlacz As Button
     Friend WithEvents GroupBox4 As GroupBox
     Friend WithEvents btnPociagi As Button
+    Friend WithEvents GroupBox5 As GroupBox
+    Friend WithEvents btnUartPolacz As Button
+    Friend WithEvents txtUartPort As TextBox
+    Friend WithEvents spKomunikacja As IO.Ports.SerialPort
+    Friend WithEvents Label2 As Label
+    Friend WithEvents lblUartStan As Label
+    Friend WithEvents btnUartRozlacz As Button
 End Class

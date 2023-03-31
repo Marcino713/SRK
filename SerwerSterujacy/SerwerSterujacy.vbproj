@@ -121,6 +121,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="OknoSerwera.resx">
       <DependentUpon>OknoSerwera.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Pociagi.resx">
       <DependentUpon>Pociagi.vb</DependentUpon>

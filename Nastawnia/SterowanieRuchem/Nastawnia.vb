@@ -84,6 +84,7 @@ Public Class wndNastawnia
 
     Private Sub mnuZarzadzajSerwerem_Click() Handles mnuZarzadzajSerwerem.Click
         Dim t As New Thread(AddressOf PokazOknoSerwera)
+        t.SetApartmentState(ApartmentState.STA)
         t.Start()
     End Sub
 

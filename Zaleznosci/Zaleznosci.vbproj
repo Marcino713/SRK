@@ -72,6 +72,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IMigacz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawionoJasnoscLampyUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawionoStanSygnalizatoraDrogowegoUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawionoStanSygnalizatoraUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawJasnoscLampyUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraDrogowegoUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraManewrowegoUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraPolsamoczynnegoUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraPowtarzajacegoUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraPrzejazdowegoUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraSamoczynnegoUrz.vb" />
+    <Compile Include="ObslugaKomunikatowUrzadzen\KomunikatUrzadzenia.vb" />
+    <Compile Include="ObslugaKomunikatowUrzadzen\TypKomunikatuUrzadzenia.vb" />
     <Compile Include="Komunikaty\DHInicjalizuj.vb" />
     <Compile Include="Komunikaty\DHZainicjalizowano.vb" />
     <Compile Include="Komunikaty\Informacja.vb" />
@@ -174,6 +186,8 @@
     <Compile Include="ObslugaPlikow\SegmentPliku.vb" />
     <Compile Include="Pulpit\PrzejazdKolejowoDrogowy.vb" />
     <Compile Include="Komunikaty\UstawStanPrzejazdu.vb" />
+    <Compile Include="Urzadzenia\KomunikacjaZUrzadzeniami.vb" />
+    <Compile Include="Urzadzenia\SygnalizatorPolsamoczynnyUrz.vb" />
     <Compile Include="WersjaPliku.vb" />
     <Compile Include="Pulpit\Lampa.vb" />
     <Compile Include="Pulpit\ParaLicznikowOsi.vb" />

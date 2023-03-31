@@ -25,6 +25,7 @@ Public Class SerwerTCP
         End Get
     End Property
 
+    Private WithEvents PolaczenieUart As New KomunikacjaZUrzadzeniami
     Private Posterunki As ObslugiwanyPosterunek()
     Private KlienciPoAdresieStacji As New Dictionary(Of UShort, ObslugiwanyPosterunek)
     Private PociagiPoNumerze As New Dictionary(Of UInteger, Pociag)
@@ -79,6 +80,9 @@ Public Class SerwerTCP
                 Dim adr(k.Jasnosci.Length - 1) As UShort
                 For i As Integer = 0 To k.Jasnosci.Length - 1
                     adr(i) = k.Jasnosci(i).Adres
+
+                    PolaczenieUart.UstawJasnoscLampy(New UstawJasnoscLampyUrz() With {.AdresUrzadzenia = k.Jasnosci(i).Adres, .Jasnosc = k.Jasnosci(i).Jasnosc})
+
                 Next
                 pol.WyslijKomunikat(New ZmienionoJasnoscLamp() With {.Adresy = adr})
                 'RaiseEvent OdebranoUstawJasnoscLamp(pol.AdresStacji, CType(kom, UstawJasnoscLamp))
@@ -233,13 +237,21 @@ Public Class SerwerTCP
             Sub(pol, kom)
                 Dim k As UstawStanSygnalizatora = CType(kom, UstawStanSygnalizatora)
                 Dim st As StanSygnalizatora
+
+
+                Dim p As PredkoscSygnalizatora
+
+
                 Select Case k.Stan
                     Case UstawianyStanSygnalizatora.Manewrowy
                         st = StanSygnalizatora.Manewrowy
+                        p = PredkoscSygnalizatora.Manewrowy
                     Case UstawianyStanSygnalizatora.Zastepczy
                         st = StanSygnalizatora.Zastepczy
+                        p = PredkoscSygnalizatora.Zastepczy
                     Case UstawianyStanSygnalizatora.Zezwalajacy
                         st = StanSygnalizatora.Zezwalajacy
+                        p = PredkoscSygnalizatora.VMax
                 End Select
                 pol.WyslijKomunikat(New ZmienionoStanSygnalizatora() With {.Adres = k.Adres, .Stan = st})
 
@@ -252,6 +264,10 @@ Public Class SerwerTCP
                         pol.WyslijKomunikat(New ZmienionoStanSygnalizatora With {.Adres = powt.Adres, .Stan = stanPowt})
                     Next
                 End If
+
+
+                PolaczenieUart.UstawStanSygnalizatoraPolsamoczynnego(New UstawStanSygnalizatoraPolsamoczynnegoUrz() With {.AdresUrzadzenia = k.Adres, .Predkosc = p, .PredkoscPowtarzana = PredkoscPowtarzanaSygnalizatora.VMax})
+
 
                 RaiseEvent OdebranoUstawStanSygnalizatora(pol.AdresStacji, k)
             End Sub
@@ -282,6 +298,11 @@ Public Class SerwerTCP
                 Dim k As ZwolnijPrzebieg = CType(kom, ZwolnijPrzebieg)
                 pol.WyslijKomunikat(New ZmienionoStanSygnalizatora() With {.Adres = k.Adres, .Stan = StanSygnalizatora.BrakWyjazdu})
                 RaiseEvent OdebranoZwolnijPrzebieg(pol.AdresStacji, k)
+
+
+                PolaczenieUart.UstawStanSygnalizatoraPolsamoczynnego(New UstawStanSygnalizatoraPolsamoczynnegoUrz() With {.AdresUrzadzenia = k.Adres, .Predkosc = PredkoscSygnalizatora.V0})
+
+
             End Sub
         ))
 
@@ -392,6 +413,11 @@ Public Class SerwerTCP
                                     .Numer = k.Numer,
                                     .Stan = If(k.Stan = UstawianyStanPrzejazdu.Zamkniety, StanPrzejazduKolejowego.Zamkniety, StanPrzejazduKolejowego.Otwarty)})
                 RaiseEvent OdebranoUstawStanPrzejazdu(pol.AdresStacji, k)
+
+
+                PolaczenieUart.UstawStanSygnalizatoraDrogowego(New UstawStanSygnalizatoraDrogowegoUrz() With {.AdresUrzadzenia = 40, .Wlaczony = k.Stan = UstawianyStanPrzejazdu.Zamkniety})
+
+
             End Sub
         ))
     End Sub
@@ -565,6 +591,14 @@ Public Class SerwerTCP
         RaiseEvent UniewaznionoListePosterunkow()
 
         _Uruchomiony = False
+    End Sub
+
+    Public Sub PolaczZUrzadzeniami(strumien As Stream)
+        PolaczenieUart.Polacz(strumien)
+    End Sub
+
+    Public Sub RozlaczZUrzadzeniami()
+        PolaczenieUart.Rozlacz()
     End Sub
 
     Public Function WczytajPolaczenie(SciezkaPliku As String) As Boolean
@@ -853,6 +887,18 @@ Public Class SerwerTCP
                                    End If
                                End If
                            End Sub)
+    End Sub
+
+    Private Sub PolaczenieUart_OdebranoUstawionoJasnoscLampy(kom As UstawionoJasnoscLampyUrz) Handles PolaczenieUart.OdebranoUstawionoJasnoscLampy
+        Debug.Print("Jasność lampy " & kom.AdresUrzadzenia)
+    End Sub
+
+    Private Sub PolaczenieUart_OdebranoUstawionoStanSygnalizatora(kom As UstawionoStanSygnalizatoraUrz) Handles PolaczenieUart.OdebranoUstawionoStanSygnalizatora
+        Debug.Print("Ustawienie sygnalizatora " & kom.AdresUrzadzenia)
+    End Sub
+
+    Private Sub PolaczenieUart_OdebranoUstawionoStanSygnalizatoraDrogowego(kom As UstawionoStanSygnalizatoraDrogowegoUrz) Handles PolaczenieUart.OdebranoUstawionoStanSygnalizatoraDrogowego
+        Debug.Print("Ustawienie sygnalizatora drogowego " & kom.AdresUrzadzenia)
     End Sub
 
     Private Class DaneDodatkowePosterunku

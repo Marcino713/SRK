@@ -15,6 +15,7 @@
         If Serwer.Uruchomiony Then
             If ZadajPytanie("Czy zamknąć okno? Spowoduje to zatrzymanie serwera.") = DialogResult.Yes Then
                 Serwer.Zatrzymaj()
+                Serwer.RozlaczZUrzadzeniami()
             Else
                 e.Cancel = True
             End If
@@ -49,7 +50,7 @@
     Private Sub btnStart_Click() Handles btnStart.Click
         Dim port As UShort
 
-        If Not UShort.TryParse(txtPort.Text, port) Then
+        If Not UShort.TryParse(txtPortTCP.Text, port) Then
             PokazBlad("W polu Port należy podać liczbą całkowitą dodatnią.")
             Exit Sub
         End If
@@ -74,6 +75,22 @@
     Private Sub btnStop_Click() Handles btnStop.Click
         Serwer.Zatrzymaj()
         PokazZatrzymanie()
+    End Sub
+
+    Private Sub btnUartPolacz_Click() Handles btnUartPolacz.Click
+        Try
+            spKomunikacja.PortName = txtUartPort.Text
+            spKomunikacja.Open()
+            Serwer.PolaczZUrzadzeniami(spKomunikacja.BaseStream)
+            PokazStanKontrolekUart()
+        Catch
+            PokazBlad("Nie udało się nawiązać połączenia z modułem UART.")
+        End Try
+    End Sub
+
+    Private Sub txtUartRozlacz_Click() Handles btnUartRozlacz.Click
+        Serwer.RozlaczZUrzadzeniami()
+        PokazStanKontrolekUart()
     End Sub
 
     Private Sub btnPociagi_Click() Handles btnPociagi.Click
@@ -171,7 +188,7 @@
         txtSciezka.Enabled = Not serwerUruchomiony
         btnPrzegladaj.Enabled = Not serwerUruchomiony
         btnWczytaj.Enabled = Not serwerUruchomiony
-        txtPort.Enabled = Not serwerUruchomiony
+        txtPortTCP.Enabled = Not serwerUruchomiony
         txtHaslo.Enabled = Not serwerUruchomiony
         btnStart.Enabled = Not serwerUruchomiony
         btnStop.Enabled = serwerUruchomiony
@@ -184,5 +201,18 @@
             btnRozlacz.Enabled = False
             OknoPociagow?.Close()
         End If
+
+        PokazStanKontrolekUart()
+    End Sub
+
+    Private Sub PokazStanKontrolekUart()
+        Dim serwerDziala As Boolean = Serwer.Uruchomiony
+        Dim uartDziala As Boolean = spKomunikacja.IsOpen
+
+        lblUartStan.Text = If(uartDziala, "Połączono", "Rozłączono")
+        lblUartStan.ForeColor = If(uartDziala, Color.Green, Color.Red)
+        txtUartPort.Enabled = (Not serwerDziala) And (Not uartDziala)
+        btnUartPolacz.Enabled = (Not serwerDziala) And (Not uartDziala)
+        btnUartRozlacz.Enabled = (Not serwerDziala) And uartDziala
     End Sub
 End Class
