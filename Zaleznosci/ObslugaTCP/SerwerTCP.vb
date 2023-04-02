@@ -901,6 +901,10 @@ Public Class SerwerTCP
         Debug.Print("Ustawienie sygnalizatora drogowego " & kom.AdresUrzadzenia)
     End Sub
 
+    Private Sub PolaczenieUart_OdebranoWykrytoOs(kom As WykrytoOsUrz) Handles PolaczenieUart.OdebranoWykrytoOs
+        Debug.Print("Wykryto oś " & kom.AdresUrzadzenia)
+    End Sub
+
     Private Class DaneDodatkowePosterunku
         Friend OdcinkiTorow As Dictionary(Of UShort, OdcinekToru)
         Friend Kostki As Dictionary(Of Kostka, Punkt)

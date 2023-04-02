@@ -5,4 +5,5 @@
     Friend Const USTAWIONO_STAN_SYGNALIZATORA_DROGOWEGO As Byte = 4
     Friend Const USTAW_JASNOSC_LAMPY As Byte = 5
     Friend Const USTAWIONO_JASNOSC_LAMPY As Byte = 6
+    Friend Const WYKRYTO_OS As Byte = 7
 End Class

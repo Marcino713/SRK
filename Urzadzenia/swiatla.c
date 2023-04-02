@@ -5,13 +5,30 @@
 // Zapis: echo A > /dev/ttyUSB0
 // Odczyt: cat < /dev/ttyUSB0
 
-volatile StanPinu wyjscia[LICZBA_WYJSC];
+volatile StanPinu piny[LICZBA_WYJSC];
+volatile uint8_t przetworzWejscia = 0;
+
+void UstawTypPinowDlaWejsc() {
+    DaneUrzadzenia* urz;
+    uint8_t urzIx = 0;
+
+    for (uint8_t i = 0; i < LiczbaUrzadzen; i++) {
+        urz = (void*)&DaneUrzadzen[urzIx];
+        urzIx += DLUGOSC_NAGLOWKA_URZ;
+
+        if (urz->Typ == TypUrz_Wejscie) {
+            piny[DaneUrzadzen[urzIx]].Typ = Wejscie;
+        }
+
+        urzIx += urz->Dlugosc;
+    }
+}
 
 void UstawSwiatloSygnalizatora(uint16_t liczba, uint8_t poz, uint8_t ix) {
     uint16_t typ = (liczba >> (poz << 1)) & 3;
-    if (typ == SYGN_WYLACZONY) wyjscia[ix].Typ = Wylacz;
-    if (typ == SYGN_MIGANIE)   wyjscia[ix].Typ = MigSwiec;
-    if (typ == SYGN_WLACZONY)  wyjscia[ix].Typ = Wlacz;
+    if (typ == SYGN_WYLACZONY) piny[ix].Typ = Wylacz;
+    if (typ == SYGN_MIGANIE)   piny[ix].Typ = MigSwiec;
+    if (typ == SYGN_WLACZONY)  piny[ix].Typ = Wlacz;
 }
 
 uint8_t PobierzTypWylaczanegoSygnDrog(uint8_t typ) {
@@ -52,8 +69,8 @@ void PrzetworzKomunikatyWejsciowe() {
                     break;
 
                 case TYP_KOM_USTAW_STAN_SYGNALIZATORA_DROGOWEGO:
-                    wy  = &wyjscia[DaneUrzadzen[urzIx]];
-                    wy2 = &wyjscia[DaneUrzadzen[urzIx + 1]];
+                    wy  = &piny[DaneUrzadzen[urzIx]];
+                    wy2 = &piny[DaneUrzadzen[urzIx + 1]];
 
                     if (kom->Dane == 1) {   //Wlacz
                         wy->Typ = MigDrogOczekiwanieNaWlaczenie;
@@ -69,7 +86,7 @@ void PrzetworzKomunikatyWejsciowe() {
                     break;
 
                 case TYP_KOM_USTAW_JASNOSC_LAMPY:
-                    wy = &wyjscia[DaneUrzadzen[urzIx]];
+                    wy = &piny[DaneUrzadzen[urzIx]];
                     wy->Typ = Jasnosc;
                     wy->Wartosc = ((kom->Dane) & 0xFF) >> 3;
                     typOdp = TYP_KOM_USTAWIONO_JASNOSC_LAMPY;
@@ -85,10 +102,49 @@ void PrzetworzKomunikatyWejsciowe() {
                     ZakonczKomunikatWyjsciowy();
                 }
 
-            } else {
-                urzIx += urz->Dlugosc;
+                break;
             }
+
+            urzIx += urz->Dlugosc;
         }
+    }
+}
+
+void PrzetworzWejscia() {
+    DaneUrzadzenia* urz;
+    uint8_t urzIx = 0;
+
+    for (uint8_t i = 0; i < LiczbaUrzadzen; i++) {
+        urz = (void*)&DaneUrzadzen[urzIx];
+        urzIx += DLUGOSC_NAGLOWKA_URZ;
+
+        if (urz->Typ == TypUrz_Wejscie) {
+            uint8_t nr = DaneUrzadzen[urzIx];
+            volatile StanPinu* p = &piny[nr];
+            uint8_t port;
+            uint8_t pin;
+            uint8_t wartosc;
+            uint8_t* wskaznikPortu;
+
+            PobierzPortPin(nr, &port, &pin);
+            wskaznikPortu = (uint8_t*)(0x30 + port * 3);    // 0x30 = PIND
+            
+            // odczyt wartosci z wejscia portu
+            wartosc = (*wskaznikPortu) & (1 << pin);
+
+            if (p->Wartosc == 0 && wartosc != 0) {
+                Komunikat* odp = RozpocznijKomunikatWyjsciowy();
+                odp->Typ = TYP_KOM_WYKRYTO_OS;
+                odp->AdresPosterunku = 0;
+                odp->AdresUrzadzenia = urz->Adres;
+                odp->Dane = 0;
+                ZakonczKomunikatWyjsciowy();
+            }
+
+            p->Wartosc = (wartosc == 0 ? 0 : 1);
+        }
+
+        urzIx += urz->Dlugosc;
     }
 }
 
@@ -196,21 +252,24 @@ void PrzetworzZmianeStanu(uint8_t ix, uint8_t typ, uint8_t wartosc) {
     }
 
     // Zapisz zmieniony stan
-    wyjscia[ix].Typ = typ;
-    wyjscia[ix].Wartosc = wartosc;
+    piny[ix].Typ = typ;
+    piny[ix].Wartosc = wartosc;
 }
 
 int main(void) {
+    UstawKierunekPinow();
     InicjalizujUart();
-
+    
     for (uint8_t i = 0; i < LICZBA_WYJSC; i++) {
-        wyjscia[i].Typ = Wylaczony;
-        wyjscia[i].Wartosc = 0;
+        piny[i].Typ = Wylaczony;
+        piny[i].Wartosc = 0;
     }
 
-    DDRB = (1 << PIN0) | (1 << PIN1) | (1 << PIN6) | (1 << PIN7);
-    DDRC = (1 << PIN0) | (1 << PIN1) | (1 << PIN2) | (1 << PIN3) | (1 << PIN4) | (1 << PIN5);
-    DDRD = (1 << PIN2) | (1 << PIN3) | (1 << PIN4) | (1 << PIN5) | (1 << PIN6) | (1 << PIN7);
+    UstawTypPinowDlaWejsc();
+
+    // Wlacz licznik odmierzajacy czas do odczytywania stanu wejsc
+    TCCR0 = (5 << CS00);
+    TIMSK = (1 << TOIE0);
 
     sei();
 
@@ -228,11 +287,12 @@ int main(void) {
 
     while (1) {
         PrzetworzKomunikatyWejsciowe();
-        port = (uint8_t*)0x32;
+        port = (uint8_t*)0x32;  // PORTD
 
+        // Przetworz wyjscia (swiatla)
         for (uint8_t i = 0; i < LICZBA_WYJSC; i++) {
-            typ = wyjscia[i].Typ;
-            wartosc = wyjscia[i].Wartosc;
+            typ = piny[i].Typ;
+            wartosc = piny[i].Wartosc;
 
             // Swiatlo wlaczone na stale
             if (typ == Wlaczony || typ == MigDrogWlaczony) stanPortu |= pin;
@@ -256,6 +316,12 @@ int main(void) {
             }
         }
 
+        // Przetworz wejscia (czujniki osi)
+        if (przetworzWejscia == 1) {
+            przetworzWejscia = 0;
+            PrzetworzWejscia();
+        }
+
         // Obsluga postepu i ewentualnego rozpoczecia nowego cyklu
         pwm++;
         if (pwm > PWM_MAX) pwm = 0;
@@ -265,4 +331,8 @@ int main(void) {
     }
 
     return 0;
+}
+
+ISR(TIMER0_OVF_vect) {
+    przetworzWejscia = 1;
 }

@@ -27,7 +27,7 @@ typedef struct StanPinu {
     uint8_t Wartosc;
 } StanPinu;
 
-enum TypWyjscia {
+enum TypPinu {
     // Swiecenie swiatla na sygnalizatorze
     Wylaczony = 0,
     Wlacz     = 1,
@@ -48,12 +48,17 @@ enum TypWyjscia {
     MigDrogWlaczony  = 10,
     MigDrogWylacz    = 11,
     MigDrogOczekiwanieNaWlaczenie = 12,
-    MigDrogWylaczOstatecznie      = 13
+    MigDrogWylaczOstatecznie      = 13,
+
+    // Wejscie
+    Wejscie = 14
 };
 
+void UstawTypPinowDlaWejsc();
 void UstawSwiatloSygnalizatora(uint16_t liczba, uint8_t poz, uint8_t ix);
 uint8_t PobierzTypWylaczanegoSygnDrog(uint8_t typ);
 void PrzetworzKomunikatyWejsciowe();
+void PrzetworzWejscia();
 void ZwiekszWartosc(uint8_t *wartosc, uint8_t mnoznik);
 void ZmniejszWartosc(uint8_t *wartosc, uint8_t mnoznik);
 void PrzetworzZmianeStanu(uint8_t ix, uint8_t typ, uint8_t wartosc);

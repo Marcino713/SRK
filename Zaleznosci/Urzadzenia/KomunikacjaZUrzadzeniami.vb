@@ -15,6 +15,7 @@ Public Class KomunikacjaZUrzadzeniami
     Public Event OdebranoUstawionoStanSygnalizatora(kom As UstawionoStanSygnalizatoraUrz)
     Public Event OdebranoUstawionoStanSygnalizatoraDrogowego(kom As UstawionoStanSygnalizatoraDrogowegoUrz)
     Public Event OdebranoUstawionoJasnoscLampy(kom As UstawionoJasnoscLampyUrz)
+    Public Event OdebranoWykrytoOs(kom As WykrytoOsUrz)
 
     Public Sub New()
         DaneFabrykiObiektow.Add(
@@ -28,6 +29,10 @@ Public Class KomunikacjaZUrzadzeniami
         DaneFabrykiObiektow.Add(
             TypKomunikatuUrzadzenia.USTAWIONO_JASNOSC_LAMPY,
             Sub(br) RaiseEvent OdebranoUstawionoJasnoscLampy(New UstawionoJasnoscLampyUrz(br)))
+
+        DaneFabrykiObiektow.Add(
+            TypKomunikatuUrzadzenia.WYKRYTO_OS,
+            Sub(br) RaiseEvent OdebranoWykrytoOs(New WykrytoOsUrz(br)))
     End Sub
 
     Public Sub Polacz(str As Stream)

@@ -82,6 +82,7 @@
     <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraPowtarzajacegoUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraPrzejazdowegoUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraSamoczynnegoUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\WykrytoOsUrz.vb" />
     <Compile Include="ObslugaKomunikatowUrzadzen\KomunikatUrzadzenia.vb" />
     <Compile Include="ObslugaKomunikatowUrzadzen\TypKomunikatuUrzadzenia.vb" />
     <Compile Include="Komunikaty\DHInicjalizuj.vb" />
