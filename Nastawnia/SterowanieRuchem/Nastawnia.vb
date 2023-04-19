@@ -3,6 +3,7 @@
 Public Class wndNastawnia
     Private Const FILTR_PLIKU As String = Zaleznosci.PolaczeniaStacji.OPIS_PLIKU & "|*" & Zaleznosci.PolaczeniaStacji.ROZSZERZENIE_PLIKU
     Private Const CZEKANIE_NA_ZAMKNIECIE As Integer = 2000
+    Private ReadOnly NAZWA_OKNA As String
 
     Private WithEvents Klient As New Zaleznosci.KlientTCP
     Private WithEvents OknoDodawaniaPociagu As wndDodawaniePociagu = Nothing
@@ -20,6 +21,7 @@ Public Class wndNastawnia
     Private CzyUsuwacOknaSterowaniaPociagami As Boolean = True
 
     Private actPokazStatus As Action(Of String, Color, Boolean) = AddressOf PokazStatusPolaczenia
+    Private actPokazNazweOkna As Action(Of String) = AddressOf PokazNazweOkna
     Private actUkryjDodawaniePociagu As Action = Sub() OknoDodawaniaPociagu?.Close()
     Private actUkryjWybieraniePociagu As Action = Sub() OknoWybieraniaPociagu?.Close()
     Private actUkryjSterowaniePociagami As Action = AddressOf ZamknijOknaSterowaniaPociagami
@@ -34,6 +36,7 @@ Public Class wndNastawnia
         plpPulpit.TypRysownika = TypRysownika.KlasycznyDirect2D
         plpPulpit.Wysrodkuj()
 
+        NAZWA_OKNA = Text
         KursorDomyslny = plpPulpit.Cursor
     End Sub
 
@@ -68,6 +71,7 @@ Public Class wndNastawnia
             actPokazPulpit(wnd.Pulpit)
             plpPulpit.InicjalizujMigacz()
             actPokazStatus("Połączono", Color.Green, True)
+            actPokazNazweOkna(wnd.Pulpit.Nazwa)
         End If
     End Sub
 
@@ -146,7 +150,13 @@ Public Class wndNastawnia
 
     Private Sub OknoWybieraniaPociagu_FormClosed() Handles OknoWybieraniaPociagu.FormClosed
         If OknoWybieraniaPociagu.WybranyPociagNr.HasValue Then
-            Dim okno As New wndSterowaniePociagiem(Klient, Me, OknoWybieraniaPociagu.WybranyPociagNr.Value, OknoWybieraniaPociagu.WybranyPociagNazwa, PredkoscMaksymalna)
+            Dim predkoscMaks As UShort
+            If OknoWybieraniaPociagu.WybranyPociagPredkoscMaksymalna = 0 Then
+                predkoscMaks = PredkoscMaksymalna
+            Else
+                predkoscMaks = Math.Min(OknoWybieraniaPociagu.WybranyPociagPredkoscMaksymalna, PredkoscMaksymalna)
+            End If
+            Dim okno As New wndSterowaniePociagiem(Klient, Me, OknoWybieraniaPociagu.WybranyPociagNr.Value, OknoWybieraniaPociagu.WybranyPociagNazwa, predkoscMaks)
             OknaSterowaniaPociagami.Add(okno)
             okno.Show()
         End If
@@ -446,6 +456,7 @@ Public Class wndNastawnia
 
     Private Sub CzyscOkno()
         Invoke(actPokazStatus, "Rozłączono", Color.Red, False)
+        Invoke(actPokazNazweOkna, String.Empty)
         Invoke(actPokazPulpit, New Zaleznosci.Pulpit)
         Invoke(actUsunMigacz)
         Invoke(actUkryjDodawaniePociagu)
@@ -472,6 +483,14 @@ Public Class wndNastawnia
         mnuDodajPociag.Enabled = polaczony
         mnuSterujPociagiem.Enabled = polaczony
         mnuOswietlenie.Enabled = polaczony
+    End Sub
+
+    Private Sub PokazNazweOkna(nazwaPosterunku As String)
+        If String.IsNullOrEmpty(nazwaPosterunku) Then
+            Text = NAZWA_OKNA
+        Else
+            Text = $"{NAZWA_OKNA} - {nazwaPosterunku}"
+        End If
     End Sub
 
     Private Sub PokazPulpit(pulpit As Zaleznosci.Pulpit)

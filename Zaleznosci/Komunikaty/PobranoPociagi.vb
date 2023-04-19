@@ -15,6 +15,7 @@
         For i As Integer = 0 To Pociagi.Length - 1
             bw.Write(Pociagi(i).Numer)
             ZapiszTekst(bw, Pociagi(i).Nazwa)
+            bw.Write(Pociagi(i).PredkoscMaksymalna)
             bw.Write(Pociagi(i).Stan)
             ZapiszTekst(bw, Pociagi(i).DodajacyPosterunek)
             ZapiszTekst(bw, Pociagi(i).Lokalizacja)
@@ -30,6 +31,7 @@
             Dim poc As New DaneWybieralnegoPociagu
             poc.Numer = br.ReadUInt32
             poc.Nazwa = OdczytajTekst(br)
+            poc.PredkoscMaksymalna = br.ReadUInt16
             poc.Stan = CType(br.ReadByte, StanWybieralnegoPociagu)
             poc.DodajacyPosterunek = OdczytajTekst(br)
             poc.Lokalizacja = OdczytajTekst(br)
@@ -43,6 +45,7 @@ End Class
 Public Class DaneWybieralnegoPociagu
     Public Property Numer As UInteger
     Public Property Nazwa As String
+    Public Property PredkoscMaksymalna As UShort
     Public Property Stan As StanWybieralnegoPociagu
     Public Property DodajacyPosterunek As String
     Public Property Lokalizacja As String

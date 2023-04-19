@@ -25,6 +25,7 @@
     Private Sub btnDodaj_Click() Handles btnDodaj.Click
         Dim nrPoc As UInteger
         Dim osie As UShort
+        Dim predkosc As UShort
         Dim zazn As Zaleznosci.Kostka = Pulpit.ZaznaczonaKostka
 
         If Not UInteger.TryParse(txtNrPociagu.Text, nrPoc) Then
@@ -32,9 +33,31 @@
             Exit Sub
         End If
 
+        If nrPoc = 0 Then
+            actPokazBlad("Numer pociągu musi być liczbą większą od 0.")
+            Exit Sub
+        End If
+
         If Not UShort.TryParse(txtLiczbaOsi.Text, osie) Then
             actPokazBlad("W polu Liczba osi należy podać liczbę całkowitą dodatnią.")
             Exit Sub
+        End If
+
+        If osie = 0 Then
+            actPokazBlad("Liczba osi pociągu musi być większa od 0.")
+            Exit Sub
+        End If
+
+        If txtPredkosc.Text <> "" Then
+            If Not UShort.TryParse(txtPredkosc.Text, predkosc) Then
+                actPokazBlad("Prędkość maksymalna pociągu musi być nieokreślona lub być liczbą całkowitą dodatnią.")
+                Exit Sub
+            End If
+
+            If predkosc = 0 Then
+                actPokazBlad("Prędkość maksymalna pociągu musi być nieokreślona lub być liczbą większą od 0.")
+                Exit Sub
+            End If
         End If
 
         If zazn Is Nothing OrElse Not Zaleznosci.Kostka.CzyTorBezRozjazdu(zazn.Typ) Then
@@ -47,7 +70,7 @@
         actPokazDostepnoscKontrolek(False)
         Dim p As Zaleznosci.Punkt = Pulpit.Pulpit.ZnajdzKostke(zazn)
         Klient.WyslijDodajPociag(New Zaleznosci.DodajPociag() With
-                {.NrPociagu = nrPoc, .Nazwa = txtNazwa.Text, .LiczbaOsi = osie, .PojazdSterowalny = cboSterowalny.Checked, .WspolrzedneKostki = p})
+                {.NrPociagu = nrPoc, .Nazwa = txtNazwa.Text, .LiczbaOsi = osie, .PredkoscMaksymalna = predkosc, .PojazdSterowalny = cboSterowalny.Checked, .WspolrzedneKostki = p})
     End Sub
 
     Private Sub btnAnuluj_Click() Handles btnAnuluj.Click
@@ -68,6 +91,10 @@
                     Invoke(actPokazBlad, "Pociąg o podanym numerze już istnieje.")
                 Case Zaleznosci.StanNadaniaNumeruPociagu.BledneWspolrzedne
                     Invoke(actPokazBlad, "Pociąg nie mógł zostać dodany na wskazanej kostce.")
+                Case Zaleznosci.StanNadaniaNumeruPociagu.NieprawidlowyNumer
+                    Invoke(actPokazBlad, "Numer pociągu jest nieprawidłowy.")
+                Case Zaleznosci.StanNadaniaNumeruPociagu.NieprawidlowaLiczbaOsi
+                    Invoke(actPokazBlad, "Liczba osi pociągu jest nieprawidłowa.")
             End Select
         End If
     End Sub

@@ -21,7 +21,7 @@
     Sub WypelnijKolo(pedzel As TPedzel, srodekX As Single, srodekY As Single, r As Single)
     Sub WypelnijTloSygnalizatora(pedzel As TPedzel, poczX As Single, koncX As Single, y As Single, r As Single)
 
-    Function UtworzCzcionke(nazwa As String, rozmiar As Single) As TCzcionka
+    Function UtworzCzcionke(nazwa As String, rozmiar As Single, tymczasowa As Boolean) As TCzcionka
     Function ZmierzTekst(czcionka As TCzcionka, tekst As String, szer As Single, wys As Single) As SizeF
     Sub RysujTekst(pedzel As TPedzel, czcionka As TCzcionka, tekst As String, x As Single, y As Single, szer As Single, wys As Single)
 End Interface

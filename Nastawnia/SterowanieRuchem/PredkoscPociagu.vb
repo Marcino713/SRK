@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 
 Friend Class PredkoscPociagu
+    Private Const ZMIANA_PREDKOSCI_KLAWISZ As UShort = 2
     Private Const PASEK_MARGINES_PION As Integer = 10
     Private Const PASEK_SZEROKOSC_POL As Integer = 3
     Private Const GRANICA_SZEROKOSC_POL As Integer = 15
@@ -106,6 +107,29 @@ Friend Class PredkoscPociagu
     Private Sub PredkoscPociagu_MouseUp() Handles Me.MouseUp
         PrzeciaganieAktywne = False
     End Sub
+
+    Private Sub PredkoscPociagu_Click() Handles Me.Click
+        Focus()
+    End Sub
+
+    Protected Overrides Function ProcessCmdKey(ByRef msg As Message, keyData As Keys) As Boolean
+        If keyData = Keys.Up Or keyData = Keys.Down Then
+
+            If keyData = Keys.Up Then
+                PredkoscBiezaca += ZMIANA_PREDKOSCI_KLAWISZ
+            Else
+                If PredkoscBiezaca >= ZMIANA_PREDKOSCI_KLAWISZ Then
+                    PredkoscBiezaca -= ZMIANA_PREDKOSCI_KLAWISZ
+                Else
+                    PredkoscBiezaca = 0
+                End If
+            End If
+
+            Return True
+        Else
+            Return False
+        End If
+    End Function
 
     Private Sub Rysuj(gr As Graphics)
         gr.Clear(BackColor)

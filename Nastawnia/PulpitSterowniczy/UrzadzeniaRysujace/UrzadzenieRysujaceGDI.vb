@@ -84,7 +84,7 @@ Friend Class UrzadzenieRysujaceGDI
         gr.FillRectangle(pedzel, poczX, y - r, koncX - poczX, r2)
     End Sub
 
-    Public Function UtworzCzcionke(nazwa As String, rozmiar As Single) As Font Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).UtworzCzcionke
+    Public Function UtworzCzcionke(nazwa As String, rozmiar As Single, tymczasowa As Boolean) As Font Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).UtworzCzcionke
         Return New Font(nazwa, rozmiar)
     End Function
 

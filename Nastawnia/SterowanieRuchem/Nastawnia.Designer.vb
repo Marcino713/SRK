@@ -22,7 +22,8 @@ Partial Class wndNastawnia
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim Pulpit2 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
+        Me.components = New System.ComponentModel.Container()
+        Dim Pulpit1 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
         Me.mnuMenu = New System.Windows.Forms.MenuStrip()
         Me.mnuNarzedzia = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuPolaczZSerwerem = New System.Windows.Forms.ToolStripMenuItem()
@@ -33,6 +34,8 @@ Partial Class wndNastawnia
         Me.mnuSterujPociagiem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuOswietlenie = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
+        Me.mnuEdytorWyswietlaczaPeronowego = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuProjektantPosterunku = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
@@ -41,8 +44,6 @@ Partial Class wndNastawnia
         Me.stStan = New System.Windows.Forms.StatusStrip()
         Me.tslStanPolaczenia = New System.Windows.Forms.ToolStripStatusLabel()
         Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
-        Me.mnuEdytorWyswietlaczaPeronowego = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuMenu.SuspendLayout()
         Me.stStan.SuspendLayout()
         Me.SuspendLayout()
@@ -66,79 +67,90 @@ Partial Class wndNastawnia
         'mnuPolaczZSerwerem
         '
         Me.mnuPolaczZSerwerem.Name = "mnuPolaczZSerwerem"
-        Me.mnuPolaczZSerwerem.Size = New System.Drawing.Size(234, 22)
+        Me.mnuPolaczZSerwerem.Size = New System.Drawing.Size(258, 22)
         Me.mnuPolaczZSerwerem.Text = "Połącz z serwerem..."
         '
         'mnuRozlaczZSerwerem
         '
         Me.mnuRozlaczZSerwerem.Enabled = False
         Me.mnuRozlaczZSerwerem.Name = "mnuRozlaczZSerwerem"
-        Me.mnuRozlaczZSerwerem.Size = New System.Drawing.Size(234, 22)
+        Me.mnuRozlaczZSerwerem.Size = New System.Drawing.Size(258, 22)
         Me.mnuRozlaczZSerwerem.Text = "Rozłącz..."
         '
         'mnuZarzadzajSerwerem
         '
         Me.mnuZarzadzajSerwerem.Name = "mnuZarzadzajSerwerem"
-        Me.mnuZarzadzajSerwerem.Size = New System.Drawing.Size(234, 22)
+        Me.mnuZarzadzajSerwerem.Size = New System.Drawing.Size(258, 22)
         Me.mnuZarzadzajSerwerem.Text = "Zarządzaj serwerem..."
         '
         'ToolStripSeparator3
         '
         Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
-        Me.ToolStripSeparator3.Size = New System.Drawing.Size(231, 6)
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(255, 6)
         '
         'mnuDodajPociag
         '
         Me.mnuDodajPociag.Enabled = False
         Me.mnuDodajPociag.Name = "mnuDodajPociag"
-        Me.mnuDodajPociag.Size = New System.Drawing.Size(234, 22)
+        Me.mnuDodajPociag.Size = New System.Drawing.Size(258, 22)
         Me.mnuDodajPociag.Text = "Dodaj pociąg..."
         '
         'mnuSterujPociagiem
         '
         Me.mnuSterujPociagiem.Enabled = False
         Me.mnuSterujPociagiem.Name = "mnuSterujPociagiem"
-        Me.mnuSterujPociagiem.Size = New System.Drawing.Size(234, 22)
+        Me.mnuSterujPociagiem.Size = New System.Drawing.Size(258, 22)
         Me.mnuSterujPociagiem.Text = "Steruj pociągiem..."
         '
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(231, 6)
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(255, 6)
         '
         'mnuOswietlenie
         '
         Me.mnuOswietlenie.Enabled = False
         Me.mnuOswietlenie.Name = "mnuOswietlenie"
-        Me.mnuOswietlenie.Size = New System.Drawing.Size(234, 22)
+        Me.mnuOswietlenie.Size = New System.Drawing.Size(258, 22)
         Me.mnuOswietlenie.Text = "Steruj oświetleniem..."
+        '
+        'ToolStripSeparator5
+        '
+        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(255, 6)
+        '
+        'mnuEdytorWyswietlaczaPeronowego
+        '
+        Me.mnuEdytorWyswietlaczaPeronowego.Name = "mnuEdytorWyswietlaczaPeronowego"
+        Me.mnuEdytorWyswietlaczaPeronowego.Size = New System.Drawing.Size(258, 22)
+        Me.mnuEdytorWyswietlaczaPeronowego.Text = "Edytor wyświetlacza peronowego..."
         '
         'ToolStripSeparator2
         '
         Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(231, 6)
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(255, 6)
         '
         'mnuProjektantPosterunku
         '
         Me.mnuProjektantPosterunku.Name = "mnuProjektantPosterunku"
-        Me.mnuProjektantPosterunku.Size = New System.Drawing.Size(234, 22)
+        Me.mnuProjektantPosterunku.Size = New System.Drawing.Size(258, 22)
         Me.mnuProjektantPosterunku.Text = "Projektant posterunku ruchu..."
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(231, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(255, 6)
         '
         'mnuNowePolaczenia
         '
         Me.mnuNowePolaczenia.Name = "mnuNowePolaczenia"
-        Me.mnuNowePolaczenia.Size = New System.Drawing.Size(234, 22)
+        Me.mnuNowePolaczenia.Size = New System.Drawing.Size(258, 22)
         Me.mnuNowePolaczenia.Text = "Nowy plik połączeń..."
         '
         'mnuOtworzPolaczenia
         '
         Me.mnuOtworzPolaczenia.Name = "mnuOtworzPolaczenia"
-        Me.mnuOtworzPolaczenia.Size = New System.Drawing.Size(234, 22)
+        Me.mnuOtworzPolaczenia.Size = New System.Drawing.Size(258, 22)
         Me.mnuOtworzPolaczenia.Text = "Otwórz plik połączeń..."
         '
         'stStan
@@ -177,23 +189,12 @@ Partial Class wndNastawnia
         Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
         Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
         Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit2.Adres = CType(0US, UShort)
-        Pulpit2.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit2
+        Pulpit1.Adres = CType(0US, UShort)
+        Pulpit1.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit1
         Me.plpPulpit.Size = New System.Drawing.Size(645, 504)
         Me.plpPulpit.TabIndex = 2
         Me.plpPulpit.ZaznaczonaKostka = Nothing
-        '
-        'mnuEdytorWyswietlaczaPeronowego
-        '
-        Me.mnuEdytorWyswietlaczaPeronowego.Name = "mnuEdytorWyswietlaczaPeronowego"
-        Me.mnuEdytorWyswietlaczaPeronowego.Size = New System.Drawing.Size(258, 22)
-        Me.mnuEdytorWyswietlaczaPeronowego.Text = "Edytor wyświetlacza peronowego..."
-        '
-        'ToolStripSeparator5
-        '
-        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
-        Me.ToolStripSeparator5.Size = New System.Drawing.Size(231, 6)
         '
         'wndNastawnia
         '

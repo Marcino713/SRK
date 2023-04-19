@@ -31,6 +31,8 @@ Partial Class wndWyborPociagu
         Me.ColumnHeader4 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader5 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.lblStan = New System.Windows.Forms.Label()
+        Me.btnAnuluj = New System.Windows.Forms.Button()
+        Me.ColumnHeader6 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.SuspendLayout()
         '
         'Label1
@@ -58,13 +60,13 @@ Partial Class wndWyborPociagu
         Me.lvPociagi.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lvPociagi.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3, Me.ColumnHeader4, Me.ColumnHeader5})
+        Me.lvPociagi.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader6, Me.ColumnHeader3, Me.ColumnHeader4, Me.ColumnHeader5})
         Me.lvPociagi.FullRowSelect = True
         Me.lvPociagi.HideSelection = False
         Me.lvPociagi.Location = New System.Drawing.Point(12, 25)
         Me.lvPociagi.MultiSelect = False
         Me.lvPociagi.Name = "lvPociagi"
-        Me.lvPociagi.Size = New System.Drawing.Size(616, 235)
+        Me.lvPociagi.Size = New System.Drawing.Size(698, 235)
         Me.lvPociagi.TabIndex = 1
         Me.lvPociagi.UseCompatibleStateImageBehavior = False
         Me.lvPociagi.View = System.Windows.Forms.View.Details
@@ -103,11 +105,27 @@ Partial Class wndWyborPociagu
         Me.lblStan.TabIndex = 3
         Me.lblStan.Text = "Wczytywanie..."
         '
+        'btnAnuluj
+        '
+        Me.btnAnuluj.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnAnuluj.Location = New System.Drawing.Point(635, 266)
+        Me.btnAnuluj.Name = "btnAnuluj"
+        Me.btnAnuluj.Size = New System.Drawing.Size(75, 23)
+        Me.btnAnuluj.TabIndex = 4
+        Me.btnAnuluj.Text = "Anuluj"
+        Me.btnAnuluj.UseVisualStyleBackColor = True
+        '
+        'ColumnHeader6
+        '
+        Me.ColumnHeader6.Text = "Prędkosć maks."
+        Me.ColumnHeader6.Width = 90
+        '
         'wndWyborPociagu
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(641, 301)
+        Me.ClientSize = New System.Drawing.Size(723, 301)
+        Me.Controls.Add(Me.btnAnuluj)
         Me.Controls.Add(Me.lblStan)
         Me.Controls.Add(Me.lvPociagi)
         Me.Controls.Add(Me.btnWybierz)
@@ -128,4 +146,6 @@ Partial Class wndWyborPociagu
     Friend WithEvents ColumnHeader4 As ColumnHeader
     Friend WithEvents ColumnHeader5 As ColumnHeader
     Friend WithEvents lblStan As Label
+    Friend WithEvents btnAnuluj As Button
+    Friend WithEvents ColumnHeader6 As ColumnHeader
 End Class

@@ -76,6 +76,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KomunikatZLista.Designer.vb">
+      <DependentUpon>KomunikatZLista.vb</DependentUpon>
+    </Compile>
+    <Compile Include="KomunikatZLista.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PulpitSterowniczy\Migacz.vb" />
     <Compile Include="Rozklady\EdytorWyswietlaczaPeronowego.Designer.vb">
       <DependentUpon>EdytorWyswietlaczaPeronowego.vb</DependentUpon>
@@ -194,6 +200,9 @@
     <Compile Include="TworzycieleWyswietlaczyPeronowych\WyswietlaczPeronowy.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="KomunikatZLista.resx">
+      <DependentUpon>KomunikatZLista.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Rozklady\EdytorWyswietlaczaPeronowego.resx">
       <DependentUpon>EdytorWyswietlaczaPeronowego.vb</DependentUpon>
     </EmbeddedResource>

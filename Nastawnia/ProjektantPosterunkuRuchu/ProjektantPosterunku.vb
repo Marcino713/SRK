@@ -2,10 +2,13 @@
     Private ReadOnly NAZWA_OKNA As String
     Private Const FILTR_PLIKU As String = Zaleznosci.Pulpit.OPIS_PLIKU & "|*" & Zaleznosci.Pulpit.ROZSZERZENIE_PLIKU
     Private Const ROZMIAR_KOSTKI_LISTA As Integer = 48
+    Private Const ROZMIAR_CZCIONKI_MIN As Single = 0.05F
+    Private Const ROZMIAR_CZCIONKI_MAX As Single = 0.5F
     Private Const PRZEJAZD_AUTOMATYCZNY As String = "A"
     Private Const PRZEJAZD_RECZNY As String = "R"
     Private Const BRAK As String = "(brak)"
     Private Const BRAK_ODCINKA As String = "(brak odcinka)"
+    Private Const BRAK_NAZWY As String = "(brak nazwy)"
     Private Shared ReadOnly PUSTY_CBO_KOSTKA As New ObiektComboBox(Of Zaleznosci.Kostka)(Nothing, "")
     Private Shared ReadOnly PUSTY_CBO_ODCINEK_TORU As New ObiektComboBox(Of Zaleznosci.OdcinekToru)(Nothing, "")
     Private ReadOnly STAWNOSC_SBL As New Dictionary(Of Zaleznosci.StawnoscSBL, ObiektStawnosciSBL)
@@ -78,8 +81,14 @@
     Private Sub tabUstawienia_Selected() Handles tabUstawienia.Selected
         If tabUstawienia.SelectedTab Is tbpPulpit Then
             plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
-            If pnlKonfSygnOdcNast.Visible Then PokazKonfSygnOdcinki()
-            If pnlKonfPrzycisk.Visible Then cboKonfPrzyciskTyp_SelectedIndexChanged()
+            Dim zazn As Zaleznosci.Kostka = plpPulpit.ZaznaczonaKostka
+            If zazn IsNot Nothing Then
+                If TypeOf zazn Is Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu Then
+                    PokazKonfSygnOdcinki()
+                ElseIf TypeOf zazn Is Zaleznosci.Przycisk Then
+                    cboKonfPrzyciskTyp_SelectedIndexChanged()
+                End If
+            End If
 
         ElseIf tabUstawienia.SelectedTab Is tbpOdcinki Then
             plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow
@@ -120,28 +129,31 @@
             .TypRysownika = TypRysownika.KlasycznyGDI,
             .TrybProjektowy = True}
 
-        DodajKostkeDoListy(p, New Zaleznosci.Tor(), "Tor")
+        Dim sygnPolsam As New Zaleznosci.SygnalizatorPolsamoczynny With {.Nazwa = "A1/2m"}
+        Dim sygnPolsamPowt As New Zaleznosci.SygnalizatorPolsamoczynny With {.Nazwa = "B"}
+
+        DodajKostkeDoListy(p, New Zaleznosci.Tor() With {.Nazwa = "Tor 1"}, "Tor")
         DodajKostkeDoListy(p, New Zaleznosci.TorKoniec(), "Koniec toru")
         DodajKostkeDoListy(p, New Zaleznosci.Zakret(), "Zakręt")
-        DodajKostkeDoListy(p, New Zaleznosci.RozjazdLewo(), "Rozjazd lewy")
-        DodajKostkeDoListy(p, New Zaleznosci.RozjazdPrawo(), "Rozjazd prawy")
-        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorSamoczynny(), "Sygnalizator samoczynny")
-        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorManewrowy(), "Sygnalizator manewrowy")
-        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorPowtarzajacy(), "Sygnalizator powtarzający")
-        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorPolsamoczynny(), "Sygnalizator półsamoczynny")
-        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy(), "Sygnalizator przejazdowy")
+        DodajKostkeDoListy(p, New Zaleznosci.RozjazdLewo() With {.Nazwa = "101"}, "Rozjazd lewy")
+        DodajKostkeDoListy(p, New Zaleznosci.RozjazdPrawo() With {.Nazwa = "103"}, "Rozjazd prawy")
+        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorSamoczynny() With {.Nazwa = "105"}, "Sygnalizator samoczynny")
+        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorManewrowy() With {.Nazwa = "Tm5"}, "Sygnalizator manewrowy")
+        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorPowtarzajacy() With {.SygnalizatorPowtarzany = sygnPolsamPowt}, "Sygnalizator powtarzający")
+        DodajKostkeDoListy(p, sygnPolsam, "Sygnalizator półsamoczynny")
+        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy() With {.Nazwa = "107"}, "Sygnalizator przejazdowy")
         DodajKostkeDoListy(p, New Zaleznosci.PrzejazdKolejowy(), "Przejazd kolejowy")
-        DodajKostkeDoListy(p, New Zaleznosci.Przycisk(), "Przycisk")
-        DodajKostkeDoListy(p, New Zaleznosci.PrzyciskTor(), "Przycisk z torem")
-        DodajKostkeDoListy(p, New Zaleznosci.Kierunek(), "Wjazd/wyjazd ze stacji")
-        DodajKostkeDoListy(p, New Zaleznosci.Napis(), "Napis")
+        DodajKostkeDoListy(p, New Zaleznosci.Przycisk() With {.SygnalizatorPolsamoczynny = sygnPolsam}, "Przycisk")
+        DodajKostkeDoListy(p, New Zaleznosci.PrzyciskTor() With {.SygnalizatorPolsamoczynny = sygnPolsam}, "Przycisk z torem")
+        DodajKostkeDoListy(p, New Zaleznosci.Kierunek() With {.Nazwa = "Tor 9"}, "Wjazd/wyjazd ze stacji")
+        DodajKostkeDoListy(p, New Zaleznosci.Napis() With {.Tekst = "Magazyn"}, "Napis")
     End Sub
 
     Private Sub UstawTytulOkna()
         If plpPulpit.Pulpit.Nazwa = "" Then
             Text = NAZWA_OKNA
         Else
-            Text = NAZWA_OKNA & " - " & plpPulpit.Pulpit.Nazwa
+            Text = $"{NAZWA_OKNA} - {plpPulpit.Pulpit.Nazwa}"
         End If
     End Sub
 
@@ -154,7 +166,7 @@
     Private Sub OdswiezPoZmianieRozmiaruPulpitu()
         plpPulpit.Invalidate()
         If tabUstawienia.SelectedTab Is tbpLiczniki Then OdswiezListeLicznikow()
-        If tabUstawienia.SelectedTab Is tbpLampy Then OdswiezListeLamp()
+        OdswiezListeLamp()
         If tabUstawienia.SelectedTab Is tbpPrzejazdy And tabPrzejazd.SelectedTab Is tbpPrzejazdRogatki Then OdswiezListePrzejazdRogatki()
         If tabUstawienia.SelectedTab Is tbpPrzejazdy And tabPrzejazd.SelectedTab Is tbpPrzejazdSygnDrog Then OdswiezListePrzejazdSygnDrog()
     End Sub
@@ -252,19 +264,38 @@
         Dim wnd As New wndEdytorRozmiaruPowierzchni(wndEdytorRozmiaruPowierzchni.TypEdycji.Usun, plpPulpit.Pulpit.Szerokosc, plpPulpit.Pulpit.Wysokosc)
         If wnd.ShowDialog = DialogResult.OK Then
             Try
-                Dim wynik As Zaleznosci.ObiektBlokujacyZmniejszaniePulpitu = plpPulpit.Pulpit.PomniejszPulpit(wnd.KierunekEdycji, wnd.LiczbaKostek)
+                Dim wynik As List(Of Zaleznosci.ObiektBlokujacyZmniejszaniePulpitu) = plpPulpit.Pulpit.PomniejszPulpit(wnd.KierunekEdycji, wnd.LiczbaKostek)
 
-                If wynik = 0 Then
+                If wynik Is Nothing Then
                     OdswiezPoZmianieRozmiaruPulpitu()
                 Else
                     Dim obiekty As New List(Of String)
-                    If (wynik And Zaleznosci.ObiektBlokujacyZmniejszaniePulpitu.Kostka) <> 0 Then obiekty.Add("kostka")
-                    If (wynik And Zaleznosci.ObiektBlokujacyZmniejszaniePulpitu.LicznikOsi) <> 0 Then obiekty.Add("licznik osi")
-                    If (wynik And Zaleznosci.ObiektBlokujacyZmniejszaniePulpitu.Lampa) <> 0 Then obiekty.Add("lampa")
-                    If (wynik And Zaleznosci.ObiektBlokujacyZmniejszaniePulpitu.PrzejazdRogatka) <> 0 Then obiekty.Add("rogatka")
-                    If (wynik And Zaleznosci.ObiektBlokujacyZmniejszaniePulpitu.PrzejazdSygnalizatorDrogowy) <> 0 Then obiekty.Add("sygnalizator drogowy przy przejeździe kolejowym")
 
-                    PokazBlad($"Nie udało się usunąć kostek - w wybranym zakresie usuwania pulpit nie jest pusty. Znajdują się tam następujące rodzaje obiektów: {String.Join(", ", obiekty)}.")
+                    For Each obj As Zaleznosci.ObiektBlokujacyZmniejszaniePulpitu In wynik
+                        Select Case obj.Typ
+                            Case Zaleznosci.RodzajObiektuBlokujacegoZmniejszaniePulpitu.Kostka
+                                obiekty.Add($"kostka o współrzędnych ({obj.Liczba1}, {obj.Liczba2})")
+
+                            Case Zaleznosci.RodzajObiektuBlokujacegoZmniejszaniePulpitu.LicznikOsi
+                                obiekty.Add($"para liczników osi o adresach {obj.Liczba1}, {obj.Liczba2}")
+
+                            Case Zaleznosci.RodzajObiektuBlokujacegoZmniejszaniePulpitu.Lampa
+                                obiekty.Add($"lampa o adresie {obj.Liczba1}")
+
+                            Case Zaleznosci.RodzajObiektuBlokujacegoZmniejszaniePulpitu.PrzejazdRogatka
+                                obiekty.Add($"rogatka o adresie {obj.Liczba2} z przejazdu numer {obj.Liczba1}")
+
+                            Case Zaleznosci.RodzajObiektuBlokujacegoZmniejszaniePulpitu.PrzejazdSygnalizatorDrogowy
+                                obiekty.Add($"sygnalizator drogowy o adresie {obj.Liczba2} z przejazdu numer {obj.Liczba1}")
+
+                            Case Else
+                                obiekty.Add("nieznany obiekt")
+
+                        End Select
+                    Next
+
+                    Dim wndKom As New wndKomunikatZLista($"W wybranym zakresie usuwania pulpit nie jest pusty.{vbCrLf}Znajdują się tam następujące rodzaje obiektów:", obiekty)
+                    wndKom.ShowDialog()
                 End If
 
             Catch ex As Exception
@@ -716,6 +747,13 @@
         plpPulpit.Invalidate()
     End Sub
 
+    Private Sub txtKonfNapisRozmiar_TextChanged() Handles txtKonfNapisRozmiar.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Napis).Rozmiar = PobierzLiczbeRzeczywistaWZakresie(txtKonfNapisRozmiar, ROZMIAR_CZCIONKI_MIN, ROZMIAR_CZCIONKI_MAX)
+        plpPulpit.Invalidate()
+    End Sub
+
 
     'Kierunek
     Private Sub rbKonfKierWyjazdLewo_CheckedChanged() Handles rbKonfKierWyjazdLewo.CheckedChanged
@@ -744,6 +782,7 @@
         Dim nowePanele As List(Of Panel) = Nothing
 
         If plpPulpit.ZaznaczonaKostka IsNot Nothing Then
+            ZdarzeniaWlaczone = False
 
             Select Case plpPulpit.ZaznaczonaKostka.Typ
                 Case Zaleznosci.TypKostki.Tor, Zaleznosci.TypKostki.Zakret, Zaleznosci.TypKostki.PrzejazdKolejowy
@@ -762,6 +801,7 @@
                     nowePanele = PokazKonfKier()
             End Select
 
+            ZdarzeniaWlaczone = True
         End If
 
         If nowePanele IsNot Nothing Then
@@ -968,6 +1008,7 @@
         Dim napis As Zaleznosci.Napis = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Napis)
 
         txtKonfNapisTekst.Text = napis.Tekst
+        txtKonfNapisRozmiar.Text = napis.Rozmiar.ToString
         Return New List(Of Panel) From {pnlKonfNapis}
     End Function
 
@@ -1135,7 +1176,10 @@
         Dim odcinek As Zaleznosci.OdcinekToru = plpPulpit.projZaznaczonyOdcinek
         If odcinek Is Nothing Then Exit Sub
 
-        If ZadajPytanie("Czy usunąć odcinek torów o nazwie " & odcinek.Nazwa & "?") = DialogResult.Yes Then
+        Dim pyt As String = "Czy usunąć odcinek torów"
+        If odcinek.Nazwa <> "" Then pyt &= " o nazwie " & odcinek.Nazwa
+
+        If ZadajPytanie(pyt & "?") = DialogResult.Yes Then
             plpPulpit.Pulpit.UsunOdcinekToru(odcinek)
             OdswiezListeOdcinkowTorow()
         End If
@@ -1246,8 +1290,8 @@
         Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik Is Nothing Then Exit Sub
 
-        Dim odc1 As String = If(licznik.Odcinek1?.Nazwa IsNot Nothing, $"""{licznik.Odcinek1?.Nazwa}""", BRAK_ODCINKA)
-        Dim odc2 As String = If(licznik.Odcinek2?.Nazwa IsNot Nothing, $"""{licznik.Odcinek2?.Nazwa}""", BRAK_ODCINKA)
+        Dim odc1 As String = PobierzNazweOdcinka(licznik.Odcinek1?.Nazwa)
+        Dim odc2 As String = PobierzNazweOdcinka(licznik.Odcinek2?.Nazwa)
 
         If ZadajPytanie($"Czy usunąć parę liczników osi dla odcinków torów {odc1} oraz {odc2}?") = DialogResult.Yes Then
             plpPulpit.Pulpit.LicznikiOsi.Remove(licznik)
@@ -1270,7 +1314,7 @@
 
         Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
-            licznik.X1 = PobierzLiczbeRzeczywistaWZakresiePulpitu(txtLicznik1X, plpPulpit.Pulpit.Szerokosc)
+            licznik.X1 = PobierzLiczbeRzeczywistaWZakresie(txtLicznik1X, plpPulpit.Pulpit.Szerokosc)
             plpPulpit.Invalidate()
         End If
     End Sub
@@ -1280,7 +1324,7 @@
 
         Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
-            licznik.Y1 = PobierzLiczbeRzeczywistaWZakresiePulpitu(txtLicznik1Y, plpPulpit.Pulpit.Wysokosc)
+            licznik.Y1 = PobierzLiczbeRzeczywistaWZakresie(txtLicznik1Y, plpPulpit.Pulpit.Wysokosc)
             plpPulpit.Invalidate()
         End If
     End Sub
@@ -1300,7 +1344,7 @@
 
         Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
-            licznik.X2 = PobierzLiczbeRzeczywistaWZakresiePulpitu(txtLicznik2X, plpPulpit.Pulpit.Szerokosc)
+            licznik.X2 = PobierzLiczbeRzeczywistaWZakresie(txtLicznik2X, plpPulpit.Pulpit.Szerokosc)
             plpPulpit.Invalidate()
         End If
     End Sub
@@ -1310,7 +1354,7 @@
 
         Dim licznik As Zaleznosci.ParaLicznikowOsi = plpPulpit.projZaznaczonyLicznik
         If licznik IsNot Nothing Then
-            licznik.Y2 = PobierzLiczbeRzeczywistaWZakresiePulpitu(txtLicznik2Y, plpPulpit.Pulpit.Wysokosc)
+            licznik.Y2 = PobierzLiczbeRzeczywistaWZakresie(txtLicznik2Y, plpPulpit.Pulpit.Wysokosc)
             plpPulpit.Invalidate()
         End If
     End Sub
@@ -1385,6 +1429,16 @@
         OdswiezListeOdcinkowWComboBox(cboLicznikOdcinek2, True, plpPulpit.projZaznaczonyLicznik?.Odcinek2, plpPulpit.projZaznaczonyLicznik?.Odcinek1)
     End Sub
 
+    Private Function PobierzNazweOdcinka(nazwa As String) As String
+        If nazwa Is Nothing Then
+            Return BRAK_ODCINKA
+        ElseIf nazwa = "" Then
+            Return BRAK_NAZWY
+        Else
+            Return $"""{nazwa}"""
+        End If
+    End Function
+
 #End Region 'Zakładka Liczniki osi
 
 #Region "Zakładka Lampy"
@@ -1438,7 +1492,7 @@
 
         Dim lampa As Zaleznosci.Lampa = plpPulpit.projZaznaczonaLampa
         If lampa IsNot Nothing Then
-            lampa.X = PobierzLiczbeRzeczywistaWZakresiePulpitu(txtLampaX, plpPulpit.Pulpit.Szerokosc)
+            lampa.X = PobierzLiczbeRzeczywistaWZakresie(txtLampaX, plpPulpit.Pulpit.Szerokosc)
             ZaznaczonaLampaNaLiscie.SubItems(1).Text = lampa.X.ToString
         End If
         plpPulpit.Invalidate()
@@ -1449,7 +1503,7 @@
 
         Dim lampa As Zaleznosci.Lampa = plpPulpit.projZaznaczonaLampa
         If lampa IsNot Nothing Then
-            lampa.Y = PobierzLiczbeRzeczywistaWZakresiePulpitu(txtLampaY, plpPulpit.Pulpit.Wysokosc)
+            lampa.Y = PobierzLiczbeRzeczywistaWZakresie(txtLampaY, plpPulpit.Pulpit.Wysokosc)
             ZaznaczonaLampaNaLiscie.SubItems(2).Text = lampa.Y.ToString
         End If
         plpPulpit.Invalidate()
@@ -1528,9 +1582,7 @@
         If przejazd Is Nothing Then Exit Sub
 
         Dim pyt As String = "Czy usunąć przejazd kolejowo-drogowy"
-        If przejazd.Nazwa <> "" Then
-            pyt &= " o nazwie " & przejazd.Nazwa
-        End If
+        If przejazd.Nazwa <> "" Then pyt &= " o nazwie " & przejazd.Nazwa
 
         If ZadajPytanie(pyt & "?") = DialogResult.Yes Then
             plpPulpit.Pulpit.UsunPrzejazdKolejowoDrogowy(przejazd)
@@ -1544,6 +1596,7 @@
         Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = plpPulpit.projZaznaczonyPrzejazd
         If przejazd IsNot Nothing Then
             przejazd.Numer = PobierzKrotkaLiczbeNieujemna(txtPrzejazdNumer)
+            ZaznaczonyPrzejazdNaLiscie.SubItems(0).Text = przejazd.Numer.ToString
         End If
     End Sub
 
@@ -1553,7 +1606,7 @@
         Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = plpPulpit.projZaznaczonyPrzejazd
         If przejazd IsNot Nothing Then
             przejazd.Nazwa = txtPrzejazdNazwa.Text
-            ZaznaczonyPrzejazdNaLiscie.SubItems(0).Text = przejazd.Nazwa
+            ZaznaczonyPrzejazdNaLiscie.SubItems(1).Text = przejazd.Nazwa
             plpPulpit.Invalidate()
         End If
     End Sub
@@ -1632,6 +1685,7 @@
 
         plpPulpit.projZaznaczonyPrzejazd.AutomatyczneZamykanie.Add(New Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego())
         OdswiezListePrzejazdAutomatyzacja()
+        OdswiezLiczbeObiektowAutomatyzacji()
     End Sub
 
     Private Sub btnPrzejazdAutomatyzacjaUsun_Click() Handles btnPrzejazdAutomatyzacjaUsun.Click
@@ -1645,6 +1699,7 @@
         If ZadajPytanie(pyt & "?") = DialogResult.Yes Then
             przejazd.AutomatyczneZamykanie.Remove(automatyzacja)
             OdswiezListePrzejazdAutomatyzacja()
+            OdswiezLiczbeObiektowAutomatyzacji()
         End If
     End Sub
 
@@ -1696,16 +1751,18 @@
     Private Sub lvPrzejazdRogatki_SelectedIndexChanged() Handles lvPrzejazdRogatki.SelectedIndexChanged
         ZdarzeniaWlaczone = False
         ZaznaczonyPrzejazdRogatkaNaLiscie = PobierzZaznaczonyElementNaLiscie(lvPrzejazdRogatki)
-        Dim rogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = PobierzZaznaczonyElement(Of Zaleznosci.ElementWykonaczyPrzejazduKolejowego)(lvPrzejazdRogatki)
+        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = PobierzZaznaczonyElement(Of Zaleznosci.RogatkaPrzejazduKolejowego)(lvPrzejazdRogatki)
         If rogatka Is Nothing Then
             txtPrzejazdRogatkaAdres.Text = ""
             txtPrzejazdRogatkaX.Text = ""
             txtPrzejazdRogatkaY.Text = ""
+            txtPrzejazdRogatkaCzasDoZamkniecia.Text = ""
             UstawAktywnoscPolPrzejazdRogatka(False)
         Else
             txtPrzejazdRogatkaAdres.Text = rogatka.Adres.ToString
             txtPrzejazdRogatkaX.Text = rogatka.X.ToString
             txtPrzejazdRogatkaY.Text = rogatka.Y.ToString
+            txtPrzejazdRogatkaCzasDoZamkniecia.Text = rogatka.CzasDoZamkniecia.ToString
             UstawAktywnoscPolPrzejazdRogatka(True)
         End If
         plpPulpit.projZaznaczonyPrzejazdRogatka = rogatka
@@ -1715,14 +1772,14 @@
     Private Sub btnPrzejazdRogatkaDodaj_Click() Handles btnPrzejazdRogatkaDodaj.Click
         If plpPulpit.projZaznaczonyPrzejazd Is Nothing Then Exit Sub
 
-        plpPulpit.projZaznaczonyPrzejazd.Rogatki.Add(New Zaleznosci.ElementWykonaczyPrzejazduKolejowego())
+        plpPulpit.projZaznaczonyPrzejazd.Rogatki.Add(New Zaleznosci.RogatkaPrzejazduKolejowego())
         OdswiezListePrzejazdRogatki()
         OdswiezLiczbeRogatek()
     End Sub
 
     Private Sub btnPrzejazdRogatkaUsun_Click() Handles btnPrzejazdRogatkaUsun.Click
         Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = plpPulpit.projZaznaczonyPrzejazd
-        Dim rogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
+        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
         If przejazd Is Nothing OrElse rogatka Is Nothing Then Exit Sub
 
         Dim pyt As String = "Czy usunąć rogatkę o adresie " & rogatka.Adres.ToString
@@ -1738,7 +1795,7 @@
     Private Sub txtPrzejazdRogatkaAdres_TextChanged() Handles txtPrzejazdRogatkaAdres.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim rogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
+        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
         If rogatka IsNot Nothing Then
             rogatka.Adres = PobierzKrotkaLiczbeNieujemna(txtPrzejazdRogatkaAdres)
             ZaznaczonyPrzejazdRogatkaNaLiscie.SubItems(0).Text = rogatka.Adres.ToString
@@ -1748,9 +1805,9 @@
     Private Sub txtPrzejazdRogatkaX_TextChanged() Handles txtPrzejazdRogatkaX.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim rogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
+        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
         If rogatka IsNot Nothing Then
-            rogatka.X = PobierzLiczbeRzeczywistaWZakresiePulpitu(txtPrzejazdRogatkaX, plpPulpit.Pulpit.Szerokosc)
+            rogatka.X = PobierzLiczbeRzeczywistaWZakresie(txtPrzejazdRogatkaX, plpPulpit.Pulpit.Szerokosc)
             ZaznaczonyPrzejazdRogatkaNaLiscie.SubItems(1).Text = rogatka.X.ToString
         End If
         plpPulpit.Invalidate()
@@ -1759,12 +1816,21 @@
     Private Sub txtPrzejazdRogatkaY_TextChanged() Handles txtPrzejazdRogatkaY.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim rogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
+        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
         If rogatka IsNot Nothing Then
-            rogatka.Y = PobierzLiczbeRzeczywistaWZakresiePulpitu(txtPrzejazdRogatkaY, plpPulpit.Pulpit.Wysokosc)
+            rogatka.Y = PobierzLiczbeRzeczywistaWZakresie(txtPrzejazdRogatkaY, plpPulpit.Pulpit.Wysokosc)
             ZaznaczonyPrzejazdRogatkaNaLiscie.SubItems(2).Text = rogatka.Y.ToString
         End If
         plpPulpit.Invalidate()
+    End Sub
+
+    Private Sub txtPrzejazdRogatkaCzasDoZamkniecia_TextChanged() Handles txtPrzejazdRogatkaCzasDoZamkniecia.TextChanged
+        If Not ZdarzeniaWlaczone Then Exit Sub
+
+        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
+        If rogatka IsNot Nothing Then
+            rogatka.CzasDoZamkniecia = PobierzKrotkaLiczbeNieujemna(txtPrzejazdRogatkaCzasDoZamkniecia)
+        End If
     End Sub
 
     Private Sub lvPrzejazdSygnDrog_SelectedIndexChanged() Handles lvPrzejazdSygnDrog.SelectedIndexChanged
@@ -1824,7 +1890,7 @@
 
         Dim sygn As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdSygnDrog
         If sygn IsNot Nothing Then
-            sygn.X = PobierzLiczbeRzeczywistaWZakresiePulpitu(txtPrzejazdSygnDrogX, plpPulpit.Pulpit.Szerokosc)
+            sygn.X = PobierzLiczbeRzeczywistaWZakresie(txtPrzejazdSygnDrogX, plpPulpit.Pulpit.Szerokosc)
             ZaznaczonyPrzejazdSygnDrogNaLiscie.SubItems(1).Text = sygn.X.ToString
         End If
         plpPulpit.Invalidate()
@@ -1835,7 +1901,7 @@
 
         Dim sygn As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdSygnDrog
         If sygn IsNot Nothing Then
-            sygn.Y = PobierzLiczbeRzeczywistaWZakresiePulpitu(txtPrzejazdSygnDrogY, plpPulpit.Pulpit.Wysokosc)
+            sygn.Y = PobierzLiczbeRzeczywistaWZakresie(txtPrzejazdSygnDrogY, plpPulpit.Pulpit.Wysokosc)
             ZaznaczonyPrzejazdSygnDrogNaLiscie.SubItems(2).Text = sygn.Y.ToString
         End If
         plpPulpit.Invalidate()
@@ -1848,9 +1914,11 @@
 
         For Each p As Zaleznosci.PrzejazdKolejowoDrogowy In plpPulpit.Pulpit.Przejazdy
             Dim lvi As New ListViewItem(New String() {
+                p.Numer.ToString,
                 p.Nazwa,
                 PobierzTrybPrzejazdu(p),
                 p.KostkiPrzejazdy.Count.ToString,
+                p.AutomatyczneZamykanie.Count.ToString,
                 p.Rogatki.Count.ToString,
                 p.SygnalizatoryDrogowe.Count.ToString
             }) With {.Tag = p}
@@ -1871,19 +1939,25 @@
 
         For Each lvi As ListViewItem In lvPrzejazdy.Items
             Dim prz As Zaleznosci.PrzejazdKolejowoDrogowy = DirectCast(lvi.Tag, Zaleznosci.PrzejazdKolejowoDrogowy)
-            lvi.SubItems(2).Text = prz.KostkiPrzejazdy.Count.ToString()
+            lvi.SubItems(3).Text = prz.KostkiPrzejazdy.Count.ToString()
         Next
+    End Sub
+
+    Private Sub OdswiezLiczbeObiektowAutomatyzacji()
+        If ZaznaczonyPrzejazdNaLiscie IsNot Nothing AndAlso plpPulpit.projZaznaczonyPrzejazd IsNot Nothing Then
+            ZaznaczonyPrzejazdNaLiscie.SubItems(4).Text = plpPulpit.projZaznaczonyPrzejazd.AutomatyczneZamykanie.Count.ToString
+        End If
     End Sub
 
     Private Sub OdswiezLiczbeRogatek()
         If ZaznaczonyPrzejazdNaLiscie IsNot Nothing AndAlso plpPulpit.projZaznaczonyPrzejazd IsNot Nothing Then
-            ZaznaczonyPrzejazdNaLiscie.SubItems(3).Text = plpPulpit.projZaznaczonyPrzejazd.Rogatki.Count.ToString
+            ZaznaczonyPrzejazdNaLiscie.SubItems(5).Text = plpPulpit.projZaznaczonyPrzejazd.Rogatki.Count.ToString
         End If
     End Sub
 
     Private Sub OdswiezLiczbeSygnDrog()
         If ZaznaczonyPrzejazdNaLiscie IsNot Nothing AndAlso plpPulpit.projZaznaczonyPrzejazd IsNot Nothing Then
-            ZaznaczonyPrzejazdNaLiscie.SubItems(4).Text = plpPulpit.projZaznaczonyPrzejazd.SygnalizatoryDrogowe.Count.ToString
+            ZaznaczonyPrzejazdNaLiscie.SubItems(6).Text = plpPulpit.projZaznaczonyPrzejazd.SygnalizatoryDrogowe.Count.ToString
         End If
     End Sub
 
@@ -1905,7 +1979,7 @@
             Else
                 przejazd.Tryb = przejazd.Tryb And (Not tryb)
             End If
-            ZaznaczonyPrzejazdNaLiscie.SubItems(1).Text = PobierzTrybPrzejazdu(przejazd)
+            ZaznaczonyPrzejazdNaLiscie.SubItems(2).Text = PobierzTrybPrzejazdu(przejazd)
             tbpPrzejazdAutomatyzacja.Enabled = (przejazd.Tryb And Zaleznosci.TrybPrzejazduKolejowego.Automatyczny) <> 0
         End If
     End Sub
@@ -1992,6 +2066,7 @@
         txtPrzejazdRogatkaAdres.Enabled = wlaczony
         txtPrzejazdRogatkaX.Enabled = wlaczony
         txtPrzejazdRogatkaY.Enabled = wlaczony
+        txtPrzejazdRogatkaCzasDoZamkniecia.Enabled = wlaczony
     End Sub
 
     Private Sub OdswiezListePrzejazdSygnDrog()
@@ -2115,9 +2190,16 @@
         Return liczba
     End Function
 
-    Private Function PobierzLiczbeRzeczywistaWZakresiePulpitu(pole As TextBox, zakresMax As Single) As Single
+    Private Function PobierzLiczbeRzeczywistaWZakresie(pole As TextBox, zakresMax As Single) As Single
         Dim liczba As Single = PobierzLiczbeRzeczywistaNieujemna(pole)
         If liczba > zakresMax Then liczba = zakresMax
+
+        Return liczba
+    End Function
+
+    Private Function PobierzLiczbeRzeczywistaWZakresie(pole As TextBox, zakresMin As Single, zakresMax As Single) As Single
+        Dim liczba As Single = PobierzLiczbeRzeczywistaWZakresie(pole, zakresMax)
+        If liczba < zakresMin Then liczba = zakresMin
 
         Return liczba
     End Function

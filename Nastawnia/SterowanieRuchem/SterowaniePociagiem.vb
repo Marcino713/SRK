@@ -67,8 +67,9 @@
 
     Private Sub Klient_OdebranoWysiadznietoZPociagu(kom As Zaleznosci.WysiadznietoZPociagu) Handles Klient.OdebranoWysiadznietoZPociagu
         If NrPociagu = kom.NrPociagu Then
+            Dim opis As String = If(kom.Stan = Zaleznosci.StanWysiadzniecia.Wyrzucono, "został wyrzucony", "wysiadł")
             PytaniePrzyZamykaniu = False
-            Invoke(actPokazKomunikat, $"Maszynista wysiadł z pociągu {PobierzOznaczeniePociagu(NrPociagu, NazwaPociagu)}.")
+            Invoke(actPokazKomunikat, $"Maszynista {opis} z pociągu {PobierzOznaczeniePociagu(NrPociagu, NazwaPociagu)}.")
             Invoke(actZamknij)
         End If
     End Sub

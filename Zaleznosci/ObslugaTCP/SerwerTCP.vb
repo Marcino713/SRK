@@ -150,39 +150,50 @@ Public Class SerwerTCP
                 Dim stan As StanNadaniaNumeruPociagu = StanNadaniaNumeruPociagu.NrZajety
                 Dim akt(0) As AktualizowanyKawalekToru
 
-                SyncLock slockRezerwacjaPosterunku
-                    KlienciPoAdresieStacji.TryGetValue(pol.AdresStacji, obs)
-                End SyncLock
+                If k.NrPociagu = 0 Then
+                    stan = StanNadaniaNumeruPociagu.NieprawidlowyNumer
 
-                If obs IsNot Nothing Then
-                    Dim p As Drawing.Point = k.WspolrzedneKostki.Konwertuj
+                ElseIf k.LiczbaOsi = 0 Then
+                    stan = StanNadaniaNumeruPociagu.NieprawidlowaLiczbaOsi
 
-                    If obs.DanePulpitu.CzyKostkaNiepusta(p) AndAlso Kostka.CzyTorBezRozjazdu(obs.DanePulpitu.Kostki(p.X, p.Y).Typ) Then
+                Else
 
-                        SyncLock slockPociagi
-                            If Not PociagiPoNumerze.ContainsKey(k.NrPociagu) Then
-                                stan = StanNadaniaNumeruPociagu.Dobrze
-                                akt(0) = New AktualizowanyKawalekToru() With {
-                                    .Polozenie = PolozenieToru.TorGlowny,
-                                    .Zajetosc = ZajetoscToru.Zajety,
-                                    .WspolrzedneKostki = k.WspolrzedneKostki
-                                }
+                    SyncLock slockRezerwacjaPosterunku
+                        KlienciPoAdresieStacji.TryGetValue(pol.AdresStacji, obs)
+                    End SyncLock
 
-                                PociagiPoNumerze.Add(k.NrPociagu, New Pociag() With {
-                                    .DodajacyPosterunek = obs,
-                                    .LiczbaOsi = k.LiczbaOsi,
-                                    .Lokalizacja = obs,
-                                    .Nazwa = k.Nazwa,
-                                    .Numer = k.NrPociagu,
-                                    .Sterowalny = k.PojazdSterowalny
-                                 })
+                    If obs IsNot Nothing Then
+                        Dim p As Drawing.Point = k.WspolrzedneKostki.Konwertuj
 
-                            End If
-                        End SyncLock
+                        If obs.DanePulpitu.CzyKostkaNiepusta(p) AndAlso Kostka.CzyTorBezRozjazdu(obs.DanePulpitu.Kostki(p.X, p.Y).Typ) Then
 
-                    Else
-                        stan = StanNadaniaNumeruPociagu.BledneWspolrzedne
+                            SyncLock slockPociagi
+                                If Not PociagiPoNumerze.ContainsKey(k.NrPociagu) Then
+                                    stan = StanNadaniaNumeruPociagu.Dobrze
+                                    akt(0) = New AktualizowanyKawalekToru() With {
+                                        .Polozenie = PolozenieToru.TorGlowny,
+                                        .Zajetosc = ZajetoscToru.Zajety,
+                                        .WspolrzedneKostki = k.WspolrzedneKostki
+                                    }
+
+                                    PociagiPoNumerze.Add(k.NrPociagu, New Pociag() With {
+                                        .DodajacyPosterunek = obs,
+                                        .LiczbaOsi = k.LiczbaOsi,
+                                        .PredkoscMaksymalna = k.PredkoscMaksymalna,
+                                        .Lokalizacja = obs,
+                                        .Nazwa = k.Nazwa,
+                                        .Numer = k.NrPociagu,
+                                        .Sterowalny = k.PojazdSterowalny
+                                     })
+
+                                End If
+                            End SyncLock
+
+                        Else
+                            stan = StanNadaniaNumeruPociagu.BledneWspolrzedne
+                        End If
                     End If
+
                 End If
 
                 pol.WyslijKomunikat(New DodanoPociag() With {.NrPociagu = k.NrPociagu, .Stan = stan})
@@ -194,6 +205,7 @@ Public Class SerwerTCP
                     RaiseEvent DodanoPociag(New StanPociagu With {
                         .DodajacyPosterunek = obs.NazwaPosterunku,
                         .LiczbaOsi = k.LiczbaOsi,
+                        .PredkoscMaksymalna = k.PredkoscMaksymalna,
                         .Lokalizacja = obs.NazwaPosterunku,
                         .Nazwa = k.Nazwa,
                         .Numer = k.NrPociagu,
@@ -319,6 +331,7 @@ Public Class SerwerTCP
                             lista.Add(New DaneWybieralnegoPociagu() With {
                                 .Numer = p.Numer,
                                 .Nazwa = p.Nazwa,
+                                .PredkoscMaksymalna = p.PredkoscMaksymalna,
                                 .Stan = If(p.SterujacyPosterunek Is Nothing, StanWybieralnegoPociagu.Wolny, StanWybieralnegoPociagu.Zajety),
                                 .DodajacyPosterunek = p.DodajacyPosterunek.NazwaPosterunku,
                                 .Lokalizacja = p.Lokalizacja.NazwaPosterunku
@@ -374,26 +387,7 @@ Public Class SerwerTCP
             AddressOf WysiadzZPociagu.Otworz,
             Sub(pol, kom)
                 Dim k As WysiadzZPociagu = CType(kom, WysiadzZPociagu)
-                Dim stan As StanWysiadzniecia = StanWysiadzniecia.BlednyNumer
-
-                SyncLock slockPociagi
-                    Dim poc As Pociag = Nothing
-
-                    If PociagiPoNumerze.TryGetValue(k.NrPociagu, poc) Then
-                        If poc.SterujacyPosterunek IsNot Nothing AndAlso poc.SterujacyPosterunek.Adres = pol.AdresStacji Then
-                            poc.SterujacyPosterunek = Nothing
-                            stan = StanWysiadzniecia.Wysiadznieto
-                        Else
-                            stan = StanWysiadzniecia.PociagNiesterowanyPrzezPosterunek
-                        End If
-                    End If
-                End SyncLock
-
-                pol.WyslijKomunikat(New WysiadznietoZPociagu() With {.NrPociagu = k.NrPociagu, .Stan = stan})
-
-                If stan = StanWysiadzniecia.Wysiadznieto Then
-                    RaiseEvent ZmienionoPosterunekSterujacyPociagiem(k.NrPociagu, Nothing)
-                End If
+                WyrzucMaszyniste(k.NrPociagu, pol)
             End Sub
         ))
 
@@ -539,6 +533,45 @@ Public Class SerwerTCP
         Return stan
     End Function
 
+    Public Function WyrzucMaszyniste(nrPociagu As UInteger) As StanWysiadzniecia
+        Return WyrzucMaszyniste(nrPociagu, Nothing)
+    End Function
+
+    Private Function WyrzucMaszyniste(nrPociagu As UInteger, pol As PolaczenieTCP) As StanWysiadzniecia
+        Dim stan As StanWysiadzniecia = StanWysiadzniecia.BlednyNumer
+
+        SyncLock slockPociagi
+            Dim poc As Pociag = Nothing
+
+            If PociagiPoNumerze.TryGetValue(nrPociagu, poc) Then
+                If pol Is Nothing Then
+
+                    pol = poc.SterujacyPosterunek?.Polaczenie
+                    poc.SterujacyPosterunek = Nothing
+                    stan = StanWysiadzniecia.Wyrzucono
+
+                Else
+
+                    If poc.SterujacyPosterunek IsNot Nothing AndAlso poc.SterujacyPosterunek.Adres = pol.AdresStacji Then
+                        poc.SterujacyPosterunek = Nothing
+                        stan = StanWysiadzniecia.Wysiadznieto
+                    Else
+                        stan = StanWysiadzniecia.PociagNiesterowanyPrzezPosterunek
+                    End If
+
+                End If
+            End If
+        End SyncLock
+
+        pol?.WyslijKomunikat(New WysiadznietoZPociagu() With {.NrPociagu = nrPociagu, .Stan = stan})
+
+        If stan = StanWysiadzniecia.Wysiadznieto Then
+            RaiseEvent ZmienionoPosterunekSterujacyPociagiem(nrPociagu, Nothing)
+        End If
+
+        Return stan
+    End Function
+
     Public Function Uruchom(port As UShort, haslo As String) As Boolean
         If Serwer IsNot Nothing Or _Uruchomiony Or Not CzyWczytanoPosterunki Then Return False
 
@@ -621,13 +654,20 @@ Public Class SerwerTCP
                                        .Zawartosc = pol.ZawartoscPosterunku,
                                        .DanePulpitu = pol.DanePulpitu}
 
-                KlienciPoAdresieStacji.Add(pol.Adres, obs)
+                If Not KlienciPoAdresieStacji.ContainsKey(pol.Adres) Then
+                    KlienciPoAdresieStacji.Add(pol.Adres, obs)
+                End If
+
                 PosterunkiLista.Add(obs)
                 ZnajdzMaksymalnaPredkoscSieci(pol.DanePulpitu)
                 ZnajdzSygnalizatoryPowtarzajace(pol.DanePulpitu)
-                DodatkoweDane.Add(pol.Adres, New DaneDodatkowePosterunku() With {
-                                  .Kostki = pol.DanePulpitu.PobierzKostkiZeWspolrzednymi(),
-                                  .OdcinkiTorow = pol.DanePulpitu.PobierzOdcinkiTorow()})
+
+                If Not DodatkoweDane.ContainsKey(pol.Adres) Then
+                    DodatkoweDane.Add(pol.Adres, New DaneDodatkowePosterunku() With {
+                                      .Kostki = pol.DanePulpitu.PobierzKostkiZeWspolrzednymi(),
+                                      .OdcinkiTorow = pol.DanePulpitu.PobierzOdcinkiTorow()})
+                End If
+
             Next
         End If
 
@@ -680,7 +720,7 @@ Public Class SerwerTCP
         Return lista.ToArray()
     End Function
 
-    Public Function PobierzStanPociagow() As StanPociagu()
+    Public Function PobierzStanPociagow() As IEnumerable(Of StanPociagu)
         Dim lista As New List(Of StanPociagu)
 
         SyncLock slockPociagi
@@ -688,6 +728,7 @@ Public Class SerwerTCP
                 lista.Add(New StanPociagu() With {
                     .DodajacyPosterunek = poc.Value.DodajacyPosterunek.NazwaPosterunku,
                     .LiczbaOsi = poc.Value.LiczbaOsi,
+                    .PredkoscMaksymalna = poc.Value.PredkoscMaksymalna,
                     .Lokalizacja = poc.Value.Lokalizacja.NazwaPosterunku,
                     .Nazwa = poc.Value.Nazwa,
                     .Numer = poc.Value.Numer,
@@ -697,7 +738,7 @@ Public Class SerwerTCP
             Next
         End SyncLock
 
-        Return lista.ToArray
+        Return lista
     End Function
 
     Friend Overrides Sub PrzetworzZakonczeniePolaczenia(pol As PolaczenieTCP)
@@ -775,7 +816,7 @@ Public Class SerwerTCP
             KlienciPoAdresieStacji.TryGetValue(post, pol)
         End SyncLock
 
-        If pol IsNot Nothing Then pol.Polaczenie?.WyslijKomunikat(kom)
+        pol?.Polaczenie?.WyslijKomunikat(kom)
     End Sub
 
     Private Sub PrzetworzDH(pol As PolaczenieTCP, kom As Komunikat)

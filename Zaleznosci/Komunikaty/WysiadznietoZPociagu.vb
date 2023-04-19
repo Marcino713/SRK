@@ -28,4 +28,5 @@ Public Enum StanWysiadzniecia As Byte
     Wysiadznieto
     PociagNiesterowanyPrzezPosterunek
     BlednyNumer
+    Wyrzucono
 End Enum

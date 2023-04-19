@@ -34,6 +34,13 @@
         End Get
     End Property
 
+    Private _WybranyPociagPredkoscMaksymalna As UShort
+    Friend ReadOnly Property WybranyPociagPredkoscMaksymalna As UShort
+        Get
+            Return _WybranyPociagPredkoscMaksymalna
+        End Get
+    End Property
+
     Friend Sub New(klient As Zaleznosci.KlientTCP)
         InitializeComponent()
 
@@ -63,14 +70,16 @@
         actPokazDostepnoscKontrolek()
     End Sub
 
-    Private Sub btnWybierz_Click() Handles btnWybierz.Click
-        Dim poc As Zaleznosci.DaneWybieralnegoPociagu = PobierzZaznaczonyPociag()
-        If poc Is Nothing OrElse poc.Stan = Zaleznosci.StanWybieralnegoPociagu.Zajety Then Exit Sub
+    Private Sub lvPociagi_DoubleClick() Handles lvPociagi.DoubleClick
+        WybierzPociag()
+    End Sub
 
-        WybieranyPociag = poc
-        actPokazStan(STATUS_WYBIERANIE)
-        actPokazDostepnoscKontrolek()
-        Klient.WyslijWybierzPociag(New Zaleznosci.WybierzPociag With {.NrPociagu = poc.Numer})
+    Private Sub btnWybierz_Click() Handles btnWybierz.Click
+        WybierzPociag()
+    End Sub
+
+    Private Sub btnAnuluj_Click() Handles btnAnuluj.Click
+        actZamknijOkno()
     End Sub
 
     Private Sub Klient_OdebranoPobranoPociagi(kom As Zaleznosci.PobranoPociagi) Handles Klient.OdebranoPobranoPociagi
@@ -85,6 +94,7 @@
         If kom.Stan = Zaleznosci.StanWybranegoPociagu.Wybrany Then
             _WybranyPociagNr = WybieranyPociag.Numer
             _WybranyPociagNazwa = WybieranyPociag.Nazwa
+            _WybranyPociagPredkoscMaksymalna = WybieranyPociag.PredkoscMaksymalna
             Invoke(actZamknijOkno)
         Else
 
@@ -109,6 +119,16 @@
         End If
     End Sub
 
+    Private Sub WybierzPociag()
+        Dim poc As Zaleznosci.DaneWybieralnegoPociagu = PobierzZaznaczonyPociag()
+        If poc Is Nothing OrElse poc.Stan = Zaleznosci.StanWybieralnegoPociagu.Zajety Then Exit Sub
+
+        WybieranyPociag = poc
+        actPokazStan(STATUS_WYBIERANIE)
+        actPokazDostepnoscKontrolek()
+        Klient.WyslijWybierzPociag(New Zaleznosci.WybierzPociag With {.NrPociagu = poc.Numer})
+    End Sub
+
     Private Sub WyslijZapytanie()
         If UtworzonoUchwytOkno And UtworzonoUchwytEtykieta And UtworzonoUchwytLista And Not WyslanoZapytanie Then
             WyslanoZapytanie = True
@@ -120,11 +140,13 @@
         PociagiSlownik.Clear()
         lvPociagi.Items.Clear()
         If Pociagi Is Nothing Then Exit Sub
+        Dim pocEn As IEnumerable(Of Zaleznosci.DaneWybieralnegoPociagu) = Pociagi.OrderBy(Function(x) x.Numer)
 
-        For Each poc As Zaleznosci.DaneWybieralnegoPociagu In Pociagi
+        For Each poc As Zaleznosci.DaneWybieralnegoPociagu In pocEn
             Dim lvi As New ListViewItem({
                     poc.Numer.ToString,
                     If(poc.Nazwa, ""),
+                    If(poc.PredkoscMaksymalna = 0, "Niezdefiniowana", poc.PredkoscMaksymalna.ToString),
                     If(poc.Stan = Zaleznosci.StanWybieralnegoPociagu.Wolny, STAN_POC_WOLNY, STAN_POC_ZAJETY),
                     If(poc.DodajacyPosterunek, ""),
                     If(poc.Lokalizacja, "")
@@ -162,7 +184,7 @@
         Dim lvi As ListViewItem = Nothing
 
         If PociagiSlownik.TryGetValue(nr, lvi) Then
-            lvi.SubItems(2).Text = STAN_POC_ZAJETY
+            lvi.SubItems(3).Text = STAN_POC_ZAJETY
             CType(lvi.Tag, Zaleznosci.DaneWybieralnegoPociagu).Stan = Zaleznosci.StanWybieralnegoPociagu.Zajety
         End If
     End Sub

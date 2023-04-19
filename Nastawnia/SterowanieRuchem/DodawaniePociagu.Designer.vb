@@ -33,6 +33,8 @@ Partial Class wndDodawaniePociagu
         Me.Label4 = New System.Windows.Forms.Label()
         Me.txtNazwa = New System.Windows.Forms.TextBox()
         Me.lblDodawanie = New System.Windows.Forms.Label()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.txtPredkosc = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
         'Label1
@@ -55,43 +57,43 @@ Partial Class wndDodawaniePociagu
         '
         'txtNrPociagu
         '
-        Me.txtNrPociagu.Location = New System.Drawing.Point(100, 45)
+        Me.txtNrPociagu.Location = New System.Drawing.Point(104, 45)
         Me.txtNrPociagu.Name = "txtNrPociagu"
-        Me.txtNrPociagu.Size = New System.Drawing.Size(129, 20)
+        Me.txtNrPociagu.Size = New System.Drawing.Size(125, 20)
         Me.txtNrPociagu.TabIndex = 1
         '
         'txtLiczbaOsi
         '
-        Me.txtLiczbaOsi.Location = New System.Drawing.Point(100, 97)
+        Me.txtLiczbaOsi.Location = New System.Drawing.Point(104, 97)
         Me.txtLiczbaOsi.Name = "txtLiczbaOsi"
-        Me.txtLiczbaOsi.Size = New System.Drawing.Size(129, 20)
+        Me.txtLiczbaOsi.Size = New System.Drawing.Size(125, 20)
         Me.txtLiczbaOsi.TabIndex = 3
         '
         'cboSterowalny
         '
         Me.cboSterowalny.AutoSize = True
-        Me.cboSterowalny.Location = New System.Drawing.Point(100, 123)
+        Me.cboSterowalny.Location = New System.Drawing.Point(104, 149)
         Me.cboSterowalny.Name = "cboSterowalny"
         Me.cboSterowalny.Size = New System.Drawing.Size(111, 17)
-        Me.cboSterowalny.TabIndex = 4
+        Me.cboSterowalny.TabIndex = 5
         Me.cboSterowalny.Text = "Pojazd sterowalny"
         Me.cboSterowalny.UseVisualStyleBackColor = True
         '
         'btnDodaj
         '
-        Me.btnDodaj.Location = New System.Drawing.Point(99, 146)
+        Me.btnDodaj.Location = New System.Drawing.Point(104, 172)
         Me.btnDodaj.Name = "btnDodaj"
-        Me.btnDodaj.Size = New System.Drawing.Size(62, 23)
-        Me.btnDodaj.TabIndex = 5
+        Me.btnDodaj.Size = New System.Drawing.Size(60, 23)
+        Me.btnDodaj.TabIndex = 6
         Me.btnDodaj.Text = "Dodaj"
         Me.btnDodaj.UseVisualStyleBackColor = True
         '
         'btnAnuluj
         '
-        Me.btnAnuluj.Location = New System.Drawing.Point(168, 146)
+        Me.btnAnuluj.Location = New System.Drawing.Point(169, 172)
         Me.btnAnuluj.Name = "btnAnuluj"
-        Me.btnAnuluj.Size = New System.Drawing.Size(62, 23)
-        Me.btnAnuluj.TabIndex = 6
+        Me.btnAnuluj.Size = New System.Drawing.Size(60, 23)
+        Me.btnAnuluj.TabIndex = 7
         Me.btnAnuluj.Text = "Anuluj"
         Me.btnAnuluj.UseVisualStyleBackColor = True
         '
@@ -115,9 +117,9 @@ Partial Class wndDodawaniePociagu
         '
         'txtNazwa
         '
-        Me.txtNazwa.Location = New System.Drawing.Point(100, 71)
+        Me.txtNazwa.Location = New System.Drawing.Point(104, 71)
         Me.txtNazwa.Name = "txtNazwa"
-        Me.txtNazwa.Size = New System.Drawing.Size(129, 20)
+        Me.txtNazwa.Size = New System.Drawing.Size(125, 20)
         Me.txtNazwa.TabIndex = 2
         '
         'lblDodawanie
@@ -128,11 +130,29 @@ Partial Class wndDodawaniePociagu
         Me.lblDodawanie.Size = New System.Drawing.Size(0, 13)
         Me.lblDodawanie.TabIndex = 9
         '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(12, 126)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(86, 13)
+        Me.Label5.TabIndex = 10
+        Me.Label5.Text = "Prędkość maks.:"
+        '
+        'txtPredkosc
+        '
+        Me.txtPredkosc.Location = New System.Drawing.Point(104, 123)
+        Me.txtPredkosc.Name = "txtPredkosc"
+        Me.txtPredkosc.Size = New System.Drawing.Size(125, 20)
+        Me.txtPredkosc.TabIndex = 4
+        '
         'wndDodawaniePociagu
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(241, 179)
+        Me.ClientSize = New System.Drawing.Size(241, 208)
+        Me.Controls.Add(Me.txtPredkosc)
+        Me.Controls.Add(Me.Label5)
         Me.Controls.Add(Me.lblDodawanie)
         Me.Controls.Add(Me.txtNazwa)
         Me.Controls.Add(Me.Label4)
@@ -165,4 +185,6 @@ Partial Class wndDodawaniePociagu
     Friend WithEvents Label4 As Label
     Friend WithEvents txtNazwa As TextBox
     Friend WithEvents lblDodawanie As Label
+    Friend WithEvents Label5 As Label
+    Friend WithEvents txtPredkosc As TextBox
 End Class

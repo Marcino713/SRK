@@ -65,20 +65,16 @@
         btnWybierz.Enabled = lvPosterunki.SelectedItems IsNot Nothing AndAlso lvPosterunki.SelectedItems.Count > 0
     End Sub
 
+    Private Sub lvPosterunki_DoubleClick() Handles lvPosterunki.DoubleClick
+        WybierzPosterunek()
+    End Sub
+
     Private Sub btnWybierz_Click() Handles btnWybierz.Click
-        If lvPosterunki.SelectedItems Is Nothing OrElse lvPosterunki.SelectedItems.Count = 0 Then Exit Sub
+        WybierzPosterunek()
+    End Sub
 
-        Dim dane As Zaleznosci.DanePosterunku = CType(lvPosterunki.SelectedItems(0).Tag, Zaleznosci.DanePosterunku)
-        If dane.Stan = Zaleznosci.StanPosterunku.Zajety Then
-            PokazBlad("Posterunek jest już zajęty.")
-            Exit Sub
-        End If
-
-        Dim kom As New Zaleznosci.WybierzPosterunek
-        If rbTrybPolsamoczynny.Checked Then kom.Tryb = Zaleznosci.TrybPracyPosterunku.Polsamoczynny Else kom.Tryb = Zaleznosci.TrybPracyPosterunku.Samoczynny
-        kom.Adres = dane.Adres
-        WybranyAdres = dane.Adres
-        Klient.WyslijWybierzPosterunek(kom)
+    Private Sub btnAnuluj_Click() Handles btnAnuluj.Click
+        actZamknijOkno()
     End Sub
 
     Private Sub Klient_BladPolaczenia() Handles Klient.BladNawiazywaniaPolaczenia
@@ -109,7 +105,8 @@
                 _Pulpit = p
                 Invoke(actZamknijOkno)
             End If
-        ElseIf kom.Stan = Zaleznosci.StanUstawianegoPosterunku.PosterunekZajety
+
+        ElseIf kom.Stan = Zaleznosci.StanUstawianegoPosterunku.PosterunekZajety Then
             Invoke(actPokazZajetoscPosterunku)
             Invoke(actPokazBlad, "Posterunek jest już zajęty.")
         End If
@@ -131,14 +128,32 @@
         Invoke(actZamknijOkno)
     End Sub
 
+    Private Sub WybierzPosterunek()
+        If lvPosterunki.SelectedItems Is Nothing OrElse lvPosterunki.SelectedItems.Count = 0 Then Exit Sub
+
+        Dim dane As Zaleznosci.DanePosterunku = CType(lvPosterunki.SelectedItems(0).Tag, Zaleznosci.DanePosterunku)
+        If dane.Stan = Zaleznosci.StanPosterunku.Zajety Then
+            PokazBlad("Posterunek jest już zajęty.")
+            Exit Sub
+        End If
+
+        Dim kom As New Zaleznosci.WybierzPosterunek
+        If rbTrybPolsamoczynny.Checked Then kom.Tryb = Zaleznosci.TrybPracyPosterunku.Polsamoczynny Else kom.Tryb = Zaleznosci.TrybPracyPosterunku.Samoczynny
+        kom.Adres = dane.Adres
+        WybranyAdres = dane.Adres
+        Klient.WyslijWybierzPosterunek(kom)
+    End Sub
+
     Private Sub OdswiezPosterunki()
         lvPosterunki.Items.Clear()
         btnWybierz.Enabled = False
         If post Is Nothing Then Exit Sub
+        Dim postEn As IEnumerable(Of Zaleznosci.DanePosterunku) = post.OrderBy(Function(x) x.Adres)
 
-        For i As Integer = 0 To post.Length - 1
-            Dim lvi As New ListViewItem(New String() {post(i).Adres.ToString, post(i).Nazwa, StanPosterunkuToString(post(i).Stan)})
-            lvi.Tag = post(i)
+        For Each p As Zaleznosci.DanePosterunku In postEn
+            Dim lvi As New ListViewItem(New String() {p.Adres.ToString, p.Nazwa, StanPosterunkuToString(p.Stan)}) With {
+                .Tag = p
+            }
             lvPosterunki.Items.Add(lvi)
         Next
     End Sub

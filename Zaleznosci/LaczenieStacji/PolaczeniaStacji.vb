@@ -91,7 +91,7 @@ Public Class PolaczeniaStacji
             ElseIf Not CzyRowne(pol.Skrot, dopasowanaStacja.Skrot) Then
                 pol.Uwagi = UwagiLaczanegoPlikuStacji.Zmodyfikowany
                 pol.Skrot = dopasowanaStacja.Skrot
-            ElseIf CzyBrakujePolaczen(pol, plikPol.LaczaneTory)
+            ElseIf CzyBrakujePolaczen(pol, plikPol.LaczaneTory) Then
                 pol.Uwagi = UwagiLaczanegoPlikuStacji.BrakiPolaczen
             End If
 

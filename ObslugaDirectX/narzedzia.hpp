@@ -3,10 +3,10 @@
 #define NARZEDZIA_H
 
 template<class Interface>
-inline void SafeRelease(Interface** ppInterfaceToRelease) {
-	if (*ppInterfaceToRelease != NULL) {
-		(*ppInterfaceToRelease)->Release();
-		(*ppInterfaceToRelease) = NULL;
+inline void WyczyscOrazZeruj(Interface** obiekt) {
+	if (*obiekt != NULL) {
+		(*obiekt)->Release();
+		(*obiekt) = NULL;
 	}
 }
 

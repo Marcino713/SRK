@@ -48,7 +48,7 @@ Public Class wndKonfiguratorPolaczen
         Dim pol As Zaleznosci.LaczoneOdcinkiTorow = PobierzZaznaczonyElement(Of Zaleznosci.LaczoneOdcinkiTorow)(lvPolaczenia)
         If pol Is Nothing Then Exit Sub
 
-        If ZadajPytanie("Czy usunąć połączenie torów " & PobierzNazweStacjiToru(pol.Posterunek1, pol.Tor1) & " i " & PobierzNazweStacjiToru(pol.Posterunek2, pol.Tor2) & "?") = DialogResult.Yes Then
+        If ZadajPytanie($"Czy usunąć połączenie torów {PobierzNazweStacjiToru(pol.Posterunek1, pol.Tor1)} i {PobierzNazweStacjiToru(pol.Posterunek2, pol.Tor2)}?") = DialogResult.Yes Then
             polaczenia.LaczaneTory.Remove(pol)
             OdswiezPolaczenia()
         End If
@@ -146,7 +146,7 @@ Public Class wndKonfiguratorPolaczen
     End Sub
 
     Private Function PobierzNazweStacjiToru(posterunek As Zaleznosci.LaczonyPlikStacji, tor As Zaleznosci.OdcinekToru) As String
-        Return posterunek.NazwaPosterunku & " (" & tor.Nazwa & ")"
+        Return $"{tor.Nazwa} ({posterunek.NazwaPosterunku})"
     End Function
 
     ''' <summary>

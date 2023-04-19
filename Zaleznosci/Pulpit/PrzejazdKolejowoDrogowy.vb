@@ -18,8 +18,8 @@ Public Class PrzejazdKolejowoDrogowy
         End Get
     End Property
 
-    Private _Rogatki As New List(Of ElementWykonaczyPrzejazduKolejowego)
-    Public ReadOnly Property Rogatki As List(Of ElementWykonaczyPrzejazduKolejowego)
+    Private _Rogatki As New List(Of RogatkaPrzejazduKolejowego)
+    Public ReadOnly Property Rogatki As List(Of RogatkaPrzejazduKolejowego)
         Get
             Return _Rogatki
         End Get
@@ -65,12 +65,10 @@ Public Class PrzejazdKolejowoDrogowy
         End Using
     End Function
 
-    Private Sub ZapiszElementyWykonawcze(bw As BinaryWriter, el As List(Of ElementWykonaczyPrzejazduKolejowego))
+    Private Sub ZapiszElementyWykonawcze(Of T As ElementWykonaczyPrzejazduKolejowego)(bw As BinaryWriter, el As List(Of T))
         bw.Write(CUShort(el.Count))
-        For Each e As ElementWykonaczyPrzejazduKolejowego In el
-            bw.Write(e.Adres)
-            bw.Write(e.X)
-            bw.Write(e.Y)
+        For Each e As T In el
+            e.Zapisz(bw)
         Next
     End Sub
 
@@ -112,15 +110,13 @@ Public Class PrzejazdKolejowoDrogowy
         konf.Pulpit.Przejazdy.Add(Me)
     End Sub
 
-    Private Sub OdczytajElementyWykonawcze(br As BinaryReader, el As List(Of ElementWykonaczyPrzejazduKolejowego))
+    Private Sub OdczytajElementyWykonawcze(Of T As {ElementWykonaczyPrzejazduKolejowego, New})(br As BinaryReader, el As List(Of T))
         Dim ile As Integer = br.ReadUInt16
         el.Capacity = ile
 
         For i As Integer = 0 To ile - 1
-            Dim e As New ElementWykonaczyPrzejazduKolejowego
-            e.Adres = br.ReadUInt16
-            e.X = br.ReadSingle
-            e.Y = br.ReadSingle
+            Dim e As New T
+            e.Otworz(br)
             el.Add(e)
         Next
     End Sub
@@ -165,6 +161,34 @@ Public Class ElementWykonaczyPrzejazduKolejowego
     Public Property Adres As UShort
     Public Property X As Single
     Public Property Y As Single
+
+    Public Overridable Sub Zapisz(bw As BinaryWriter)
+        bw.Write(Adres)
+        bw.Write(X)
+        bw.Write(Y)
+    End Sub
+
+    Public Overridable Sub Otworz(br As BinaryReader)
+        Adres = br.ReadUInt16
+        X = br.ReadSingle
+        Y = br.ReadSingle
+    End Sub
+End Class
+
+Public Class RogatkaPrzejazduKolejowego
+    Inherits ElementWykonaczyPrzejazduKolejowego
+
+    Public Property CzasDoZamkniecia As UShort
+
+    Public Overrides Sub Zapisz(bw As BinaryWriter)
+        MyBase.Zapisz(bw)
+        bw.Write(CzasDoZamkniecia)
+    End Sub
+
+    Public Overrides Sub Otworz(br As BinaryReader)
+        MyBase.Otworz(br)
+        CzasDoZamkniecia = br.ReadUInt16
+    End Sub
 End Class
 
 <Flags>

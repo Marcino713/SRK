@@ -28,4 +28,6 @@ Public Enum StanNadaniaNumeruPociagu As Byte
     Dobrze
     NrZajety
     BledneWspolrzedne
+    NieprawidlowyNumer
+    NieprawidlowaLiczbaOsi
 End Enum

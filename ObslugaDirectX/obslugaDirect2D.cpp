@@ -17,7 +17,9 @@ void DLL RozpocznijRysunekD2D(DaneOkna* hOkno, float r, float g, float b) {
 void DLL ZakonczRysunekD2D(DaneOkna* hOkno) {
 	hOkno->obraz->EndDraw();
 
-	for (size_t i = 0; i < hOkno->sciezki.size(); i++) SafeRelease(&hOkno->sciezki[i]);
+	for (size_t i = 0; i < hOkno->czcionkiTymczasowe.size(); i++) hOkno->czcionkiTymczasowe[i]->Release();
+	hOkno->czcionkiTymczasowe.clear();
+	for (size_t i = 0; i < hOkno->sciezki.size(); i++) hOkno->sciezki[i]->Release();
 	hOkno->sciezki.clear();
 	for (size_t i = 0; i < hOkno->transformacje.size(); i++) delete hOkno->transformacje[i];
 	hOkno->transformacje.clear();
@@ -36,10 +38,10 @@ wskaznik DLL UtworzPedzelD2D(DaneOkna* hOkno, float r, float g, float b, float a
 }
 
 void DLL PosprzatajD2D(DaneOkna* hOkno) {
-	for (size_t i = 0; i < hOkno->pedzle.size(); i++)   SafeRelease(&hOkno->pedzle[i]);
-	for (size_t i = 0; i < hOkno->czcionki.size(); i++) SafeRelease(&hOkno->czcionki[i]);
+	for (size_t i = 0; i < hOkno->pedzle.size(); i++)   WyczyscOrazZeruj(&hOkno->pedzle[i]);
+	for (size_t i = 0; i < hOkno->czcionki.size(); i++) WyczyscOrazZeruj(&hOkno->czcionki[i]);
 
-	SafeRelease(&hOkno->obraz);
+	WyczyscOrazZeruj(&hOkno->obraz);
 	delete hOkno;
 }
 
@@ -63,21 +65,18 @@ wskaznik DLL TransformacjaPobierzD2D(DaneOkna* hOkno) {
 void DLL TransformacjaPrzesunD2D(DaneOkna* hOkno, float x, float y) {
 	D2D1::Matrix3x2F transformacja;
 	hOkno->obraz->GetTransform(&transformacja);
-
 	hOkno->obraz->SetTransform(transformacja * D2D1::Matrix3x2F::Translation(x, y));
 }
 
 void DLL TransformacjaObrocD2D(DaneOkna* hOkno, float kat, float srodekX, float srodekY) {
 	D2D1::Matrix3x2F transformacja;
 	hOkno->obraz->GetTransform(&transformacja);
-
 	hOkno->obraz->SetTransform(transformacja * D2D1::Matrix3x2F::Rotation(kat, D2D1::Point2F(srodekX, srodekY)));
 }
 
 void DLL TransformacjaSkalujD2D(DaneOkna* hOkno, float skalowanie) {
 	D2D1::Matrix3x2F transformacja;
 	hOkno->obraz->GetTransform(&transformacja);
-
 	hOkno->obraz->SetTransform(transformacja * D2D1::Matrix3x2F::Scale(skalowanie, skalowanie));
 }
 
@@ -122,10 +121,10 @@ void DLL DodajLukDoGeometriiD2D(DaneOkna* hOkno, float x, float y, float r) {
 void DLL ZakonczGeometrieD2D(DaneOkna* hOkno) {
 	hOkno->zlew->EndFigure(D2D1_FIGURE_END_CLOSED);
 	hOkno->zlew->Close();
-	SafeRelease(&hOkno->zlew);
+	WyczyscOrazZeruj(&hOkno->zlew);
 }
 
-wskaznik DLL UtworzCzcionkeD2D(DaneOkna* hOkno, wchar_t* nazwaCzcionki, float rozmiar) {
+wskaznik DLL UtworzCzcionkeD2D(DaneOkna* hOkno, wchar_t* nazwaCzcionki, float rozmiar, bool tymczasowa) {
 	IDWriteTextFormat* czcionka = NULL;
 	FabrykaDirectWrite->CreateTextFormat(
 		nazwaCzcionki,
@@ -137,7 +136,12 @@ wskaznik DLL UtworzCzcionkeD2D(DaneOkna* hOkno, wchar_t* nazwaCzcionki, float ro
 		L"",
 		&czcionka
 	);
-	hOkno->czcionki.push_back(czcionka);
+
+	if (tymczasowa) {
+		hOkno->czcionkiTymczasowe.push_back(czcionka);
+	} else {
+		hOkno->czcionki.push_back(czcionka);
+	}
 
 	return (wskaznik)czcionka;
 }
@@ -147,7 +151,7 @@ D2D1_SIZE_F DLL ZmierzTekstD2D(IDWriteTextFormat* czcionka, wchar_t* tekst, floa
 	FabrykaDirectWrite->CreateTextLayout(tekst, wcslen(tekst), czcionka, szer, wys, &obszar);
 	DWRITE_TEXT_METRICS m;
 	obszar->GetMetrics(&m);
-	SafeRelease(&obszar);
+	obszar->Release();
 
 	return D2D1::SizeF(m.width, min(m.height, wys));
 }

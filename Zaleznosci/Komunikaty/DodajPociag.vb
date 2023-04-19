@@ -4,6 +4,7 @@
     Public Property LiczbaOsi As UShort
     Public Property NrPociagu As UInteger
     Public Property Nazwa As String
+    Public Property PredkoscMaksymalna As UShort
     Public Property PojazdSterowalny As Boolean
     Public Property WspolrzedneKostki As Punkt
 
@@ -17,6 +18,7 @@
         bw.Write(LiczbaOsi)
         bw.Write(NrPociagu)
         ZapiszTekst(bw, Nazwa)
+        bw.Write(PredkoscMaksymalna)
         bw.Write(PojazdSterowalny)
         bw.Write(WspolrzedneKostki.X)
         bw.Write(WspolrzedneKostki.Y)
@@ -27,6 +29,7 @@
         kom.LiczbaOsi = br.ReadUInt16
         kom.NrPociagu = br.ReadUInt32
         kom.Nazwa = OdczytajTekst(br)
+        kom.PredkoscMaksymalna = br.ReadUInt16
         kom.PojazdSterowalny = br.ReadBoolean
         kom.WspolrzedneKostki = New Punkt
         kom.WspolrzedneKostki.X = br.ReadUInt16

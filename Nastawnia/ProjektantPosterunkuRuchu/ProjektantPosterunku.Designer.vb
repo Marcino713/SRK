@@ -23,7 +23,7 @@ Partial Class wndProjektantPosterunku
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim Pulpit1 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
+        Dim Pulpit2 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
         Me.mnuMenu = New System.Windows.Forms.MenuStrip()
         Me.mnuNarzedzia = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuNowy = New System.Windows.Forms.ToolStripMenuItem()
@@ -45,6 +45,8 @@ Partial Class wndProjektantPosterunku
         Me.pnlKonfSygnPrzycisk = New System.Windows.Forms.Panel()
         Me.cbKonfSygnPrzycisk = New System.Windows.Forms.CheckBox()
         Me.pnlKonfNapis = New System.Windows.Forms.Panel()
+        Me.txtKonfNapisRozmiar = New System.Windows.Forms.TextBox()
+        Me.Label17 = New System.Windows.Forms.Label()
         Me.txtKonfNapisTekst = New System.Windows.Forms.TextBox()
         Me.Label9 = New System.Windows.Forms.Label()
         Me.pnlKonfRozjazd = New System.Windows.Forms.Panel()
@@ -280,7 +282,11 @@ Partial Class wndProjektantPosterunku
         Me.Label53 = New System.Windows.Forms.Label()
         Me.btnPrzejazdSygnDrogUsun = New System.Windows.Forms.Button()
         Me.btnPrzejazdSygnDrogDodaj = New System.Windows.Forms.Button()
+        Me.ColumnHeader25 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader26 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
+        Me.txtPrzejazdRogatkaCzasDoZamkniecia = New System.Windows.Forms.TextBox()
+        Me.Label18 = New System.Windows.Forms.Label()
         Me.mnuMenu.SuspendLayout()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
@@ -551,13 +557,33 @@ Partial Class wndProjektantPosterunku
         '
         Me.pnlKonfNapis.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfNapis.Controls.Add(Me.txtKonfNapisRozmiar)
+        Me.pnlKonfNapis.Controls.Add(Me.Label17)
         Me.pnlKonfNapis.Controls.Add(Me.txtKonfNapisTekst)
         Me.pnlKonfNapis.Controls.Add(Me.Label9)
         Me.pnlKonfNapis.Location = New System.Drawing.Point(20, 39)
         Me.pnlKonfNapis.Name = "pnlKonfNapis"
-        Me.pnlKonfNapis.Size = New System.Drawing.Size(144, 45)
+        Me.pnlKonfNapis.Size = New System.Drawing.Size(144, 87)
         Me.pnlKonfNapis.TabIndex = 1
         Me.pnlKonfNapis.Visible = False
+        '
+        'txtKonfNapisRozmiar
+        '
+        Me.txtKonfNapisRozmiar.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfNapisRozmiar.Location = New System.Drawing.Point(0, 55)
+        Me.txtKonfNapisRozmiar.Name = "txtKonfNapisRozmiar"
+        Me.txtKonfNapisRozmiar.Size = New System.Drawing.Size(144, 20)
+        Me.txtKonfNapisRozmiar.TabIndex = 11
+        '
+        'Label17
+        '
+        Me.Label17.AutoSize = True
+        Me.Label17.Location = New System.Drawing.Point(0, 39)
+        Me.Label17.Name = "Label17"
+        Me.Label17.Size = New System.Drawing.Size(48, 13)
+        Me.Label17.TabIndex = 11
+        Me.Label17.Text = "Rozmiar:"
         '
         'txtKonfNapisTekst
         '
@@ -2197,7 +2223,7 @@ Partial Class wndProjektantPosterunku
         '
         'lvPrzejazdy
         '
-        Me.lvPrzejazdy.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader11, Me.ColumnHeader14, Me.ColumnHeader24, Me.ColumnHeader12, Me.ColumnHeader13})
+        Me.lvPrzejazdy.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader25, Me.ColumnHeader11, Me.ColumnHeader14, Me.ColumnHeader24, Me.ColumnHeader26, Me.ColumnHeader12, Me.ColumnHeader13})
         Me.lvPrzejazdy.ContextMenuStrip = Me.ctxSortowanie
         Me.lvPrzejazdy.Dock = System.Windows.Forms.DockStyle.Fill
         Me.lvPrzejazdy.FullRowSelect = True
@@ -2680,6 +2706,8 @@ Partial Class wndProjektantPosterunku
         '
         'splPrzejazdRogatki.Panel2
         '
+        Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.Label18)
+        Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.txtPrzejazdRogatkaCzasDoZamkniecia)
         Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.btnPrzejazdRogatkaDodaj)
         Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.txtPrzejazdRogatkaY)
         Me.splPrzejazdRogatki.Panel2.Controls.Add(Me.btnPrzejazdRogatkaUsun)
@@ -2732,9 +2760,9 @@ Partial Class wndProjektantPosterunku
         '
         'txtPrzejazdRogatkaY
         '
-        Me.txtPrzejazdRogatkaY.Location = New System.Drawing.Point(132, 45)
+        Me.txtPrzejazdRogatkaY.Location = New System.Drawing.Point(99, 45)
         Me.txtPrzejazdRogatkaY.Name = "txtPrzejazdRogatkaY"
-        Me.txtPrzejazdRogatkaY.Size = New System.Drawing.Size(60, 20)
+        Me.txtPrzejazdRogatkaY.Size = New System.Drawing.Size(44, 20)
         Me.txtPrzejazdRogatkaY.TabIndex = 9
         '
         'btnPrzejazdRogatkaUsun
@@ -2748,15 +2776,15 @@ Partial Class wndProjektantPosterunku
         '
         'txtPrzejazdRogatkaX
         '
-        Me.txtPrzejazdRogatkaX.Location = New System.Drawing.Point(66, 45)
+        Me.txtPrzejazdRogatkaX.Location = New System.Drawing.Point(49, 45)
         Me.txtPrzejazdRogatkaX.Name = "txtPrzejazdRogatkaX"
-        Me.txtPrzejazdRogatkaX.Size = New System.Drawing.Size(60, 20)
+        Me.txtPrzejazdRogatkaX.Size = New System.Drawing.Size(44, 20)
         Me.txtPrzejazdRogatkaX.TabIndex = 8
         '
         'Label51
         '
         Me.Label51.AutoSize = True
-        Me.Label51.Location = New System.Drawing.Point(62, 29)
+        Me.Label51.Location = New System.Drawing.Point(46, 29)
         Me.Label51.Name = "Label51"
         Me.Label51.Size = New System.Drawing.Size(17, 13)
         Me.Label51.TabIndex = 1
@@ -2766,13 +2794,13 @@ Partial Class wndProjektantPosterunku
         '
         Me.txtPrzejazdRogatkaAdres.Location = New System.Drawing.Point(0, 45)
         Me.txtPrzejazdRogatkaAdres.Name = "txtPrzejazdRogatkaAdres"
-        Me.txtPrzejazdRogatkaAdres.Size = New System.Drawing.Size(60, 20)
+        Me.txtPrzejazdRogatkaAdres.Size = New System.Drawing.Size(43, 20)
         Me.txtPrzejazdRogatkaAdres.TabIndex = 7
         '
         'Label52
         '
         Me.Label52.AutoSize = True
-        Me.Label52.Location = New System.Drawing.Point(127, 29)
+        Me.Label52.Location = New System.Drawing.Point(96, 29)
         Me.Label52.Name = "Label52"
         Me.Label52.Size = New System.Drawing.Size(17, 13)
         Me.Label52.TabIndex = 2
@@ -2919,6 +2947,16 @@ Partial Class wndProjektantPosterunku
         Me.btnPrzejazdSygnDrogDodaj.Text = "Dodaj"
         Me.btnPrzejazdSygnDrogDodaj.UseVisualStyleBackColor = True
         '
+        'ColumnHeader25
+        '
+        Me.ColumnHeader25.Text = "Numer"
+        Me.ColumnHeader25.Width = 50
+        '
+        'ColumnHeader26
+        '
+        Me.ColumnHeader26.Text = "Automatyzacja"
+        Me.ColumnHeader26.Width = 50
+        '
         'plpPulpit
         '
         Me.plpPulpit.AllowDrop = True
@@ -2940,13 +2978,29 @@ Partial Class wndProjektantPosterunku
         Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
         Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
         Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit1.Adres = CType(0US, UShort)
-        Pulpit1.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit1
+        Pulpit2.Adres = CType(0US, UShort)
+        Pulpit2.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit2
         Me.plpPulpit.Size = New System.Drawing.Size(790, 645)
         Me.plpPulpit.TabIndex = 4
         Me.plpPulpit.TrybProjektowy = True
         Me.plpPulpit.ZaznaczonaKostka = Nothing
+        '
+        'txtPrzejazdRogatkaCzasDoZamkniecia
+        '
+        Me.txtPrzejazdRogatkaCzasDoZamkniecia.Location = New System.Drawing.Point(149, 45)
+        Me.txtPrzejazdRogatkaCzasDoZamkniecia.Name = "txtPrzejazdRogatkaCzasDoZamkniecia"
+        Me.txtPrzejazdRogatkaCzasDoZamkniecia.Size = New System.Drawing.Size(43, 20)
+        Me.txtPrzejazdRogatkaCzasDoZamkniecia.TabIndex = 10
+        '
+        'Label18
+        '
+        Me.Label18.AutoSize = True
+        Me.Label18.Location = New System.Drawing.Point(146, 29)
+        Me.Label18.Name = "Label18"
+        Me.Label18.Size = New System.Drawing.Size(42, 13)
+        Me.Label18.TabIndex = 11
+        Me.Label18.Text = "Czekaj:"
         '
         'wndProjektantPosterunku
         '
@@ -3320,4 +3374,10 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents cbKonfRozjazdNiezajetoscWprost As CheckBox
     Friend WithEvents cbKonfRozjazdNiezajetoscBok As CheckBox
     Friend WithEvents pnlKonfSygnPrzycisk As Panel
+    Friend WithEvents txtKonfNapisRozmiar As TextBox
+    Friend WithEvents Label17 As Label
+    Friend WithEvents ColumnHeader25 As ColumnHeader
+    Friend WithEvents ColumnHeader26 As ColumnHeader
+    Friend WithEvents txtPrzejazdRogatkaCzasDoZamkniecia As TextBox
+    Friend WithEvents Label18 As Label
 End Class

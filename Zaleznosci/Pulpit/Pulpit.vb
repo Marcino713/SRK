@@ -191,7 +191,9 @@ Public Class Pulpit
         Dim dict As New Dictionary(Of UShort, Lampa)
 
         For Each l As Lampa In Lampy
-            dict.Add(l.Adres, l)
+            If Not dict.ContainsKey(l.Adres) Then
+                dict.Add(l.Adres, l)
+            End If
         Next
 
         Return dict
@@ -201,7 +203,9 @@ Public Class Pulpit
         Dim slownik As New Dictionary(Of UShort, OdcinekToru)
 
         For Each o As OdcinekToru In _Odcinki
-            slownik.Add(o.Adres, o)
+            If Not slownik.ContainsKey(o.Adres) Then
+                slownik.Add(o.Adres, o)
+            End If
         Next
 
         Return slownik
@@ -211,7 +215,9 @@ Public Class Pulpit
         Dim slownik As New Dictionary(Of UShort, PrzejazdKolejowoDrogowy)
 
         For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
-            slownik.Add(p.Numer, p)
+            If Not slownik.ContainsKey(p.Numer) Then
+                slownik.Add(p.Numer, p)
+            End If
         Next
 
         Return slownik
@@ -319,7 +325,7 @@ Public Class Pulpit
         PrzesunObiektyPunktowe(kierunek, rozmiar)
     End Sub
 
-    Public Function PomniejszPulpit(kierunek As KierunekEdycjiPulpitu, rozmiar As Integer) As ObiektBlokujacyZmniejszaniePulpitu
+    Public Function PomniejszPulpit(kierunek As KierunekEdycjiPulpitu, rozmiar As Integer) As List(Of ObiektBlokujacyZmniejszaniePulpitu)
         If rozmiar < 0 Then
             Throw New ArgumentException("Rozmiar nie może być ujemny.")
         End If
@@ -342,7 +348,7 @@ Public Class Pulpit
         Dim wysnowa As Integer = _Wysokosc
         Dim szernowa As Integer = _Szerokosc
         Dim wspolrzednaGraniczna As Single = rozmiar
-        Dim wynik As ObiektBlokujacyZmniejszaniePulpitu = 0
+        Dim wynik As New List(Of ObiektBlokujacyZmniejszaniePulpitu)
 
         Select Case kierunek
             Case KierunekEdycjiPulpitu.Gora
@@ -370,57 +376,43 @@ Public Class Pulpit
         For x As Integer = poczx To koncx
             For y As Integer = poczy To koncy
                 If _Kostki(x, y) IsNot Nothing Then
-                    wynik = ObiektBlokujacyZmniejszaniePulpitu.Kostka
-                    Exit For
+                    wynik.Add(New ObiektBlokujacyZmniejszaniePulpitu(RodzajObiektuBlokujacegoZmniejszaniePulpitu.Kostka, x, y))
                 End If
             Next
-            If wynik <> 0 Then Exit For
         Next
 
         'Sprawdź, czy są jakieś liczniki
         For Each p As ParaLicznikowOsi In _LicznikiOsi
             If CzyPunktWUsuwanymZakresie(p.X1, p.Y1, kierunek, wspolrzednaGraniczna) Or
                CzyPunktWUsuwanymZakresie(p.X2, p.Y2, kierunek, wspolrzednaGraniczna) Then
-                wynik = wynik Or ObiektBlokujacyZmniejszaniePulpitu.LicznikOsi
-                Exit For
+                wynik.Add(New ObiektBlokujacyZmniejszaniePulpitu(RodzajObiektuBlokujacegoZmniejszaniePulpitu.LicznikOsi, p.Adres1, p.Adres2))
             End If
         Next
 
         'Sprawdź, czy są jakieś lampy
         For Each l As Lampa In _Lampy
             If CzyPunktWUsuwanymZakresie(l.X, l.Y, kierunek, wspolrzednaGraniczna) Then
-                wynik = wynik Or ObiektBlokujacyZmniejszaniePulpitu.Lampa
-                Exit For
+                wynik.Add(New ObiektBlokujacyZmniejszaniePulpitu(RodzajObiektuBlokujacegoZmniejszaniePulpitu.Lampa, l.Adres, 0))
             End If
         Next
 
         'Sprawdź, czy są elementy przejazdów
-        Dim koniec As Boolean = False
-
         For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
             For Each r As ElementWykonaczyPrzejazduKolejowego In p.Rogatki
                 If CzyPunktWUsuwanymZakresie(r.X, r.Y, kierunek, wspolrzednaGraniczna) Then
-                    wynik = wynik Or ObiektBlokujacyZmniejszaniePulpitu.PrzejazdRogatka
-                    koniec = True
-                    Exit For
+                    wynik.Add(New ObiektBlokujacyZmniejszaniePulpitu(RodzajObiektuBlokujacegoZmniejszaniePulpitu.PrzejazdRogatka, p.Numer, r.Adres))
                 End If
             Next
-
-            If koniec Then Exit For
 
             For Each s As ElementWykonaczyPrzejazduKolejowego In p.SygnalizatoryDrogowe
                 If CzyPunktWUsuwanymZakresie(s.X, s.Y, kierunek, wspolrzednaGraniczna) Then
-                    wynik = wynik Or ObiektBlokujacyZmniejszaniePulpitu.PrzejazdSygnalizatorDrogowy
-                    koniec = True
-                    Exit For
+                    wynik.Add(New ObiektBlokujacyZmniejszaniePulpitu(RodzajObiektuBlokujacegoZmniejszaniePulpitu.PrzejazdSygnalizatorDrogowy, p.Numer, s.Adres))
                 End If
             Next
-
-            If koniec Then Exit For
         Next
 
         'Usuwany zakres jest pusty, można usunąć
-        If wynik = 0 Then
+        If wynik.Count = 0 Then
             Dim tab(szernowa - 1, wysnowa - 1) As Kostka
             PrzeiterujKostki(Sub(x, y, k) tab(x - przesx, y - przesy) = k)
             _Kostki = tab
@@ -428,9 +420,11 @@ Public Class Pulpit
             _Wysokosc = wysnowa
 
             PrzesunObiektyPunktowe(kierunek, -rozmiar)
-        End If
 
-        Return wynik
+            Return Nothing
+        Else
+            Return wynik
+        End If
     End Function
 
     Private Sub PrzesunObiektyPunktowe(kierunek As KierunekEdycjiPulpitu, rozm As Single)
@@ -621,7 +615,10 @@ Public Class Pulpit
 
         PrzeiterujKostki(Sub(x, y, k)
                              If sprTypu(k.Typ) Then
-                                 slownik.Add(CType(k, IAdres).Adres, CType(k, T))
+                                 Dim adr As UShort = CType(k, IAdres).Adres
+                                 If Not slownik.ContainsKey(adr) Then
+                                     slownik.Add(adr, CType(k, T))
+                                 End If
                              End If
                          End Sub)
 
@@ -638,6 +635,18 @@ Public Class Pulpit
 
 End Class
 
+Public Class ObiektBlokujacyZmniejszaniePulpitu
+    Public Typ As RodzajObiektuBlokujacegoZmniejszaniePulpitu
+    Public Liczba1 As Integer
+    Public Liczba2 As Integer
+
+    Public Sub New(typ As RodzajObiektuBlokujacegoZmniejszaniePulpitu, liczba1 As Integer, liczba2 As Integer)
+        Me.Typ = typ
+        Me.Liczba1 = liczba1
+        Me.Liczba2 = liczba2
+    End Sub
+End Class
+
 Public Enum KierunekEdycjiPulpitu
     Gora
     Prawo
@@ -645,11 +654,10 @@ Public Enum KierunekEdycjiPulpitu
     Lewo
 End Enum
 
-<Flags>
-Public Enum ObiektBlokujacyZmniejszaniePulpitu
-    Kostka = 1
-    LicznikOsi = 2
-    Lampa = 4
-    PrzejazdRogatka = 8
-    PrzejazdSygnalizatorDrogowy = 16
+Public Enum RodzajObiektuBlokujacegoZmniejszaniePulpitu
+    Kostka
+    LicznikOsi
+    Lampa
+    PrzejazdRogatka
+    PrzejazdSygnalizatorDrogowy
 End Enum

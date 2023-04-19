@@ -18,6 +18,7 @@ struct DaneOkna {
 	std::vector<ID2D1SolidColorBrush*> pedzle;
 	std::vector<ID2D1PathGeometry*> sciezki;
 	std::vector<IDWriteTextFormat*> czcionki;
+	std::vector<IDWriteTextFormat*> czcionkiTymczasowe;
 	ID2D1HwndRenderTarget* obraz = NULL;
 	ID2D1GeometrySink* zlew = NULL;
 };
@@ -49,7 +50,7 @@ extern "C" {
 	void DLL DodajLukDoGeometriiD2D(DaneOkna* hOkno, float x, float y, float r);
 	void DLL ZakonczGeometrieD2D(DaneOkna* hOkno);
 
-	wskaznik DLL UtworzCzcionkeD2D(DaneOkna* hOkno, wchar_t* nazwaCzcionki, float rozmiar);
+	wskaznik DLL UtworzCzcionkeD2D(DaneOkna* hOkno, wchar_t* nazwaCzcionki, float rozmiar, bool tymczasowa);
 	D2D1_SIZE_F DLL ZmierzTekstD2D(IDWriteTextFormat* czcionka, wchar_t* tekst, float szer, float wys);
 	void DLL RysujTekstD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, IDWriteTextFormat* czcionka, wchar_t* tekst, float x, float y, float szer, float wys);
 }

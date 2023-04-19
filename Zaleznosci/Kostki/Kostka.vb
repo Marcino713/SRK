@@ -37,6 +37,7 @@ Public MustInherit Class Kostka
             CzySygnalizator(typ) Or
             typ = TypKostki.Tor Or
             typ = TypKostki.Zakret Or
+            typ = TypKostki.Kierunek Or
             typ = TypKostki.PrzyciskTor Or
             typ = TypKostki.PrzejazdKolejowy
     End Function

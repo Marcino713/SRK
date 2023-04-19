@@ -40,6 +40,7 @@ Partial Class wndWyborStacji
         Me.ColumnHeader1 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader2 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader3 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.btnAnuluj = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
@@ -137,6 +138,7 @@ Partial Class wndWyborStacji
         Me.GroupBox2.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox2.Controls.Add(Me.btnAnuluj)
         Me.GroupBox2.Controls.Add(Me.rbTrybSamoczynny)
         Me.GroupBox2.Controls.Add(Me.rbTrybPolsamoczynny)
         Me.GroupBox2.Controls.Add(Me.Label4)
@@ -184,7 +186,7 @@ Partial Class wndWyborStacji
         '
         Me.btnWybierz.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnWybierz.Enabled = False
-        Me.btnWybierz.Location = New System.Drawing.Point(602, 496)
+        Me.btnWybierz.Location = New System.Drawing.Point(520, 496)
         Me.btnWybierz.Name = "btnWybierz"
         Me.btnWybierz.Size = New System.Drawing.Size(75, 23)
         Me.btnWybierz.TabIndex = 8
@@ -221,6 +223,16 @@ Partial Class wndWyborStacji
         Me.ColumnHeader3.Text = "Stan"
         Me.ColumnHeader3.Width = 100
         '
+        'btnAnuluj
+        '
+        Me.btnAnuluj.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnAnuluj.Location = New System.Drawing.Point(601, 496)
+        Me.btnAnuluj.Name = "btnAnuluj"
+        Me.btnAnuluj.Size = New System.Drawing.Size(75, 23)
+        Me.btnAnuluj.TabIndex = 9
+        Me.btnAnuluj.Text = "Anuluj"
+        Me.btnAnuluj.UseVisualStyleBackColor = True
+        '
         'wndWyborStacji
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -256,4 +268,5 @@ Partial Class wndWyborStacji
     Friend WithEvents rbTrybSamoczynny As RadioButton
     Friend WithEvents rbTrybPolsamoczynny As RadioButton
     Friend WithEvents Label4 As Label
+    Friend WithEvents btnAnuluj As Button
 End Class

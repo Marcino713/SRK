@@ -27,7 +27,7 @@
     Private Declare Auto Sub DodajLukDoGeometriiD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, x As Single, y As Single, r As Single)
     Private Declare Auto Sub ZakonczGeometrieD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr)
 
-    Private Declare Auto Function UtworzCzcionkeD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, nazwaCzcionki As String, rozmiar As Single) As IntPtr
+    Private Declare Auto Function UtworzCzcionkeD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, nazwaCzcionki As String, rozmiar As Single, tymczasowa As Boolean) As IntPtr
     Private Declare Auto Function ZmierzTekstD2D Lib "ObslugaDirectX.dll" (czcionka As IntPtr, tekst As String, szer As Single, wys As Single) As SizeF
     Private Declare Auto Sub RysujTekstD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, pedzel As IntPtr, czcionka As IntPtr, tekst As String, x As Single, y As Single, szer As Single, wys As Single)
 
@@ -138,8 +138,8 @@
         WypelnijFigureD2D(hOkno, pedzel, figura)
     End Sub
 
-    Public Function UtworzCzcionke(nazwaCzcionki As String, rozmiar As Single) As IntPtr Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).UtworzCzcionke
-        Return UtworzCzcionkeD2D(hOkno, nazwaCzcionki, rozmiar * PRZELICZNIK_ROZM_CZIONKI)
+    Public Function UtworzCzcionke(nazwaCzcionki As String, rozmiar As Single, tymczasowa As Boolean) As IntPtr Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).UtworzCzcionke
+        Return UtworzCzcionkeD2D(hOkno, nazwaCzcionki, rozmiar * PRZELICZNIK_ROZM_CZIONKI, tymczasowa)
     End Function
 
     Public Function ZmierzTekst(czcionka As IntPtr, tekst As String, szer As Single, wys As Single) As SizeF Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).ZmierzTekst

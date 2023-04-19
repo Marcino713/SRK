@@ -164,8 +164,9 @@
             PosterunkiSlownik.Clear()
             btnRozlacz.Enabled = False
             If polaczenia Is Nothing Then Exit Sub
+            Dim polEn As IEnumerable(Of Zaleznosci.StanObslugiwanegoPosterunku) = polaczenia.OrderBy(Function(x) x.NazwaPosterunku)
 
-            For Each pol As Zaleznosci.StanObslugiwanegoPosterunku In polaczenia
+            For Each pol As Zaleznosci.StanObslugiwanegoPosterunku In polEn
                 Dim lvi As New ListViewItem(New String() {pol.NazwaPosterunku, pol.NazwaPliku, pol.Adres, pol.DataPodlaczenia, pol.OstatnieZapytanie}) With {
                         .Tag = pol
                     }

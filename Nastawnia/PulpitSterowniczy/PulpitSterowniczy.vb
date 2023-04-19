@@ -12,6 +12,7 @@ Friend Class PulpitSterowniczy
     Private Const KATEG_KONF As String = "Konfiguracja"
     Private Const KATEG_ZDARZ As String = "Zdarzenia trybu działania"
     Private Const KATEG_ZDARZ_PROJ As String = "Zdarzenia trybu projektowego"
+    Private ReadOnly KLAWISZE_STRZALEK As New HashSet(Of Keys) From {Keys.Up, Keys.Down, Keys.Left, Keys.Right}
 
     Public PoczatekZaznaczeniaLamp As PointF
     Public KoniecZaznaczeniaLamp As PointF
@@ -290,13 +291,13 @@ Friend Class PulpitSterowniczy
         End Set
     End Property
 
-    Private _projZaznaczonyPrzejazdRogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego
+    Private _projZaznaczonyPrzejazdRogatka As Zaleznosci.RogatkaPrzejazduKolejowego
     <Browsable(False)>
-    Public Property projZaznaczonyPrzejazdRogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego
+    Public Property projZaznaczonyPrzejazdRogatka As Zaleznosci.RogatkaPrzejazduKolejowego
         Get
             Return _projZaznaczonyPrzejazdRogatka
         End Get
-        Set(value As Zaleznosci.ElementWykonaczyPrzejazduKolejowego)
+        Set(value As Zaleznosci.RogatkaPrzejazduKolejowego)
             _projZaznaczonyPrzejazdRogatka = value
             If _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyRogatki Then Invalidate()
         End Set
@@ -387,6 +388,10 @@ Friend Class PulpitSterowniczy
         Migacz?.Wylacz()
         UstawMigacz(Nothing)
         actWylaczZegarMigania()
+    End Sub
+
+    Private Sub ctmWysrodkuj_Click() Handles ctmWysrodkuj.Click
+        Wysrodkuj()
     End Sub
 
     Private Sub PulpitSterowniczy_Load() Handles Me.Load
@@ -690,6 +695,55 @@ Friend Class PulpitSterowniczy
             Invalidate()
         End If
     End Sub
+
+    Protected Overrides Function ProcessCmdKey(ByRef msg As Message, keyData As Keys) As Boolean
+        Dim wynik As Boolean = False
+
+        If TrybProjektowy AndAlso _ZaznaczonaKostka IsNot Nothing AndAlso KLAWISZE_STRZALEK.Contains(keyData) Then
+            Dim p As Zaleznosci.Punkt = _Pulpit.ZnajdzKostke(_ZaznaczonaKostka)
+            Dim przesX As Integer
+            Dim przesY As Integer
+            Dim maxX As Integer
+            Dim maxY As Integer
+
+            If keyData = Keys.Up AndAlso p.Y <> 0 Then
+                przesY = -1
+                maxY = -1
+
+            ElseIf keyData = Keys.Down AndAlso p.Y <> (Pulpit.Wysokosc - 1) Then
+                przesY = 1
+                maxY = Pulpit.Wysokosc
+
+            ElseIf keyData = Keys.Left AndAlso p.X <> 0 Then
+                przesX = -1
+                maxX = -1
+
+            ElseIf keyData = Keys.Right AndAlso p.X <> (Pulpit.Szerokosc - 1) Then
+                przesX = 1
+                maxX = Pulpit.Szerokosc
+            End If
+
+            If przesX <> 0 Or przesY <> 0 Then
+                Dim nast As Zaleznosci.Kostka = ZnajdzNajblizszaKostke(p.X + przesX, p.Y + przesY, przesX, przesY, maxX, maxY)
+                If nast IsNot Nothing Then ZaznaczonaKostka = nast
+                wynik = True
+            End If
+        End If
+
+        Return wynik
+    End Function
+
+    Private Function ZnajdzNajblizszaKostke(x As Integer, y As Integer, przesX As Integer, przesY As Integer, maxX As Integer, maxY As Integer) As Zaleznosci.Kostka
+        While x <> maxX And y <> maxY
+            Dim k As Zaleznosci.Kostka = Pulpit.Kostki(x, y)
+            If k IsNot Nothing Then Return k
+
+            x += przesX
+            y += przesY
+        End While
+
+        Return Nothing
+    End Function
 
     Private Function PobierzPozycjeDlaWysrodkowania() As Point
         Return New Point(

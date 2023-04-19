@@ -105,6 +105,8 @@
     Private ReadOnly PUNKTY_KIERUNKU As PointF()
     Private ReadOnly PUNKTY_SZCZELINY_KIERUNKU As PointF()
 
+    Private Const DOMYSLNY_ROZMIAR_CZCIONKI As Single = 0.17F
+    Private Const NAZWA_CZCIONKI As String = "Arial"
     Private CZCIONKA As TCzcionka
 
     Private Const NAZWA_SZ As String = "Sz"     'Sygnał zastępczy
@@ -223,7 +225,7 @@
         PEDZEL_PRZEJAZD_ROGATKA_ZAZN = urz.UtworzPedzel(KolorRGB("#000DFF"))
         PEDZEL_PRZEJAZD_SYGN_DROG = urz.UtworzPedzel(KolorRGB("#FF66D1"))
         PEDZEL_PRZEJAZD_SYGN_DROG_ZAZN = urz.UtworzPedzel(KolorRGB("#CC0047"))
-        CZCIONKA = urz.UtworzCzcionke("Arial", 0.17)
+        CZCIONKA = urz.UtworzCzcionke(NAZWA_CZCIONKI, DOMYSLNY_ROZMIAR_CZCIONKI, False)
 
         zainicjalizowano = True
     End Sub
@@ -552,16 +554,21 @@
     End Sub
 
     Private Sub RysujNazwe(nazwa As String, x As Single, y As Single, Optional wys As Single = TEKST_WYS_LINIA, Optional dodatkowyMarginesSzer As Single = TEKST_POZ_X, Optional przywrocTransformacje As Boolean = False)
+        RysujNazwe(nazwa, x, y, wys, dodatkowyMarginesSzer, przywrocTransformacje, CZCIONKA)
+    End Sub
+
+    Private Sub RysujNazwe(nazwa As String, x As Single, y As Single, wys As Single, dodatkowyMarginesSzer As Single, przywrocTransformacje As Boolean, uzywanaCzcionka As TCzcionka)
         If String.IsNullOrEmpty(nazwa) Then Exit Sub
 
-        Dim rect As New RectangleF(x, y, 1 - x - dodatkowyMarginesSzer, wys)
+        Dim rect As New RectangleF(x, y, 1.0F - x - dodatkowyMarginesSzer, wys)
+        Dim rozm As SizeF = urz.ZmierzTekst(uzywanaCzcionka, nazwa, rect.Width, rect.Height)
         Dim zmienionoTransformacje As Boolean = False
         Dim transformacja As TMacierz
+        rect.X += (rect.Width - rozm.Width) / 2.0F
 
         If CzyObrocicObiekty() Then
-            Dim rozm As SizeF = urz.ZmierzTekst(CZCIONKA, nazwa, rect.Width, rect.Height)
-            Dim x1 As Single = rect.X + rozm.Width / 2
-            Dim y1 As Single = rect.Y + rozm.Height / 2
+            Dim x1 As Single = rect.X + rozm.Width / 2.0F
+            Dim y1 As Single = rect.Y + rozm.Height / 2.0F
             zmienionoTransformacje = True
             transformacja = urz.TransformacjaPobierz
 
@@ -570,7 +577,7 @@
             urz.TransformacjaDolacz(transformacja)
         End If
 
-        urz.RysujTekst(PEDZEL_TEKST, CZCIONKA, nazwa, rect.X, rect.Y, rect.Width, rect.Height)
+        urz.RysujTekst(PEDZEL_TEKST, uzywanaCzcionka, nazwa, rect.X, rect.Y, rect.Width, rect.Height)
 
         If zmienionoTransformacje AndAlso przywrocTransformacje Then
             urz.TransformacjaResetuj()
@@ -827,8 +834,9 @@
     End Sub
 
     Private Sub RysujKostkeNapis(napis As Zaleznosci.Napis)
-        urz.WypelnijKolo(PEDZEL_KOLKO_TEKST, KOLKO_TEKST_POZ, KOLKO_TEKST_POZ, KOLKO_TEKST_PROMIEN)
-        RysujNazwe(napis.Tekst, TEKST_NAPIS_POZ, TEKST_NAPIS_POZ, TEKST_WYS_KOSTKA_NAPIS, TEKST_POZ_X)
+        If String.IsNullOrWhiteSpace(napis.Tekst) Then urz.WypelnijKolo(PEDZEL_KOLKO_TEKST, KOLKO_TEKST_POZ, KOLKO_TEKST_POZ, KOLKO_TEKST_PROMIEN)
+        Dim czcionka As TCzcionka = urz.UtworzCzcionke(NAZWA_CZCIONKI, napis.Rozmiar, True)
+        RysujNazwe(napis.Tekst, TEKST_NAPIS_POZ, TEKST_NAPIS_POZ, TEKST_WYS_KOSTKA_NAPIS, TEKST_POZ_X, False, czcionka)
     End Sub
 
     Private Sub RysujSlupSygnalizatora(poczx As Single)
