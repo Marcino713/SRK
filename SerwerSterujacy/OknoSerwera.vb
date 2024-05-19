@@ -102,6 +102,18 @@
         End If
     End Sub
 
+    Private Sub btnKonfZwrotnic_Click() Handles btnKonfZwrotnic.Click
+        If Not Serwer.CzyWczytanoPosterunki Then
+            PokazBlad("Przed konfiguracją zwrotnic należy wczytać listę posterunków ruchu.")
+            Exit Sub
+        End If
+
+        If Not Serwer.Uruchomiony And spKomunikacja.IsOpen Then
+            Dim wnd As New wndKonfiguratorZwrotnic(Serwer)
+            wnd.ShowDialog()
+        End If
+    End Sub
+
     Private Sub lvPosterunki_SelectedIndexChanged() Handles lvPosterunki.SelectedIndexChanged
         SyncLock slockListaPosterunkow
             btnRozlacz.Enabled =
@@ -215,5 +227,6 @@
         txtUartPort.Enabled = (Not serwerDziala) And (Not uartDziala)
         btnUartPolacz.Enabled = (Not serwerDziala) And (Not uartDziala)
         btnUartRozlacz.Enabled = (Not serwerDziala) And uartDziala
+        btnKonfZwrotnic.Enabled = (Not serwerDziala) And uartDziala
     End Sub
 End Class

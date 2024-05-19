@@ -32,6 +32,7 @@ Public Class SerwerTCP
     Private WszyscyKlienci As New List(Of PolaczenieTCP)
     Private SygnalizatoryPowtDlaSygnalizatoraPolsamoczynego As New Dictionary(Of UShort, List(Of SygnalizatorPowtarzajacy))
     Private DodatkoweDane As New Dictionary(Of UShort, DaneDodatkowePosterunku)
+    Private Przejazdy As New Dictionary(Of UShort, PrzejazdKolejowoDrogowy)
     Private Serwer As TcpListener
     Private WatekSerwera As Thread
     Private WatekZamykaniaPolaczen As Thread
@@ -289,7 +290,8 @@ Public Class SerwerTCP
             AddressOf UstawZwrotnice.Otworz,
             Sub(pol, kom)
                 Dim k As UstawZwrotnice = CType(kom, UstawZwrotnice)
-                pol.WyslijKomunikat(New ZmienionoStanZwrotnicy() With {.Adres = k.Adres, .Stan = If(k.Ustawienie = UstawienieRozjazduEnum.Wprost, StanRozjazdu.Wprost, StanRozjazdu.Bok)})
+                pol.WyslijKomunikat(New ZmienionoStanZwrotnicy() With {.Adres = k.Adres, .Stan = If(k.Ustawienie = UstawianyStanRozjazdu.Wprost, StanRozjazdu.Wprost, StanRozjazdu.Bok)})
+                PolaczenieUart.UstawZwrotnice(New UstawZwrotniceUrz() With {.AdresUrzadzenia = k.Adres, .Ustawienie = If(k.Ustawienie = UstawianyStanRozjazdu.Wprost, UstawienieRozjazduEnum.Wprost, UstawienieRozjazduEnum.Bok)})
                 RaiseEvent OdebranoUstawZwrotnice(pol.AdresStacji, k)
             End Sub
         ))
@@ -408,9 +410,22 @@ Public Class SerwerTCP
                                     .Stan = If(k.Stan = UstawianyStanPrzejazdu.Zamkniety, StanPrzejazduKolejowego.Zamkniety, StanPrzejazduKolejowego.Otwarty)})
                 RaiseEvent OdebranoUstawStanPrzejazdu(pol.AdresStacji, k)
 
+                Dim prz As PrzejazdKolejowoDrogowy = Nothing
+                If Przejazdy.TryGetValue(k.Numer, prz) Then
+                    Dim wlaczony As Boolean = k.Stan = UstawianyStanPrzejazdu.Zamkniety
 
-                PolaczenieUart.UstawStanSygnalizatoraDrogowego(New UstawStanSygnalizatoraDrogowegoUrz() With {.AdresUrzadzenia = 40, .Wlaczony = k.Stan = UstawianyStanPrzejazdu.Zamkniety})
+                    For Each r As RogatkaPrzejazduKolejowego In prz.Rogatki
+                        If k.Stan = UstawianyStanPrzejazdu.Zamkniety Then
+                            PolaczenieUart.ZamknijRogatke(New ZamknijRogatkeUrz() With {.AdresUrzadzenia = r.Adres, .CzasZamykaniaMs = prz.CzasOpuszczania})
+                        Else
+                            PolaczenieUart.OtworzRogatke(New OtworzRogatkeUrz() With {.AdresUrzadzenia = r.Adres, .CzasOtwieraniaMs = prz.CzasPodnoszenia})
+                        End If
+                    Next
 
+                    For Each s As ElementWykonaczyPrzejazduKolejowego In prz.SygnalizatoryDrogowe
+                        PolaczenieUart.UstawStanSygnalizatoraDrogowego(New UstawStanSygnalizatoraDrogowegoUrz() With {.AdresUrzadzenia = s.Adres, .Wlaczony = wlaczony})
+                    Next
+                End If
 
             End Sub
         ))
@@ -470,6 +485,10 @@ Public Class SerwerTCP
 
     Public Sub WysliZmienionoStanPrzejazdu(post As UShort, kom As ZmienionoStanPrzejazdu)
         WyslijDoKlienta(post, kom)
+    End Sub
+
+    Public Sub UstawZwrotniceSerwisowo(kom As UstawZwrotniceSerwisowoUrz)
+        PolaczenieUart.UstawZwrotniceSerwisowo(kom)
     End Sub
 
     Public Sub ZmienNazwePociagu(NrPociagu As UInteger, Nazwa As String)
@@ -661,6 +680,8 @@ Public Class SerwerTCP
                 PosterunkiLista.Add(obs)
                 ZnajdzMaksymalnaPredkoscSieci(pol.DanePulpitu)
                 ZnajdzSygnalizatoryPowtarzajace(pol.DanePulpitu)
+                Dim prz As Dictionary(Of UShort, PrzejazdKolejowoDrogowy) = pol.DanePulpitu.PobierzPrzejazdyKolejowoDrogowe
+                If prz.Count > 0 Then Przejazdy = prz
 
                 If Not DodatkoweDane.ContainsKey(pol.Adres) Then
                     DodatkoweDane.Add(pol.Adres, New DaneDodatkowePosterunku() With {
@@ -739,6 +760,27 @@ Public Class SerwerTCP
         End SyncLock
 
         Return lista
+    End Function
+
+    Public Function PobierzZwrotnice() As IEnumerable(Of DaneZwrotnicy)
+        If _Uruchomiony Or Not CzyWczytanoPosterunki Then Return Nothing
+
+        Dim zwrotnice As New List(Of DaneZwrotnicy)
+
+        For Each p As ObslugiwanyPosterunek In Posterunki
+            p.DanePulpitu.PrzeiterujKostki(Sub(x, y, k)
+                                               Dim z As Rozjazd = TryCast(k, Rozjazd)
+                                               If z IsNot Nothing Then
+                                                   zwrotnice.Add(New DaneZwrotnicy() With {
+                                                                 .AdresPosterunku = p.Adres,
+                                                                 .NazwaPosterunku = p.NazwaPosterunku,
+                                                                 .AdresZwrotnicy = z.Adres,
+                                                                 .NazwaZwrotnicy = z.Nazwa})
+                                               End If
+                                           End Sub)
+        Next
+
+        Return zwrotnice
     End Function
 
     Friend Overrides Sub PrzetworzZakonczeniePolaczenia(pol As PolaczenieTCP)
@@ -944,6 +986,14 @@ Public Class SerwerTCP
 
     Private Sub PolaczenieUart_OdebranoWykrytoOs(kom As WykrytoOsUrz) Handles PolaczenieUart.OdebranoWykrytoOs
         Debug.Print("Wykryto oś " & kom.AdresUrzadzenia)
+    End Sub
+
+    Private Sub PolaczenieUart_OdebranoZmienionoStanRogatki(kom As ZmienionoStanRogatkiUrz) Handles PolaczenieUart.OdebranoZmienionoStanRogatki
+        Debug.Print("Zmieniono stan rogatki " & kom.AdresUrzadzenia & ": " & kom.Stan.ToString)
+    End Sub
+
+    Private Sub PolaczenieUart_OdebranoZmienionoStanZwrotnicy(kom As ZmienionoStanZwrotnicyUrz) Handles PolaczenieUart.OdebranoZmienionoStanZwrotnicy
+        Debug.Print("Zmieniono stan zwrotnicy " & kom.AdresUrzadzenia & ": " & kom.Stan.ToString)
     End Sub
 
     Private Class DaneDodatkowePosterunku

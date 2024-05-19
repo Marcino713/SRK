@@ -158,12 +158,12 @@ Public Class KonfiguracjaRozjazduZaleznego
 End Class
 
 Public Enum UstawienieRozjazduEnum
-    Wprost
-    Bok
+    Wprost = 1
+    Bok = 2
 End Enum
 
 Public Enum StanRozjazdu As Byte
-    Wprost
-    Bok
-    Niezdefiniowany
+    Niezdefiniowany = 0
+    Wprost = 1
+    Bok = 2
 End Enum

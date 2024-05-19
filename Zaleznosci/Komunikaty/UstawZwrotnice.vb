@@ -25,7 +25,7 @@
 End Class
 
 Public Enum UstawianyStanRozjazdu As Byte
-    Wprost
-    Bok
-    KasujRozprucie
+    Wprost = 1
+    Bok = 2
+    KasujRozprucie = 3
 End Enum

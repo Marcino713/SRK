@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IMigacz.vb" />
+    <Compile Include="KomunikatyUrzadzen\OtworzRogatkeUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\UstawionoJasnoscLampyUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\UstawionoStanSygnalizatoraDrogowegoUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\UstawionoStanSygnalizatoraUrz.vb" />
@@ -82,7 +83,12 @@
     <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraPowtarzajacegoUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraPrzejazdowegoUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\UstawStanSygnalizatoraSamoczynnegoUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawZwrotniceSerwisowoUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\UstawZwrotniceUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\WykrytoOsUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\ZamknijRogatkeUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\ZmienionoStanRogatkiUrz.vb" />
+    <Compile Include="KomunikatyUrzadzen\ZmienionoStanZwrotnicyUrz.vb" />
     <Compile Include="ObslugaKomunikatowUrzadzen\KomunikatUrzadzenia.vb" />
     <Compile Include="ObslugaKomunikatowUrzadzen\TypKomunikatuUrzadzenia.vb" />
     <Compile Include="Komunikaty\DHInicjalizuj.vb" />
@@ -131,6 +137,7 @@
     <Compile Include="Komunikaty\WybranoPosterunek.vb" />
     <Compile Include="Komunikaty\ZmienionoStanZwrotnicy.vb" />
     <Compile Include="Komunikaty\ZmienionoStanToru.vb" />
+    <Compile Include="ObslugaTCP\DaneZwrotnicy.vb" />
     <Compile Include="ObslugaTCP\KlientDaneDH.vb" />
     <Compile Include="ObslugaTCP\ObslugiwanyPosterunek.vb" />
     <Compile Include="ObslugaTCP\Pociag.vb" />

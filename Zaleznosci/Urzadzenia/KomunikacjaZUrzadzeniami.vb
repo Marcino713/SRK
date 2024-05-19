@@ -10,12 +10,21 @@ Public Class KomunikacjaZUrzadzeniami
     Private slockZapisz As New Object
     Private DaneFabrykiObiektow As New Dictionary(Of Byte, MetodaOtwierajaca)
 
+    Private _polaczony As Boolean
+    Public ReadOnly Property Polaczony As Boolean
+        Get
+            Return _polaczony
+        End Get
+    End Property
+
     Private Delegate Sub MetodaOtwierajaca(br As BinaryReader)
 
     Public Event OdebranoUstawionoStanSygnalizatora(kom As UstawionoStanSygnalizatoraUrz)
     Public Event OdebranoUstawionoStanSygnalizatoraDrogowego(kom As UstawionoStanSygnalizatoraDrogowegoUrz)
     Public Event OdebranoUstawionoJasnoscLampy(kom As UstawionoJasnoscLampyUrz)
     Public Event OdebranoWykrytoOs(kom As WykrytoOsUrz)
+    Public Event OdebranoZmienionoStanZwrotnicy(kom As ZmienionoStanZwrotnicyUrz)
+    Public Event OdebranoZmienionoStanRogatki(kom As ZmienionoStanRogatkiUrz)
 
     Public Sub New()
         DaneFabrykiObiektow.Add(
@@ -33,6 +42,14 @@ Public Class KomunikacjaZUrzadzeniami
         DaneFabrykiObiektow.Add(
             TypKomunikatuUrzadzenia.WYKRYTO_OS,
             Sub(br) RaiseEvent OdebranoWykrytoOs(New WykrytoOsUrz(br)))
+
+        DaneFabrykiObiektow.Add(
+            TypKomunikatuUrzadzenia.ZMIENIONO_STAN_ZWROTNICY,
+            Sub(br) RaiseEvent OdebranoZmienionoStanZwrotnicy(New ZmienionoStanZwrotnicyUrz(br)))
+
+        DaneFabrykiObiektow.Add(
+            TypKomunikatuUrzadzenia.ZMIENIONO_STAN_ROGATKI,
+            Sub(br) RaiseEvent OdebranoZmienionoStanRogatki(New ZmienionoStanRogatkiUrz(br)))
     End Sub
 
     Public Sub Polacz(str As Stream)
@@ -41,12 +58,18 @@ Public Class KomunikacjaZUrzadzeniami
         br = New BinaryReader(str)
         watekOdbierania = New Thread(AddressOf OdbierajKomunikaty)
         watekOdbierania.Start()
+        _polaczony = True
     End Sub
 
     Public Sub Rozlacz()
-        strumien?.Close()
-        strumien?.Dispose()
-        strumien = Nothing
+        Try
+            strumien?.Close()
+            strumien?.Dispose()
+            strumien = Nothing
+        Catch
+        End Try
+
+        _polaczony = False
     End Sub
 
     Public Sub UstawStanSygnalizatoraSamoczynnego(kom As UstawStanSygnalizatoraSamoczynnegoUrz)
@@ -74,6 +97,22 @@ Public Class KomunikacjaZUrzadzeniami
     End Sub
 
     Public Sub UstawJasnoscLampy(kom As UstawJasnoscLampyUrz)
+        Zapisz(kom)
+    End Sub
+
+    Public Sub UstawZwrotnice(kom As UstawZwrotniceUrz)
+        Zapisz(kom)
+    End Sub
+
+    Public Sub UstawZwrotniceSerwisowo(kom As UstawZwrotniceSerwisowoUrz)
+        Zapisz(kom)
+    End Sub
+
+    Public Sub ZamknijRogatke(kom As ZamknijRogatkeUrz)
+        Zapisz(kom)
+    End Sub
+
+    Public Sub OtworzRogatke(kom As OtworzRogatkeUrz)
         Zapisz(kom)
     End Sub
 

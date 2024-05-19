@@ -50,12 +50,13 @@ Partial Class wndOknoSerwera
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.btnPociagi = New System.Windows.Forms.Button()
         Me.GroupBox5 = New System.Windows.Forms.GroupBox()
+        Me.btnUartRozlacz = New System.Windows.Forms.Button()
         Me.lblUartStan = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.btnUartPolacz = New System.Windows.Forms.Button()
         Me.txtUartPort = New System.Windows.Forms.TextBox()
         Me.spKomunikacja = New System.IO.Ports.SerialPort(Me.components)
-        Me.btnUartRozlacz = New System.Windows.Forms.Button()
+        Me.btnKonfZwrotnic = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
@@ -217,7 +218,7 @@ Partial Class wndOknoSerwera
         Me.GroupBox3.Location = New System.Drawing.Point(165, 95)
         Me.GroupBox3.Name = "GroupBox3"
         Me.GroupBox3.Size = New System.Drawing.Size(676, 421)
-        Me.GroupBox3.TabIndex = 15
+        Me.GroupBox3.TabIndex = 16
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Posterunki i klienci"
         '
@@ -227,7 +228,7 @@ Partial Class wndOknoSerwera
         Me.btnRozlacz.Location = New System.Drawing.Point(515, 392)
         Me.btnRozlacz.Name = "btnRozlacz"
         Me.btnRozlacz.Size = New System.Drawing.Size(75, 23)
-        Me.btnRozlacz.TabIndex = 17
+        Me.btnRozlacz.TabIndex = 18
         Me.btnRozlacz.Text = "Rozłącz"
         Me.btnRozlacz.UseVisualStyleBackColor = True
         '
@@ -237,7 +238,7 @@ Partial Class wndOknoSerwera
         Me.btnOdswiez.Location = New System.Drawing.Point(596, 392)
         Me.btnOdswiez.Name = "btnOdswiez"
         Me.btnOdswiez.Size = New System.Drawing.Size(75, 23)
-        Me.btnOdswiez.TabIndex = 18
+        Me.btnOdswiez.TabIndex = 19
         Me.btnOdswiez.Text = "Odśwież"
         Me.btnOdswiez.UseVisualStyleBackColor = True
         '
@@ -253,7 +254,7 @@ Partial Class wndOknoSerwera
         Me.lvPosterunki.MultiSelect = False
         Me.lvPosterunki.Name = "lvPosterunki"
         Me.lvPosterunki.Size = New System.Drawing.Size(664, 354)
-        Me.lvPosterunki.TabIndex = 16
+        Me.lvPosterunki.TabIndex = 17
         Me.lvPosterunki.UseCompatibleStateImageBehavior = False
         Me.lvPosterunki.View = System.Windows.Forms.View.Details
         '
@@ -295,6 +296,7 @@ Partial Class wndOknoSerwera
         '
         Me.GroupBox4.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox4.Controls.Add(Me.btnKonfZwrotnic)
         Me.GroupBox4.Controls.Add(Me.btnPociagi)
         Me.GroupBox4.Location = New System.Drawing.Point(12, 413)
         Me.GroupBox4.Name = "GroupBox4"
@@ -326,6 +328,16 @@ Partial Class wndOknoSerwera
         Me.GroupBox5.TabIndex = 9
         Me.GroupBox5.TabStop = False
         Me.GroupBox5.Text = "Komunikacja UART"
+        '
+        'btnUartRozlacz
+        '
+        Me.btnUartRozlacz.Enabled = False
+        Me.btnUartRozlacz.Location = New System.Drawing.Point(5, 87)
+        Me.btnUartRozlacz.Name = "btnUartRozlacz"
+        Me.btnUartRozlacz.Size = New System.Drawing.Size(137, 23)
+        Me.btnUartRozlacz.TabIndex = 12
+        Me.btnUartRozlacz.Text = "Rozłącz"
+        Me.btnUartRozlacz.UseVisualStyleBackColor = True
         '
         'lblUartStan
         '
@@ -365,15 +377,15 @@ Partial Class wndOknoSerwera
         '
         Me.spKomunikacja.BaudRate = 19200
         '
-        'btnUartRozlacz
+        'btnKonfZwrotnic
         '
-        Me.btnUartRozlacz.Enabled = False
-        Me.btnUartRozlacz.Location = New System.Drawing.Point(5, 87)
-        Me.btnUartRozlacz.Name = "btnUartRozlacz"
-        Me.btnUartRozlacz.Size = New System.Drawing.Size(137, 23)
-        Me.btnUartRozlacz.TabIndex = 12
-        Me.btnUartRozlacz.Text = "Rozłącz"
-        Me.btnUartRozlacz.UseVisualStyleBackColor = True
+        Me.btnKonfZwrotnic.Enabled = False
+        Me.btnKonfZwrotnic.Location = New System.Drawing.Point(5, 48)
+        Me.btnKonfZwrotnic.Name = "btnKonfZwrotnic"
+        Me.btnKonfZwrotnic.Size = New System.Drawing.Size(137, 23)
+        Me.btnKonfZwrotnic.TabIndex = 15
+        Me.btnKonfZwrotnic.Text = "Konfiguracja zwrotnic..."
+        Me.btnKonfZwrotnic.UseVisualStyleBackColor = True
         '
         'wndOknoSerwera
         '
@@ -433,4 +445,5 @@ Partial Class wndOknoSerwera
     Friend WithEvents Label2 As Label
     Friend WithEvents lblUartStan As Label
     Friend WithEvents btnUartRozlacz As Button
+    Friend WithEvents btnKonfZwrotnic As Button
 End Class

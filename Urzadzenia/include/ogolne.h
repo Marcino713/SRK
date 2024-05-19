@@ -16,5 +16,9 @@
 #define LICZBA_WYJSC (LICZBA_PORTOW * LICZBA_PINOW)
 // Numer pinu o najwiekszej wartosci
 #define PIN_MAX 0x80
+// Adres portu D jako liczba
+#define PORTD_NUM 0x32
+// Adres pinu D jako liczba
+#define PIND_NUM 0x30
 
 #endif

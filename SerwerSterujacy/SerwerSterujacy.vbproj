@@ -76,6 +76,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KonfiguratorZwrotnic.Designer.vb">
+      <DependentUpon>KonfiguratorZwrotnic.vb</DependentUpon>
+    </Compile>
+    <Compile Include="KonfiguratorZwrotnic.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Narzedzia.vb" />
     <Compile Include="OknoSerwera.vb">
       <SubType>Form</SubType>
@@ -113,6 +119,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="KonfiguratorZwrotnic.resx">
+      <DependentUpon>KonfiguratorZwrotnic.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
