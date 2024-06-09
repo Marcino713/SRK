@@ -30,6 +30,7 @@ Partial Class wndOknoSerwera
         Me.txtSciezka = New System.Windows.Forms.TextBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.btnFiltrujAdresy = New System.Windows.Forms.Button()
         Me.lblStanSerwera = New System.Windows.Forms.Label()
         Me.btnStop = New System.Windows.Forms.Button()
         Me.btnStart = New System.Windows.Forms.Button()
@@ -48,6 +49,7 @@ Partial Class wndOknoSerwera
         Me.ColumnHeader5 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.Label6 = New System.Windows.Forms.Label()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
+        Me.btnKonfZwrotnic = New System.Windows.Forms.Button()
         Me.btnPociagi = New System.Windows.Forms.Button()
         Me.GroupBox5 = New System.Windows.Forms.GroupBox()
         Me.btnUartRozlacz = New System.Windows.Forms.Button()
@@ -56,7 +58,7 @@ Partial Class wndOknoSerwera
         Me.btnUartPolacz = New System.Windows.Forms.Button()
         Me.txtUartPort = New System.Windows.Forms.TextBox()
         Me.spKomunikacja = New System.IO.Ports.SerialPort(Me.components)
-        Me.btnKonfZwrotnic = New System.Windows.Forms.Button()
+        Me.ColumnHeader6 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
@@ -75,7 +77,7 @@ Partial Class wndOknoSerwera
         Me.GroupBox1.Controls.Add(Me.Label1)
         Me.GroupBox1.Location = New System.Drawing.Point(12, 12)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(829, 77)
+        Me.GroupBox1.Size = New System.Drawing.Size(980, 77)
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Plik połączeń"
@@ -100,7 +102,7 @@ Partial Class wndOknoSerwera
         'btnPrzegladaj
         '
         Me.btnPrzegladaj.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnPrzegladaj.Location = New System.Drawing.Point(749, 18)
+        Me.btnPrzegladaj.Location = New System.Drawing.Point(900, 18)
         Me.btnPrzegladaj.Name = "btnPrzegladaj"
         Me.btnPrzegladaj.Size = New System.Drawing.Size(75, 22)
         Me.btnPrzegladaj.TabIndex = 2
@@ -113,7 +115,7 @@ Partial Class wndOknoSerwera
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtSciezka.Location = New System.Drawing.Point(60, 19)
         Me.txtSciezka.Name = "txtSciezka"
-        Me.txtSciezka.Size = New System.Drawing.Size(683, 20)
+        Me.txtSciezka.Size = New System.Drawing.Size(834, 20)
         Me.txtSciezka.TabIndex = 1
         Me.txtSciezka.Text = "C:\Users\Marcin\Desktop\Testy\Testy pol\a.pol"
         '
@@ -128,6 +130,7 @@ Partial Class wndOknoSerwera
         '
         'GroupBox2
         '
+        Me.GroupBox2.Controls.Add(Me.btnFiltrujAdresy)
         Me.GroupBox2.Controls.Add(Me.lblStanSerwera)
         Me.GroupBox2.Controls.Add(Me.btnStop)
         Me.GroupBox2.Controls.Add(Me.btnStart)
@@ -137,17 +140,26 @@ Partial Class wndOknoSerwera
         Me.GroupBox2.Controls.Add(Me.Label3)
         Me.GroupBox2.Location = New System.Drawing.Point(12, 95)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(147, 172)
+        Me.GroupBox2.Size = New System.Drawing.Size(147, 202)
         Me.GroupBox2.TabIndex = 4
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Zarządzanie serwerem"
+        '
+        'btnFiltrujAdresy
+        '
+        Me.btnFiltrujAdresy.Location = New System.Drawing.Point(5, 155)
+        Me.btnFiltrujAdresy.Name = "btnFiltrujAdresy"
+        Me.btnFiltrujAdresy.Size = New System.Drawing.Size(136, 23)
+        Me.btnFiltrujAdresy.TabIndex = 9
+        Me.btnFiltrujAdresy.Text = "Filtruj adresy"
+        Me.btnFiltrujAdresy.UseVisualStyleBackColor = True
         '
         'lblStanSerwera
         '
         Me.lblStanSerwera.AutoSize = True
         Me.lblStanSerwera.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
         Me.lblStanSerwera.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblStanSerwera.Location = New System.Drawing.Point(6, 152)
+        Me.lblStanSerwera.Location = New System.Drawing.Point(6, 181)
         Me.lblStanSerwera.Name = "lblStanSerwera"
         Me.lblStanSerwera.Size = New System.Drawing.Size(0, 13)
         Me.lblStanSerwera.TabIndex = 6
@@ -217,28 +229,28 @@ Partial Class wndOknoSerwera
         Me.GroupBox3.Controls.Add(Me.Label6)
         Me.GroupBox3.Location = New System.Drawing.Point(165, 95)
         Me.GroupBox3.Name = "GroupBox3"
-        Me.GroupBox3.Size = New System.Drawing.Size(676, 421)
-        Me.GroupBox3.TabIndex = 16
+        Me.GroupBox3.Size = New System.Drawing.Size(827, 426)
+        Me.GroupBox3.TabIndex = 17
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Posterunki i klienci"
         '
         'btnRozlacz
         '
         Me.btnRozlacz.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnRozlacz.Location = New System.Drawing.Point(515, 392)
+        Me.btnRozlacz.Location = New System.Drawing.Point(666, 397)
         Me.btnRozlacz.Name = "btnRozlacz"
         Me.btnRozlacz.Size = New System.Drawing.Size(75, 23)
-        Me.btnRozlacz.TabIndex = 18
+        Me.btnRozlacz.TabIndex = 19
         Me.btnRozlacz.Text = "Rozłącz"
         Me.btnRozlacz.UseVisualStyleBackColor = True
         '
         'btnOdswiez
         '
         Me.btnOdswiez.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnOdswiez.Location = New System.Drawing.Point(596, 392)
+        Me.btnOdswiez.Location = New System.Drawing.Point(747, 397)
         Me.btnOdswiez.Name = "btnOdswiez"
         Me.btnOdswiez.Size = New System.Drawing.Size(75, 23)
-        Me.btnOdswiez.TabIndex = 19
+        Me.btnOdswiez.TabIndex = 20
         Me.btnOdswiez.Text = "Odśwież"
         Me.btnOdswiez.UseVisualStyleBackColor = True
         '
@@ -247,14 +259,14 @@ Partial Class wndOknoSerwera
         Me.lvPosterunki.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lvPosterunki.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3, Me.ColumnHeader4, Me.ColumnHeader5})
+        Me.lvPosterunki.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3, Me.ColumnHeader4, Me.ColumnHeader5, Me.ColumnHeader6})
         Me.lvPosterunki.FullRowSelect = True
         Me.lvPosterunki.HideSelection = False
         Me.lvPosterunki.Location = New System.Drawing.Point(6, 32)
         Me.lvPosterunki.MultiSelect = False
         Me.lvPosterunki.Name = "lvPosterunki"
-        Me.lvPosterunki.Size = New System.Drawing.Size(664, 354)
-        Me.lvPosterunki.TabIndex = 17
+        Me.lvPosterunki.Size = New System.Drawing.Size(815, 359)
+        Me.lvPosterunki.TabIndex = 18
         Me.lvPosterunki.UseCompatibleStateImageBehavior = False
         Me.lvPosterunki.View = System.Windows.Forms.View.Details
         '
@@ -271,7 +283,7 @@ Partial Class wndOknoSerwera
         'ColumnHeader3
         '
         Me.ColumnHeader3.Text = "Adres"
-        Me.ColumnHeader3.Width = 80
+        Me.ColumnHeader3.Width = 50
         '
         'ColumnHeader4
         '
@@ -298,12 +310,22 @@ Partial Class wndOknoSerwera
             Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.GroupBox4.Controls.Add(Me.btnKonfZwrotnic)
         Me.GroupBox4.Controls.Add(Me.btnPociagi)
-        Me.GroupBox4.Location = New System.Drawing.Point(12, 413)
+        Me.GroupBox4.Location = New System.Drawing.Point(12, 443)
         Me.GroupBox4.Name = "GroupBox4"
-        Me.GroupBox4.Size = New System.Drawing.Size(147, 103)
-        Me.GroupBox4.TabIndex = 13
+        Me.GroupBox4.Size = New System.Drawing.Size(147, 78)
+        Me.GroupBox4.TabIndex = 14
         Me.GroupBox4.TabStop = False
         Me.GroupBox4.Text = "Zarządzanie obiektami"
+        '
+        'btnKonfZwrotnic
+        '
+        Me.btnKonfZwrotnic.Enabled = False
+        Me.btnKonfZwrotnic.Location = New System.Drawing.Point(5, 48)
+        Me.btnKonfZwrotnic.Name = "btnKonfZwrotnic"
+        Me.btnKonfZwrotnic.Size = New System.Drawing.Size(137, 23)
+        Me.btnKonfZwrotnic.TabIndex = 16
+        Me.btnKonfZwrotnic.Text = "Konfiguracja zwrotnic..."
+        Me.btnKonfZwrotnic.UseVisualStyleBackColor = True
         '
         'btnPociagi
         '
@@ -311,7 +333,7 @@ Partial Class wndOknoSerwera
         Me.btnPociagi.Location = New System.Drawing.Point(5, 19)
         Me.btnPociagi.Name = "btnPociagi"
         Me.btnPociagi.Size = New System.Drawing.Size(137, 23)
-        Me.btnPociagi.TabIndex = 14
+        Me.btnPociagi.TabIndex = 15
         Me.btnPociagi.Text = "Pociągi..."
         Me.btnPociagi.UseVisualStyleBackColor = True
         '
@@ -322,10 +344,10 @@ Partial Class wndOknoSerwera
         Me.GroupBox5.Controls.Add(Me.Label2)
         Me.GroupBox5.Controls.Add(Me.btnUartPolacz)
         Me.GroupBox5.Controls.Add(Me.txtUartPort)
-        Me.GroupBox5.Location = New System.Drawing.Point(12, 273)
+        Me.GroupBox5.Location = New System.Drawing.Point(12, 303)
         Me.GroupBox5.Name = "GroupBox5"
         Me.GroupBox5.Size = New System.Drawing.Size(147, 134)
-        Me.GroupBox5.TabIndex = 9
+        Me.GroupBox5.TabIndex = 10
         Me.GroupBox5.TabStop = False
         Me.GroupBox5.Text = "Komunikacja UART"
         '
@@ -335,7 +357,7 @@ Partial Class wndOknoSerwera
         Me.btnUartRozlacz.Location = New System.Drawing.Point(5, 87)
         Me.btnUartRozlacz.Name = "btnUartRozlacz"
         Me.btnUartRozlacz.Size = New System.Drawing.Size(137, 23)
-        Me.btnUartRozlacz.TabIndex = 12
+        Me.btnUartRozlacz.TabIndex = 13
         Me.btnUartRozlacz.Text = "Rozłącz"
         Me.btnUartRozlacz.UseVisualStyleBackColor = True
         '
@@ -362,7 +384,7 @@ Partial Class wndOknoSerwera
         Me.btnUartPolacz.Location = New System.Drawing.Point(5, 58)
         Me.btnUartPolacz.Name = "btnUartPolacz"
         Me.btnUartPolacz.Size = New System.Drawing.Size(137, 23)
-        Me.btnUartPolacz.TabIndex = 11
+        Me.btnUartPolacz.TabIndex = 12
         Me.btnUartPolacz.Text = "Połącz"
         Me.btnUartPolacz.UseVisualStyleBackColor = True
         '
@@ -371,27 +393,22 @@ Partial Class wndOknoSerwera
         Me.txtUartPort.Location = New System.Drawing.Point(6, 32)
         Me.txtUartPort.Name = "txtUartPort"
         Me.txtUartPort.Size = New System.Drawing.Size(135, 20)
-        Me.txtUartPort.TabIndex = 10
+        Me.txtUartPort.TabIndex = 11
         '
         'spKomunikacja
         '
         Me.spKomunikacja.BaudRate = 19200
         '
-        'btnKonfZwrotnic
+        'ColumnHeader6
         '
-        Me.btnKonfZwrotnic.Enabled = False
-        Me.btnKonfZwrotnic.Location = New System.Drawing.Point(5, 48)
-        Me.btnKonfZwrotnic.Name = "btnKonfZwrotnic"
-        Me.btnKonfZwrotnic.Size = New System.Drawing.Size(137, 23)
-        Me.btnKonfZwrotnic.TabIndex = 15
-        Me.btnKonfZwrotnic.Text = "Konfiguracja zwrotnic..."
-        Me.btnKonfZwrotnic.UseVisualStyleBackColor = True
+        Me.ColumnHeader6.Text = "Adres IP"
+        Me.ColumnHeader6.Width = 130
         '
         'wndOknoSerwera
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(853, 528)
+        Me.ClientSize = New System.Drawing.Size(1004, 533)
         Me.Controls.Add(Me.GroupBox5)
         Me.Controls.Add(Me.GroupBox4)
         Me.Controls.Add(Me.GroupBox3)
@@ -446,4 +463,6 @@ Partial Class wndOknoSerwera
     Friend WithEvents lblUartStan As Label
     Friend WithEvents btnUartRozlacz As Button
     Friend WithEvents btnKonfZwrotnic As Button
+    Friend WithEvents btnFiltrujAdresy As Button
+    Friend WithEvents ColumnHeader6 As ColumnHeader
 End Class

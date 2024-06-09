@@ -158,9 +158,11 @@ Public Class AutomatyczneZamykaniePrzejazduKolejowego
 End Class
 
 Public Class ElementWykonaczyPrzejazduKolejowego
+    Implements IObiektPunktowy
+
     Public Property Adres As UShort
-    Public Property X As Single
-    Public Property Y As Single
+    Public Property X As Single Implements IObiektPunktowy.X
+    Public Property Y As Single Implements IObiektPunktowy.Y
 
     Public Overridable Sub Zapisz(bw As BinaryWriter)
         bw.Write(Adres)

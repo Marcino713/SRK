@@ -189,7 +189,7 @@
         PEDZEL_TOR_TEN_ODCINEK = urz.UtworzPedzel(KOLOR_TOR_TEN_ODCINEK)
         PEDZEL_TOR_NIEPRZYPISANY = urz.UtworzPedzel(KOLOR_TOR_NIEPRZYPISANY)
         PEDZEL_TOR_LICZNIK_ODCINEK_2 = urz.UtworzPedzel(KOLOR_TOR_LICZNIK_ODCINEK_2)
-        PEDZEL_SZCZELINA_WOLNY = urz.UtworzPedzel(KolorRGB("#A8A8A8"))
+        PEDZEL_SZCZELINA_WOLNY = urz.UtworzPedzel(KolorRGB("#404040"))
         PEDZEL_SZCZELINA_UTWIERDZONY = urz.UtworzPedzel(KolorRGB("#FFFFFF"))
         PEDZEL_SZCZELINA_ZAJETY = urz.UtworzPedzel(KolorRGB("#FF3030"))
         PEDZEL_SZCZELINA_ZWROTNICA = urz.UtworzPedzel(KolorRGB("#FFFF00"))

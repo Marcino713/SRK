@@ -206,9 +206,11 @@ Partial Class wndProjektantPosterunku
         Me.tbpPrzejazdy = New System.Windows.Forms.TabPage()
         Me.splKartaPrzejazdy = New System.Windows.Forms.SplitContainer()
         Me.lvPrzejazdy = New System.Windows.Forms.ListView()
+        Me.ColumnHeader25 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader11 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader14 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader24 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader26 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader12 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader13 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.btnPrzejazdUsun = New System.Windows.Forms.Button()
@@ -260,6 +262,8 @@ Partial Class wndProjektantPosterunku
         Me.ColumnHeader15 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader16 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader17 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.Label18 = New System.Windows.Forms.Label()
+        Me.txtPrzejazdRogatkaCzasDoZamkniecia = New System.Windows.Forms.TextBox()
         Me.btnPrzejazdRogatkaDodaj = New System.Windows.Forms.Button()
         Me.txtPrzejazdRogatkaY = New System.Windows.Forms.TextBox()
         Me.btnPrzejazdRogatkaUsun = New System.Windows.Forms.Button()
@@ -282,11 +286,9 @@ Partial Class wndProjektantPosterunku
         Me.Label53 = New System.Windows.Forms.Label()
         Me.btnPrzejazdSygnDrogUsun = New System.Windows.Forms.Button()
         Me.btnPrzejazdSygnDrogDodaj = New System.Windows.Forms.Button()
-        Me.ColumnHeader25 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-        Me.ColumnHeader26 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
-        Me.txtPrzejazdRogatkaCzasDoZamkniecia = New System.Windows.Forms.TextBox()
-        Me.Label18 = New System.Windows.Forms.Label()
+        Me.Label34 = New System.Windows.Forms.Label()
+        Me.Label35 = New System.Windows.Forms.Label()
         Me.mnuMenu.SuspendLayout()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
@@ -1553,6 +1555,7 @@ Partial Class wndProjektantPosterunku
         '
         'splKartaTory.Panel2
         '
+        Me.splKartaTory.Panel2.Controls.Add(Me.Label34)
         Me.splKartaTory.Panel2.Controls.Add(Me.txtOdcinekAdres)
         Me.splKartaTory.Panel2.Controls.Add(Me.Label7)
         Me.splKartaTory.Panel2.Controls.Add(Me.pnlTorLegenda)
@@ -1636,7 +1639,7 @@ Partial Class wndProjektantPosterunku
         Me.pnlTorLegenda.Controls.Add(Me.pnlTorKolorInnyOdcinek)
         Me.pnlTorLegenda.Location = New System.Drawing.Point(0, 195)
         Me.pnlTorLegenda.Name = "pnlTorLegenda"
-        Me.pnlTorLegenda.Size = New System.Drawing.Size(200, 100)
+        Me.pnlTorLegenda.Size = New System.Drawing.Size(200, 73)
         Me.pnlTorLegenda.TabIndex = 14
         '
         'Label4
@@ -2236,6 +2239,11 @@ Partial Class wndProjektantPosterunku
         Me.lvPrzejazdy.UseCompatibleStateImageBehavior = False
         Me.lvPrzejazdy.View = System.Windows.Forms.View.Details
         '
+        'ColumnHeader25
+        '
+        Me.ColumnHeader25.Text = "Numer"
+        Me.ColumnHeader25.Width = 50
+        '
         'ColumnHeader11
         '
         Me.ColumnHeader11.Text = "Nazwa"
@@ -2250,6 +2258,11 @@ Partial Class wndProjektantPosterunku
         '
         Me.ColumnHeader24.Text = "Kostki"
         Me.ColumnHeader24.Width = 50
+        '
+        'ColumnHeader26
+        '
+        Me.ColumnHeader26.Text = "Automatyzacja"
+        Me.ColumnHeader26.Width = 50
         '
         'ColumnHeader12
         '
@@ -2296,6 +2309,7 @@ Partial Class wndProjektantPosterunku
         '
         'tbpPrzejazdOgolne
         '
+        Me.tbpPrzejazdOgolne.Controls.Add(Me.Label35)
         Me.tbpPrzejazdOgolne.Controls.Add(Me.txtPrzejazdNumer)
         Me.tbpPrzejazdOgolne.Controls.Add(Me.Label61)
         Me.tbpPrzejazdOgolne.Controls.Add(Me.cbPrzejazdTrybReczny)
@@ -2749,6 +2763,22 @@ Partial Class wndProjektantPosterunku
         '
         Me.ColumnHeader17.Text = "Y"
         '
+        'Label18
+        '
+        Me.Label18.AutoSize = True
+        Me.Label18.Location = New System.Drawing.Point(149, 29)
+        Me.Label18.Name = "Label18"
+        Me.Label18.Size = New System.Drawing.Size(42, 13)
+        Me.Label18.TabIndex = 11
+        Me.Label18.Text = "Czekaj:"
+        '
+        'txtPrzejazdRogatkaCzasDoZamkniecia
+        '
+        Me.txtPrzejazdRogatkaCzasDoZamkniecia.Location = New System.Drawing.Point(149, 45)
+        Me.txtPrzejazdRogatkaCzasDoZamkniecia.Name = "txtPrzejazdRogatkaCzasDoZamkniecia"
+        Me.txtPrzejazdRogatkaCzasDoZamkniecia.Size = New System.Drawing.Size(43, 20)
+        Me.txtPrzejazdRogatkaCzasDoZamkniecia.TabIndex = 10
+        '
         'btnPrzejazdRogatkaDodaj
         '
         Me.btnPrzejazdRogatkaDodaj.Location = New System.Drawing.Point(-1, 3)
@@ -2784,7 +2814,7 @@ Partial Class wndProjektantPosterunku
         'Label51
         '
         Me.Label51.AutoSize = True
-        Me.Label51.Location = New System.Drawing.Point(46, 29)
+        Me.Label51.Location = New System.Drawing.Point(49, 29)
         Me.Label51.Name = "Label51"
         Me.Label51.Size = New System.Drawing.Size(17, 13)
         Me.Label51.TabIndex = 1
@@ -2800,7 +2830,7 @@ Partial Class wndProjektantPosterunku
         'Label52
         '
         Me.Label52.AutoSize = True
-        Me.Label52.Location = New System.Drawing.Point(96, 29)
+        Me.Label52.Location = New System.Drawing.Point(99, 29)
         Me.Label52.Name = "Label52"
         Me.Label52.Size = New System.Drawing.Size(17, 13)
         Me.Label52.TabIndex = 2
@@ -2809,7 +2839,7 @@ Partial Class wndProjektantPosterunku
         'Label50
         '
         Me.Label50.AutoSize = True
-        Me.Label50.Location = New System.Drawing.Point(3, 29)
+        Me.Label50.Location = New System.Drawing.Point(0, 29)
         Me.Label50.Name = "Label50"
         Me.Label50.Size = New System.Drawing.Size(37, 13)
         Me.Label50.TabIndex = 0
@@ -2905,7 +2935,7 @@ Partial Class wndProjektantPosterunku
         'Label55
         '
         Me.Label55.AutoSize = True
-        Me.Label55.Location = New System.Drawing.Point(127, 29)
+        Me.Label55.Location = New System.Drawing.Point(132, 29)
         Me.Label55.Name = "Label55"
         Me.Label55.Size = New System.Drawing.Size(17, 13)
         Me.Label55.TabIndex = 4
@@ -2914,7 +2944,7 @@ Partial Class wndProjektantPosterunku
         'Label54
         '
         Me.Label54.AutoSize = True
-        Me.Label54.Location = New System.Drawing.Point(62, 29)
+        Me.Label54.Location = New System.Drawing.Point(66, 29)
         Me.Label54.Name = "Label54"
         Me.Label54.Size = New System.Drawing.Size(17, 13)
         Me.Label54.TabIndex = 3
@@ -2923,7 +2953,7 @@ Partial Class wndProjektantPosterunku
         'Label53
         '
         Me.Label53.AutoSize = True
-        Me.Label53.Location = New System.Drawing.Point(3, 29)
+        Me.Label53.Location = New System.Drawing.Point(0, 29)
         Me.Label53.Name = "Label53"
         Me.Label53.Size = New System.Drawing.Size(37, 13)
         Me.Label53.TabIndex = 2
@@ -2946,16 +2976,6 @@ Partial Class wndProjektantPosterunku
         Me.btnPrzejazdSygnDrogDodaj.TabIndex = 5
         Me.btnPrzejazdSygnDrogDodaj.Text = "Dodaj"
         Me.btnPrzejazdSygnDrogDodaj.UseVisualStyleBackColor = True
-        '
-        'ColumnHeader25
-        '
-        Me.ColumnHeader25.Text = "Numer"
-        Me.ColumnHeader25.Width = 50
-        '
-        'ColumnHeader26
-        '
-        Me.ColumnHeader26.Text = "Automatyzacja"
-        Me.ColumnHeader26.Width = 50
         '
         'plpPulpit
         '
@@ -2986,21 +3006,29 @@ Partial Class wndProjektantPosterunku
         Me.plpPulpit.TrybProjektowy = True
         Me.plpPulpit.ZaznaczonaKostka = Nothing
         '
-        'txtPrzejazdRogatkaCzasDoZamkniecia
+        'Label34
         '
-        Me.txtPrzejazdRogatkaCzasDoZamkniecia.Location = New System.Drawing.Point(149, 45)
-        Me.txtPrzejazdRogatkaCzasDoZamkniecia.Name = "txtPrzejazdRogatkaCzasDoZamkniecia"
-        Me.txtPrzejazdRogatkaCzasDoZamkniecia.Size = New System.Drawing.Size(43, 20)
-        Me.txtPrzejazdRogatkaCzasDoZamkniecia.TabIndex = 10
+        Me.Label34.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Label34.AutoEllipsis = True
+        Me.Label34.Location = New System.Drawing.Point(0, 266)
+        Me.Label34.Name = "Label34"
+        Me.Label34.Size = New System.Drawing.Size(200, 118)
+        Me.Label34.TabIndex = 1
+        Me.Label34.Text = "Aby dodać kostkę toru do odcinka, należy zaznaczyć odcinek na liście i kliknąć na" &
+    " kostkę na pulpicie."
         '
-        'Label18
+        'Label35
         '
-        Me.Label18.AutoSize = True
-        Me.Label18.Location = New System.Drawing.Point(146, 29)
-        Me.Label18.Name = "Label18"
-        Me.Label18.Size = New System.Drawing.Size(42, 13)
-        Me.Label18.TabIndex = 11
-        Me.Label18.Text = "Czekaj:"
+        Me.Label35.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Label35.AutoEllipsis = True
+        Me.Label35.Location = New System.Drawing.Point(0, 307)
+        Me.Label35.Name = "Label35"
+        Me.Label35.Size = New System.Drawing.Size(194, 112)
+        Me.Label35.TabIndex = 20
+        Me.Label35.Text = "Aby dodać kostkę przejazdu, należy zaznaczyć przejazd na liście i kliknąć na kost" &
+    "kę na pulpicie."
         '
         'wndProjektantPosterunku
         '
@@ -3380,4 +3408,6 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents ColumnHeader26 As ColumnHeader
     Friend WithEvents txtPrzejazdRogatkaCzasDoZamkniecia As TextBox
     Friend WithEvents Label18 As Label
+    Friend WithEvents Label34 As Label
+    Friend WithEvents Label35 As Label
 End Class

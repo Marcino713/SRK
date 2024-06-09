@@ -25,6 +25,20 @@ Public Class SerwerTCP
         End Get
     End Property
 
+    Private _AkceptacjaAdresow As New AkceptowaneAdresy
+    Public Property AkceptacjaAdresow As AkceptowaneAdresy
+        Get
+            SyncLock slockAkcAdresy
+                Return New AkceptowaneAdresy(_AkceptacjaAdresow)
+            End SyncLock
+        End Get
+        Set(value As AkceptowaneAdresy)
+            SyncLock slockAkcAdresy
+                _AkceptacjaAdresow = If(value Is Nothing, New AkceptowaneAdresy(), New AkceptowaneAdresy(value))
+            End SyncLock
+        End Set
+    End Property
+
     Private WithEvents PolaczenieUart As New KomunikacjaZUrzadzeniami
     Private Posterunki As ObslugiwanyPosterunek()
     Private KlienciPoAdresieStacji As New Dictionary(Of UShort, ObslugiwanyPosterunek)
@@ -42,9 +56,10 @@ Public Class SerwerTCP
     Private slockRezerwacjaPosterunku As New Object
     Private slockListaPolaczen As New Object
     Private slockPociagi As New Object
+    Private slockAkcAdresy As New Object
 
     Public Event UniewaznionoListePosterunkow()
-    Public Event ZmianaCzasuPodlaczenia(post As String, dataPodlaczenia As String)
+    Public Event ZmianaCzasuPodlaczenia(post As String, dataPodlaczenia As String, adresIp As String)
     Public Event OdebranoUstawJasnoscLamp(post As UShort, kom As UstawJasnoscLamp)
     Public Event OdebranoUstawKierunek(post As UShort, kom As UstawKierunek)
     Public Event OdebranoPotwierdzKierunek(post As UShort, kom As PotwierdzKierunek)
@@ -723,10 +738,12 @@ Public Class SerwerTCP
         For Each obs As ObslugiwanyPosterunek In Posterunki
             Dim dataPodlaczenia As String = ""
             Dim ostatnieZapytanie As String = ""
+            Dim adresIp As String = ""
 
             If obs.Polaczenie IsNot Nothing Then
                 dataPodlaczenia = obs.Polaczenie.CzasNawiazaniaPolaczenia.ToString(FORMAT_DATY)
                 ostatnieZapytanie = obs.Polaczenie.OstatnieZapytanie.ToString(FORMAT_DATY)
+                adresIp = obs.Polaczenie.AdresIp
             End If
 
             lista.Add(New StanObslugiwanegoPosterunku With {
@@ -734,7 +751,8 @@ Public Class SerwerTCP
                       .NazwaPliku = obs.NazwaPliku,
                       .Adres = obs.Adres.ToString,
                       .DataPodlaczenia = dataPodlaczenia,
-                      .OstatnieZapytanie = ostatnieZapytanie
+                      .OstatnieZapytanie = ostatnieZapytanie,
+                      .AdresIp = adresIp
             })
         Next
 
@@ -793,10 +811,32 @@ Public Class SerwerTCP
         RozlaczPosterunek(pol.AdresStacji)
     End Sub
 
+    Private Function CzyAdresAkceptowany(adres As EndPoint) As Boolean
+        Dim adr As IPAddress = TryCast(adres, IPEndPoint)?.Address
+        If adr Is Nothing Then Return False
+
+        SyncLock slockAkcAdresy
+            If _AkceptacjaAdresow.Typ = TypAkceptowaniaAdresow.Wszyscy Then Return True
+
+            Dim zawiera As Boolean = _AkceptacjaAdresow.Zbior.Contains(adr)
+            Return _
+                (_AkceptacjaAdresow.Typ = TypAkceptowaniaAdresow.OproczWybranych AndAlso Not zawiera) OrElse
+                (_AkceptacjaAdresow.Typ = TypAkceptowaniaAdresow.TylkoWybrani AndAlso zawiera)
+        End SyncLock
+
+        Return False
+    End Function
+
     Private Sub AkceptujPolaczenia()
         Do Until Koniec
             Try
                 Dim tcp As TcpClient = Serwer.AcceptTcpClient()
+
+                If Not CzyAdresAkceptowany(tcp.Client.RemoteEndPoint) Then
+                    tcp.Close()
+                    Continue Do
+                End If
+
                 Dim klient As New PolaczenieTCP(Me, tcp)
 
                 SyncLock slockListaPolaczen
@@ -899,6 +939,7 @@ Public Class SerwerTCP
         Dim obs As ObslugiwanyPosterunek = Nothing
         Dim odp As Komunikat
         Dim dataPodl As String = Nothing
+        Dim adresIp As String = Nothing
 
         SyncLock slockRezerwacjaPosterunku
             If KlienciPoAdresieStacji.TryGetValue(k.Adres, obs) AndAlso obs.Polaczenie Is Nothing Then
@@ -906,6 +947,7 @@ Public Class SerwerTCP
                 pol.AdresStacji = k.Adres
                 odp = New WybranoPosterunek() With {.Stan = StanUstawianegoPosterunku.WybranoPoprawnie, .ZawartoscPliku = obs.Zawartosc}
                 dataPodl = pol.CzasNawiazaniaPolaczenia.ToString(FORMAT_DATY)
+                adresIp = pol.AdresIp
                 pol.UstawStanSterowanieRuchem()
             Else
                 odp = New WybranoPosterunek() With {.Stan = StanUstawianegoPosterunku.PosterunekZajety}
@@ -913,8 +955,8 @@ Public Class SerwerTCP
         End SyncLock
 
         pol.WyslijKomunikat(odp)
-        If dataPodl IsNot Nothing Then
-            RaiseEvent ZmianaCzasuPodlaczenia(obs.Adres.ToString, dataPodl)
+        If dataPodl IsNot Nothing And adresIp IsNot Nothing Then
+            RaiseEvent ZmianaCzasuPodlaczenia(obs.Adres.ToString, dataPodl, adresIp)
         End If
     End Sub
 
@@ -929,7 +971,7 @@ Public Class SerwerTCP
             End If
         End SyncLock
 
-        If adr IsNot Nothing Then RaiseEvent ZmianaCzasuPodlaczenia(adr, "")
+        If adr IsNot Nothing Then RaiseEvent ZmianaCzasuPodlaczenia(adr, "", "")
     End Sub
 
     Private Sub ZakDzialanieKlienta(pol As PolaczenieTCP, kom As Komunikat)

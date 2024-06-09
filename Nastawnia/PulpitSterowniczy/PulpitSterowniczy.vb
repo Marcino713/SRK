@@ -117,6 +117,8 @@ Friend Class PulpitSterowniczy
             Return _TypRysownika
         End Get
         Set(value As TypRysownika)
+            If value = _TypRysownika Then Exit Property
+
             Select Case value
                 Case TypRysownika.KlasycznyGDI
                     _Rysownik = New PulpitKlasycznyGDI()
@@ -232,6 +234,8 @@ Friend Class PulpitSterowniczy
             Return _projZaznaczonaLampa
         End Get
         Set(value As Zaleznosci.Lampa)
+            If _projZaznaczonaLampa Is value Then Exit Property
+
             _projZaznaczonaLampa = value
             RaiseEvent projZmianaZaznaczeniaLampy(value)
             If _projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then Invalidate()
@@ -298,7 +302,10 @@ Friend Class PulpitSterowniczy
             Return _projZaznaczonyPrzejazdRogatka
         End Get
         Set(value As Zaleznosci.RogatkaPrzejazduKolejowego)
+            If _projZaznaczonyPrzejazdRogatka Is value Then Exit Property
+
             _projZaznaczonyPrzejazdRogatka = value
+            RaiseEvent projZmianaZaznaczeniaRogatki(value)
             If _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyRogatki Then Invalidate()
         End Set
     End Property
@@ -310,7 +317,10 @@ Friend Class PulpitSterowniczy
             Return _projZaznaczonyPrzejazdSygnDrog
         End Get
         Set(value As Zaleznosci.ElementWykonaczyPrzejazduKolejowego)
+            If _projZaznaczonyPrzejazdSygnDrog Is value Then Exit Property
+
             _projZaznaczonyPrzejazdSygnDrog = value
+            RaiseEvent projZmianaZaznaczeniaSygnalizatoraDrogowego(value)
             If _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdySygnDrog Then Invalidate()
         End Set
     End Property
@@ -335,6 +345,12 @@ Friend Class PulpitSterowniczy
 
     <Description("Zmiana przypisania kostki do przejazdu kolejowo-drogowego"), Category(KATEG_ZDARZ_PROJ)>
     Public Event projZmianaPrzypisaniaKostkiDoPrzejazdu()
+
+    <Description("Zmiana zaznaczonej rogatki przejazdu kolejowo-drogowego"), Category(KATEG_ZDARZ_PROJ)>
+    Public Event projZmianaZaznaczeniaRogatki(rogatka As Zaleznosci.RogatkaPrzejazduKolejowego)
+
+    <Description("Zmiana zaznaczonego sygnalizatora drogowego przejazdu kolejowo-drogowego"), Category(KATEG_ZDARZ_PROJ)>
+    Public Event projZmianaZaznaczeniaSygnalizatoraDrogowego(sygnalizator As Zaleznosci.ElementWykonaczyPrzejazduKolejowego)
 
     Public Sub New()
         InitializeComponent()
@@ -470,6 +486,12 @@ Friend Class PulpitSterowniczy
 
                     End If
                 End If
+
+            ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyRogatki Then
+                projZaznaczonyPrzejazdRogatka = PobierzKliknietaRogatke(e.Location)
+
+            ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdySygnDrog Then
+                projZaznaczonyPrzejazdSygnDrog = PobierzKliknietySygnDrog(e.Location)
 
             ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then
                 projZaznaczonaLampa = PobierzKliknietaLampe(e.Location)
@@ -769,17 +791,37 @@ Friend Class PulpitSterowniczy
         Return New Point(CInt(p.X - 0.5), CInt(p.Y - 0.5))
     End Function
 
-    Private Function PobierzKliknietaLampe(klik As Point) As Zaleznosci.Lampa
+    Private Function PobierzKliknietyObiektPunktowy(elementy As IEnumerable(Of Zaleznosci.IObiektPunktowy), klik As Point) As Zaleznosci.IObiektPunktowy
         Dim s As PointF = WspolrzedneEkranuDoPulpitu(klik)
         Dim pol As Single = _Rysownik.KOLKO_SZER / 2
 
-        For Each l As Zaleznosci.Lampa In Pulpit.Lampy
-            If (s.X <= l.X + pol) And (s.X >= l.X - pol) And (s.Y <= l.Y + pol) And (s.Y >= l.Y - pol) Then
-                Return l
+        For Each el As Zaleznosci.IObiektPunktowy In elementy
+            If (s.X <= el.X + pol) And (s.X >= el.X - pol) And (s.Y <= el.Y + pol) And (s.Y >= el.Y - pol) Then
+                Return el
             End If
         Next
 
         Return Nothing
+    End Function
+
+    Private Function PobierzKliknietaRogatke(klik As Point) As Zaleznosci.RogatkaPrzejazduKolejowego
+        If _projZaznaczonyPrzejazd IsNot Nothing Then
+            Return CType(PobierzKliknietyObiektPunktowy(_projZaznaczonyPrzejazd.Rogatki, klik), Zaleznosci.RogatkaPrzejazduKolejowego)
+        Else
+            Return Nothing
+        End If
+    End Function
+
+    Private Function PobierzKliknietySygnDrog(klik As Point) As Zaleznosci.ElementWykonaczyPrzejazduKolejowego
+        If _projZaznaczonyPrzejazd IsNot Nothing Then
+            Return CType(PobierzKliknietyObiektPunktowy(_projZaznaczonyPrzejazd.SygnalizatoryDrogowe, klik), Zaleznosci.ElementWykonaczyPrzejazduKolejowego)
+        Else
+            Return Nothing
+        End If
+    End Function
+
+    Private Function PobierzKliknietaLampe(klik As Point) As Zaleznosci.Lampa
+        Return CType(PobierzKliknietyObiektPunktowy(Pulpit.Lampy, klik), Zaleznosci.Lampa)
     End Function
 
     Private Function PobierzLampyWObszarze() As HashSet(Of Zaleznosci.Lampa)

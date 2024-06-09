@@ -34,8 +34,13 @@
         NAZWA_OKNA = Text
     End Sub
 
+    Public Sub New(sciezka As String)
+        Me.New()
+        OtworzPlik(sciezka)
+    End Sub
+
     Private Sub wndProjektantPosterunku_Load() Handles Me.Load
-        plpPulpit.TypRysownika = TypRysownika.KlasycznyDirect2D
+        plpPulpit.TypRysownika = Narzedzia.TypRysownika
         plpPulpit.Wysrodkuj()
 
         PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygnSygnNast, pnlKonfSygnOdcNast, pnlKonfSygnPrzycisk, pnlKonfSygnSwiatla, pnlKonfSygnPowt, pnlKonfTor, pnlKonfNapis, pnlKonfKier, pnlKonfAdres}
@@ -111,15 +116,15 @@
         End If
     End Sub
 
-    Private Sub DodajKostkeDoListy(pulpit As PulpitSterowniczy, kostka As Zaleznosci.Kostka, nazwa As String)
+    Private Function UtworzKostkeDoListy(pulpit As PulpitSterowniczy, kostka As Zaleznosci.Kostka, nazwa As String) As ListViewItem
         pulpit.Pulpit.Kostki(0, 0) = kostka
         Dim bm As New Bitmap(ROZMIAR_KOSTKI_LISTA, ROZMIAR_KOSTKI_LISTA)
         pulpit.DrawToBitmap(bm, New Rectangle(0, 0, ROZMIAR_KOSTKI_LISTA, ROZMIAR_KOSTKI_LISTA))
         imlKostki.Images.Add(bm)
-        lvPulpitKostki.Items.Add(New ListViewItem(nazwa, imlKostki.Images.Count - 1) With {
+        Return New ListViewItem(nazwa, imlKostki.Images.Count - 1) With {
             .Tag = kostka.GetType()
-        })
-    End Sub
+        }
+    End Function
 
     Private Sub UtworzListeKostek()
         Dim p As New PulpitSterowniczy With {
@@ -132,21 +137,25 @@
         Dim sygnPolsam As New Zaleznosci.SygnalizatorPolsamoczynny With {.Nazwa = "A1/2m"}
         Dim sygnPolsamPowt As New Zaleznosci.SygnalizatorPolsamoczynny With {.Nazwa = "B"}
 
-        DodajKostkeDoListy(p, New Zaleznosci.Tor() With {.Nazwa = "Tor 1"}, "Tor")
-        DodajKostkeDoListy(p, New Zaleznosci.TorKoniec(), "Koniec toru")
-        DodajKostkeDoListy(p, New Zaleznosci.Zakret(), "Zakręt")
-        DodajKostkeDoListy(p, New Zaleznosci.RozjazdLewo() With {.Nazwa = "101"}, "Rozjazd lewy")
-        DodajKostkeDoListy(p, New Zaleznosci.RozjazdPrawo() With {.Nazwa = "103"}, "Rozjazd prawy")
-        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorSamoczynny() With {.Nazwa = "105"}, "Sygnalizator samoczynny")
-        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorManewrowy() With {.Nazwa = "Tm5"}, "Sygnalizator manewrowy")
-        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorPowtarzajacy() With {.SygnalizatorPowtarzany = sygnPolsamPowt}, "Sygnalizator powtarzający")
-        DodajKostkeDoListy(p, sygnPolsam, "Sygnalizator półsamoczynny")
-        DodajKostkeDoListy(p, New Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy() With {.Nazwa = "107"}, "Sygnalizator przejazdowy")
-        DodajKostkeDoListy(p, New Zaleznosci.PrzejazdKolejowy(), "Przejazd kolejowy")
-        DodajKostkeDoListy(p, New Zaleznosci.Przycisk() With {.SygnalizatorPolsamoczynny = sygnPolsam}, "Przycisk")
-        DodajKostkeDoListy(p, New Zaleznosci.PrzyciskTor() With {.SygnalizatorPolsamoczynny = sygnPolsam}, "Przycisk z torem")
-        DodajKostkeDoListy(p, New Zaleznosci.Kierunek() With {.Nazwa = "Tor 9"}, "Wjazd/wyjazd ze stacji")
-        DodajKostkeDoListy(p, New Zaleznosci.Napis() With {.Tekst = "Magazyn"}, "Napis")
+        Dim kostkiLista As New List(Of ListViewItem) From {
+            UtworzKostkeDoListy(p, New Zaleznosci.Tor() With {.Nazwa = "Tor 1"}, "Tor"),
+            UtworzKostkeDoListy(p, New Zaleznosci.TorKoniec(), "Koniec toru"),
+            UtworzKostkeDoListy(p, New Zaleznosci.Zakret(), "Zakręt"),
+            UtworzKostkeDoListy(p, New Zaleznosci.RozjazdLewo() With {.Nazwa = "101"}, "Rozjazd lewy"),
+            UtworzKostkeDoListy(p, New Zaleznosci.RozjazdPrawo() With {.Nazwa = "103"}, "Rozjazd prawy"),
+            UtworzKostkeDoListy(p, New Zaleznosci.SygnalizatorSamoczynny() With {.Nazwa = "105"}, "Sygnalizator samoczynny"),
+            UtworzKostkeDoListy(p, New Zaleznosci.SygnalizatorManewrowy() With {.Nazwa = "Tm5"}, "Sygnalizator manewrowy"),
+            UtworzKostkeDoListy(p, New Zaleznosci.SygnalizatorPowtarzajacy() With {.SygnalizatorPowtarzany = sygnPolsamPowt}, "Sygnalizator powtarzający"),
+            UtworzKostkeDoListy(p, sygnPolsam, "Sygnalizator półsamoczynny"),
+            UtworzKostkeDoListy(p, New Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy() With {.Nazwa = "107"}, "Sygnalizator przejazdowy"),
+            UtworzKostkeDoListy(p, New Zaleznosci.PrzejazdKolejowy(), "Przejazd kolejowy"),
+            UtworzKostkeDoListy(p, New Zaleznosci.Przycisk() With {.SygnalizatorPolsamoczynny = sygnPolsam}, "Przycisk"),
+            UtworzKostkeDoListy(p, New Zaleznosci.PrzyciskTor() With {.SygnalizatorPolsamoczynny = sygnPolsam}, "Przycisk z torem"),
+            UtworzKostkeDoListy(p, New Zaleznosci.Kierunek() With {.Nazwa = "Tor 9"}, "Wjazd/wyjazd ze stacji"),
+            UtworzKostkeDoListy(p, New Zaleznosci.Napis() With {.Tekst = "Magazyn"}, "Napis")
+        }
+
+        lvPulpitKostki.Items.AddRange(kostkiLista.OrderBy(Function(x) x.Text).ToArray())
     End Sub
 
     Private Sub UstawTytulOkna()
@@ -163,12 +172,24 @@
         tabUstawienia_Selected()
     End Sub
 
+    Private Sub OtworzPlik(sciezka As String)
+        Dim pulpitNowy As Zaleznosci.Pulpit = Zaleznosci.Pulpit.Otworz(sciezka)
+        If pulpitNowy IsNot Nothing Then
+            CzyscDane(pulpitNowy)
+            UstawTytulOkna()
+        Else
+            PokazBlad($"Nie udało się otworzyć pliku {sciezka}.")
+        End If
+    End Sub
+
     Private Sub OdswiezPoZmianieRozmiaruPulpitu()
         plpPulpit.Invalidate()
         If tabUstawienia.SelectedTab Is tbpLiczniki Then OdswiezListeLicznikow()
         OdswiezListeLamp()
-        If tabUstawienia.SelectedTab Is tbpPrzejazdy And tabPrzejazd.SelectedTab Is tbpPrzejazdRogatki Then OdswiezListePrzejazdRogatki()
-        If tabUstawienia.SelectedTab Is tbpPrzejazdy And tabPrzejazd.SelectedTab Is tbpPrzejazdSygnDrog Then OdswiezListePrzejazdSygnDrog()
+        If tabUstawienia.SelectedTab Is tbpPrzejazdy Then
+            OdswiezListePrzejazdRogatki()
+            OdswiezListePrzejazdSygnDrog()
+        End If
     End Sub
 
     Private Function Zapisz(nowyPlik As Boolean) As Boolean
@@ -232,15 +253,7 @@
             Dim dlg As New OpenFileDialog With {
                 .Filter = FILTR_PLIKU
             }
-            If dlg.ShowDialog = DialogResult.OK Then
-                Dim pulpitNowy As Zaleznosci.Pulpit = Zaleznosci.Pulpit.Otworz(dlg.FileName)
-                If pulpitNowy IsNot Nothing Then
-                    CzyscDane(pulpitNowy)
-                    UstawTytulOkna()
-                Else
-                    PokazBlad("Nie udało się otworzyć pliku.")
-                End If
-            End If
+            If dlg.ShowDialog = DialogResult.OK Then OtworzPlik(dlg.FileName)
         End If
     End Sub
 
@@ -2111,18 +2124,8 @@
 
     Private Sub plpPulpit_projZmianaZaznaczeniaLampy(lampa As Zaleznosci.Lampa) Handles plpPulpit.projZmianaZaznaczeniaLampy
         If Not ZdarzeniaWlaczone Then Exit Sub
-
         lvLampy.SelectedItems.Clear()
-
-        If lampa IsNot Nothing Then
-            For i As Integer = 0 To lvLampy.Items.Count - 1
-                Dim lvi As ListViewItem = lvLampy.Items(i)
-                If DirectCast(lvi.Tag, Zaleznosci.Lampa) Is lampa Then
-                    lvi.Selected = True
-                    Exit For
-                End If
-            Next
-        End If
+        If lampa IsNot Nothing Then ZaznaczElementNaLiscie(lvLampy, lampa)
     End Sub
 
     Private Sub plpPulpit_projZmianaPrzypisaniaToruDoOdcinka() Handles plpPulpit.projZmianaPrzypisaniaToruDoOdcinka
@@ -2131,6 +2134,18 @@
 
     Private Sub plpPulpit_projZmianaPrzypisaniaKostkiDoPrzejazdu() Handles plpPulpit.projZmianaPrzypisaniaKostkiDoPrzejazdu
         OdswiezLiczbePrzypisanychKostekPrzejazdow()
+    End Sub
+
+    Private Sub plpPulpit_projZmianaZaznaczeniaRogatki(rogatka As Zaleznosci.RogatkaPrzejazduKolejowego) Handles plpPulpit.projZmianaZaznaczeniaRogatki
+        If Not ZdarzeniaWlaczone Then Exit Sub
+        lvPrzejazdRogatki.SelectedItems.Clear()
+        If rogatka IsNot Nothing Then ZaznaczElementNaLiscie(lvPrzejazdRogatki, rogatka)
+    End Sub
+
+    Private Sub plpPulpit_projZmianaZaznaczeniaSygnalizatoraDrogowego(sygnalizator As Zaleznosci.ElementWykonaczyPrzejazduKolejowego) Handles plpPulpit.projZmianaZaznaczeniaSygnalizatoraDrogowego
+        If Not ZdarzeniaWlaczone Then Exit Sub
+        lvPrzejazdSygnDrog.SelectedItems.Clear()
+        If sygnalizator IsNot Nothing Then ZaznaczElementNaLiscie(lvPrzejazdSygnDrog, sygnalizator)
     End Sub
 
 #End Region 'Pulpit
@@ -2174,6 +2189,15 @@
             Return lv.SelectedItems(0)
         End If
     End Function
+
+    Private Sub ZaznaczElementNaLiscie(Of T As Class)(lista As ListView, szukany As T)
+        For Each lvi As ListViewItem In lista.Items
+            If TryCast(lvi.Tag, T) Is szukany Then
+                lvi.Selected = True
+                Exit For
+            End If
+        Next
+    End Sub
 
     Private Function PobierzKrotkaLiczbeNieujemna(pole As TextBox) As UShort
         Dim liczba As UShort = 0

@@ -1,4 +1,5 @@
-﻿Imports System.Threading
+﻿Imports System.IO
+Imports System.Threading
 
 Public Class wndNastawnia
     Private Const FILTR_PLIKU As String = Zaleznosci.PolaczeniaStacji.OPIS_PLIKU & "|*" & Zaleznosci.PolaczeniaStacji.ROZSZERZENIE_PLIKU
@@ -33,11 +34,16 @@ Public Class wndNastawnia
 
     Public Sub New()
         InitializeComponent()
-        plpPulpit.TypRysownika = TypRysownika.KlasycznyDirect2D
+        Dim argumenty As String() = Environment.GetCommandLineArgs()
+
+        UstawTypRysownika(argumenty)
+        plpPulpit.TypRysownika = Narzedzia.TypRysownika
         plpPulpit.Wysrodkuj()
 
         NAZWA_OKNA = Text
         KursorDomyslny = plpPulpit.Cursor
+
+        WczytajPlikiPosterunkow(argumenty)
     End Sub
 
     Friend Sub UsunOknoSterowaniaPociagiem(okno As wndSterowaniePociagiem)
@@ -471,7 +477,7 @@ Public Class wndNastawnia
     End Sub
 
     Private Sub PokazOknoSerwera()
-        Dim wnd As New SerwerSterujacy.wndOknoSerwera
+        Dim wnd As New SerwerSterujacy.wndOknoSerwera(False)
         wnd.ShowDialog()
     End Sub
 
@@ -515,5 +521,14 @@ Public Class wndNastawnia
         CzyUsuwacOknaSterowaniaPociagami = True
 
         OknaSterowaniaPociagami.Clear()
+    End Sub
+
+    Private Sub WczytajPlikiPosterunkow(argumenty As String())
+        For Each arg As String In argumenty
+            If arg.EndsWith(Zaleznosci.Pulpit.ROZSZERZENIE_PLIKU) AndAlso File.Exists(arg) Then
+                Dim wnd As New wndProjektantPosterunku(arg)
+                wnd.Show()
+            End If
+        Next
     End Sub
 End Class

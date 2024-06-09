@@ -29,6 +29,13 @@ Friend Class PolaczenieTCP
         End Get
     End Property
 
+    Private _AdresIp As String
+    Public ReadOnly Property AdresIp As String
+        Get
+            Return _AdresIp
+        End Get
+    End Property
+
     Private tcp As ZarzadzanieTCP
     Private Szyfrator As ICryptoTransform
     Private Deszyfrator As ICryptoTransform
@@ -46,6 +53,7 @@ Friend Class PolaczenieTCP
 
     Friend Sub New(zarzTCP As ZarzadzanieTCP, klient As TcpClient)
         _CzasNawiazaniaPolaczenia = Now
+        _AdresIp = klient.Client.RemoteEndPoint.ToString
         tcp = zarzTCP
         KlientTCP = klient
         Strumien = KlientTCP.GetStream()

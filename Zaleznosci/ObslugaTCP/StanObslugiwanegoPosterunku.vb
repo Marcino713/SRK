@@ -4,4 +4,5 @@
     Public Adres As String
     Public DataPodlaczenia As String
     Public OstatnieZapytanie As String
+    Public AdresIp As String
 End Class

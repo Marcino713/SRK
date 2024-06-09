@@ -148,6 +148,7 @@
     <Compile Include="ObslugaTCP\StanObslugiwanegoPosterunku.vb" />
     <Compile Include="ObslugaTCP\StanPociagu.vb" />
     <Compile Include="ObslugaTCP\StanPolaczenia.vb" />
+    <Compile Include="ObslugaTCP\AkceptowaneAdresy.vb" />
     <Compile Include="ObslugaTCP\ZarzadzanieTCP.vb" />
     <Compile Include="PlikiPolaczen\KonfiguracjaOdczytu.vb" />
     <Compile Include="LaczenieStacji\LaczoneOdcinkiTorow.vb" />
@@ -192,6 +193,7 @@
     <Compile Include="PlikiPulpitu\KonfiguracjaZapisu.vb" />
     <Compile Include="ObslugaPlikow\OtwieraniePlikuException.vb" />
     <Compile Include="ObslugaPlikow\SegmentPliku.vb" />
+    <Compile Include="Pulpit\IObiektPunktowy.vb" />
     <Compile Include="Pulpit\PrzejazdKolejowoDrogowy.vb" />
     <Compile Include="Komunikaty\UstawStanPrzejazdu.vb" />
     <Compile Include="Urzadzenia\KomunikacjaZUrzadzeniami.vb" />

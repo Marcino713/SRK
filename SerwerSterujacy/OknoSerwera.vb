@@ -1,14 +1,28 @@
-﻿Public Class wndOknoSerwera
+﻿Imports System.IO
+
+Public Class wndOknoSerwera
+    Private Const WCZYTYWANIE_BLAD As String = "Błąd wczytywania połączeń"
+    Private Const WCZYTYWANIE_SUKCES As String = "Wczytano poprawnie"
     Private WithEvents Serwer As New Zaleznosci.SerwerTCP
     Private WithEvents OknoPociagow As wndPociagi
+    Private WithEvents OknoAdresyIp As wndListaAdresowIP
     Private PosterunkiSlownik As New Dictionary(Of String, ListViewItem)
 
-    Private actZmianaCzasuPodlaczenia As Action(Of String, String) = AddressOf PokazZmianeCzasuPodlaczenia
+    Private actZmianaCzasuPodlaczenia As Action(Of String, String, String) = AddressOf PokazZmianeCzasuPodlaczenia
     Private slockListaPosterunkow As New Object
 
     Public Sub New()
+        Me.New(True)
+    End Sub
+
+    Public Sub New(wczytajPlik As Boolean)
         InitializeComponent()
         PokazZatrzymanie()
+
+        If wczytajPlik Then
+            Dim argumenty As String() = Environment.GetCommandLineArgs()
+            WczytajPlikPolaczen(argumenty)
+        End If
     End Sub
 
     Private Sub wndOknoGlowne_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
@@ -44,7 +58,7 @@
         End If
 
         Dim wynik As Boolean = Serwer.WczytajPolaczenie(txtSciezka.Text)
-        lblStanWczytania.Text = If(wynik, "Wczytano poprawnie", "Błąd wczytywania połączeń")
+        lblStanWczytania.Text = If(wynik, WCZYTYWANIE_SUKCES, WCZYTYWANIE_BLAD)
     End Sub
 
     Private Sub btnStart_Click() Handles btnStart.Click
@@ -75,6 +89,15 @@
     Private Sub btnStop_Click() Handles btnStop.Click
         Serwer.Zatrzymaj()
         PokazZatrzymanie()
+    End Sub
+
+    Private Sub btnFiltrujAdresy_Click() Handles btnFiltrujAdresy.Click
+        If OknoAdresyIp Is Nothing Then
+            OknoAdresyIp = New wndListaAdresowIP(Serwer.AkceptacjaAdresow)
+            OknoAdresyIp.Show()
+        Else
+            OknoAdresyIp.Focus()
+        End If
     End Sub
 
     Private Sub btnUartPolacz_Click() Handles btnUartPolacz.Click
@@ -145,15 +168,23 @@
         OknoPociagow = Nothing
     End Sub
 
+    Private Sub OknoAdresyIp_FormClosed() Handles OknoAdresyIp.FormClosed
+        If OknoAdresyIp.DialogResult = DialogResult.OK Then
+            Serwer.AkceptacjaAdresow = OknoAdresyIp.Ustawienia
+        End If
+
+        OknoAdresyIp = Nothing
+    End Sub
+
     Private Sub Serwer_UniewaznionoListePosterunkow() Handles Serwer.UniewaznionoListePosterunkow
         OdswiezPosterunki()
     End Sub
 
-    Private Sub Serwer_ZmianaCzasuPodlaczenia(post As String, dataPodlaczenia As String) Handles Serwer.ZmianaCzasuPodlaczenia
-        Invoke(actZmianaCzasuPodlaczenia, post, dataPodlaczenia)
+    Private Sub Serwer_ZmianaCzasuPodlaczenia(post As String, dataPodlaczenia As String, adresIp As String) Handles Serwer.ZmianaCzasuPodlaczenia
+        Invoke(actZmianaCzasuPodlaczenia, post, dataPodlaczenia, adresIp)
     End Sub
 
-    Private Sub PokazZmianeCzasuPodlaczenia(adres As String, data As String)
+    Private Sub PokazZmianeCzasuPodlaczenia(adres As String, data As String, adresIp As String)
         SyncLock slockListaPosterunkow
             If lvPosterunki.SelectedItems IsNot Nothing AndAlso lvPosterunki.SelectedItems.Count > 0 AndAlso CType(lvPosterunki.SelectedItems(0).Tag, Zaleznosci.StanObslugiwanegoPosterunku).Adres = adres Then
                 btnRozlacz.Enabled = data <> ""
@@ -162,6 +193,7 @@
             Dim lvi As ListViewItem = Nothing
             If PosterunkiSlownik.TryGetValue(adres, lvi) Then
                 lvi.SubItems(3).Text = data
+                lvi.SubItems(5).Text = adresIp
                 Dim post As Zaleznosci.StanObslugiwanegoPosterunku = CType(lvi.Tag, Zaleznosci.StanObslugiwanegoPosterunku)
                 post.DataPodlaczenia = data
             End If
@@ -179,7 +211,7 @@
             Dim polEn As IEnumerable(Of Zaleznosci.StanObslugiwanegoPosterunku) = polaczenia.OrderBy(Function(x) x.NazwaPosterunku)
 
             For Each pol As Zaleznosci.StanObslugiwanegoPosterunku In polEn
-                Dim lvi As New ListViewItem(New String() {pol.NazwaPosterunku, pol.NazwaPliku, pol.Adres, pol.DataPodlaczenia, pol.OstatnieZapytanie}) With {
+                Dim lvi As New ListViewItem(New String() {pol.NazwaPosterunku, pol.NazwaPliku, pol.Adres, pol.DataPodlaczenia, pol.OstatnieZapytanie, pol.AdresIp}) With {
                         .Tag = pol
                     }
 
@@ -228,5 +260,23 @@
         btnUartPolacz.Enabled = (Not serwerDziala) And (Not uartDziala)
         btnUartRozlacz.Enabled = (Not serwerDziala) And uartDziala
         btnKonfZwrotnic.Enabled = (Not serwerDziala) And uartDziala
+    End Sub
+
+    Private Sub WczytajPlikPolaczen(argumenty As String())
+        Dim znalezionoPlik As Boolean = False
+
+        For Each arg As String In argumenty
+            If arg.EndsWith(Zaleznosci.PolaczeniaStacji.ROZSZERZENIE_PLIKU) AndAlso File.Exists(arg) Then
+                znalezionoPlik = True
+
+                If Serwer.WczytajPolaczenie(arg) Then
+                    txtSciezka.Text = arg
+                    lblStanWczytania.Text = WCZYTYWANIE_SUKCES
+                    Exit Sub
+                End If
+            End If
+        Next
+
+        If znalezionoPlik Then lblStanWczytania.Text = WCZYTYWANIE_BLAD
     End Sub
 End Class
