@@ -1,4 +1,4 @@
-﻿Public Class Nieuwierzytelniono 's
+﻿Public Class Nieuwierzytelniono
     Inherits Komunikat
 
     Public Property Przyczyna As PrzyczynaNieuwierzytelnienia

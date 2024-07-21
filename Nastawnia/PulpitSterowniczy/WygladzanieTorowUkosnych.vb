@@ -112,7 +112,7 @@
         Dim kostka As Zaleznosci.Kostka = pulpit.Kostki(kostkaNowa.X, kostkaNowa.Y)
         If kostka Is Nothing Then Return GranicaToru.Brak
 
-        If Zaleznosci.Kostka.CzyTor(kostka.Typ) Then
+        If Zaleznosci.Kostka.CzyTor(kostka) Then
             If kostka.Typ = Zaleznosci.TypKostki.Zakret Then
                 Return CzyGraniczyZZakretem(kostka.Obrot, roznica, krawedz)
 

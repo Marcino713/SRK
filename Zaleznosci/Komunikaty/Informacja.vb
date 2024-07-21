@@ -1,4 +1,4 @@
-﻿Public Class Informacja 's
+﻿Public Class Informacja
     Inherits Komunikat
 
     Public Property Waznosc As WaznoscInformacji

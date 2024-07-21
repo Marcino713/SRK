@@ -1,4 +1,4 @@
-﻿Public Class WysiadzZPociagu    'k
+﻿Public Class WysiadzZPociagu
     Inherits Komunikat
 
     Public Property NrPociagu As UInteger

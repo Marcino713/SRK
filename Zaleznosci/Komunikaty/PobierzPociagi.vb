@@ -1,4 +1,4 @@
-﻿Public Class PobierzPociagi  'k
+﻿Public Class PobierzPociagi
     Inherits Komunikat
 
     Public Overrides ReadOnly Property Typ As UShort

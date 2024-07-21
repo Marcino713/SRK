@@ -138,8 +138,8 @@ Public Class PolaczeniaStacji
                 bw.Write(Wersja.WersjaBoczna)
                 bw.Write(DataUtworzenia.ToBinary)
 
-                ZapiszObiekty(bw, _LaczaneTory, TypObiektuPliku.LACZONE_TORY, konf)
-                ZapiszObiekty(bw, _LaczanePliki, TypObiektuPliku.LACZONE_PLIKI, konf)
+                ZapiszObiekty(bw, _LaczaneTory, TypObiektuPlikuPolaczen.LACZONE_TORY, konf)
+                ZapiszObiekty(bw, _LaczanePliki, TypObiektuPlikuPolaczen.LACZONE_PLIKI, konf)
             End Using
         End Using
 
@@ -151,7 +151,7 @@ Public Class PolaczeniaStacji
             Dim b As Byte() = o.Zapisz(konf)
             If b IsNot Nothing Then
                 bw.Write(typ)
-                bw.Write(CType(b.Length, UShort))
+                bw.Write(CUShort(b.Length))
                 bw.Write(b)
             End If
         Next
@@ -202,9 +202,9 @@ Public Class PolaczeniaStacji
         Dim ob As IObiektPlikuTyp = Nothing
 
         Select Case typ
-            Case TypObiektuPliku.LACZONE_TORY
+            Case TypObiektuPlikuPolaczen.LACZONE_TORY
                 ob = LaczoneOdcinkiTorow.UtworzObiekt(b, konf)
-            Case TypObiektuPliku.LACZONE_PLIKI
+            Case TypObiektuPlikuPolaczen.LACZONE_PLIKI
                 ob = LaczonyPlikStacji.UtworzObiekt(b, konf)
         End Select
 
@@ -225,4 +225,9 @@ Public Class PolaczeniaStacji
         Return False
     End Function
 
+End Class
+
+Friend Class TypObiektuPlikuPolaczen
+    Friend Const LACZONE_TORY As UShort = 1
+    Friend Const LACZONE_PLIKI As UShort = 2
 End Class

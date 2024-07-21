@@ -20,7 +20,7 @@ Public Module Narzedzia
     Friend Sub ZapiszTekst(bw As BinaryWriter, tekst As String)
         If tekst Is Nothing Then tekst = ""
         Dim b As Byte() = KODOWANIE.GetBytes(tekst)
-        bw.Write(CType(b.Length, UShort))
+        bw.Write(CUShort(b.Length))
         bw.Write(b)
     End Sub
 
@@ -33,7 +33,7 @@ Public Module Narzedzia
     Friend Function PobierzInt32(b As Byte(), pocz As Integer, liczba_bajtow As Integer) As Integer
         Dim liczba As Integer = 0
         For i As Integer = 0 To liczba_bajtow - 1
-            liczba = liczba Or (CType(b(pocz + i), Integer) << i * 8)
+            liczba = liczba Or (CInt(b(pocz + i)) << i * 8)
         Next
         Return liczba
     End Function

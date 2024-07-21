@@ -181,7 +181,7 @@ Public Class SerwerTCP
                     If obs IsNot Nothing Then
                         Dim p As Drawing.Point = k.WspolrzedneKostki.Konwertuj
 
-                        If obs.DanePulpitu.CzyKostkaNiepusta(p) AndAlso Kostka.CzyTorBezRozjazdu(obs.DanePulpitu.Kostki(p.X, p.Y).Typ) Then
+                        If obs.DanePulpitu.CzyKostkaNiepusta(p) AndAlso Kostka.CzyTorBezRozjazdu(obs.DanePulpitu.Kostki(p.X, p.Y)) Then
 
                             SyncLock slockPociagi
                                 If Not PociagiPoNumerze.ContainsKey(k.NrPociagu) Then

@@ -33,12 +33,12 @@
 
     Private Sub btnDodaj_Click() Handles btnDodaj.Click
         If cboTor1.SelectedItem Is Nothing Then
-            PokazBlad("Nie wybrano pierwszego toru.")
+            Wspolne.PokazBlad("Nie wybrano pierwszego toru.")
             Exit Sub
         End If
 
         If cboTor2.SelectedItem Is Nothing Then
-            PokazBlad("Nie wybrano drugiego toru.")
+            Wspolne.PokazBlad("Nie wybrano drugiego toru.")
             Exit Sub
         End If
 

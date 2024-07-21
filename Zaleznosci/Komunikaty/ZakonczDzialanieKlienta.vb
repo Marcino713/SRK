@@ -1,4 +1,4 @@
-﻿Public Class ZakonczDzialanieKlienta 'k
+﻿Public Class ZakonczDzialanieKlienta
     Inherits Komunikat
 
     Public Property Przyczyna As PrzyczynaZakonczeniaDzialaniaKlienta

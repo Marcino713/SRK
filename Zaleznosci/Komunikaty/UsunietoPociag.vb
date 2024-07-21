@@ -1,4 +1,4 @@
-﻿Public Class UsunietoPociag     's
+﻿Public Class UsunietoPociag
     Inherits Komunikat
 
     Public Property NrPociagu As UInteger

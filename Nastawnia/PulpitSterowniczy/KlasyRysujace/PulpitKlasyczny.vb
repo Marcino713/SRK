@@ -281,7 +281,7 @@
             UniewaznioneSasiedztwoTorow = False
         End If
 
-        ps.Pulpit.PrzeiterujKostki(AddressOf PrzetworzKostke, ps)
+        ps.Pulpit.PrzeiterujKostki(AddressOf RysujKostke, ps)
 
         If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Or (Not ps.TrybProjektowy And ps.MozliwoscZaznaczeniaLamp) Then
             Dim zaznLampy As HashSet(Of Zaleznosci.Lampa) = ps.ZaznaczoneLampy
@@ -355,24 +355,27 @@
         urz.ZakonczRysunek()
     End Sub
 
-    Private Sub PrzetworzKostke(x As Integer, y As Integer, k As Zaleznosci.Kostka, ps As PulpitSterowniczy)
-        UstawKolorSzczeliny(k)
-        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Then UstawKolorToru(k, ps.projZaznaczonyOdcinek)
-        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Then UstawKolorToruDlaLicznika(k, ps.projZaznaczonyLicznik)
-        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy Then UstawKolorToruDlaPrzejazdu(k, ps.projZaznaczonyPrzejazd)
-        If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja Then UstawKolorToruDlaPrzejazduAutomatyzacja(k, ps.projZaznaczonyPrzejazdAutomatyzacja)
-        Dim zazn As Boolean = k Is ps.ZaznaczonaKostka AndAlso ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic AndAlso (ps.TrybProjektowy Or ps.MozliwoscZaznaczeniaToru)
-        RysujKostke(x, y, k, zazn)
-    End Sub
+    Private Sub RysujKostke(x As Integer, y As Integer, kostka As Zaleznosci.Kostka, ps As PulpitSterowniczy)
+        UstawKolorSzczeliny(kostka)
 
-    Private Sub RysujKostke(x As Integer, y As Integer, kostka As Zaleznosci.Kostka, zaznaczona As Boolean)
+        Select Case ps.projDodatkoweObiekty
+            Case RysujDodatkoweObiekty.OdcinkiTorow
+                UstawKolorToru(kostka, ps.projZaznaczonyOdcinek)
+            Case RysujDodatkoweObiekty.Liczniki
+                UstawKolorToruDlaLicznika(kostka, ps.projZaznaczonyLicznik)
+            Case RysujDodatkoweObiekty.Przejazdy
+                UstawKolorToruDlaPrzejazdu(kostka, ps.projZaznaczonyPrzejazd)
+            Case RysujDodatkoweObiekty.PrzejazdyAutomatyzacja
+                UstawKolorToruDlaPrzejazduAutomatyzacja(kostka, ps.projZaznaczonyPrzejazdAutomatyzacja)
+        End Select
+
         urz.TransformacjaResetuj()
         urz.TransformacjaObroc(kostka.Obrot, POL, POL)
         urz.TransformacjaPrzesun(x, y)
         urz.TransformacjaDolacz(glownaTransformacja)
-
         obrot = kostka.Obrot
 
+        Dim zaznaczona As Boolean = kostka Is ps.ZaznaczonaKostka AndAlso ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic AndAlso (ps.TrybProjektowy Or ps.MozliwoscZaznaczeniaToru)
         If zaznaczona Then
             Dim polKrawedzi As Single = KRAWEDZ_SZER * POL
             Dim rozm As Single = 1.0F - KRAWEDZ_SZER
@@ -401,7 +404,7 @@
             Case Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
                 RysujSygnalizatorTOP(CType(kostka, Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy))
             Case Zaleznosci.TypKostki.PrzejazdKolejowy
-                RysujPrzejazd(CType(kostka, Zaleznosci.PrzejazdKolejowy))
+                RysujPrzejazd(CType(kostka, Zaleznosci.PrzejazdKolejowoDrogowyKostka))
             Case Zaleznosci.TypKostki.Przycisk
                 RysujPrzyciskZwykly(CType(kostka, Zaleznosci.Przycisk))
             Case Zaleznosci.TypKostki.PrzyciskTor
@@ -712,7 +715,7 @@
         RysujTorProsty(sygnalizator, True)
     End Sub
 
-    Private Sub RysujPrzejazd(przejazd As Zaleznosci.PrzejazdKolejowy)
+    Private Sub RysujPrzejazd(przejazd As Zaleznosci.PrzejazdKolejowoDrogowyKostka)
         Dim pedzAwaria As TPedzel = If(trybProjektowy Or przejazd.Awaria, PEDZEL_SYGN_CZER_JASNY, PEDZEL_SYGN_CZER)
         Dim pedzStan As TPedzel = If(
                 trybProjektowy Or
@@ -930,8 +933,8 @@
     Private Sub UstawKolorToruDlaPrzejazdu(k As Zaleznosci.Kostka, zazn As Zaleznosci.PrzejazdKolejowoDrogowy)
         pedzelToru = PEDZEL_TOR_WOLNY
 
-        If TypeOf k Is Zaleznosci.PrzejazdKolejowy Then
-            Dim p As Zaleznosci.PrzejazdKolejowy = CType(k, Zaleznosci.PrzejazdKolejowy)
+        If TypeOf k Is Zaleznosci.PrzejazdKolejowoDrogowyKostka Then
+            Dim p As Zaleznosci.PrzejazdKolejowoDrogowyKostka = CType(k, Zaleznosci.PrzejazdKolejowoDrogowyKostka)
 
             If zazn IsNot Nothing AndAlso p.NalezyDoPrzejazdu Is zazn Then
                 pedzelToru = PEDZEL_TOR_TEN_ODCINEK

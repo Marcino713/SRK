@@ -1,4 +1,4 @@
-﻿Public Class WybierzPosterunek  'k
+﻿Public Class WybierzPosterunek
     Inherits Komunikat
 
     Public Property Adres As UShort

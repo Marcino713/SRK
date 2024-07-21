@@ -50,7 +50,7 @@ Public Class wndListaAdresowIP
                 If IPAddress.TryParse(adr, adrIp) Then
                     ust.Zbior.Add(adrIp)
                 Else
-                    PokazBlad($"Adres w linii {i + 1} jest niepoprawny.")
+                    Wspolne.PokazBlad($"Adres w linii {i + 1} jest niepoprawny.")
                     Return Nothing
                 End If
             End If
@@ -64,7 +64,7 @@ Public Class wndListaAdresowIP
             Try
                 File.WriteAllText(dlgZapisz.FileName, txtAdresy.Text)
             Catch
-                PokazBlad("Wystąpił błąd podczas zapisu pliku z listą adresów.")
+                Wspolne.PokazBlad("Wystąpił błąd podczas zapisu pliku z listą adresów.")
             End Try
         End If
     End Sub
@@ -74,7 +74,7 @@ Public Class wndListaAdresowIP
             Try
                 txtAdresy.Text = File.ReadAllText(dlgOtworz.FileName)
             Catch
-                PokazBlad("Wystąpił błąd podczas odczytu pliku z listą adresów.")
+                Wspolne.PokazBlad("Wystąpił błąd podczas odczytu pliku z listą adresów.")
             End Try
         End If
     End Sub

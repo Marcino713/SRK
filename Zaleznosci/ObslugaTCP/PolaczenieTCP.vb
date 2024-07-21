@@ -96,7 +96,7 @@ Friend Class PolaczenieTCP
         Dim ziarno As Integer = 0
         Dim poz As Integer = 0
         For i As Integer = 0 To kluczDH.Length - 1
-            ziarno = ziarno Xor (CType(kluczDH(i), Integer) << poz)
+            ziarno = ziarno Xor (CInt(kluczDH(i)) << poz)
             poz += 8
             If poz >= 32 Then poz = 0
         Next

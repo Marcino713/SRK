@@ -1,4 +1,4 @@
-﻿Public Class ZakonczonoDzialanieSerwera 's
+﻿Public Class ZakonczonoDzialanieSerwera
     Inherits Komunikat
 
     Public Property Przyczyna As PrzyczynaZakonczeniaDzialaniaSerwera

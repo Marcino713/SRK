@@ -90,7 +90,6 @@
     <Compile Include="KomunikatyUrzadzen\ZmienionoStanRogatkiUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\ZmienionoStanZwrotnicyUrz.vb" />
     <Compile Include="ObslugaKomunikatowUrzadzen\KomunikatUrzadzenia.vb" />
-    <Compile Include="ObslugaKomunikatowUrzadzen\TypKomunikatuUrzadzenia.vb" />
     <Compile Include="Komunikaty\DHInicjalizuj.vb" />
     <Compile Include="Komunikaty\DHZainicjalizowano.vb" />
     <Compile Include="Komunikaty\Informacja.vb" />
@@ -107,7 +106,7 @@
     <Compile Include="Kostki\IAdres.vb" />
     <Compile Include="Kostki\IPrzycisk.vb" />
     <Compile Include="Kostki\IZakret.vb" />
-    <Compile Include="Kostki\PrzejazdKolejowy.vb" />
+    <Compile Include="Kostki\PrzejazdKolejowoDrogowyKostka.vb" />
     <Compile Include="Kostki\SygnalizatorOstrzegawczyPrzejazdowy.vb" />
     <Compile Include="Kostki\SygnalizatorPowtarzajacy.vb" />
     <Compile Include="Kostki\SygnalizatorWylaczanyPoPrzejechaniu.vb" />
@@ -155,7 +154,6 @@
     <Compile Include="LaczenieStacji\LaczonyPlikStacji.vb" />
     <Compile Include="LaczenieStacji\PolaczeniaStacji.vb" />
     <Compile Include="PlikiPolaczen\KonfiguracjaZapisu.vb" />
-    <Compile Include="PlikiPolaczen\TypObiektuPliku.vb" />
     <Compile Include="ObslugaPlikow\IObiektPliku.vb" />
     <Compile Include="Kostki\Kierunek.vb" />
     <Compile Include="Kostki\Kostka.vb" />
@@ -203,7 +201,6 @@
     <Compile Include="Pulpit\ParaLicznikowOsi.vb" />
     <Compile Include="Pulpit\OdcinekToru.vb" />
     <Compile Include="Pulpit\Pulpit.vb" />
-    <Compile Include="PlikiPulpitu\TypObiektuPliku.vb" />
     <Compile Include="Punkt.vb" />
   </ItemGroup>
   <ItemGroup>

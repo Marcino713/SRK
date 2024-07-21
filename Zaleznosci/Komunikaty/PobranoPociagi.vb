@@ -1,4 +1,4 @@
-﻿Public Class PobranoPociagi     's
+﻿Public Class PobranoPociagi
     Inherits Komunikat
 
     Public Property Pociagi As DaneWybieralnegoPociagu()

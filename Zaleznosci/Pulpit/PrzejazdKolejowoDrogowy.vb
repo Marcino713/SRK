@@ -32,8 +32,8 @@ Public Class PrzejazdKolejowoDrogowy
         End Get
     End Property
 
-    Private _KostkiPrzejazdy As New HashSet(Of PrzejazdKolejowy)
-    Public ReadOnly Property KostkiPrzejazdy As HashSet(Of PrzejazdKolejowy)
+    Private _KostkiPrzejazdy As New HashSet(Of PrzejazdKolejowoDrogowyKostka)
+    Public ReadOnly Property KostkiPrzejazdy As HashSet(Of PrzejazdKolejowoDrogowyKostka)
         Get
             Return _KostkiPrzejazdy
         End Get

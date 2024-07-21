@@ -1,4 +1,4 @@
-﻿Public Class WybranoPosterunek  's
+﻿Public Class WybranoPosterunek
     Inherits Komunikat
 
     Public Property Stan As StanUstawianegoPosterunku

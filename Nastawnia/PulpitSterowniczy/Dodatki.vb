@@ -21,4 +21,20 @@
             Me.Zrodlo = zrodlo
         End Sub
     End Class
+
+    Public Enum TypRysownika
+        KlasycznyGDI
+        KlasycznyDirect2D
+    End Enum
+
+    Public Enum RysujDodatkoweObiekty
+        Nic
+        Lampy
+        OdcinkiTorow
+        Liczniki
+        Przejazdy
+        PrzejazdyAutomatyzacja
+        PrzejazdyRogatki
+        PrzejazdySygnDrog
+    End Enum
 End Module

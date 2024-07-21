@@ -70,7 +70,7 @@ Public Class LaczonyPlikStacji
             Using bw As New BinaryWriter(ms)
                 bw.Write(id)
                 ZapiszTekst(bw, NazwaPliku)
-                bw.Write(CType(Skrot.Length, Byte))
+                bw.Write(CByte(Skrot.Length))
                 bw.Write(Skrot)
                 Return ms.ToArray
             End Using

@@ -1,6 +1,6 @@
 ﻿Imports System.Numerics
 
-Public Class DHInicjalizuj  'k
+Public Class DHInicjalizuj
     Inherits Komunikat
 
     Public Property LiczbaA As BigInteger
@@ -17,13 +17,13 @@ Public Class DHInicjalizuj  'k
         Dim b As Byte()
 
         b = LiczbaA.ToByteArray()
-        bw.Write(CType(b.Length, UShort))
+        bw.Write(CUShort(b.Length))
         bw.Write(b)
 
         bw.Write(LiczbaG)
 
         b = LiczbaP.ToByteArray()
-        bw.Write(CType(b.Length, UShort))
+        bw.Write(CUShort(b.Length))
         bw.Write(b)
     End Sub
 

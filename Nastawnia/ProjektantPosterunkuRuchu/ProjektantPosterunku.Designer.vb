@@ -23,7 +23,7 @@ Partial Class wndProjektantPosterunku
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim Pulpit2 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
+        Dim Pulpit1 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
         Me.mnuMenu = New System.Windows.Forms.MenuStrip()
         Me.mnuNarzedzia = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuNowy = New System.Windows.Forms.ToolStripMenuItem()
@@ -36,6 +36,7 @@ Partial Class wndProjektantPosterunku
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuNazwa = New System.Windows.Forms.ToolStripMenuItem()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
+        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
         Me.Label36 = New System.Windows.Forms.Label()
         Me.tabUstawienia = New System.Windows.Forms.TabControl()
         Me.tbpPulpit = New System.Windows.Forms.TabPage()
@@ -140,7 +141,8 @@ Partial Class wndProjektantPosterunku
         Me.ColumnHeader5 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader6 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ctxSortowanie = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.ctxSortuj = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ctmSortuj = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Label34 = New System.Windows.Forms.Label()
         Me.txtOdcinekAdres = New System.Windows.Forms.TextBox()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.pnlTorLegenda = New System.Windows.Forms.Panel()
@@ -217,6 +219,7 @@ Partial Class wndProjektantPosterunku
         Me.btnPrzejazdDodaj = New System.Windows.Forms.Button()
         Me.tabPrzejazd = New System.Windows.Forms.TabControl()
         Me.tbpPrzejazdOgolne = New System.Windows.Forms.TabPage()
+        Me.Label35 = New System.Windows.Forms.Label()
         Me.txtPrzejazdNumer = New System.Windows.Forms.TextBox()
         Me.Label61 = New System.Windows.Forms.Label()
         Me.cbPrzejazdTrybReczny = New System.Windows.Forms.CheckBox()
@@ -244,7 +247,7 @@ Partial Class wndProjektantPosterunku
         Me.ColumnHeader22 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader23 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ctxSortowaniePrzejazdy = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.ctxSortujPrzejazdy = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ctmSortujPrzejazdy = New System.Windows.Forms.ToolStripMenuItem()
         Me.pnlPrzejazdAutomatyzacjaKolorSygnalizator = New System.Windows.Forms.Panel()
         Me.pnlPrzejazdAutomatyzacjaKolorPrzyjazd = New System.Windows.Forms.Panel()
         Me.pnlPrzejazdAutomatyzacjaKolorWyjazd = New System.Windows.Forms.Panel()
@@ -286,9 +289,6 @@ Partial Class wndProjektantPosterunku
         Me.Label53 = New System.Windows.Forms.Label()
         Me.btnPrzejazdSygnDrogUsun = New System.Windows.Forms.Button()
         Me.btnPrzejazdSygnDrogDodaj = New System.Windows.Forms.Button()
-        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
-        Me.Label34 = New System.Windows.Forms.Label()
-        Me.Label35 = New System.Windows.Forms.Label()
         Me.mnuMenu.SuspendLayout()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
@@ -451,6 +451,35 @@ Partial Class wndProjektantPosterunku
         Me.splOkno.Size = New System.Drawing.Size(1006, 670)
         Me.splOkno.SplitterDistance = 788
         Me.splOkno.TabIndex = 1
+        '
+        'plpPulpit
+        '
+        Me.plpPulpit.AllowDrop = True
+        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
+        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
+        Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
+        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
+        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
+        Me.plpPulpit.Name = "plpPulpit"
+        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projZaznaczonaLampa = Nothing
+        Me.plpPulpit.projZaznaczonyLicznik = Nothing
+        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
+        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
+        Pulpit1.Adres = CType(0US, UShort)
+        Pulpit1.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit1
+        Me.plpPulpit.Size = New System.Drawing.Size(790, 645)
+        Me.plpPulpit.TabIndex = 4
+        Me.plpPulpit.TrybProjektowy = True
+        Me.plpPulpit.ZaznaczonaKostka = Nothing
         '
         'Label36
         '
@@ -1598,15 +1627,27 @@ Partial Class wndProjektantPosterunku
         '
         'ctxSortowanie
         '
-        Me.ctxSortowanie.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ctxSortuj})
+        Me.ctxSortowanie.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ctmSortuj})
         Me.ctxSortowanie.Name = "ctxOdcinki"
         Me.ctxSortowanie.Size = New System.Drawing.Size(106, 26)
         '
-        'ctxSortuj
+        'ctmSortuj
         '
-        Me.ctxSortuj.Name = "ctxSortuj"
-        Me.ctxSortuj.Size = New System.Drawing.Size(105, 22)
-        Me.ctxSortuj.Text = "Sortuj"
+        Me.ctmSortuj.Name = "ctmSortuj"
+        Me.ctmSortuj.Size = New System.Drawing.Size(105, 22)
+        Me.ctmSortuj.Text = "Sortuj"
+        '
+        'Label34
+        '
+        Me.Label34.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Label34.AutoEllipsis = True
+        Me.Label34.Location = New System.Drawing.Point(0, 266)
+        Me.Label34.Name = "Label34"
+        Me.Label34.Size = New System.Drawing.Size(200, 118)
+        Me.Label34.TabIndex = 1
+        Me.Label34.Text = "Aby dodać kostkę toru do odcinka, należy zaznaczyć odcinek na liście i kliknąć na" &
+    " kostkę na pulpicie."
         '
         'txtOdcinekAdres
         '
@@ -2338,6 +2379,18 @@ Partial Class wndProjektantPosterunku
         Me.tbpPrzejazdOgolne.Text = "Ogólne"
         Me.tbpPrzejazdOgolne.UseVisualStyleBackColor = True
         '
+        'Label35
+        '
+        Me.Label35.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Label35.AutoEllipsis = True
+        Me.Label35.Location = New System.Drawing.Point(0, 307)
+        Me.Label35.Name = "Label35"
+        Me.Label35.Size = New System.Drawing.Size(194, 112)
+        Me.Label35.TabIndex = 20
+        Me.Label35.Text = "Aby dodać kostkę przejazdu, należy zaznaczyć przejazd na liście i kliknąć na kost" &
+    "kę na pulpicie."
+        '
         'txtPrzejazdNumer
         '
         Me.txtPrzejazdNumer.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
@@ -2586,15 +2639,15 @@ Partial Class wndProjektantPosterunku
         '
         'ctxSortowaniePrzejazdy
         '
-        Me.ctxSortowaniePrzejazdy.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ctxSortujPrzejazdy})
+        Me.ctxSortowaniePrzejazdy.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ctmSortujPrzejazdy})
         Me.ctxSortowaniePrzejazdy.Name = "ctxSortowaniePrzejazdy"
-        Me.ctxSortowaniePrzejazdy.Size = New System.Drawing.Size(106, 26)
+        Me.ctxSortowaniePrzejazdy.Size = New System.Drawing.Size(181, 48)
         '
-        'ctxSortujPrzejazdy
+        'ctmSortujPrzejazdy
         '
-        Me.ctxSortujPrzejazdy.Name = "ctxSortujPrzejazdy"
-        Me.ctxSortujPrzejazdy.Size = New System.Drawing.Size(105, 22)
-        Me.ctxSortujPrzejazdy.Text = "Sortuj"
+        Me.ctmSortujPrzejazdy.Name = "ctmSortujPrzejazdy"
+        Me.ctmSortujPrzejazdy.Size = New System.Drawing.Size(180, 22)
+        Me.ctmSortujPrzejazdy.Text = "Sortuj"
         '
         'pnlPrzejazdAutomatyzacjaKolorSygnalizator
         '
@@ -2977,59 +3030,6 @@ Partial Class wndProjektantPosterunku
         Me.btnPrzejazdSygnDrogDodaj.Text = "Dodaj"
         Me.btnPrzejazdSygnDrogDodaj.UseVisualStyleBackColor = True
         '
-        'plpPulpit
-        '
-        Me.plpPulpit.AllowDrop = True
-        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
-        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
-        Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
-        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
-        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
-        Me.plpPulpit.Name = "plpPulpit"
-        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
-        Me.plpPulpit.projZaznaczonaLampa = Nothing
-        Me.plpPulpit.projZaznaczonyLicznik = Nothing
-        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
-        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit2.Adres = CType(0US, UShort)
-        Pulpit2.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit2
-        Me.plpPulpit.Size = New System.Drawing.Size(790, 645)
-        Me.plpPulpit.TabIndex = 4
-        Me.plpPulpit.TrybProjektowy = True
-        Me.plpPulpit.ZaznaczonaKostka = Nothing
-        '
-        'Label34
-        '
-        Me.Label34.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Label34.AutoEllipsis = True
-        Me.Label34.Location = New System.Drawing.Point(0, 266)
-        Me.Label34.Name = "Label34"
-        Me.Label34.Size = New System.Drawing.Size(200, 118)
-        Me.Label34.TabIndex = 1
-        Me.Label34.Text = "Aby dodać kostkę toru do odcinka, należy zaznaczyć odcinek na liście i kliknąć na" &
-    " kostkę na pulpicie."
-        '
-        'Label35
-        '
-        Me.Label35.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Label35.AutoEllipsis = True
-        Me.Label35.Location = New System.Drawing.Point(0, 307)
-        Me.Label35.Name = "Label35"
-        Me.Label35.Size = New System.Drawing.Size(194, 112)
-        Me.Label35.TabIndex = 20
-        Me.Label35.Text = "Aby dodać kostkę przejazdu, należy zaznaczyć przejazd na liście i kliknąć na kost" &
-    "kę na pulpicie."
-        '
         'wndProjektantPosterunku
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -3274,7 +3274,7 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents Label9 As Label
     Friend WithEvents pnlKonfKier As Panel
     Friend WithEvents ctxSortowanie As ContextMenuStrip
-    Friend WithEvents ctxSortuj As ToolStripMenuItem
+    Friend WithEvents ctmSortuj As ToolStripMenuItem
     Friend WithEvents mnuNowy As ToolStripMenuItem
     Friend WithEvents mnuOtworz As ToolStripMenuItem
     Friend WithEvents mnuZapisz As ToolStripMenuItem
@@ -3367,7 +3367,7 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents ColumnHeader24 As ColumnHeader
     Friend WithEvents pnlPrzejazdAutomatyzacjaKolorSygnalizator As Panel
     Friend WithEvents ctxSortowaniePrzejazdy As ContextMenuStrip
-    Friend WithEvents ctxSortujPrzejazdy As ToolStripMenuItem
+    Friend WithEvents ctmSortujPrzejazdy As ToolStripMenuItem
     Friend WithEvents Label60 As Label
     Friend WithEvents Label59 As Label
     Friend WithEvents cboKonfKierStawnosc As ComboBox

@@ -8,7 +8,7 @@
     Private PytaniePrzyZamykaniu As Boolean = True
 
     Private actPokazKomunikat As Action(Of String) = AddressOf PokazKomunikat
-    Private actPokazBlad As Action(Of String) = AddressOf PokazBlad
+    Private actPokazBlad As Action(Of String) = AddressOf Wspolne.PokazBlad
     Private actUstawNazwePociagu As Action(Of String) = AddressOf UstawNazwePociagu
     Private actPokazPredkoscDozwolona As Action(Of UShort) = AddressOf PokazPredkoscDozwolona
     Private actPokazPredkoscBiezaca As Action(Of Short) = AddressOf PokazPredkoscBiezaca
@@ -58,7 +58,7 @@
     End Sub
 
     Private Sub btnUsun_Click() Handles btnUsun.Click
-        If ZadajPytanie($"Czy chcesz usunąć pociąg {PobierzOznaczeniePociagu(NrPociagu, NazwaPociagu)}?") = DialogResult.Yes Then
+        If Wspolne.ZadajPytanie($"Czy chcesz usunąć pociąg {Wspolne.PobierzOznaczeniePociagu(NrPociagu, NazwaPociagu)}?") = DialogResult.Yes Then
             prPredkosc.Enabled = False
             PokazDostepnoscKontrolek(False)
             Klient.WyslijUsunPociag(New Zaleznosci.UsunPociag() With {.NrPociagu = NrPociagu})
@@ -69,7 +69,7 @@
         If NrPociagu = kom.NrPociagu Then
             Dim opis As String = If(kom.Stan = Zaleznosci.StanWysiadzniecia.Wyrzucono, "został wyrzucony", "wysiadł")
             PytaniePrzyZamykaniu = False
-            Invoke(actPokazKomunikat, $"Maszynista {opis} z pociągu {PobierzOznaczeniePociagu(NrPociagu, NazwaPociagu)}.")
+            Invoke(actPokazKomunikat, $"Maszynista {opis} z pociągu {Wspolne.PobierzOznaczeniePociagu(NrPociagu, NazwaPociagu)}.")
             Invoke(actZamknij)
         End If
     End Sub
@@ -77,7 +77,7 @@
     Private Sub Klient_OdebranoUsunietoPociag(kom As Zaleznosci.UsunietoPociag) Handles Klient.OdebranoUsunietoPociag
         If NrPociagu = kom.NrPociagu Then
             PytaniePrzyZamykaniu = False
-            Invoke(actPokazKomunikat, $"Pociąg {PobierzOznaczeniePociagu(NrPociagu, NazwaPociagu)} został usunięty.")
+            Invoke(actPokazKomunikat, $"Pociąg {Wspolne.PobierzOznaczeniePociagu(NrPociagu, NazwaPociagu)} został usunięty.")
             Invoke(actZamknij)
         End If
     End Sub
@@ -118,7 +118,7 @@
     End Sub
 
     Private Function WysiadzZPociagu() As Boolean
-        If ZadajPytanie($"Czy chcesz zakończyć prowadzenie pociągu {PobierzOznaczeniePociagu(NrPociagu, NazwaPociagu)}?") = DialogResult.Yes Then
+        If Wspolne.ZadajPytanie($"Czy chcesz zakończyć prowadzenie pociągu {Wspolne.PobierzOznaczeniePociagu(NrPociagu, NazwaPociagu)}?") = DialogResult.Yes Then
             prPredkosc.Enabled = False
             PokazDostepnoscKontrolek(False)
             Klient.WyslijWysiadzZPociagu(New Zaleznosci.WysiadzZPociagu() With {.NrPociagu = NrPociagu})

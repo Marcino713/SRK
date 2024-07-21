@@ -1,4 +1,4 @@
-﻿Public Class ZakonczonoSesjeKlienta   's
+﻿Public Class ZakonczonoSesjeKlienta
     Inherits Komunikat
 
     Public Property Przyczyna As PrzyczynaZakonczeniaSesjiKlienta

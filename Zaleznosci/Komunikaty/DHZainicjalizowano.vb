@@ -1,6 +1,6 @@
 ﻿Imports System.Numerics
 
-Public Class DHZainicjalizowano     's
+Public Class DHZainicjalizowano
     Inherits Komunikat
 
     Public Property LiczbaB As BigInteger
@@ -13,7 +13,7 @@ Public Class DHZainicjalizowano     's
 
     Public Overrides Sub Zapisz(bw As BinaryWriter)
         Dim b As Byte() = LiczbaB.ToByteArray
-        bw.Write(CType(b.Length, UShort))
+        bw.Write(CUShort(b.Length))
         bw.Write(b)
     End Sub
 

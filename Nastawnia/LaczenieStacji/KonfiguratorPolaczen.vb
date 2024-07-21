@@ -48,7 +48,7 @@ Public Class wndKonfiguratorPolaczen
         Dim pol As Zaleznosci.LaczoneOdcinkiTorow = PobierzZaznaczonyElement(Of Zaleznosci.LaczoneOdcinkiTorow)(lvPolaczenia)
         If pol Is Nothing Then Exit Sub
 
-        If ZadajPytanie($"Czy usunąć połączenie torów {PobierzNazweStacjiToru(pol.Posterunek1, pol.Tor1)} i {PobierzNazweStacjiToru(pol.Posterunek2, pol.Tor2)}?") = DialogResult.Yes Then
+        If Wspolne.ZadajPytanie($"Czy usunąć połączenie torów {PobierzNazweStacjiToru(pol.Posterunek1, pol.Tor1)} i {PobierzNazweStacjiToru(pol.Posterunek2, pol.Tor2)}?") = DialogResult.Yes Then
             polaczenia.LaczaneTory.Remove(pol)
             OdswiezPolaczenia()
         End If
@@ -169,7 +169,7 @@ Public Class wndKonfiguratorPolaczen
         If wynik Then
             PokazKomunikat("Plik został zapisany.")
         Else
-            PokazBlad("Wystąpił błąd podczas zapisu pliku.")
+            Wspolne.PokazBlad("Wystąpił błąd podczas zapisu pliku.")
         End If
         Return wynik
     End Function

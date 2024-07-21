@@ -34,7 +34,7 @@
         Dim poc As Zaleznosci.StanPociagu = PobierzZaznaczonyPociag()
 
         If poc IsNot Nothing Then
-            If ZadajPytanie($"Czy wyrzucić maszynistę z pociągu {PobierzOznaczeniePociagu(poc.Numer, poc.Nazwa)}?") = DialogResult.Yes Then
+            If Wspolne.ZadajPytanie($"Czy wyrzucić maszynistę z pociągu {Wspolne.PobierzOznaczeniePociagu(poc.Numer, poc.Nazwa)}?") = DialogResult.Yes Then
                 Serwer.WyrzucMaszyniste(poc.Numer)
             End If
         End If
@@ -56,7 +56,7 @@
         Dim poc As Zaleznosci.StanPociagu = PobierzZaznaczonyPociag()
 
         If poc IsNot Nothing Then
-            If ZadajPytanie($"Czy usunąć pociąg { PobierzOznaczeniePociagu(poc.Numer, poc.Nazwa)}?") = DialogResult.Yes Then
+            If Wspolne.ZadajPytanie($"Czy usunąć pociąg {Wspolne.PobierzOznaczeniePociagu(poc.Numer, poc.Nazwa)}?") = DialogResult.Yes Then
                 Serwer.UsunPociagZSieci(poc.Numer)
             End If
         End If

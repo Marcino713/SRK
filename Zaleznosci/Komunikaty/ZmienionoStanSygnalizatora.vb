@@ -1,4 +1,4 @@
-﻿Public Class ZmienionoStanSygnalizatora 's
+﻿Public Class ZmienionoStanSygnalizatora
     Inherits Komunikat
 
     Public Property Adres As UShort

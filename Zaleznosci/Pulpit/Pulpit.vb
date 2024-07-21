@@ -1,18 +1,27 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-Imports SegmPliku = Zaleznosci.SegmentPliku(Of Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu))
+﻿Imports System.Drawing
+Imports Zaleznosci.PlikiPulpitu
 Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
-Imports System.Drawing
+Imports SegmPliku = Zaleznosci.SegmentPliku(Of Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu))
 
 Public Class Pulpit
     Public Delegate Sub PrzetworzKostkeZObiektem(Of T)(x As Integer, y As Integer, k As Kostka, o As T)
     Public Delegate Sub PrzetworzKostke(x As Integer, y As Integer, k As Kostka)
-    Private Delegate Function CzyZgodnyTypKostki(typ As TypKostki) As Boolean
+    Private Delegate Function CzyZgodnyTypKostki(k As Kostka) As Boolean
+    Private Delegate Function UtworzObiektPulpitu(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPlikuTyp
 
-    Public Shared ReadOnly ObslugiwaneWersje As WersjaPliku() = {New WersjaPliku(0, 1)}
     Public Const ROZSZERZENIE_PLIKU As String = ".stacja"
     Public Const OPIS_PLIKU As String = "Schemat posterunku ruchu"
     Public Const ROZMIAR_DOMYSLNY As Integer = 10
+    Public Shared ReadOnly ObslugiwaneWersje As WersjaPliku() = {New WersjaPliku(0, 1)}
     Private Const NAGLOWEK As String = "STAC"
+
+    Private Shared ReadOnly TworzycieleObiektow As New Dictionary(Of UShort, UtworzObiektPulpitu) From {
+        {TypObiektuPlikuPulpitu.KOSTKA, AddressOf Kostka.UtworzObiekt},
+        {TypObiektuPlikuPulpitu.ODCINEK_TORU, AddressOf OdcinekToru.UtworzObiekt},
+        {TypObiektuPlikuPulpitu.LICZNIK_OSI, AddressOf ParaLicznikowOsi.UtworzObiekt},
+        {TypObiektuPlikuPulpitu.LAMPA, AddressOf Lampa.UtworzObiekt},
+        {TypObiektuPlikuPulpitu.PRZEJAZD_KOLEJOWO_DROGOWY, AddressOf PrzejazdKolejowoDrogowy.UtworzObiekt}
+    }
 
     Public ReadOnly Property Wersja As New WersjaPliku(0, 1)
 
@@ -260,7 +269,7 @@ Public Class Pulpit
         Dim tor As Tor = TryCast(kostka, Tor)
         tor?.NalezyDoOdcinka?.KostkiTory.Remove(tor)
 
-        Dim przejazd As PrzejazdKolejowy = TryCast(kostka, PrzejazdKolejowy)
+        Dim przejazd As PrzejazdKolejowoDrogowyKostka = TryCast(kostka, PrzejazdKolejowoDrogowyKostka)
         przejazd?.NalezyDoPrzejazdu?.KostkiPrzejazdy.Remove(przejazd)
 
         Dim sygnTop As SygnalizatorOstrzegawczyPrzejazdowy = TryCast(kostka, SygnalizatorOstrzegawczyPrzejazdowy)
@@ -338,7 +347,7 @@ Public Class Pulpit
             Throw New ArgumentException("Rozmiar musi być mniejszy niż wysokość pulpitu.")
         End If
 
-        'Sprawdź, czy w usuwanym zakresie nie ma żadnych kostek
+        'Oblicz parametry zmniejszania pulpitu
         Dim poczx As Integer = 0
         Dim koncx As Integer = _Szerokosc - 1
         Dim poczy As Integer = 0
@@ -373,6 +382,7 @@ Public Class Pulpit
 
         End Select
 
+        'Sprawdź, czy są jakieś kostki
         For x As Integer = poczx To koncx
             For y As Integer = poczy To koncy
                 If _Kostki(x, y) IsNot Nothing Then
@@ -428,51 +438,47 @@ Public Class Pulpit
     End Function
 
     Private Sub PrzesunObiektyPunktowe(kierunek As KierunekEdycjiPulpitu, rozm As Single)
-        If kierunek = KierunekEdycjiPulpitu.Lewo Or kierunek = KierunekEdycjiPulpitu.Gora Then
+        Dim x As Single = 0.0F
+        Dim y As Single = 0.0F
 
-            'Przesuń liczniki
-            For Each p As ParaLicznikowOsi In _LicznikiOsi
-                If kierunek = KierunekEdycjiPulpitu.Lewo Then
-                    p.X1 += rozm
-                    p.X2 += rozm
-                Else
-                    p.Y1 += rozm
-                    p.Y2 += rozm
-                End If
+        Select Case kierunek
+            Case KierunekEdycjiPulpitu.Lewo
+                x = rozm
+            Case KierunekEdycjiPulpitu.Gora
+                y = rozm
+            Case Else
+                Exit Sub
+        End Select
+
+        'Przesuń liczniki
+        For Each p As ParaLicznikowOsi In _LicznikiOsi
+            p.X1 += x
+            p.X2 += x
+            p.Y1 += y
+            p.Y2 += y
+        Next
+
+        'Przesuń lampy
+        For Each l As Lampa In _Lampy
+            l.X += x
+            l.Y += y
+        Next
+
+        'Przejazdy
+        For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
+
+            'Przesuń rogatki
+            For Each r As ElementWykonaczyPrzejazduKolejowego In p.Rogatki
+                r.X += x
+                r.Y += y
             Next
 
-            'Przesuń lampy
-            For Each l As Lampa In _Lampy
-                If kierunek = KierunekEdycjiPulpitu.Lewo Then
-                    l.X += rozm
-                Else
-                    l.Y += rozm
-                End If
+            'Przesuń sygnalizatory drogowe
+            For Each s As ElementWykonaczyPrzejazduKolejowego In p.SygnalizatoryDrogowe
+                s.X += x
+                s.Y += y
             Next
-
-            'Przejazdy
-            For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
-
-                'Przesuń rogatki
-                For Each r As ElementWykonaczyPrzejazduKolejowego In p.Rogatki
-                    If kierunek = KierunekEdycjiPulpitu.Lewo Then
-                        r.X += rozm
-                    Else
-                        r.Y += rozm
-                    End If
-                Next
-
-                'Przesuń sygnalizatory drogowe
-                For Each s As ElementWykonaczyPrzejazduKolejowego In p.SygnalizatoryDrogowe
-                    If kierunek = KierunekEdycjiPulpitu.Lewo Then
-                        s.X += rozm
-                    Else
-                        s.Y += rozm
-                    End If
-                Next
-            Next
-
-        End If
+        Next
     End Sub
 
     Private Function _Zapisz() As Boolean
@@ -503,8 +509,8 @@ Public Class Pulpit
                 bw.Write(PobierzBajty(NAGLOWEK))
                 bw.Write(Wersja.WersjaGlowna)
                 bw.Write(Wersja.WersjaBoczna)
-                bw.Write(CType(_Szerokosc, UShort))
-                bw.Write(CType(_Wysokosc, UShort))
+                bw.Write(CUShort(_Szerokosc))
+                bw.Write(CUShort(_Wysokosc))
 
                 'Informacje o posterunku
                 bw.Write(DataUtworzenia.ToBinary)
@@ -513,16 +519,16 @@ Public Class Pulpit
 
                 'Pulpit
                 PrzeiterujKostki(Sub(x, y, k)
-                                     konf.X = CType(x, UShort)
-                                     konf.Y = CType(y, UShort)
-                                     ZapiszObiekt(bw, k, TypObiektuPliku.KOSTKA, konf)
+                                     konf.X = CUShort(x)
+                                     konf.Y = CUShort(y)
+                                     ZapiszObiekt(bw, k, TypObiektuPlikuPulpitu.KOSTKA, konf)
                                  End Sub)
 
                 'Inne obiekty
-                ZapiszObiekty(bw, _Odcinki, TypObiektuPliku.ODCINEK_TORU, konf)
-                ZapiszObiekty(bw, _LicznikiOsi, TypObiektuPliku.LICZNIK_OSI, konf)
-                ZapiszObiekty(bw, _Lampy, TypObiektuPliku.LAMPA, konf)
-                ZapiszObiekty(bw, _Przejazdy, TypObiektuPliku.PRZEJAZD_KOLEJOWO_DROGOWY, konf)
+                ZapiszObiekty(bw, _Odcinki, TypObiektuPlikuPulpitu.ODCINEK_TORU, konf)
+                ZapiszObiekty(bw, _LicznikiOsi, TypObiektuPlikuPulpitu.LICZNIK_OSI, konf)
+                ZapiszObiekty(bw, _Lampy, TypObiektuPlikuPulpitu.LAMPA, konf)
+                ZapiszObiekty(bw, _Przejazdy, TypObiektuPlikuPulpitu.PRZEJAZD_KOLEJOWO_DROGOWY, konf)
 
             End Using
         End Using
@@ -533,7 +539,7 @@ Public Class Pulpit
     Private Sub ZapiszObiekt(bw As BinaryWriter, obiekt As IObiektPlikuTyp, typ As UShort, konf As KonfiguracjaZapisu)
         Dim dane As Byte() = obiekt.Zapisz(konf)
         bw.Write(typ)
-        bw.Write(CType(dane.Length, UShort))
+        bw.Write(CUShort(dane.Length))
         bw.Write(dane)
     End Sub
 
@@ -576,7 +582,7 @@ Public Class Pulpit
             'Pulpit
             Do Until str.Position >= str.Length
                 Dim seg As SegmPliku = UtworzObiekt(br, konf)
-                If seg.Obiekt IsNot Nothing Then segmenty.Add(seg)
+                If seg IsNot Nothing Then segmenty.Add(seg)
             Loop
 
         End Using
@@ -593,28 +599,21 @@ Public Class Pulpit
         Dim ile As UShort = br.ReadUInt16
         Dim b As Byte() = br.ReadBytes(ile)
         Dim ob As IObiektPlikuTyp = Nothing
+        Dim metodaTworzaca As UtworzObiektPulpitu = Nothing
 
-        Select Case typ
-            Case TypObiektuPliku.KOSTKA
-                ob = Kostka.UtworzObiekt(b, konf)
-            Case TypObiektuPliku.ODCINEK_TORU
-                ob = OdcinekToru.UtworzObiekt(b, konf)
-            Case TypObiektuPliku.LICZNIK_OSI
-                ob = ParaLicznikowOsi.UtworzObiekt(b, konf)
-            Case TypObiektuPliku.LAMPA
-                ob = Lampa.UtworzObiekt(b, konf)
-            Case TypObiektuPliku.PRZEJAZD_KOLEJOWO_DROGOWY
-                ob = PrzejazdKolejowoDrogowy.UtworzObiekt(b, konf)
-        End Select
+        If TworzycieleObiektow.TryGetValue(typ, metodaTworzaca) Then
+            ob = metodaTworzaca(b, konf)
+            If ob IsNot Nothing Then Return New SegmPliku() With {.Dane = b, .Obiekt = ob}
+        End If
 
-        Return New SegmPliku() With {.Dane = b, .Obiekt = ob}
+        Return Nothing
     End Function
 
     Private Function PobierzKostki(Of T As Kostka)(sprTypu As CzyZgodnyTypKostki) As Dictionary(Of UShort, T)
         Dim slownik As New Dictionary(Of UShort, T)
 
         PrzeiterujKostki(Sub(x, y, k)
-                             If sprTypu(k.Typ) Then
+                             If sprTypu(k) Then
                                  Dim adr As UShort = CType(k, IAdres).Adres
                                  If Not slownik.ContainsKey(adr) Then
                                      slownik.Add(adr, CType(k, T))
@@ -633,6 +632,14 @@ Public Class Pulpit
             (kierunek = KierunekEdycjiPulpitu.Lewo And x < wspolrzednaGraniczna)
     End Function
 
+End Class
+
+Friend Class TypObiektuPlikuPulpitu
+    Friend Const KOSTKA As UShort = 1
+    Friend Const ODCINEK_TORU As UShort = 2
+    Friend Const LICZNIK_OSI As UShort = 3
+    Friend Const LAMPA As UShort = 4
+    Friend Const PRZEJAZD_KOLEJOWO_DROGOWY As UShort = 5
 End Class
 
 Public Class ObiektBlokujacyZmniejszaniePulpitu

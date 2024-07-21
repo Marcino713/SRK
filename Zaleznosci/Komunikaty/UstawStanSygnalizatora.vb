@@ -1,4 +1,4 @@
-﻿Public Class UstawStanSygnalizatora  'k
+﻿Public Class UstawStanSygnalizatora
     Inherits Komunikat
 
     Public Property Adres As UShort

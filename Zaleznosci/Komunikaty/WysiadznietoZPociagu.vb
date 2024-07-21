@@ -1,4 +1,4 @@
-﻿Public Class WysiadznietoZPociagu   's
+﻿Public Class WysiadznietoZPociagu
     Inherits Komunikat
 
     Public Property NrPociagu As UInteger

@@ -1,4 +1,4 @@
-﻿Public Class WybierzPociag  'k
+﻿Public Class WybierzPociag
     Inherits Komunikat
 
     Public Property NrPociagu As UInteger

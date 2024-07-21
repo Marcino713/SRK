@@ -27,7 +27,7 @@ Public Class wndOknoSerwera
 
     Private Sub wndOknoGlowne_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         If Serwer.Uruchomiony Then
-            If ZadajPytanie("Czy zamknąć okno? Spowoduje to zatrzymanie serwera.") = DialogResult.Yes Then
+            If Wspolne.ZadajPytanie("Czy zamknąć okno? Spowoduje to zatrzymanie serwera.") = DialogResult.Yes Then
                 Serwer.Zatrzymaj()
                 Serwer.RozlaczZUrzadzeniami()
             Else
@@ -48,12 +48,12 @@ Public Class wndOknoSerwera
 
     Private Sub btnWczytaj_Click() Handles btnWczytaj.Click
         If Serwer.Uruchomiony Then
-            PokazBlad("Przed wczytaniem pliku połączeń należy zatrzymać serwer.")
+            Wspolne.PokazBlad("Przed wczytaniem pliku połączeń należy zatrzymać serwer.")
             Exit Sub
         End If
 
         If txtSciezka.Text = "" Then
-            PokazBlad("Należy podać ścieżkę pliku połączeń.")
+            Wspolne.PokazBlad("Należy podać ścieżkę pliku połączeń.")
             Exit Sub
         End If
 
@@ -65,22 +65,22 @@ Public Class wndOknoSerwera
         Dim port As UShort
 
         If Not UShort.TryParse(txtPortTCP.Text, port) Then
-            PokazBlad("W polu Port należy podać liczbą całkowitą dodatnią.")
+            Wspolne.PokazBlad("W polu Port należy podać liczbą całkowitą dodatnią.")
             Exit Sub
         End If
 
         If txtHaslo.Text = "" Then
-            PokazBlad("Należy podać hasło.")
+            Wspolne.PokazBlad("Należy podać hasło.")
             Exit Sub
         End If
 
         If Not Serwer.CzyWczytanoPosterunki Then
-            PokazBlad("Przed uruchomieniem serwera należy wczytać listę posterunków ruchu.")
+            Wspolne.PokazBlad("Przed uruchomieniem serwera należy wczytać listę posterunków ruchu.")
             Exit Sub
         End If
 
         If Not Serwer.Uruchom(port, txtHaslo.Text) Then
-            PokazBlad("Nie udało się uruchomić serwera.")
+            Wspolne.PokazBlad("Nie udało się uruchomić serwera.")
         Else
             PokazUruchomienie()
         End If
@@ -107,7 +107,7 @@ Public Class wndOknoSerwera
             Serwer.PolaczZUrzadzeniami(spKomunikacja.BaseStream)
             PokazStanKontrolekUart()
         Catch
-            PokazBlad("Nie udało się nawiązać połączenia z modułem UART.")
+            Wspolne.PokazBlad("Nie udało się nawiązać połączenia z modułem UART.")
         End Try
     End Sub
 
@@ -127,7 +127,7 @@ Public Class wndOknoSerwera
 
     Private Sub btnKonfZwrotnic_Click() Handles btnKonfZwrotnic.Click
         If Not Serwer.CzyWczytanoPosterunki Then
-            PokazBlad("Przed konfiguracją zwrotnic należy wczytać listę posterunków ruchu.")
+            Wspolne.PokazBlad("Przed konfiguracją zwrotnic należy wczytać listę posterunków ruchu.")
             Exit Sub
         End If
 
@@ -155,7 +155,7 @@ Public Class wndOknoSerwera
             post = CType(lvPosterunki.SelectedItems(0).Tag, Zaleznosci.StanObslugiwanegoPosterunku)
         End SyncLock
 
-        If ZadajPytanie($"Czy rozłączyć posterunek {post.NazwaPosterunku}?") = DialogResult.Yes Then
+        If Wspolne.ZadajPytanie($"Czy rozłączyć posterunek {post.NazwaPosterunku}?") = DialogResult.Yes Then
             Serwer.ZakonczPolaczenie(UShort.Parse(post.Adres))
         End If
     End Sub

@@ -1,4 +1,4 @@
-﻿Public Class UwierzytelnionoPoprawnie   's
+﻿Public Class UwierzytelnionoPoprawnie
     Inherits Komunikat
 
     Public Property PredkoscMaksymalna As UShort    'maksymalna prędkość pociągów na całej sieci

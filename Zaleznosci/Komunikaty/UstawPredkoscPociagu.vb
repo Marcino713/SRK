@@ -1,4 +1,4 @@
-﻿Public Class UstawPredkoscPociagu   'k
+﻿Public Class UstawPredkoscPociagu
     Inherits Komunikat
 
     Public Property NrPociagu As UInteger

@@ -15,7 +15,7 @@
     Private actPokazPociagi As Action = AddressOf PokazListePociagow
     Private actPokazStan As Action(Of String) = Sub(stan) lblStan.Text = stan
     Private actPokazDostepnoscKontrolek As Action = AddressOf PokazDostepnoscKontrolek
-    Private actPokazBlad As Action(Of String) = AddressOf PokazBlad
+    Private actPokazBlad As Action(Of String) = AddressOf Wspolne.PokazBlad
     Private actUsunPociag As Action(Of UInteger) = AddressOf UsunPociag
     Private actPokazZajetoscPociagu As Action(Of UInteger) = AddressOf PokazZajetoscPociagu
     Private actZamknijOkno As Action = Sub() Close()

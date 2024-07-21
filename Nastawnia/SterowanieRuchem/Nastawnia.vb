@@ -23,13 +23,10 @@ Public Class wndNastawnia
 
     Private actPokazStatus As Action(Of String, Color, Boolean) = AddressOf PokazStatusPolaczenia
     Private actPokazNazweOkna As Action(Of String) = AddressOf PokazNazweOkna
-    Private actUkryjDodawaniePociagu As Action = Sub() OknoDodawaniaPociagu?.Close()
-    Private actUkryjWybieraniePociagu As Action = Sub() OknoWybieraniaPociagu?.Close()
-    Private actUkryjSterowaniePociagami As Action = AddressOf ZamknijOknaSterowaniaPociagami
-    Private actUkryjOswietlenie As Action = Sub() OknoOswietlenia?.Close()
+    Private actZamknijOkna As Action = Sub() ZamknijOkna()
     Private actPokazPulpit As Action(Of Zaleznosci.Pulpit) = AddressOf PokazPulpit
     Private actUsunMigacz As Action = AddressOf UsunMigacz
-    Private actPokazBlad As Action(Of String) = AddressOf PokazBlad
+    Private actPokazBlad As Action(Of String) = AddressOf Wspolne.PokazBlad
     Private actPokazKomunikat As Action(Of String) = AddressOf PokazKomunikat
 
     Public Sub New()
@@ -37,7 +34,7 @@ Public Class wndNastawnia
         Dim argumenty As String() = Environment.GetCommandLineArgs()
 
         UstawTypRysownika(argumenty)
-        plpPulpit.TypRysownika = Narzedzia.TypRysownika
+        plpPulpit.TypRysownika = WybranyTypRysownika
         plpPulpit.Wysrodkuj()
 
         NAZWA_OKNA = Text
@@ -53,11 +50,8 @@ Public Class wndNastawnia
     Private Sub wndNastawnia_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         If Not Klient.Uruchomiony Then Exit Sub
 
-        If ZadajPytanie("Zamknąć okno? Spowoduje to rozłączenie z serwerem.") = DialogResult.Yes Then
-            actUkryjDodawaniePociagu()
-            actUkryjWybieraniePociagu()
-            actUkryjSterowaniePociagami()
-            actUkryjOswietlenie()
+        If Wspolne.ZadajPytanie("Zamknąć okno? Spowoduje to rozłączenie z serwerem.") = DialogResult.Yes Then
+            actZamknijOkna()
             Klient.WyslijZakonczDzialanieKlienta(New Zaleznosci.ZakonczDzialanieKlienta() With {.Przyczyna = Zaleznosci.PrzyczynaZakonczeniaDzialaniaKlienta.ZatrzymanieKlienta})
             Dim t As New Thread(AddressOf ZamknijPolaczenie)
             t.Start(Klient)
@@ -82,11 +76,8 @@ Public Class wndNastawnia
     End Sub
 
     Private Sub mnuRozlaczZSerwerem_Click() Handles mnuRozlaczZSerwerem.Click
-        If ZadajPytanie("Czy rozłączyć z serwerem?") = DialogResult.Yes Then
-            actUkryjDodawaniePociagu()
-            actUkryjWybieraniePociagu()
-            actUkryjSterowaniePociagami()
-            actUkryjOswietlenie()
+        If Wspolne.ZadajPytanie("Czy rozłączyć z serwerem?") = DialogResult.Yes Then
+            actZamknijOkna()
             Klient.WyslijZakonczDzialanieKlienta(New Zaleznosci.ZakonczDzialanieKlienta() With {.Przyczyna = Zaleznosci.PrzyczynaZakonczeniaDzialaniaKlienta.ZatrzymanieKlienta})
             actPokazStatus("Rozłączanie...", Color.Blue, True)
         End If
@@ -437,7 +428,7 @@ Public Class wndNastawnia
         Dim prz As Zaleznosci.PrzejazdKolejowoDrogowy = Nothing
 
         If kom.Blad = Zaleznosci.BladZmianyStanuPrzejazdu.Brak AndAlso Przejazdy.TryGetValue(kom.Numer, prz) Then
-            For Each k As Zaleznosci.PrzejazdKolejowy In prz.KostkiPrzejazdy
+            For Each k As Zaleznosci.PrzejazdKolejowoDrogowyKostka In prz.KostkiPrzejazdy
                 k.Stan = kom.Stan
                 k.Awaria = kom.Awaria
             Next
@@ -452,7 +443,7 @@ Public Class wndNastawnia
         If Okno.ShowDialog = DialogResult.OK Then
             Dim polaczenia As Zaleznosci.PolaczeniaStacji = MetodaOtwierajaca(Okno.FileName)
             If polaczenia Is Nothing Then
-                PokazBlad(KomunikatBledu)
+                Wspolne.PokazBlad(KomunikatBledu)
             Else
                 Dim wnd As New wndKonfiguratorPolaczen(polaczenia)
                 wnd.Show()
@@ -465,10 +456,7 @@ Public Class wndNastawnia
         Invoke(actPokazNazweOkna, String.Empty)
         Invoke(actPokazPulpit, New Zaleznosci.Pulpit)
         Invoke(actUsunMigacz)
-        Invoke(actUkryjDodawaniePociagu)
-        Invoke(actUkryjWybieraniePociagu)
-        Invoke(actUkryjSterowaniePociagami)
-        Invoke(actUkryjOswietlenie)
+        Invoke(actZamknijOkna)
     End Sub
 
     Private Sub ZamknijPolaczenie(klient As Object)
@@ -513,7 +501,11 @@ Public Class wndNastawnia
         plpPulpit.UsunMigacz()
     End Sub
 
-    Private Sub ZamknijOknaSterowaniaPociagami()
+    Private Sub ZamknijOkna()
+        OknoDodawaniaPociagu?.Close()
+        OknoWybieraniaPociagu?.Close()
+        OknoOswietlenia?.Close()
+
         CzyUsuwacOknaSterowaniaPociagami = False
         For Each okno As wndSterowaniePociagiem In OknaSterowaniaPociagami
             okno.Zamknij()

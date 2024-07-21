@@ -111,12 +111,12 @@ Public MustInherit Class Rozjazd
 
     Private Sub ZapiszZaleznosci(zalezn As KonfiguracjaRozjazduZaleznego(), bw As BinaryWriter, konf As KonfiguracjaZapisu)
         Dim zal As KonfiguracjaRozjazduZaleznego
-        bw.Write(CType(zalezn.Length, Byte))
+        bw.Write(CByte(zalezn.Length))
 
         For i As Integer = 0 To zalezn.Length - 1
             zal = zalezn(i)
             bw.Write(If(zal.RozjazdZalezny Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(zal.RozjazdZalezny)))
-            bw.Write(CType(zal.Konfiguracja, Byte))
+            bw.Write(CByte(zal.Konfiguracja))
         Next
     End Sub
 

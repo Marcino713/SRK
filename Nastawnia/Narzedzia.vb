@@ -3,19 +3,11 @@
     Public Const ARG_TYP_RYSOWNIKA As String = "-tp"
     Public Const ARG_TYP_RYSOWNIKA_KLASYCZNY_GDI As String = "klgdi"
     Public Const ARG_TYP_RYSOWNIKA_KLASYCZNY_D2D As String = "kld2d"
-    Public TypRysownika As TypRysownika = TypRysownika.KlasycznyDirect2D
-
-    Public Sub PokazBlad(Komunikat As String)
-        MessageBox.Show(Komunikat, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error)
-    End Sub
+    Friend WybranyTypRysownika As TypRysownika = TypRysownika.KlasycznyDirect2D
 
     Public Sub PokazKomunikat(Komunikat As String)
         MessageBox.Show(Komunikat, "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
-
-    Public Function ZadajPytanie(Pytanie As String) As DialogResult
-        Return MessageBox.Show(Pytanie, "Pytanie", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-    End Function
 
     Public Function ZadajPytanieTrzyodpowiedziowe(Pytanie As String) As DialogResult
         Return MessageBox.Show(Pytanie, "Pytanie", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
@@ -42,25 +34,18 @@
         Return "Połączenie zostało zamknięte" & dodatek & "."
     End Function
 
-    Friend Function PobierzOznaczeniePociagu(nr As UInteger, nazwa As String) As String
-        Dim ozn As String = nr.ToString
-        If Not String.IsNullOrEmpty(nazwa) Then ozn &= " " & nazwa
-
-        Return ozn
-    End Function
-
     Friend Sub UstawTypRysownika(argumenty As String())
         Dim typ As String = PobierzWartoscArgumentuWierszaPolecen(argumenty, ARG_TYP_RYSOWNIKA)
 
         Select Case typ?.ToLower
             Case ARG_TYP_RYSOWNIKA_KLASYCZNY_GDI
-                TypRysownika = TypRysownika.KlasycznyGDI
+                WybranyTypRysownika = TypRysownika.KlasycznyGDI
 
             Case ARG_TYP_RYSOWNIKA_KLASYCZNY_D2D
-                TypRysownika = TypRysownika.KlasycznyDirect2D
+                WybranyTypRysownika = TypRysownika.KlasycznyDirect2D
 
             Case Else
-                TypRysownika = TypRysownika.KlasycznyDirect2D
+                WybranyTypRysownika = TypRysownika.KlasycznyDirect2D
 
         End Select
     End Sub
@@ -80,10 +65,12 @@
     Friend Class ObiektComboBox(Of T)
         Public Property Wartosc As T
         Public Property Tekst As String
+
         Public Sub New(el As T, napis As String)
             Wartosc = el
             Tekst = napis
         End Sub
+
         Public Overrides Function ToString() As String
             Return Tekst
         End Function

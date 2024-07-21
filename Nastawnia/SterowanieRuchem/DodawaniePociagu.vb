@@ -7,7 +7,7 @@
 
     Private actPokazStan As Action(Of String) = Sub(s) lblDodawanie.Text = s
     Private actPokazDostepnoscKontrolek As Action(Of Boolean) = AddressOf PokazDostepnoscKontrolek
-    Private actPokazBlad As Action(Of String) = AddressOf PokazBlad
+    Private actPokazBlad As Action(Of String) = AddressOf Wspolne.PokazBlad
     Private actPokazKomunikat As Action(Of String) = AddressOf PokazKomunikat
     Private actZamknij As Action = Sub() Close()
 
@@ -60,7 +60,7 @@
             End If
         End If
 
-        If zazn Is Nothing OrElse Not Zaleznosci.Kostka.CzyTorBezRozjazdu(zazn.Typ) Then
+        If zazn Is Nothing OrElse Not Zaleznosci.Kostka.CzyTorBezRozjazdu(zazn) Then
             actPokazBlad("Należy na schemacie zaznaczyć kostkę, na której znajduje się pociąg.")
             Exit Sub
         End If

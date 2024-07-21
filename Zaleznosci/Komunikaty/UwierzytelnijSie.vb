@@ -1,4 +1,4 @@
-﻿Public Class UwierzytelnijSie  'k
+﻿Public Class UwierzytelnijSie
     Inherits Komunikat
 
     Public Property Haslo As String

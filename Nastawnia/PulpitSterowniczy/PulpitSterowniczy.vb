@@ -93,8 +93,11 @@ Friend Class PulpitSterowniczy
         Set(value As Single)
             If value < SKALOWANIE_MIN Then value = SKALOWANIE_MIN
             If value > SKALOWANIE_MAX Then value = SKALOWANIE_MAX
-            _Skalowanie = value
-            Invalidate()
+
+            If value <> _Skalowanie Then
+                _Skalowanie = value
+                Invalidate()
+            End If
         End Set
     End Property
 
@@ -470,9 +473,9 @@ Friend Class PulpitSterowniczy
             ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy Then
                 If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
                     Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-                    If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.PrzejazdKolejowy AndAlso _projZaznaczonyPrzejazd IsNot Nothing Then
+                    If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.PrzejazdKolejowoDrogowyKostka AndAlso _projZaznaczonyPrzejazd IsNot Nothing Then
 
-                        Dim prz As Zaleznosci.PrzejazdKolejowy = DirectCast(kostka, Zaleznosci.PrzejazdKolejowy)
+                        Dim prz As Zaleznosci.PrzejazdKolejowoDrogowyKostka = DirectCast(kostka, Zaleznosci.PrzejazdKolejowoDrogowyKostka)
                         Dim nalezyDoTegoPrzejazdu As Boolean = prz.NalezyDoPrzejazdu Is _projZaznaczonyPrzejazd
                         prz.NalezyDoPrzejazdu?.KostkiPrzejazdy.Remove(prz)
                         If nalezyDoTegoPrzejazdu Then
@@ -514,7 +517,7 @@ Friend Class PulpitSterowniczy
 
                 If _Pulpit.CzyKostkaNiepusta(p) Then
                     Dim k As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-                    If Zaleznosci.Kostka.CzyTorBezRozjazdu(k.Typ) Then
+                    If Zaleznosci.Kostka.CzyTorBezRozjazdu(k) Then
                         ZaznaczonaKostka = k
                         zaznaczono = True
                     End If
@@ -571,10 +574,13 @@ Friend Class PulpitSterowniczy
     Private Sub PulpitSterowniczy_MouseWheel(sender As Object, e As MouseEventArgs) Handles Me.MouseWheel
         Dim wspx As Double = (e.X - Przesuniecie.X) / SzerokoscPulpitu
         Dim wspy As Double = (e.Y - Przesuniecie.Y) / WysokoscPulpitu
+        Dim sk As Single = Skalowanie
 
         RysowanieWlaczone = False
         Skalowanie += e.Delta * SKALOWANIE_ZMIANA
         RysowanieWlaczone = True
+
+        If sk = Skalowanie Then Exit Sub
 
         Dim nowy As New Point(CInt(wspx * SzerokoscPulpitu), CInt(wspy * WysokoscPulpitu))
         Przesuniecie = New Point(e.X - nowy.X, e.Y - nowy.Y)

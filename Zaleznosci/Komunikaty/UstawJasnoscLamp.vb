@@ -1,4 +1,4 @@
-﻿Public Class UstawJasnoscLamp   'k
+﻿Public Class UstawJasnoscLamp
     Inherits Komunikat
 
     Public Property Jasnosci As JasnoscLampy()
@@ -10,7 +10,7 @@
     End Property
 
     Public Overrides Sub Zapisz(bw As BinaryWriter)
-        bw.Write(CType(Jasnosci.Length, UShort))
+        bw.Write(CUShort(Jasnosci.Length))
 
         For i As Integer = 0 To Jasnosci.Length - 1
             bw.Write(Jasnosci(i).Adres)

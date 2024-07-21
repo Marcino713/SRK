@@ -26,7 +26,7 @@ Public Class SygnalizatorPolsamoczynny
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
         MyBase.ZapiszKostke(bw, konf)
-        bw.Write(CType(DostepneSwiatla, UShort))
+        bw.Write(CUShort(DostepneSwiatla))
     End Sub
 
     Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)

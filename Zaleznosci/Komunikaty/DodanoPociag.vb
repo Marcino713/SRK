@@ -1,4 +1,4 @@
-﻿Public Class DodanoPociag 's
+﻿Public Class DodanoPociag
     Inherits Komunikat
 
     Public Property NrPociagu As UInteger

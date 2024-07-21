@@ -1,4 +1,4 @@
-﻿Public Class ZmienionoStanToru  's
+﻿Public Class ZmienionoStanToru
     Inherits Komunikat
 
     Public Property Tory As AktualizowanyKawalekToru()
@@ -10,7 +10,7 @@
     End Property
 
     Public Overrides Sub Zapisz(bw As BinaryWriter)
-        bw.Write(CType(Tory.Length, UShort))
+        bw.Write(CUShort(Tory.Length))
 
         For i As Integer = 0 To Tory.Length - 1
             bw.Write(Tory(i).WspolrzedneKostki.X)

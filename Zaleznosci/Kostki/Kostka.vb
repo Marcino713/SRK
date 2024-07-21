@@ -4,49 +4,44 @@ Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.Kon
 Public MustInherit Class Kostka
     Implements IObiektPlikuTyp
 
+    Private Delegate Function UtworzKostke() As Kostka
+
+    Private Shared ReadOnly TworzycieleKostek As New Dictionary(Of TypKostki, UtworzKostke) From {
+        {TypKostki.Tor, Function() New Tor},
+        {TypKostki.TorKoniec, Function() New TorKoniec},
+        {TypKostki.Zakret, Function() New Zakret},
+        {TypKostki.RozjazdLewo, Function() New RozjazdLewo},
+        {TypKostki.RozjazdPrawo, Function() New RozjazdPrawo},
+        {TypKostki.SygnalizatorManewrowy, Function() New SygnalizatorManewrowy},
+        {TypKostki.SygnalizatorPolsamoczynny, Function() New SygnalizatorPolsamoczynny},
+        {TypKostki.SygnalizatorSamoczynny, Function() New SygnalizatorSamoczynny},
+        {TypKostki.Przycisk, Function() New Przycisk},
+        {TypKostki.PrzyciskTor, Function() New PrzyciskTor},
+        {TypKostki.Kierunek, Function() New Kierunek},
+        {TypKostki.Napis, Function() New Napis},
+        {TypKostki.SygnalizatorPowtarzajacy, Function() New SygnalizatorPowtarzajacy},
+        {TypKostki.SygnalizatorOstrzegawczyPrzejazdowy, Function() New SygnalizatorOstrzegawczyPrzejazdowy},
+        {TypKostki.PrzejazdKolejowy, Function() New PrzejazdKolejowoDrogowyKostka}
+    }
+
     Public ReadOnly Property Typ As TypKostki
     Public Property Obrot As Integer
-
     Public Property Migacz As IMigacz
 
-    Public Shared Function CzyRozjazd(typ As TypKostki) As Boolean
-        Return _
-            typ = TypKostki.RozjazdLewo Or
-            typ = TypKostki.RozjazdPrawo
+    Public Shared Function CzyRozjazd(k As Kostka) As Boolean
+        Return TypeOf k Is Rozjazd
     End Function
 
-    Public Shared Function CzyPrzycisk(typ As TypKostki) As Boolean
-        Return _
-            CzyRozjazd(typ) Or
-            typ = TypKostki.Przycisk Or
-            typ = TypKostki.PrzyciskTor Or
-            typ = TypKostki.SygnalizatorManewrowy
+    Public Shared Function CzySygnalizator(k As Kostka) As Boolean
+        Return TypeOf k Is Sygnalizator
     End Function
 
-    Public Shared Function CzySygnalizator(typ As TypKostki) As Boolean
-        Return _
-            typ = TypKostki.SygnalizatorManewrowy Or
-            typ = TypKostki.SygnalizatorSamoczynny Or
-            typ = TypKostki.SygnalizatorPolsamoczynny Or
-            typ = TypKostki.SygnalizatorPowtarzajacy Or
-            typ = TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
+    Public Shared Function CzyTorBezRozjazdu(k As Kostka) As Boolean
+        Return TypeOf k Is Tor AndAlso TypeOf k IsNot Rozjazd
     End Function
 
-    Public Shared Function CzyTorBezRozjazdu(typ As TypKostki) As Boolean
-        Return _
-            CzySygnalizator(typ) Or
-            typ = TypKostki.Tor Or
-            typ = TypKostki.Zakret Or
-            typ = TypKostki.Kierunek Or
-            typ = TypKostki.PrzyciskTor Or
-            typ = TypKostki.PrzejazdKolejowy
-    End Function
-
-    Public Shared Function CzyTor(typ As TypKostki) As Boolean
-        Return _
-            CzyTorBezRozjazdu(typ) Or
-            CzyRozjazd(typ) Or
-            typ = TypKostki.TorKoniec
+    Public Shared Function CzyTor(k As Kostka) As Boolean
+        Return TypeOf k Is Tor OrElse TypeOf k Is TorKoniec
     End Function
 
     Public Sub New(typ As TypKostki)
@@ -71,11 +66,11 @@ Public MustInherit Class Kostka
     Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
         Using ms As New MemoryStream
             Using bw As New BinaryWriter(ms)
-                bw.Write(CType(Typ, UShort))
+                bw.Write(CUShort(Typ))
                 bw.Write(konf.Kostki(Me))
                 bw.Write(konf.X)
                 bw.Write(konf.Y)
-                bw.Write(CType(Obrot, UShort))
+                bw.Write(CUShort(Obrot))
                 ZapiszKostke(bw, konf)
 
                 Return ms.ToArray()
@@ -87,42 +82,15 @@ Public MustInherit Class Kostka
         Dim typ As TypKostki = CType(PobierzInt32(dane, 0, 2), TypKostki)
         Dim id As Integer = PobierzInt32(dane, 2, 4)
         Dim k As Kostka = Nothing
+        Dim metodaTworzaca As UtworzKostke = Nothing
 
-        Select Case typ
-            Case TypKostki.Tor
-                k = New Tor
-            Case TypKostki.TorKoniec
-                k = New TorKoniec
-            Case TypKostki.Zakret
-                k = New Zakret
-            Case TypKostki.RozjazdLewo
-                k = New RozjazdLewo
-            Case TypKostki.RozjazdPrawo
-                k = New RozjazdPrawo
-            Case TypKostki.SygnalizatorManewrowy
-                k = New SygnalizatorManewrowy
-            Case TypKostki.SygnalizatorPolsamoczynny
-                k = New SygnalizatorPolsamoczynny
-            Case TypKostki.SygnalizatorSamoczynny
-                k = New SygnalizatorSamoczynny
-            Case TypKostki.Przycisk
-                k = New Przycisk
-            Case TypKostki.PrzyciskTor
-                k = New PrzyciskTor
-            Case TypKostki.Kierunek
-                k = New Kierunek
-            Case TypKostki.Napis
-                k = New Napis
-            Case TypKostki.SygnalizatorPowtarzajacy
-                k = New SygnalizatorPowtarzajacy
-            Case TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
-                k = New SygnalizatorOstrzegawczyPrzejazdowy
-            Case TypKostki.PrzejazdKolejowy
-                k = New PrzejazdKolejowy
-        End Select
+        If TworzycieleKostek.TryGetValue(typ, metodaTworzaca) Then
+            k = metodaTworzaca()
+            konf.Kostki.Add(id, k)
+            Return k
+        End If
 
-        konf.Kostki.Add(id, k)
-        Return k
+        Return Nothing
     End Function
 
     Friend MustOverride Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)

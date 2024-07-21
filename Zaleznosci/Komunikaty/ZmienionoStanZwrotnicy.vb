@@ -1,4 +1,4 @@
-﻿Public Class ZmienionoStanZwrotnicy  's
+﻿Public Class ZmienionoStanZwrotnicy
     Inherits Komunikat
 
     Public Property Adres As UShort

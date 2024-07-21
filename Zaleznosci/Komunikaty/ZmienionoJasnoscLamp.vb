@@ -1,4 +1,4 @@
-﻿Public Class ZmienionoJasnoscLamp   's
+﻿Public Class ZmienionoJasnoscLamp
     Inherits Komunikat
 
     Public Property Adresy As UShort()
@@ -10,7 +10,7 @@
     End Property
 
     Public Overrides Sub Zapisz(bw As BinaryWriter)
-        bw.Write(CType(Adresy.Length, UShort))
+        bw.Write(CUShort(Adresy.Length))
 
         For i As Integer = 0 To Adresy.Length - 1
             bw.Write(Adresy(i))

@@ -104,7 +104,6 @@
     <Compile Include="PulpitSterowniczy\Dodatki.vb" />
     <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyDirect2D.vb" />
     <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyGDI.vb" />
-    <Compile Include="PulpitSterowniczy\RysujDodatkoweObiekty.vb" />
     <Compile Include="ProjektantPosterunkuRuchu\EdytorRozmiaruPowierzchni.Designer.vb">
       <DependentUpon>EdytorRozmiaruPowierzchni.vb</DependentUpon>
     </Compile>
@@ -166,7 +165,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasyczny.vb" />
-    <Compile Include="PulpitSterowniczy\TypRysownika.vb" />
     <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\IUrzadzenieRysujace.vb" />
     <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceDirect2D.vb" />
     <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceGDI.vb" />
@@ -276,6 +274,10 @@
     <ProjectReference Include="..\SerwerSterujacy\SerwerSterujacy.vbproj">
       <Project>{db38cd60-7afc-4062-9289-d2e73682f056}</Project>
       <Name>SerwerSterujacy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Wspolne\Wspolne.vbproj">
+      <Project>{2d8e9cdf-f079-428a-92d8-2449c514ff89}</Project>
+      <Name>Wspolne</Name>
     </ProjectReference>
     <ProjectReference Include="..\Zaleznosci\Zaleznosci.vbproj">
       <Project>{d13b5d10-865e-4724-b791-13137e8bd9d6}</Project>

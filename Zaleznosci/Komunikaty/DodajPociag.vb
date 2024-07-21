@@ -1,4 +1,4 @@
-﻿Public Class DodajPociag  'k
+﻿Public Class DodajPociag
     Inherits Komunikat
 
     Public Property LiczbaOsi As UShort

@@ -1,4 +1,4 @@
-﻿Public Class ZmienionoPredkoscDozwolona    's
+﻿Public Class ZmienionoPredkoscDozwolona
     Inherits Komunikat
 
     Public Property NrPociagu As UInteger

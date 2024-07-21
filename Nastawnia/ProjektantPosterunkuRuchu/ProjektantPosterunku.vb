@@ -40,7 +40,7 @@
     End Sub
 
     Private Sub wndProjektantPosterunku_Load() Handles Me.Load
-        plpPulpit.TypRysownika = Narzedzia.TypRysownika
+        plpPulpit.TypRysownika = WybranyTypRysownika
         plpPulpit.Wysrodkuj()
 
         PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygnSygnNast, pnlKonfSygnOdcNast, pnlKonfSygnPrzycisk, pnlKonfSygnSwiatla, pnlKonfSygnPowt, pnlKonfTor, pnlKonfNapis, pnlKonfKier, pnlKonfAdres}
@@ -148,7 +148,7 @@
             UtworzKostkeDoListy(p, New Zaleznosci.SygnalizatorPowtarzajacy() With {.SygnalizatorPowtarzany = sygnPolsamPowt}, "Sygnalizator powtarzający"),
             UtworzKostkeDoListy(p, sygnPolsam, "Sygnalizator półsamoczynny"),
             UtworzKostkeDoListy(p, New Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy() With {.Nazwa = "107"}, "Sygnalizator przejazdowy"),
-            UtworzKostkeDoListy(p, New Zaleznosci.PrzejazdKolejowy(), "Przejazd kolejowy"),
+            UtworzKostkeDoListy(p, New Zaleznosci.PrzejazdKolejowoDrogowyKostka(), "Przejazd kolejowy"),
             UtworzKostkeDoListy(p, New Zaleznosci.Przycisk() With {.SygnalizatorPolsamoczynny = sygnPolsam}, "Przycisk"),
             UtworzKostkeDoListy(p, New Zaleznosci.PrzyciskTor() With {.SygnalizatorPolsamoczynny = sygnPolsam}, "Przycisk z torem"),
             UtworzKostkeDoListy(p, New Zaleznosci.Kierunek() With {.Nazwa = "Tor 9"}, "Wjazd/wyjazd ze stacji"),
@@ -178,7 +178,7 @@
             CzyscDane(pulpitNowy)
             UstawTytulOkna()
         Else
-            PokazBlad($"Nie udało się otworzyć pliku {sciezka}.")
+            Wspolne.PokazBlad($"Nie udało się otworzyć pliku {sciezka}.")
         End If
     End Sub
 
@@ -214,7 +214,7 @@
         End If
 
         If Not wynik Then
-            PokazBlad("Nie udało się zapisać pliku.")
+            Wspolne.PokazBlad("Nie udało się zapisać pliku.")
             Return False
         Else
             PokazKomunikat("Plik został zapisany.")
@@ -312,7 +312,7 @@
                 End If
 
             Catch ex As Exception
-                PokazBlad("Wystąpił błąd podczas usuwania kostek:" & vbCrLf & ex.Message)
+                Wspolne.PokazBlad("Wystąpił błąd podczas usuwania kostek:" & vbCrLf & ex.Message)
             End Try
         End If
     End Sub
@@ -326,7 +326,7 @@
         End If
     End Sub
 
-    Private Sub ctxSortuj_Click() Handles ctxSortuj.Click
+    Private Sub ctmSortuj_Click() Handles ctmSortuj.Click
         If tabUstawienia.SelectedTab Is tbpOdcinki Then
             plpPulpit.Pulpit.SortujOdcinkiNazwaRosnaco()
             OdswiezListeOdcinkowTorow()
@@ -346,7 +346,7 @@
         End If
     End Sub
 
-    Private Sub ctxSortujPrzejazdy_Click() Handles ctxSortujPrzejazdy.Click
+    Private Sub ctmSortujPrzejazdy_Click() Handles ctmSortujPrzejazdy.Click
         If plpPulpit.projZaznaczonyPrzejazd IsNot Nothing Then
             Dim prz As Zaleznosci.PrzejazdKolejowoDrogowy = plpPulpit.projZaznaczonyPrzejazd
 
@@ -1192,7 +1192,7 @@
         Dim pyt As String = "Czy usunąć odcinek torów"
         If odcinek.Nazwa <> "" Then pyt &= " o nazwie " & odcinek.Nazwa
 
-        If ZadajPytanie(pyt & "?") = DialogResult.Yes Then
+        If Wspolne.ZadajPytanie(pyt & "?") = DialogResult.Yes Then
             plpPulpit.Pulpit.UsunOdcinekToru(odcinek)
             OdswiezListeOdcinkowTorow()
         End If
@@ -1306,7 +1306,7 @@
         Dim odc1 As String = PobierzNazweOdcinka(licznik.Odcinek1?.Nazwa)
         Dim odc2 As String = PobierzNazweOdcinka(licznik.Odcinek2?.Nazwa)
 
-        If ZadajPytanie($"Czy usunąć parę liczników osi dla odcinków torów {odc1} oraz {odc2}?") = DialogResult.Yes Then
+        If Wspolne.ZadajPytanie($"Czy usunąć parę liczników osi dla odcinków torów {odc1} oraz {odc2}?") = DialogResult.Yes Then
             plpPulpit.Pulpit.LicznikiOsi.Remove(licznik)
             OdswiezListeLicznikow()
         End If
@@ -1484,7 +1484,7 @@
         Dim lampa As Zaleznosci.Lampa = plpPulpit.projZaznaczonaLampa
         If lampa Is Nothing Then Exit Sub
 
-        If ZadajPytanie("Czy usunąć lampę o adresie " & lampa.Adres.ToString & "?") = DialogResult.Yes Then
+        If Wspolne.ZadajPytanie("Czy usunąć lampę o adresie " & lampa.Adres.ToString & "?") = DialogResult.Yes Then
             plpPulpit.Pulpit.Lampy.Remove(lampa)
             OdswiezListeLamp()
         End If
@@ -1597,7 +1597,7 @@
         Dim pyt As String = "Czy usunąć przejazd kolejowo-drogowy"
         If przejazd.Nazwa <> "" Then pyt &= " o nazwie " & przejazd.Nazwa
 
-        If ZadajPytanie(pyt & "?") = DialogResult.Yes Then
+        If Wspolne.ZadajPytanie(pyt & "?") = DialogResult.Yes Then
             plpPulpit.Pulpit.UsunPrzejazdKolejowoDrogowy(przejazd)
             OdswiezListePrzejazdow()
         End If
@@ -1709,7 +1709,7 @@
         Dim pyt As String = "Czy usunąć obiekt automatyzacji"
         If przejazd.Nazwa <> "" Then pyt &= " z przejazdu " & przejazd.Nazwa
 
-        If ZadajPytanie(pyt & "?") = DialogResult.Yes Then
+        If Wspolne.ZadajPytanie(pyt & "?") = DialogResult.Yes Then
             przejazd.AutomatyczneZamykanie.Remove(automatyzacja)
             OdswiezListePrzejazdAutomatyzacja()
             OdswiezLiczbeObiektowAutomatyzacji()
@@ -1798,7 +1798,7 @@
         Dim pyt As String = "Czy usunąć rogatkę o adresie " & rogatka.Adres.ToString
         If przejazd.Nazwa <> "" Then pyt &= " z przejazdu " & przejazd.Nazwa
 
-        If ZadajPytanie(pyt & "?") = DialogResult.Yes Then
+        If Wspolne.ZadajPytanie(pyt & "?") = DialogResult.Yes Then
             przejazd.Rogatki.Remove(rogatka)
             OdswiezListePrzejazdRogatki()
             OdswiezLiczbeRogatek()
@@ -1881,7 +1881,7 @@
         Dim pyt As String = "Czy usunąć sygnalizator drogowy o adresie " & sygnDrog.Adres
         If przejazd.Nazwa <> "" Then pyt &= " z przejazdu " & przejazd.Nazwa
 
-        If ZadajPytanie(pyt & "?") = DialogResult.Yes Then
+        If Wspolne.ZadajPytanie(pyt & "?") = DialogResult.Yes Then
             przejazd.SygnalizatoryDrogowe.Remove(sygnDrog)
             OdswiezListePrzejazdSygnDrog()
             OdswiezLiczbeSygnDrog()

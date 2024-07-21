@@ -1,4 +1,4 @@
-﻿Public Class UstawZwrotnice  'k
+﻿Public Class UstawZwrotnice
     Inherits Komunikat
 
     Public Property Adres As UShort

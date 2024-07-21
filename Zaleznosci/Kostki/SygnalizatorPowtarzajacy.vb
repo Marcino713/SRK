@@ -1,13 +1,11 @@
 ﻿Imports Zaleznosci.PlikiPulpitu
 
 Public Class SygnalizatorPowtarzajacy
-    Inherits Tor
-    Implements IAdres
+    Inherits Sygnalizator
 
     Private Const BLAD As String = "Dla kostki sygnalizatora powtarzającego nie można zdefiniować nazwy."
     Private Const NAZWA_SP As String = "Sp"
 
-    Public Property Adres As UShort = 0 Implements IAdres.Adres
     Public Property Kolejnosc As KolejnoscSygnalizatoraPowtarzajacego
     Public Property SygnalizatorPowtarzany As SygnalizatorPolsamoczynny
     Public Overloads Property Nazwa As String
@@ -45,14 +43,12 @@ Public Class SygnalizatorPowtarzajacy
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
         MyBase.ZapiszKostke(bw, konf)
-        bw.Write(Adres)
         bw.Write(CByte(Kolejnosc))
         bw.Write(If(SygnalizatorPowtarzany Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(SygnalizatorPowtarzany)))
     End Sub
 
     Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
         MyBase.OtworzKostke(br, konf)
-        Adres = br.ReadUInt16
         Kolejnosc = CType(br.ReadByte, KolejnoscSygnalizatoraPowtarzajacego)
         Dim id As Integer = br.ReadInt32
         SygnalizatorPowtarzany = CType(konf.Kostki(id), SygnalizatorPolsamoczynny)

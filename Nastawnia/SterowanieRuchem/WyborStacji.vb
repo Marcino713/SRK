@@ -22,7 +22,7 @@
 
     Private actOdswiezPosterunki As Action = AddressOf OdswiezPosterunki
     Private actPokazStan As Action(Of Boolean, String) = AddressOf PokazStanPolaczenia
-    Private actPokazBlad As Action(Of String) = AddressOf PokazBlad
+    Private actPokazBlad As Action(Of String) = AddressOf Wspolne.PokazBlad
     Private actZamknijOkno As Action = Sub() Close()
     Private actWyczyscPosterunki As Action = AddressOf WyczyscListePosterunkow
     Private actPokazZajetoscPosterunku As Action = AddressOf PokazZajetoscPosterunku
@@ -42,17 +42,17 @@
         Dim port As UShort
 
         If txtAdres.Text = "" Then
-            PokazBlad("Należy podać adres serwera.")
+            Wspolne.PokazBlad("Należy podać adres serwera.")
             Exit Sub
         End If
 
         If Not UShort.TryParse(txtPort.Text, port) Then
-            PokazBlad("Wartość pola Port musi być liczbą całkowitą dodatnią.")
+            Wspolne.PokazBlad("Wartość pola Port musi być liczbą całkowitą dodatnią.")
             Exit Sub
         End If
 
         If txtHaslo.Text = "" Then
-            PokazBlad("Należy podać hasło.")
+            Wspolne.PokazBlad("Należy podać hasło.")
             Exit Sub
         End If
 
@@ -133,7 +133,7 @@
 
         Dim dane As Zaleznosci.DanePosterunku = CType(lvPosterunki.SelectedItems(0).Tag, Zaleznosci.DanePosterunku)
         If dane.Stan = Zaleznosci.StanPosterunku.Zajety Then
-            PokazBlad("Posterunek jest już zajęty.")
+            Wspolne.PokazBlad("Posterunek jest już zajęty.")
             Exit Sub
         End If
 

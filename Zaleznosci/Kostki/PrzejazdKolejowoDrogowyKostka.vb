@@ -1,6 +1,6 @@
 ﻿Imports Zaleznosci.PlikiPulpitu
 
-Public Class PrzejazdKolejowy
+Public Class PrzejazdKolejowoDrogowyKostka
     Inherits Tor
 
     Private Const BLAD As String = "Kostka przejazdu kolejowego nie obsługuje właściwości Nazwa."
