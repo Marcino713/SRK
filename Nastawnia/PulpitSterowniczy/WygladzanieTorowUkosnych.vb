@@ -4,13 +4,13 @@
     Private Const BOKI As Integer = 4
 
     'Z której strony, względem kostki o danych współrzędnych, znajduje się kostka sąsiednia
-    Private ReadOnly PRAWO As New Point(1, 0)
-    Private ReadOnly DOL As New Point(0, 1)
-    Private ReadOnly LEWO As New Point(-1, 0)
-    Private ReadOnly GORA As New Point(0, -1)
+    Private ReadOnly PRAWO As New Zaleznosci.PunktCalkowity(1, 0)
+    Private ReadOnly DOL As New Zaleznosci.PunktCalkowity(0, 1)
+    Private ReadOnly LEWO As New Zaleznosci.PunktCalkowity(-1, 0)
+    Private ReadOnly GORA As New Zaleznosci.PunktCalkowity(0, -1)
 
     'Położenia kostki sąsiedniej, zgodnie z rosnącym obrotem
-    Private ReadOnly KOSTKI_SASIEDNIE As Point() = {PRAWO, DOL, LEWO, GORA}
+    Private ReadOnly KOSTKI_SASIEDNIE As Zaleznosci.PunktCalkowity() = {PRAWO, DOL, LEWO, GORA}
 
     Friend Sub WyznaczWygladzanieZakretow(pulpit As Zaleznosci.Pulpit)
         pulpit.PrzeiterujKostki(AddressOf CzyscParametryWygladzaniaDlaKostki)
@@ -18,37 +18,37 @@
     End Sub
 
     Private Sub CzyscParametryWygladzaniaDlaKostki(x As Integer, y As Integer, k As Zaleznosci.Kostka)
-        If TypeOf k Is Zaleznosci.Tor And TypeOf k IsNot Zaleznosci.Zakret Then
-            DirectCast(k, Zaleznosci.Tor).RysowanieDodatkowychTrojkatow = 0
+        Dim tor As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
+        If tor IsNot Nothing AndAlso TypeOf k IsNot Zaleznosci.Zakret Then
+            tor.RysowanieDodatkowychTrojkatow = 0
         End If
 
-        If TypeOf k Is Zaleznosci.TorKoniec Then
-            DirectCast(k, Zaleznosci.TorKoniec).RysowanieDodatkowychTrojkatow = 0
-        End If
+        Dim konc As Zaleznosci.TorKoniec = TryCast(k, Zaleznosci.TorKoniec)
+        If konc IsNot Nothing Then konc.RysowanieDodatkowychTrojkatow = 0
 
-        If TypeOf k Is Zaleznosci.IZakret Then
-            DirectCast(k, Zaleznosci.IZakret).PrzytnijZakret = 0
-        End If
+        Dim zakr As Zaleznosci.IZakret = TryCast(k, Zaleznosci.IZakret)
+        If zakr IsNot Nothing Then zakr.PrzytnijZakret = 0
     End Sub
 
     Private Sub PrzetworzKostke(x As Integer, y As Integer, k As Zaleznosci.Kostka, pulpit As Zaleznosci.Pulpit)
-        If TypeOf k Is Zaleznosci.IZakret Then
-            Dim zakret As Zaleznosci.IZakret = DirectCast(k, Zaleznosci.IZakret)
+        Dim zakret As Zaleznosci.IZakret = TryCast(k, Zaleznosci.IZakret)
+
+        If zakret IsNot Nothing Then
             Dim rozjLewo As Boolean = k.Typ = Zaleznosci.TypKostki.RozjazdLewo
             Dim rozjPrawo As Boolean = k.Typ = Zaleznosci.TypKostki.RozjazdPrawo
-            Dim wsp As New Point(x, y)
+            Dim wsp As New Zaleznosci.PunktCalkowity(x, y)
             Dim granicaPrawo As GranicaToru
             Dim granicaDol As GranicaToru
-            Dim sasiedztwoPrawo As Point
-            Dim sasiedztwoDol As Point
+            Dim sasiedztwoPrawo As Zaleznosci.PunktCalkowity
+            Dim sasiedztwoDol As Zaleznosci.PunktCalkowity
             Dim obrotKostki As Integer = ObliczObrot(k.Obrot, rozjPrawo)
 
             'sprawdź, z czym graniczy kostka
             sasiedztwoPrawo = KOSTKI_SASIEDNIE(ObliczStopienObrotu(obrotKostki))
             sasiedztwoDol = KOSTKI_SASIEDNIE(ObliczStopienObrotu(obrotKostki + KAT_PROSTY))
 
-            granicaPrawo = CzyGraniczyZTorem(pulpit, wsp, sasiedztwoPrawo, KrawedzZakretu.Prawo, rozjPrawo)
-            granicaDol = CzyGraniczyZTorem(pulpit, wsp, sasiedztwoDol, KrawedzZakretu.Dol, rozjPrawo)
+            granicaPrawo = CzyGraniczyZTorem(pulpit, wsp, sasiedztwoPrawo, KrawedzZakretu.Prawo)
+            granicaDol = CzyGraniczyZTorem(pulpit, wsp, sasiedztwoDol, KrawedzZakretu.Dol)
 
             'wyznacz przycięcie trójkątów na torach ukośnych
             If ((granicaPrawo And GranicaToru.PrzedluzonyZakret) = 0) And (((granicaPrawo And GranicaToru.Prosty) <> 0) Or rozjLewo) Then
@@ -71,7 +71,7 @@
         End If
     End Sub
 
-    Private Sub WyznaczDodatkoweTrojkaty(pulpit As Zaleznosci.Pulpit, x As Integer, y As Integer, obrot As Integer, granica As GranicaToru, sasiedztwo As Point, poczatkowyObrot As Integer,
+    Private Sub WyznaczDodatkoweTrojkaty(pulpit As Zaleznosci.Pulpit, x As Integer, y As Integer, obrot As Integer, granica As GranicaToru, sasiedztwo As Zaleznosci.PunktCalkowity, poczatkowyObrot As Integer,
                                          trojLewo As Zaleznosci.DodatkoweTrojkatyTor, trojLewoKoniec As Zaleznosci.DodatkoweTrojkatyTorKoniec, trojPrawo As Zaleznosci.DodatkoweTrojkatyTor)
 
         If (granica And GranicaToru.Prosty) <> 0 And (granica And GranicaToru.Zakret) = 0 Then
@@ -102,8 +102,8 @@
     ''' <param name="roznica">Wartość dodawana do współrzednych kostki, aby uzyskać współrzędne kostki sprawdzanej</param>
     ''' <param name="krawedz">Sprawdzana krawędź toru ukośnego</param>
     ''' <returns></returns>
-    Private Function CzyGraniczyZTorem(pulpit As Zaleznosci.Pulpit, wspolrzedne As Point, roznica As Point, krawedz As KrawedzZakretu, rozjazdPrawy As Boolean) As GranicaToru
-        Dim kostkaNowa As New Point(wspolrzedne.X + roznica.X, wspolrzedne.Y + roznica.Y)
+    Private Function CzyGraniczyZTorem(pulpit As Zaleznosci.Pulpit, wspolrzedne As Zaleznosci.PunktCalkowity, roznica As Zaleznosci.PunktCalkowity, krawedz As KrawedzZakretu) As GranicaToru
+        Dim kostkaNowa As New Zaleznosci.PunktCalkowity(wspolrzedne.X + roznica.X, wspolrzedne.Y + roznica.Y)
 
         If kostkaNowa.X < 0 OrElse kostkaNowa.Y < 0 OrElse kostkaNowa.X >= pulpit.Szerokosc OrElse kostkaNowa.Y >= pulpit.Wysokosc Then
             Return GranicaToru.Brak
@@ -133,7 +133,7 @@
         Return GranicaToru.Brak
     End Function
 
-    Private Function CzyGraniczyZKoncemToru(obrot As Integer, roznica As Point) As GranicaToru
+    Private Function CzyGraniczyZKoncemToru(obrot As Integer, roznica As Zaleznosci.PunktCalkowity) As GranicaToru
         Dim ix As Integer = ObliczStopienObrotu(obrot)
 
         If KOSTKI_SASIEDNIE(ix) = roznica Then
@@ -143,7 +143,7 @@
         Return GranicaToru.Brak
     End Function
 
-    Private Function CzyGraniczyZToremProstym(obrot As Integer, roznica As Point) As GranicaToru
+    Private Function CzyGraniczyZToremProstym(obrot As Integer, roznica As Zaleznosci.PunktCalkowity) As GranicaToru
         Dim reszta As Integer = ObliczStopienObrotu(obrot) And 1
 
         If _
@@ -155,7 +155,7 @@
         Return GranicaToru.Brak
     End Function
 
-    Private Function CzyGraniczyZZakretem(obrot As Integer, roznica As Point, krawedz As KrawedzZakretu) As GranicaToru
+    Private Function CzyGraniczyZZakretem(obrot As Integer, roznica As Zaleznosci.PunktCalkowity, krawedz As KrawedzZakretu) As GranicaToru
         Dim wynik As GranicaToru = GranicaToru.Brak
         Dim ix As Integer = ObliczStopienObrotu(obrot)
 

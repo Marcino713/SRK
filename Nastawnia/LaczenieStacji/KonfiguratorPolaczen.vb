@@ -45,7 +45,7 @@ Public Class wndKonfiguratorPolaczen
     End Sub
 
     Private Sub btnUsun_Click() Handles btnUsun.Click
-        Dim pol As Zaleznosci.LaczoneOdcinkiTorow = PobierzZaznaczonyElement(Of Zaleznosci.LaczoneOdcinkiTorow)(lvPolaczenia)
+        Dim pol As Zaleznosci.LaczoneOdcinkiTorow = PobierzTagZElementuListy(Of Zaleznosci.LaczoneOdcinkiTorow)(PobierzZaznaczonyElementNaLiscie(lvPolaczenia))
         If pol Is Nothing Then Exit Sub
 
         If Wspolne.ZadajPytanie($"Czy usunąć połączenie torów {PobierzNazweStacjiToru(pol.Posterunek1, pol.Tor1)} i {PobierzNazweStacjiToru(pol.Posterunek2, pol.Tor2)}?") = DialogResult.Yes Then

@@ -62,7 +62,7 @@ Public Class wndNastawnia
     End Sub
 
     Private Sub mnuPolaczZSerwerem_Click() Handles mnuPolaczZSerwerem.Click
-        Dim wnd As New wndWyborStacji(Klient)
+        Dim wnd As New wndWyborPosterunku(Klient)
         WlaczoneOknoWyboruPost = True
         wnd.ShowDialog()
         WlaczoneOknoWyboruPost = False
@@ -349,7 +349,7 @@ Public Class wndNastawnia
     Private Sub Klient_OdebranoZmienionoStanToru(kom As Zaleznosci.ZmienionoStanToru) Handles Klient.OdebranoZmienionoStanToru
         For i As Integer = 0 To kom.Tory.Length - 1
             Dim akt As Zaleznosci.AktualizowanyKawalekToru = kom.Tory(i)
-            If Not plpPulpit.Pulpit.CzyKostkaNiepusta(akt.WspolrzedneKostki.Konwertuj) Then Continue For
+            If Not plpPulpit.Pulpit.CzyKostkaNiepusta(akt.WspolrzedneKostki) Then Continue For
 
             Dim k As Zaleznosci.Kostka = plpPulpit.Pulpit.Kostki(akt.WspolrzedneKostki.X, akt.WspolrzedneKostki.Y)
             If akt.Polozenie = Zaleznosci.PolozenieToru.RozjazdWBok Then

@@ -84,16 +84,16 @@
             Invoke(actPokazDostepnoscKontrolek, True)
 
             Select Case kom.Stan
-                Case Zaleznosci.StanNadaniaNumeruPociagu.Dobrze
+                Case Zaleznosci.StanDodaniaPociagu.Dobrze
                     Invoke(actPokazKomunikat, "Pociąg został dodany.")
                     Invoke(actZamknij)
-                Case Zaleznosci.StanNadaniaNumeruPociagu.NrZajety
+                Case Zaleznosci.StanDodaniaPociagu.NrZajety
                     Invoke(actPokazBlad, "Pociąg o podanym numerze już istnieje.")
-                Case Zaleznosci.StanNadaniaNumeruPociagu.BledneWspolrzedne
+                Case Zaleznosci.StanDodaniaPociagu.BledneWspolrzedne
                     Invoke(actPokazBlad, "Pociąg nie mógł zostać dodany na wskazanej kostce.")
-                Case Zaleznosci.StanNadaniaNumeruPociagu.NieprawidlowyNumer
+                Case Zaleznosci.StanDodaniaPociagu.NieprawidlowyNumer
                     Invoke(actPokazBlad, "Numer pociągu jest nieprawidłowy.")
-                Case Zaleznosci.StanNadaniaNumeruPociagu.NieprawidlowaLiczbaOsi
+                Case Zaleznosci.StanDodaniaPociagu.NieprawidlowaLiczbaOsi
                     Invoke(actPokazBlad, "Liczba osi pociągu jest nieprawidłowa.")
             End Select
         End If

@@ -1,4 +1,4 @@
-﻿Public Class wndWyborStacji
+﻿Public Class wndWyborPosterunku
     Private Const STAN_WOLNY As String = "Wolny"
     Private Const STAN_ZAJETY As String = "Zajęty"
 
@@ -32,7 +32,7 @@
         Klient = obiektKlienta
     End Sub
 
-    Private Sub wndWyborStacji_FormClosing() Handles Me.FormClosing
+    Private Sub wndWyborPosterunku_FormClosing() Handles Me.FormClosing
         Dim k As Zaleznosci.KlientTCP = Klient
         Klient = Nothing
         If _Pulpit Is Nothing Then k.Zakoncz(False)
@@ -175,9 +175,11 @@
         If lvPosterunki.Items Is Nothing Then Exit Sub
 
         For i As Integer = 0 To lvPosterunki.Items.Count - 1
-            Dim dp As Zaleznosci.DanePosterunku = CType(lvPosterunki.Items(i).Tag, Zaleznosci.DanePosterunku)
+            Dim lvi As ListViewItem = lvPosterunki.Items(i)
+            Dim dp As Zaleznosci.DanePosterunku = CType(lvi.Tag, Zaleznosci.DanePosterunku)
+
             If dp.Adres = WybranyAdres Then
-                lvPosterunki.Items(i).SubItems(2).Text = STAN_ZAJETY
+                lvi.SubItems(2).Text = STAN_ZAJETY
                 Exit Sub
             End If
         Next

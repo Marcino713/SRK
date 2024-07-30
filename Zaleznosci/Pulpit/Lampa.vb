@@ -2,11 +2,11 @@
 Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
 
 Public Class Lampa
-    Implements IObiektPlikuTyp, IObiektPunktowy
+    Implements IObiektPlikuTyp, IObiektPunktowy(Of Single)
 
     Public Property Adres As UShort
-    Public Property X As Single Implements IObiektPunktowy.X
-    Public Property Y As Single Implements IObiektPunktowy.Y
+    Public Property X As Single Implements IObiektPunktowy(Of Single).X
+    Public Property Y As Single Implements IObiektPunktowy(Of Single).Y
 
     Private kolejka As New Queue(Of Byte)({0})
 

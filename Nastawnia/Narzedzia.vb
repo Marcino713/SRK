@@ -5,19 +5,27 @@
     Public Const ARG_TYP_RYSOWNIKA_KLASYCZNY_D2D As String = "kld2d"
     Friend WybranyTypRysownika As TypRysownika = TypRysownika.KlasycznyDirect2D
 
-    Public Sub PokazKomunikat(Komunikat As String)
-        MessageBox.Show(Komunikat, "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    Public Sub PokazKomunikat(komunikat As String)
+        MessageBox.Show(komunikat, "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
 
-    Public Function ZadajPytanieTrzyodpowiedziowe(Pytanie As String) As DialogResult
-        Return MessageBox.Show(Pytanie, "Pytanie", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
+    Public Function ZadajPytanieTrzyodpowiedziowe(pytanie As String) As DialogResult
+        Return MessageBox.Show(pytanie, "Pytanie", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
     End Function
 
-    Friend Function PobierzZaznaczonyElement(Of T)(lv As ListView) As T
+    Friend Function PobierzZaznaczonyElementNaLiscie(lv As ListView) As ListViewItem
         If lv.SelectedItems Is Nothing OrElse lv.SelectedItems.Count = 0 Then
             Return Nothing
         Else
-            Return DirectCast(lv.SelectedItems(0).Tag, T)
+            Return lv.SelectedItems(0)
+        End If
+    End Function
+
+    Friend Function PobierzTagZElementuListy(Of T)(lvi As ListViewItem) As T
+        If lvi Is Nothing Then
+            Return Nothing
+        Else
+            Return DirectCast(lvi.Tag, T)
         End If
     End Function
 

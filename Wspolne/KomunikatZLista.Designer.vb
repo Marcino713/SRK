@@ -23,8 +23,8 @@ Partial Class wndKomunikatZLista
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.lblKomunikat = New System.Windows.Forms.Label()
-        Me.lstLista = New System.Windows.Forms.ListBox()
         Me.btnOK = New System.Windows.Forms.Button()
+        Me.lvLista = New System.Windows.Forms.ListView()
         Me.SuspendLayout()
         '
         'lblKomunikat
@@ -34,17 +34,6 @@ Partial Class wndKomunikatZLista
         Me.lblKomunikat.Name = "lblKomunikat"
         Me.lblKomunikat.Size = New System.Drawing.Size(0, 13)
         Me.lblKomunikat.TabIndex = 0
-        '
-        'lstLista
-        '
-        Me.lstLista.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lstLista.FormattingEnabled = True
-        Me.lstLista.Location = New System.Drawing.Point(12, 38)
-        Me.lstLista.Name = "lstLista"
-        Me.lstLista.Size = New System.Drawing.Size(315, 147)
-        Me.lstLista.TabIndex = 1
         '
         'btnOK
         '
@@ -56,13 +45,26 @@ Partial Class wndKomunikatZLista
         Me.btnOK.Text = "OK"
         Me.btnOK.UseVisualStyleBackColor = True
         '
+        'lvLista
+        '
+        Me.lvLista.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lvLista.HideSelection = False
+        Me.lvLista.Location = New System.Drawing.Point(12, 38)
+        Me.lvLista.Name = "lvLista"
+        Me.lvLista.Size = New System.Drawing.Size(315, 151)
+        Me.lvLista.TabIndex = 3
+        Me.lvLista.UseCompatibleStateImageBehavior = False
+        Me.lvLista.View = System.Windows.Forms.View.List
+        '
         'wndKomunikatZLista
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(339, 230)
+        Me.Controls.Add(Me.lvLista)
         Me.Controls.Add(Me.btnOK)
-        Me.Controls.Add(Me.lstLista)
         Me.Controls.Add(Me.lblKomunikat)
         Me.Name = "wndKomunikatZLista"
         Me.Text = "Komunikat"
@@ -72,6 +74,6 @@ Partial Class wndKomunikatZLista
     End Sub
 
     Friend WithEvents lblKomunikat As Label
-    Friend WithEvents lstLista As ListBox
     Friend WithEvents btnOK As Button
+    Friend WithEvents lvLista As ListView
 End Class

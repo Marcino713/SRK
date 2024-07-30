@@ -11,22 +11,27 @@
 
     Public Overrides Sub Zapisz(bw As BinaryWriter)
         bw.Write(CUShort(Jasnosci.Length))
+        Dim jasnosc As JasnoscLampy
 
         For i As Integer = 0 To Jasnosci.Length - 1
-            bw.Write(Jasnosci(i).Adres)
-            bw.Write(Jasnosci(i).Jasnosc)
+            jasnosc = Jasnosci(i)
+            bw.Write(jasnosc.Adres)
+            bw.Write(jasnosc.Jasnosc)
         Next
     End Sub
 
     Public Shared Function Otworz(br As BinaryReader) As Komunikat
         Dim kom As New UstawJasnoscLamp
         Dim ile As Integer = br.ReadUInt16
+        Dim jasnosc As JasnoscLampy
         ReDim kom.Jasnosci(ile - 1)
 
         For i As Integer = 0 To ile - 1
-            kom.Jasnosci(i) = New JasnoscLampy
-            kom.Jasnosci(i).Adres = br.ReadUInt16
-            kom.Jasnosci(i).Jasnosc = br.ReadByte
+            jasnosc = New JasnoscLampy
+            jasnosc.Adres = br.ReadUInt16
+            jasnosc.Jasnosc = br.ReadByte
+
+            kom.Jasnosci(i) = jasnosc
         Next
 
         Return kom

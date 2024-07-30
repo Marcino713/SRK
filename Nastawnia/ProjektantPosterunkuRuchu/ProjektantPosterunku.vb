@@ -11,7 +11,11 @@
     Private Const BRAK_NAZWY As String = "(brak nazwy)"
     Private Shared ReadOnly PUSTY_CBO_KOSTKA As New ObiektComboBox(Of Zaleznosci.Kostka)(Nothing, "")
     Private Shared ReadOnly PUSTY_CBO_ODCINEK_TORU As New ObiektComboBox(Of Zaleznosci.OdcinekToru)(Nothing, "")
-    Private ReadOnly STAWNOSC_SBL As New Dictionary(Of Zaleznosci.StawnoscSBL, ObiektStawnosciSBL)
+    Private ReadOnly STAWNOSC_SBL As New Dictionary(Of Zaleznosci.StawnoscSBL, OpakowywaczEnum(Of Zaleznosci.StawnoscSBL))
+    Private ReadOnly TYP_PRZYCISKU As New Dictionary(Of Zaleznosci.TypPrzyciskuEnum, OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuEnum))
+    Private ReadOnly TYP_PRZYCISKU_TOR As New Dictionary(Of Zaleznosci.TypPrzyciskuTorEnum, OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuTorEnum))
+    Private ReadOnly LISTA_TYP_PRZYCISKU As Object()
+    Private ReadOnly LISTA_TYP_PRZYCISKU_TOR As Object()
 
     Private PaneleKonfKostek As Panel()
     Private ZnacznikPaneluWyswietlonego As New Object
@@ -32,6 +36,9 @@
     Public Sub New()
         InitializeComponent()
         NAZWA_OKNA = Text
+
+        LISTA_TYP_PRZYCISKU = DodajRodzajePrzyciskow()
+        LISTA_TYP_PRZYCISKU_TOR = DodajRodzajePrzyciskowToru()
     End Sub
 
     Public Sub New(sciezka As String)
@@ -282,32 +289,32 @@
                 If wynik Is Nothing Then
                     OdswiezPoZmianieRozmiaruPulpitu()
                 Else
-                    Dim obiekty As New List(Of String)
+                    Dim obiekty As New List(Of Wspolne.Komunikat)
 
                     For Each obj As Zaleznosci.ObiektBlokujacyZmniejszaniePulpitu In wynik
                         Select Case obj.Typ
                             Case Zaleznosci.RodzajObiektuBlokujacegoZmniejszaniePulpitu.Kostka
-                                obiekty.Add($"kostka o współrzędnych ({obj.Liczba1}, {obj.Liczba2})")
+                                obiekty.Add(New Wspolne.Komunikat($"kostka o współrzędnych ({obj.Liczba1}, {obj.Liczba2})"))
 
                             Case Zaleznosci.RodzajObiektuBlokujacegoZmniejszaniePulpitu.LicznikOsi
-                                obiekty.Add($"para liczników osi o adresach {obj.Liczba1}, {obj.Liczba2}")
+                                obiekty.Add(New Wspolne.Komunikat($"para liczników osi o adresach {obj.Liczba1}, {obj.Liczba2}"))
 
                             Case Zaleznosci.RodzajObiektuBlokujacegoZmniejszaniePulpitu.Lampa
-                                obiekty.Add($"lampa o adresie {obj.Liczba1}")
+                                obiekty.Add(New Wspolne.Komunikat($"lampa o adresie {obj.Liczba1}"))
 
                             Case Zaleznosci.RodzajObiektuBlokujacegoZmniejszaniePulpitu.PrzejazdRogatka
-                                obiekty.Add($"rogatka o adresie {obj.Liczba2} z przejazdu numer {obj.Liczba1}")
+                                obiekty.Add(New Wspolne.Komunikat($"rogatka o adresie {obj.Liczba2} z przejazdu numer {obj.Liczba1}"))
 
                             Case Zaleznosci.RodzajObiektuBlokujacegoZmniejszaniePulpitu.PrzejazdSygnalizatorDrogowy
-                                obiekty.Add($"sygnalizator drogowy o adresie {obj.Liczba2} z przejazdu numer {obj.Liczba1}")
+                                obiekty.Add(New Wspolne.Komunikat($"sygnalizator drogowy o adresie {obj.Liczba2} z przejazdu numer {obj.Liczba1}"))
 
                             Case Else
-                                obiekty.Add("nieznany obiekt")
+                                obiekty.Add(New Wspolne.Komunikat("nieznany obiekt"))
 
                         End Select
                     Next
 
-                    Dim wndKom As New wndKomunikatZLista($"W wybranym zakresie usuwania pulpit nie jest pusty.{vbCrLf}Znajdują się tam następujące rodzaje obiektów:", obiekty)
+                    Dim wndKom As New Wspolne.wndKomunikatZLista($"W wybranym zakresie usuwania pulpit nie jest pusty.{vbCrLf}Znajdują się tam następujące rodzaje obiektów:", obiekty)
                     wndKom.ShowDialog()
                 End If
 
@@ -660,25 +667,25 @@
 
             Select Case plpPulpit.ZaznaczonaKostka.Typ
                 Case Zaleznosci.TypKostki.Przycisk
-                    Dim typ As Zaleznosci.TypPrzyciskuEnum = DirectCast(el, ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)).Wartosc
+                    Dim typ As Zaleznosci.TypPrzyciskuEnum = DirectCast(el, ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuEnum))).Wartosc.Element
                     Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Przycisk)
                     prz.TypPrzycisku = typ
 
                     Select Case typ
                         Case Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegu, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego
-                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweSygnalizatora))
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweToru))
                             ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.SygnalizatorPolsamoczynny)
 
                         Case Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnManewrowego
-                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzySygnalizatorManewrowy, AddressOf PobierzNazweSygnalizatora))
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzySygnalizatorManewrowy, AddressOf PobierzNazweToru))
                             ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.SygnalizatorManewrowy)
 
                         Case Zaleznosci.TypPrzyciskuEnum.WlaczenieSBL, Zaleznosci.TypPrzyciskuEnum.PotwierdzenieSBL, Zaleznosci.TypPrzyciskuEnum.ZwolnienieSBL
-                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzyKierunek, AddressOf PobierzNazweKierunku))
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzyKierunek, AddressOf PobierzNazweToru))
                             ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.Kierunek)
 
                         Case Zaleznosci.TypPrzyciskuEnum.KasowanieRozprucia
-                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzyRozjazd, AddressOf PobierzNazweRozjazdu))
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzyRozjazd, AddressOf PobierzNazweToru))
                             ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.Rozjazd)
 
                         Case Zaleznosci.TypPrzyciskuEnum.ZamknieciePrzejazdu, Zaleznosci.TypPrzyciskuEnum.OtwarciePrzejazdu
@@ -688,17 +695,17 @@
                     End Select
 
                 Case Zaleznosci.TypKostki.PrzyciskTor
-                    Dim typ As Zaleznosci.TypPrzyciskuTorEnum = DirectCast(el, ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)).Wartosc
+                    Dim typ As Zaleznosci.TypPrzyciskuTorEnum = DirectCast(el, ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuTorEnum))).Wartosc.Element
                     Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
                     prz.TypPrzycisku = typ
 
                     Select Case typ
                         Case Zaleznosci.TypPrzyciskuTorEnum.JazdaSygnalizatorPolsamoczynny, Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorPolsamoczynny
-                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweSygnalizatora))
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweToru))
                             ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.SygnalizatorPolsamoczynny)
 
                         Case Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy
-                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzySygnalizatorManewrowy, AddressOf PobierzNazweSygnalizatora))
+                            cboKonfPrzyciskObiekt.Items.AddRange(PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzySygnalizatorManewrowy, AddressOf PobierzNazweToru))
                             ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfPrzyciskObiekt, prz.SygnalizatorManewrowy)
 
                     End Select
@@ -786,7 +793,7 @@
     Private Sub cboKonfKierStawnosc_SelectedIndexChanged() Handles cboKonfKierStawnosc.SelectedIndexChanged
         If cboKonfKierStawnosc.SelectedItem Is Nothing Then Exit Sub
         DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).Stawnosc =
-            DirectCast(cboKonfKierStawnosc.SelectedItem, ObiektComboBox(Of ObiektStawnosciSBL)).Wartosc.Stawnosc
+            DirectCast(cboKonfKierStawnosc.SelectedItem, ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.StawnoscSBL))).Wartosc.Element
     End Sub
 
 
@@ -927,7 +934,7 @@
         If sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Or sygn.Typ = Zaleznosci.TypKostki.SygnalizatorSamoczynny Then
             panele.Add(pnlKonfSygnSygnNast)
             cboKonfSygnSygnNast.Items.Clear()
-            Dim sygnalizatory As ObiektComboBox(Of Zaleznosci.Kostka)() = PobierzElementyDoComboBox(AddressOf CzySygnalizatorUzalezniony, AddressOf PobierzNazweSygnalizatora)
+            Dim sygnalizatory As ObiektComboBox(Of Zaleznosci.Kostka)() = PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzySygnalizatorUzalezniony, AddressOf PobierzNazweToru)
             cboKonfSygnSygnNast.Items.Add(PUSTY_CBO_KOSTKA)
             cboKonfSygnSygnNast.Items.AddRange(sygnalizatory)
             Dim sygn_nast As Zaleznosci.Sygnalizator = DirectCast(sygn, Zaleznosci.SygnalizatorUzalezniony).SygnalizatorNastepny
@@ -971,7 +978,7 @@
                 rbKonfSygnPowtKolejnoscIII.Checked = True
         End Select
 
-        Dim sygnalizatory As ObiektComboBox(Of Zaleznosci.Kostka)() = PobierzElementyDoComboBox(AddressOf CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweSygnalizatora)
+        Dim sygnalizatory As ObiektComboBox(Of Zaleznosci.Kostka)() = PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweToru)
         cboKonfSygnPowtSygnObslugiwany.Items.Clear()
         cboKonfSygnPowtSygnObslugiwany.Items.AddRange(sygnalizatory)
         ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfSygnPowtSygnObslugiwany, sygn.SygnalizatorPowtarzany)
@@ -986,28 +993,13 @@
         Select Case plpPulpit.ZaznaczonaKostka.Typ
             Case Zaleznosci.TypKostki.Przycisk
                 Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Przycisk)
-                cboKonfPrzyciskTyp.Items.AddRange({
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy, "Sygnał zastępczy"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegu, "Zwolnienie przebiegu pociągowego na sygnalizatorze półsamoczynnym"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego, "Zwolnienie przebiegu manewrowego na sygnalizatorze półsamoczynnym"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnManewrowego, "Zwolnienie przebiegu manewrowego na sygnalizatorze manewrowym"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.WlaczenieSBL, "Włączenie blokady"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.PotwierdzenieSBL, "Potwierdzenie kierunku blokady"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZwolnienieSBL, "Zwolnienie blokady"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.KasowanieRozprucia, "Kasowanie rozprucia"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.ZamknieciePrzejazdu, "Zamknięcie przejazdu kolejowo-drogowego"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuEnum)(Zaleznosci.TypPrzyciskuEnum.OtwarciePrzejazdu, "Otwarcie przejazdu kolejowo-drogowego")
-                })
-                cboKonfPrzyciskTyp.SelectedIndex = prz.TypPrzycisku
+                cboKonfPrzyciskTyp.Items.AddRange(LISTA_TYP_PRZYCISKU)
+                ZaznaczElement(cboKonfPrzyciskTyp, TYP_PRZYCISKU(prz.TypPrzycisku))
 
             Case Zaleznosci.TypKostki.PrzyciskTor
                 Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
-                cboKonfPrzyciskTyp.Items.AddRange({
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.JazdaSygnalizatorPolsamoczynny, "Wyjazd na sygnalizatorze półsamoczynnym"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorPolsamoczynny, "Sygnał manewrowy na sygnalizatorze półsamoczynnym"),
-                    New ObiektComboBox(Of Zaleznosci.TypPrzyciskuTorEnum)(Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy, "Sygnał manewrowy na sygnalizatorze manewrowym")
-                })
-                cboKonfPrzyciskTyp.SelectedIndex = prz.TypPrzycisku
+                cboKonfPrzyciskTyp.Items.AddRange(LISTA_TYP_PRZYCISKU_TOR)
+                ZaznaczElement(cboKonfPrzyciskTyp, TYP_PRZYCISKU_TOR(prz.TypPrzycisku))
 
                 PokazKonfTor(False)
                 panele.Add(pnlKonfTor)
@@ -1049,10 +1041,45 @@
     End Sub
 
     Private Sub DodajRodzajStawnosciSBL(stawnosc As Zaleznosci.StawnoscSBL, opis As String)
-        Dim st As New ObiektStawnosciSBL() With {.Stawnosc = stawnosc}
-        STAWNOSC_SBL.Add(stawnosc, st)
-        cboKonfKierStawnosc.Items.Add(New ObiektComboBox(Of ObiektStawnosciSBL)(st, opis))
+        cboKonfKierStawnosc.Items.Add(New ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.StawnoscSBL))(DodajElementOpakowywanyDoSlownika(STAWNOSC_SBL, stawnosc), opis))
     End Sub
+
+    Private Function DodajRodzajePrzyciskow() As Object()
+        Dim lista As New List(Of ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuEnum)))
+
+        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy, "Sygnał zastępczy")
+        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegu, "Zwolnienie przebiegu pociągowego na sygnalizatorze półsamoczynnym")
+        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego, "Zwolnienie przebiegu manewrowego na sygnalizatorze półsamoczynnym")
+        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnManewrowego, "Zwolnienie przebiegu manewrowego na sygnalizatorze manewrowym")
+        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.WlaczenieSBL, "Włączenie blokady")
+        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.PotwierdzenieSBL, "Potwierdzenie kierunku blokady")
+        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnienieSBL, "Zwolnienie blokady")
+        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.KasowanieRozprucia, "Kasowanie rozprucia")
+        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZamknieciePrzejazdu, "Zamknięcie przejazdu kolejowo-drogowego")
+        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.OtwarciePrzejazdu, "Otwarcie przejazdu kolejowo-drogowego")
+
+        Return lista.OrderBy(Function(t) t.Tekst).ToArray
+    End Function
+
+    Private Function DodajRodzajePrzyciskowToru() As Object()
+        Dim lista As New List(Of ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuTorEnum)))
+
+        DodajElementOpakowywany(TYP_PRZYCISKU_TOR, lista, Zaleznosci.TypPrzyciskuTorEnum.JazdaSygnalizatorPolsamoczynny, "Wyjazd na sygnalizatorze półsamoczynnym")
+        DodajElementOpakowywany(TYP_PRZYCISKU_TOR, lista, Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorPolsamoczynny, "Sygnał manewrowy na sygnalizatorze półsamoczynnym")
+        DodajElementOpakowywany(TYP_PRZYCISKU_TOR, lista, Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy, "Sygnał manewrowy na sygnalizatorze manewrowym")
+
+        Return lista.OrderBy(Function(t) t.Tekst).ToArray
+    End Function
+
+    Private Sub DodajElementOpakowywany(Of T)(slownik As Dictionary(Of T, OpakowywaczEnum(Of T)), lista As List(Of ObiektComboBox(Of OpakowywaczEnum(Of T))), element As T, nazwa As String)
+        lista.Add(New ObiektComboBox(Of OpakowywaczEnum(Of T))(DodajElementOpakowywanyDoSlownika(slownik, element), nazwa))
+    End Sub
+
+    Private Function DodajElementOpakowywanyDoSlownika(Of T)(slownik As Dictionary(Of T, OpakowywaczEnum(Of T)), element As T) As OpakowywaczEnum(Of T)
+        Dim el As New OpakowywaczEnum(Of T)(element)
+        slownik.Add(element, el)
+        Return el
+    End Function
 
     Private Function PrzetworzZaznaczenieRozjazduZaleznego(cbo As ComboBox, rbPlus As RadioButton, rbMinus As RadioButton, ByRef rozjazd As Zaleznosci.Rozjazd) As Boolean
         If cbo.SelectedItem Is Nothing Then Return False
@@ -1074,7 +1101,7 @@
     End Sub
 
     Private Sub PokazDostepneRozjazdyZalezne(cbo As ComboBox, rozjazdWybrany As Zaleznosci.Rozjazd, rozjazdUkryty As Zaleznosci.Rozjazd)
-        Dim el As ObiektComboBox(Of Zaleznosci.Kostka)() = PobierzElementyDoComboBox(AddressOf CzyRozjazd, AddressOf PobierzNazweRozjazdu, rozjazdUkryty)
+        Dim el As ObiektComboBox(Of Zaleznosci.Kostka)() = PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzyRozjazd, AddressOf PobierzNazweToru, rozjazdUkryty)
 
         cbo.Items.Clear()
         cbo.Items.Add(PUSTY_CBO_KOSTKA)
@@ -1082,14 +1109,6 @@
 
         ZaznaczElement(Of Zaleznosci.Kostka)(cbo, rozjazdWybrany)
     End Sub
-
-    Private Function CzyRozjazd(kostka As Zaleznosci.Kostka) As Boolean
-        Return kostka.Typ = Zaleznosci.TypKostki.RozjazdLewo Or kostka.Typ = Zaleznosci.TypKostki.RozjazdPrawo
-    End Function
-
-    Private Function PobierzNazweRozjazdu(kostka As Zaleznosci.Kostka) As String
-        Return DirectCast(kostka, Zaleznosci.Rozjazd).Nazwa
-    End Function
 
     Private Sub UstawDostepneSwiatlo(cb As CheckBox, kolor As Zaleznosci.DostepneSwiatlaEnum)
         Dim sygn As Zaleznosci.SygnalizatorPolsamoczynny = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny)
@@ -1106,46 +1125,6 @@
             plpPulpit.Invalidate()
         End If
     End Sub
-
-    Private Function CzySygnalizatorUzalezniony(kostka As Zaleznosci.Kostka) As Boolean
-        Return kostka.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Or kostka.Typ = Zaleznosci.TypKostki.SygnalizatorSamoczynny
-    End Function
-
-    Private Function CzySygnalizatorPolsamoczynny(kostka As Zaleznosci.Kostka) As Boolean
-        Return kostka.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny
-    End Function
-
-    Private Function CzySygnalizatorManewrowy(kostka As Zaleznosci.Kostka) As Boolean
-        Return kostka.Typ = Zaleznosci.TypKostki.SygnalizatorManewrowy
-    End Function
-
-    Private Function CzySygnalizatorTOP(kostka As Zaleznosci.Kostka) As Boolean
-        Return kostka.Typ = Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
-    End Function
-
-    Private Function CzyKierunek(kostka As Zaleznosci.Kostka) As Boolean
-        Return kostka.Typ = Zaleznosci.TypKostki.Kierunek
-    End Function
-
-    Private Function PobierzNazweSygnalizatora(kostka As Zaleznosci.Kostka) As String
-        Return DirectCast(kostka, Zaleznosci.Sygnalizator).Nazwa
-    End Function
-
-    Private Function PobierzNazweKierunku(kostka As Zaleznosci.Kostka) As String
-        Return DirectCast(kostka, Zaleznosci.Kierunek).Nazwa
-    End Function
-
-    Private Function PobierzElementyDoComboBox(sprawdzanie As SprawdzTypKostki, nazwa As PobierzNazweKostki, Optional obiektUnikany As Zaleznosci.Kostka = Nothing, Optional pominZaznaczony As Boolean = True) As ObiektComboBox(Of Zaleznosci.Kostka)()
-        Dim kostki As New List(Of ObiektComboBox(Of Zaleznosci.Kostka))
-
-        plpPulpit.Pulpit.PrzeiterujKostki(Sub(x, y, k)
-                                              If sprawdzanie(k) AndAlso (Not pominZaznaczony Or k IsNot plpPulpit.ZaznaczonaKostka) AndAlso k IsNot obiektUnikany Then
-                                                  kostki.Add(New ObiektComboBox(Of Zaleznosci.Kostka)(k, nazwa(k)))
-                                              End If
-                                          End Sub)
-
-        Return kostki.OrderBy(Function(k As ObiektComboBox(Of Zaleznosci.Kostka)) nazwa(k.Wartosc)).ToArray()
-    End Function
 
     Private Function PobierzPrzejazdyDoComboBox() As ObiektComboBox(Of Zaleznosci.PrzejazdKolejowoDrogowy)()
         Dim przejazdy As New List(Of ObiektComboBox(Of Zaleznosci.PrzejazdKolejowoDrogowy))
@@ -1164,7 +1143,7 @@
     Private Sub lvOdcinki_SelectedIndexChanged() Handles lvOdcinki.SelectedIndexChanged
         ZdarzeniaWlaczone = False
         ZaznaczonyOdcinekNaLiscie = PobierzZaznaczonyElementNaLiscie(lvOdcinki)
-        Dim odcinek As Zaleznosci.OdcinekToru = PobierzZaznaczonyElement(Of Zaleznosci.OdcinekToru)(lvOdcinki)
+        Dim odcinek As Zaleznosci.OdcinekToru = PobierzTagZElementuListy(Of Zaleznosci.OdcinekToru)(ZaznaczonyOdcinekNaLiscie)
         If odcinek Is Nothing Then
             txtOdcinekAdres.Text = ""
             txtOdcinekNazwa.Text = ""
@@ -1255,10 +1234,12 @@
 
     Private Sub OdswiezLiczbePrzypisanychKostekTorow()
         If lvOdcinki.Items Is Nothing Then Exit Sub
+        Dim lvi As ListViewItem
 
         For i As Integer = 0 To lvOdcinki.Items.Count - 1
-            Dim o As Zaleznosci.OdcinekToru = DirectCast(lvOdcinki.Items(i).Tag, Zaleznosci.OdcinekToru)
-            lvOdcinki.Items(i).SubItems(2).Text = o.KostkiTory.Count.ToString()
+            lvi = lvOdcinki.Items(i)
+            Dim o As Zaleznosci.OdcinekToru = DirectCast(lvi.Tag, Zaleznosci.OdcinekToru)
+            lvi.SubItems(2).Text = o.KostkiTory.Count.ToString()
         Next
     End Sub
 
@@ -1269,7 +1250,7 @@
     Private Sub lvLiczniki_SelectedIndexChanged() Handles lvLiczniki.SelectedIndexChanged
         ZdarzeniaWlaczone = False
         ZaznaczonyLicznikNaLiscie = PobierzZaznaczonyElementNaLiscie(lvLiczniki)
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = PobierzZaznaczonyElement(Of Zaleznosci.ParaLicznikowOsi)(lvLiczniki)
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = PobierzTagZElementuListy(Of Zaleznosci.ParaLicznikowOsi)(ZaznaczonyLicznikNaLiscie)
         plpPulpit.projZaznaczonyLicznik = licznik
         If licznik Is Nothing Then
             txtLicznik1Adres.Text = ""
@@ -1459,7 +1440,7 @@
     Private Sub lvLampy_SelectedIndexChanged() Handles lvLampy.SelectedIndexChanged
         ZdarzeniaWlaczone = False
         ZaznaczonaLampaNaLiscie = PobierzZaznaczonyElementNaLiscie(lvLampy)
-        Dim lampa As Zaleznosci.Lampa = PobierzZaznaczonyElement(Of Zaleznosci.Lampa)(lvLampy)
+        Dim lampa As Zaleznosci.Lampa = PobierzTagZElementuListy(Of Zaleznosci.Lampa)(ZaznaczonaLampaNaLiscie)
         If lampa Is Nothing Then
             txtLampaAdres.Text = ""
             txtLampaX.Text = ""
@@ -1557,7 +1538,7 @@
     Private Sub lvPrzejazdy_SelectedIndexChanged() Handles lvPrzejazdy.SelectedIndexChanged
         ZdarzeniaWlaczone = False
         ZaznaczonyPrzejazdNaLiscie = PobierzZaznaczonyElementNaLiscie(lvPrzejazdy)
-        Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = PobierzZaznaczonyElement(Of Zaleznosci.PrzejazdKolejowoDrogowy)(lvPrzejazdy)
+        Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = PobierzTagZElementuListy(Of Zaleznosci.PrzejazdKolejowoDrogowy)(ZaznaczonyPrzejazdNaLiscie)
         plpPulpit.projZaznaczonyPrzejazd = przejazd
         If przejazd Is Nothing Then
             txtPrzejazdNumer.Text = ""
@@ -1678,7 +1659,7 @@
     Private Sub lvPrzejazdAutomatyzacja_SelectedIndexChanged() Handles lvPrzejazdAutomatyzacja.SelectedIndexChanged
         ZdarzeniaWlaczone = False
         ZaznaczonyPrzejazdAutomatyzacjaNaLiscie = PobierzZaznaczonyElementNaLiscie(lvPrzejazdAutomatyzacja)
-        Dim automatyzacja As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego = PobierzZaznaczonyElement(Of Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego)(lvPrzejazdAutomatyzacja)
+        Dim automatyzacja As Zaleznosci.PrzejazdAutomatyczneZamykanie = PobierzTagZElementuListy(Of Zaleznosci.PrzejazdAutomatyczneZamykanie)(ZaznaczonyPrzejazdAutomatyzacjaNaLiscie)
         plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = automatyzacja
         If automatyzacja Is Nothing Then
             cboPrzejazdAutomatyzacjaOdcinekWyjazd.SelectedItem = Nothing
@@ -1696,14 +1677,14 @@
     Private Sub btnPrzejazdAutomatyzacjaDodaj_Click() Handles btnPrzejazdAutomatyzacjaDodaj.Click
         If plpPulpit.projZaznaczonyPrzejazd Is Nothing Then Exit Sub
 
-        plpPulpit.projZaznaczonyPrzejazd.AutomatyczneZamykanie.Add(New Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego())
+        plpPulpit.projZaznaczonyPrzejazd.AutomatyczneZamykanie.Add(New Zaleznosci.PrzejazdAutomatyczneZamykanie())
         OdswiezListePrzejazdAutomatyzacja()
         OdswiezLiczbeObiektowAutomatyzacji()
     End Sub
 
     Private Sub btnPrzejazdAutomatyzacjaUsun_Click() Handles btnPrzejazdAutomatyzacjaUsun.Click
         Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = plpPulpit.projZaznaczonyPrzejazd
-        Dim automatyzacja As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdAutomatyzacja
+        Dim automatyzacja As Zaleznosci.PrzejazdAutomatyczneZamykanie = plpPulpit.projZaznaczonyPrzejazdAutomatyzacja
         If przejazd Is Nothing OrElse automatyzacja Is Nothing Then Exit Sub
 
         Dim pyt As String = "Czy usunąć obiekt automatyzacji"
@@ -1722,7 +1703,7 @@
         If plpPulpit.projZaznaczonyPrzejazdAutomatyzacja Is Nothing Then Exit Sub
 
         Dim odcinek As ObiektComboBox(Of Zaleznosci.OdcinekToru) = CType(cboPrzejazdAutomatyzacjaOdcinekWyjazd.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru))
-        Dim automatyzacja As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdAutomatyzacja
+        Dim automatyzacja As Zaleznosci.PrzejazdAutomatyczneZamykanie = plpPulpit.projZaznaczonyPrzejazdAutomatyzacja
         automatyzacja.OdcinekWyjazd = odcinek.Wartosc
         ZaznaczonyPrzejazdAutomatyzacjaNaLiscie.SubItems(0).Text = odcinek.Wartosc.Nazwa
         plpPulpit.Invalidate()
@@ -1738,7 +1719,7 @@
         If plpPulpit.projZaznaczonyPrzejazdAutomatyzacja Is Nothing Then Exit Sub
 
         Dim odcinek As ObiektComboBox(Of Zaleznosci.OdcinekToru) = CType(cboPrzejazdAutomatyzacjaOdcinekPrzyjazd.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru))
-        Dim automatyzacja As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdAutomatyzacja
+        Dim automatyzacja As Zaleznosci.PrzejazdAutomatyczneZamykanie = plpPulpit.projZaznaczonyPrzejazdAutomatyzacja
         automatyzacja.OdcinekPrzyjazd = odcinek.Wartosc
         ZaznaczonyPrzejazdAutomatyzacjaNaLiscie.SubItems(1).Text = odcinek.Wartosc.Nazwa
         plpPulpit.Invalidate()
@@ -1764,7 +1745,7 @@
     Private Sub lvPrzejazdRogatki_SelectedIndexChanged() Handles lvPrzejazdRogatki.SelectedIndexChanged
         ZdarzeniaWlaczone = False
         ZaznaczonyPrzejazdRogatkaNaLiscie = PobierzZaznaczonyElementNaLiscie(lvPrzejazdRogatki)
-        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = PobierzZaznaczonyElement(Of Zaleznosci.RogatkaPrzejazduKolejowego)(lvPrzejazdRogatki)
+        Dim rogatka As Zaleznosci.PrzejazdRogatka = PobierzTagZElementuListy(Of Zaleznosci.PrzejazdRogatka)(ZaznaczonyPrzejazdRogatkaNaLiscie)
         If rogatka Is Nothing Then
             txtPrzejazdRogatkaAdres.Text = ""
             txtPrzejazdRogatkaX.Text = ""
@@ -1785,14 +1766,14 @@
     Private Sub btnPrzejazdRogatkaDodaj_Click() Handles btnPrzejazdRogatkaDodaj.Click
         If plpPulpit.projZaznaczonyPrzejazd Is Nothing Then Exit Sub
 
-        plpPulpit.projZaznaczonyPrzejazd.Rogatki.Add(New Zaleznosci.RogatkaPrzejazduKolejowego())
+        plpPulpit.projZaznaczonyPrzejazd.Rogatki.Add(New Zaleznosci.PrzejazdRogatka())
         OdswiezListePrzejazdRogatki()
         OdswiezLiczbeRogatek()
     End Sub
 
     Private Sub btnPrzejazdRogatkaUsun_Click() Handles btnPrzejazdRogatkaUsun.Click
         Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = plpPulpit.projZaznaczonyPrzejazd
-        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
+        Dim rogatka As Zaleznosci.PrzejazdRogatka = plpPulpit.projZaznaczonyPrzejazdRogatka
         If przejazd Is Nothing OrElse rogatka Is Nothing Then Exit Sub
 
         Dim pyt As String = "Czy usunąć rogatkę o adresie " & rogatka.Adres.ToString
@@ -1808,7 +1789,7 @@
     Private Sub txtPrzejazdRogatkaAdres_TextChanged() Handles txtPrzejazdRogatkaAdres.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
+        Dim rogatka As Zaleznosci.PrzejazdRogatka = plpPulpit.projZaznaczonyPrzejazdRogatka
         If rogatka IsNot Nothing Then
             rogatka.Adres = PobierzKrotkaLiczbeNieujemna(txtPrzejazdRogatkaAdres)
             ZaznaczonyPrzejazdRogatkaNaLiscie.SubItems(0).Text = rogatka.Adres.ToString
@@ -1818,7 +1799,7 @@
     Private Sub txtPrzejazdRogatkaX_TextChanged() Handles txtPrzejazdRogatkaX.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
+        Dim rogatka As Zaleznosci.PrzejazdRogatka = plpPulpit.projZaznaczonyPrzejazdRogatka
         If rogatka IsNot Nothing Then
             rogatka.X = PobierzLiczbeRzeczywistaWZakresie(txtPrzejazdRogatkaX, plpPulpit.Pulpit.Szerokosc)
             ZaznaczonyPrzejazdRogatkaNaLiscie.SubItems(1).Text = rogatka.X.ToString
@@ -1829,7 +1810,7 @@
     Private Sub txtPrzejazdRogatkaY_TextChanged() Handles txtPrzejazdRogatkaY.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
+        Dim rogatka As Zaleznosci.PrzejazdRogatka = plpPulpit.projZaznaczonyPrzejazdRogatka
         If rogatka IsNot Nothing Then
             rogatka.Y = PobierzLiczbeRzeczywistaWZakresie(txtPrzejazdRogatkaY, plpPulpit.Pulpit.Wysokosc)
             ZaznaczonyPrzejazdRogatkaNaLiscie.SubItems(2).Text = rogatka.Y.ToString
@@ -1840,7 +1821,7 @@
     Private Sub txtPrzejazdRogatkaCzasDoZamkniecia_TextChanged() Handles txtPrzejazdRogatkaCzasDoZamkniecia.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim rogatka As Zaleznosci.RogatkaPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
+        Dim rogatka As Zaleznosci.PrzejazdRogatka = plpPulpit.projZaznaczonyPrzejazdRogatka
         If rogatka IsNot Nothing Then
             rogatka.CzasDoZamkniecia = PobierzKrotkaLiczbeNieujemna(txtPrzejazdRogatkaCzasDoZamkniecia)
         End If
@@ -1849,7 +1830,7 @@
     Private Sub lvPrzejazdSygnDrog_SelectedIndexChanged() Handles lvPrzejazdSygnDrog.SelectedIndexChanged
         ZdarzeniaWlaczone = False
         ZaznaczonyPrzejazdSygnDrogNaLiscie = PobierzZaznaczonyElementNaLiscie(lvPrzejazdSygnDrog)
-        Dim sygn As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = PobierzZaznaczonyElement(Of Zaleznosci.ElementWykonaczyPrzejazduKolejowego)(lvPrzejazdSygnDrog)
+        Dim sygn As Zaleznosci.PrzejazdElementWykonawczy = PobierzTagZElementuListy(Of Zaleznosci.PrzejazdElementWykonawczy)(ZaznaczonyPrzejazdSygnDrogNaLiscie)
         If sygn Is Nothing Then
             txtPrzejazdSygnDrogAdres.Text = ""
             txtPrzejazdSygnDrogX.Text = ""
@@ -1868,14 +1849,14 @@
     Private Sub btnPrzejazdSygnDrogDodaj_Click() Handles btnPrzejazdSygnDrogDodaj.Click
         If plpPulpit.projZaznaczonyPrzejazd Is Nothing Then Exit Sub
 
-        plpPulpit.projZaznaczonyPrzejazd.SygnalizatoryDrogowe.Add(New Zaleznosci.ElementWykonaczyPrzejazduKolejowego)
+        plpPulpit.projZaznaczonyPrzejazd.SygnalizatoryDrogowe.Add(New Zaleznosci.PrzejazdElementWykonawczy)
         OdswiezListePrzejazdSygnDrog()
         OdswiezLiczbeSygnDrog()
     End Sub
 
     Private Sub btnPrzejazdSygnDrogUsun_Click() Handles btnPrzejazdSygnDrogUsun.Click
         Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = plpPulpit.projZaznaczonyPrzejazd
-        Dim sygnDrog As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdSygnDrog
+        Dim sygnDrog As Zaleznosci.PrzejazdElementWykonawczy = plpPulpit.projZaznaczonyPrzejazdSygnDrog
         If przejazd Is Nothing OrElse sygnDrog Is Nothing Then Exit Sub
 
         Dim pyt As String = "Czy usunąć sygnalizator drogowy o adresie " & sygnDrog.Adres
@@ -1891,7 +1872,7 @@
     Private Sub txtPrzejazdSygnDrogAdres_TextChanged() Handles txtPrzejazdSygnDrogAdres.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim sygn As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdSygnDrog
+        Dim sygn As Zaleznosci.PrzejazdElementWykonawczy = plpPulpit.projZaznaczonyPrzejazdSygnDrog
         If sygn IsNot Nothing Then
             sygn.Adres = PobierzKrotkaLiczbeNieujemna(txtPrzejazdSygnDrogAdres)
             ZaznaczonyPrzejazdSygnDrogNaLiscie.SubItems(0).Text = sygn.Adres.ToString
@@ -1901,7 +1882,7 @@
     Private Sub txtPrzejazdSygnDrogX_TextChanged() Handles txtPrzejazdSygnDrogX.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim sygn As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdSygnDrog
+        Dim sygn As Zaleznosci.PrzejazdElementWykonawczy = plpPulpit.projZaznaczonyPrzejazdSygnDrog
         If sygn IsNot Nothing Then
             sygn.X = PobierzLiczbeRzeczywistaWZakresie(txtPrzejazdSygnDrogX, plpPulpit.Pulpit.Szerokosc)
             ZaznaczonyPrzejazdSygnDrogNaLiscie.SubItems(1).Text = sygn.X.ToString
@@ -1912,7 +1893,7 @@
     Private Sub txtPrzejazdSygnDrogY_TextChanged() Handles txtPrzejazdSygnDrogY.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim sygn As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdSygnDrog
+        Dim sygn As Zaleznosci.PrzejazdElementWykonawczy = plpPulpit.projZaznaczonyPrzejazdSygnDrog
         If sygn IsNot Nothing Then
             sygn.Y = PobierzLiczbeRzeczywistaWZakresie(txtPrzejazdSygnDrogY, plpPulpit.Pulpit.Wysokosc)
             ZaznaczonyPrzejazdSygnDrogNaLiscie.SubItems(2).Text = sygn.Y.ToString
@@ -2005,12 +1986,12 @@
     End Function
 
     Private Sub OdswiezListePrzejazdAutomatyzacja()
-        Dim automatyzacja As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdAutomatyzacja
+        Dim automatyzacja As Zaleznosci.PrzejazdAutomatyczneZamykanie = plpPulpit.projZaznaczonyPrzejazdAutomatyzacja
         lvPrzejazdAutomatyzacja.Items.Clear()
         ZaznaczonyPrzejazdAutomatyzacjaNaLiscie = Nothing
 
         If plpPulpit.projZaznaczonyPrzejazd IsNot Nothing Then
-            For Each a As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego In plpPulpit.projZaznaczonyPrzejazd.AutomatyczneZamykanie
+            For Each a As Zaleznosci.PrzejazdAutomatyczneZamykanie In plpPulpit.projZaznaczonyPrzejazd.AutomatyczneZamykanie
                 Dim lvi As New ListViewItem(New String() {
                     If(a.OdcinekWyjazd?.Nazwa, BRAK),
                     If(a.OdcinekPrzyjazd?.Nazwa, BRAK),
@@ -2036,7 +2017,7 @@
 
     Private Sub OdswiezListeSygnalizatorowPrzejazdAutomatyzacja()
         cboPrzejazdAutomatyzacjaSygnalizator.Items.Clear()
-        cboPrzejazdAutomatyzacjaSygnalizator.Items.AddRange(PobierzElementyDoComboBox(AddressOf CzySygnalizatorTOP, AddressOf PobierzNazweSygnalizatora, pominZaznaczony:=False))
+        cboPrzejazdAutomatyzacjaSygnalizator.Items.AddRange(PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzySygnalizatorTOP, AddressOf PobierzNazweToru, pominZaznaczony:=False))
         If plpPulpit.projZaznaczonyPrzejazdAutomatyzacja IsNot Nothing Then
             ZaznaczElement(Of Zaleznosci.Kostka)(cboPrzejazdAutomatyzacjaSygnalizator, plpPulpit.projZaznaczonyPrzejazdAutomatyzacja.Sygnalizator)
         End If
@@ -2050,12 +2031,12 @@
     End Sub
 
     Private Sub OdswiezListePrzejazdRogatki()
-        Dim rogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdRogatka
+        Dim rogatka As Zaleznosci.PrzejazdElementWykonawczy = plpPulpit.projZaznaczonyPrzejazdRogatka
         lvPrzejazdRogatki.Items.Clear()
         ZaznaczonyPrzejazdRogatkaNaLiscie = Nothing
 
         If plpPulpit.projZaznaczonyPrzejazd IsNot Nothing Then
-            For Each r As Zaleznosci.ElementWykonaczyPrzejazduKolejowego In plpPulpit.projZaznaczonyPrzejazd.Rogatki
+            For Each r As Zaleznosci.PrzejazdElementWykonawczy In plpPulpit.projZaznaczonyPrzejazd.Rogatki
                 Dim lvi As New ListViewItem(New String() {
                     r.Adres.ToString,
                     r.X.ToString,
@@ -2083,12 +2064,12 @@
     End Sub
 
     Private Sub OdswiezListePrzejazdSygnDrog()
-        Dim sygn As Zaleznosci.ElementWykonaczyPrzejazduKolejowego = plpPulpit.projZaznaczonyPrzejazdSygnDrog
+        Dim sygn As Zaleznosci.PrzejazdElementWykonawczy = plpPulpit.projZaznaczonyPrzejazdSygnDrog
         lvPrzejazdSygnDrog.Items.Clear()
         ZaznaczonyPrzejazdSygnDrogNaLiscie = Nothing
 
         If plpPulpit.projZaznaczonyPrzejazd IsNot Nothing Then
-            For Each s As Zaleznosci.ElementWykonaczyPrzejazduKolejowego In plpPulpit.projZaznaczonyPrzejazd.SygnalizatoryDrogowe
+            For Each s As Zaleznosci.PrzejazdElementWykonawczy In plpPulpit.projZaznaczonyPrzejazd.SygnalizatoryDrogowe
                 Dim lvi As New ListViewItem(New String() {
                     s.Adres.ToString,
                     s.X.ToString,
@@ -2136,13 +2117,13 @@
         OdswiezLiczbePrzypisanychKostekPrzejazdow()
     End Sub
 
-    Private Sub plpPulpit_projZmianaZaznaczeniaRogatki(rogatka As Zaleznosci.RogatkaPrzejazduKolejowego) Handles plpPulpit.projZmianaZaznaczeniaRogatki
+    Private Sub plpPulpit_projZmianaZaznaczeniaRogatki(rogatka As Zaleznosci.PrzejazdRogatka) Handles plpPulpit.projZmianaZaznaczeniaRogatki
         If Not ZdarzeniaWlaczone Then Exit Sub
         lvPrzejazdRogatki.SelectedItems.Clear()
         If rogatka IsNot Nothing Then ZaznaczElementNaLiscie(lvPrzejazdRogatki, rogatka)
     End Sub
 
-    Private Sub plpPulpit_projZmianaZaznaczeniaSygnalizatoraDrogowego(sygnalizator As Zaleznosci.ElementWykonaczyPrzejazduKolejowego) Handles plpPulpit.projZmianaZaznaczeniaSygnalizatoraDrogowego
+    Private Sub plpPulpit_projZmianaZaznaczeniaSygnalizatoraDrogowego(sygnalizator As Zaleznosci.PrzejazdElementWykonawczy) Handles plpPulpit.projZmianaZaznaczeniaSygnalizatoraDrogowego
         If Not ZdarzeniaWlaczone Then Exit Sub
         lvPrzejazdSygnDrog.SelectedItems.Clear()
         If sygnalizator IsNot Nothing Then ZaznaczElementNaLiscie(lvPrzejazdSygnDrog, sygnalizator)
@@ -2166,6 +2147,22 @@
         ZaznaczElement(cbo, zaznaczony)
     End Sub
 
+    Private Function PobierzKostkiDoComboBox(sprawdzanie As SprawdzTypKostki, nazwa As PobierzNazweKostki, Optional obiektUnikany As Zaleznosci.Kostka = Nothing, Optional pominZaznaczony As Boolean = True) As ObiektComboBox(Of Zaleznosci.Kostka)()
+        Dim kostki As New List(Of ObiektComboBox(Of Zaleznosci.Kostka))
+
+        plpPulpit.Pulpit.PrzeiterujKostki(Sub(x, y, k)
+                                              If sprawdzanie(k) AndAlso (Not pominZaznaczony Or k IsNot plpPulpit.ZaznaczonaKostka) AndAlso k IsNot obiektUnikany Then
+                                                  kostki.Add(New ObiektComboBox(Of Zaleznosci.Kostka)(k, nazwa(k)))
+                                              End If
+                                          End Sub)
+
+        Return kostki.OrderBy(Function(k As ObiektComboBox(Of Zaleznosci.Kostka)) k.Tekst).ToArray()
+    End Function
+
+    Private Function PobierzNazweToru(kostka As Zaleznosci.Kostka) As String
+        Return DirectCast(kostka, Zaleznosci.Tor).Nazwa
+    End Function
+
     Private Sub ZaznaczElement(Of T As Class)(cbo As ComboBox, el As T)
         If el Is Nothing Then
             cbo.SelectedItem = Nothing
@@ -2181,14 +2178,6 @@
 
         cbo.SelectedItem = Nothing
     End Sub
-
-    Private Function PobierzZaznaczonyElementNaLiscie(lv As ListView) As ListViewItem
-        If lv.SelectedItems Is Nothing OrElse lv.SelectedItems.Count = 0 Then
-            Return Nothing
-        Else
-            Return lv.SelectedItems(0)
-        End If
-    End Function
 
     Private Sub ZaznaczElementNaLiscie(Of T As Class)(lista As ListView, szukany As T)
         For Each lvi As ListViewItem In lista.Items
@@ -2228,8 +2217,12 @@
         Return liczba
     End Function
 
-    Private Class ObiektStawnosciSBL
-        Public Stawnosc As Zaleznosci.StawnoscSBL
+    Private Class OpakowywaczEnum(Of T)
+        Public Element As T
+
+        Public Sub New(el As T)
+            Element = el
+        End Sub
     End Class
 #End Region 'Reszta
 

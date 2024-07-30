@@ -301,7 +301,7 @@
 
         If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyRogatki AndAlso ps.projZaznaczonyPrzejazd IsNot Nothing Then
             Dim pedzel As TPedzel
-            For Each rogatka As Zaleznosci.ElementWykonaczyPrzejazduKolejowego In ps.projZaznaczonyPrzejazd.Rogatki
+            For Each rogatka As Zaleznosci.PrzejazdElementWykonawczy In ps.projZaznaczonyPrzejazd.Rogatki
                 pedzel = If(rogatka Is ps.projZaznaczonyPrzejazdRogatka, PEDZEL_PRZEJAZD_ROGATKA_ZAZN, PEDZEL_PRZEJAZD_ROGATKA)
                 RysujKolko(pedzel, rogatka.X, rogatka.Y)
             Next
@@ -309,7 +309,7 @@
 
         If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdySygnDrog AndAlso ps.projZaznaczonyPrzejazd IsNot Nothing Then
             Dim pedzel As TPedzel
-            For Each sygnDrog As Zaleznosci.ElementWykonaczyPrzejazduKolejowego In ps.projZaznaczonyPrzejazd.SygnalizatoryDrogowe
+            For Each sygnDrog As Zaleznosci.PrzejazdElementWykonawczy In ps.projZaznaczonyPrzejazd.SygnalizatoryDrogowe
                 pedzel = If(sygnDrog Is ps.projZaznaczonyPrzejazdSygnDrog, PEDZEL_PRZEJAZD_SYGN_DROG_ZAZN, PEDZEL_PRZEJAZD_SYGN_DROG)
                 RysujKolko(pedzel, sygnDrog.X, sygnDrog.Y)
             Next
@@ -902,10 +902,9 @@
 
     Private Sub UstawKolorToru(k As Zaleznosci.Kostka, zazn As Zaleznosci.OdcinekToru)
         pedzelToru = PEDZEL_TOR_WOLNY
+        Dim t As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
 
-        If TypeOf k Is Zaleznosci.Tor Then
-            Dim t As Zaleznosci.Tor = DirectCast(k, Zaleznosci.Tor)
-
+        If t IsNot Nothing Then
             If zazn IsNot Nothing AndAlso t.NalezyDoOdcinka Is zazn Then
                 pedzelToru = PEDZEL_TOR_TEN_ODCINEK
             ElseIf t.NalezyDoOdcinka Is Nothing Then
@@ -916,10 +915,9 @@
 
     Private Sub UstawKolorToruDlaLicznika(k As Zaleznosci.Kostka, zazn As Zaleznosci.ParaLicznikowOsi)
         pedzelToru = PEDZEL_TOR_WOLNY
+        Dim t As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
 
-        If zazn IsNot Nothing AndAlso TypeOf k Is Zaleznosci.Tor Then
-            Dim t As Zaleznosci.Tor = DirectCast(k, Zaleznosci.Tor)
-
+        If zazn IsNot Nothing AndAlso t IsNot Nothing Then
             If t.NalezyDoOdcinka IsNot Nothing Then
                 If t.NalezyDoOdcinka Is zazn.Odcinek1 Then
                     pedzelToru = PEDZEL_TOR_TEN_ODCINEK
@@ -932,10 +930,9 @@
 
     Private Sub UstawKolorToruDlaPrzejazdu(k As Zaleznosci.Kostka, zazn As Zaleznosci.PrzejazdKolejowoDrogowy)
         pedzelToru = PEDZEL_TOR_WOLNY
+        Dim p As Zaleznosci.PrzejazdKolejowoDrogowyKostka = TryCast(k, Zaleznosci.PrzejazdKolejowoDrogowyKostka)
 
-        If TypeOf k Is Zaleznosci.PrzejazdKolejowoDrogowyKostka Then
-            Dim p As Zaleznosci.PrzejazdKolejowoDrogowyKostka = CType(k, Zaleznosci.PrzejazdKolejowoDrogowyKostka)
-
+        If p IsNot Nothing Then
             If zazn IsNot Nothing AndAlso p.NalezyDoPrzejazdu Is zazn Then
                 pedzelToru = PEDZEL_TOR_TEN_ODCINEK
             ElseIf p.NalezyDoPrzejazdu Is Nothing Then
@@ -944,12 +941,11 @@
         End If
     End Sub
 
-    Private Sub UstawKolorToruDlaPrzejazduAutomatyzacja(k As Zaleznosci.Kostka, zazn As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego)
+    Private Sub UstawKolorToruDlaPrzejazduAutomatyzacja(k As Zaleznosci.Kostka, zazn As Zaleznosci.PrzejazdAutomatyczneZamykanie)
         pedzelToru = PEDZEL_TOR_WOLNY
+        Dim t As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
 
-        If zazn IsNot Nothing AndAlso TypeOf k Is Zaleznosci.Tor Then
-            Dim t As Zaleznosci.Tor = DirectCast(k, Zaleznosci.Tor)
-
+        If zazn IsNot Nothing AndAlso t IsNot Nothing Then
             If t.NalezyDoOdcinka IsNot Nothing Then
                 If t.NalezyDoOdcinka Is zazn.OdcinekWyjazd Then
                     pedzelToru = PEDZEL_TOR_TEN_ODCINEK
@@ -967,13 +963,13 @@
         pedzelSzczelinyBok = PEDZEL_SZCZELINA_WOLNY
 
         Dim pedzelUstawiony As Boolean = False
-        If TypeOf k Is Zaleznosci.Tor Then
-            Dim tor As Zaleznosci.Tor = DirectCast(k, Zaleznosci.Tor)
+        Dim tor As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
+
+        If tor IsNot Nothing Then
+            Dim roz As Zaleznosci.Rozjazd = TryCast(k, Zaleznosci.Rozjazd)
             pedzelSzczelinyWprost = PobierzPedzelToruNiezwolnionego(tor.Zajetosc, pedzelUstawiony)
 
-            If TypeOf k Is Zaleznosci.Rozjazd Then
-                Dim roz As Zaleznosci.Rozjazd = DirectCast(k, Zaleznosci.Rozjazd)
-
+            If roz IsNot Nothing Then
                 If Not pedzelUstawiony Then
                     If roz.Rozprucie And wysokiStanMigania Then
                         pedzelSzczelinyWprost = PEDZEL_SZCZELINA_ROZPRUCIE

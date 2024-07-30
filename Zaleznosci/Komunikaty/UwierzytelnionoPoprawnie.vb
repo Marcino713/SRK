@@ -11,13 +11,15 @@
     End Property
 
     Public Overrides Sub Zapisz(bw As BinaryWriter)
+        Dim post As DanePosterunku
         bw.Write(PredkoscMaksymalna)
         bw.Write(CUShort(Posterunki.Length))
 
         For i As Integer = 0 To Posterunki.Length - 1
-            ZapiszTekst(bw, Posterunki(i).Nazwa)
-            bw.Write(Posterunki(i).Adres)
-            bw.Write(Posterunki(i).Stan)
+            post = Posterunki(i)
+            ZapiszTekst(bw, post.Nazwa)
+            bw.Write(post.Adres)
+            bw.Write(post.Stan)
         Next
     End Sub
 

@@ -86,7 +86,7 @@ Public Class SerwerTCP
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZAKONCZ_DZIALANIE_KLIENTA, New PrzetwOdebrKomunikatu(
             AddressOf ZakonczDzialanieKlienta.Otworz,
-            AddressOf ZakDzialanieKlienta
+            AddressOf PrzetworzZakonczDzialanieKlienta
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_JASNOSC_LAMP, New PrzetwOdebrKomunikatu(
@@ -94,12 +94,15 @@ Public Class SerwerTCP
             Sub(pol, kom)
                 Dim k As UstawJasnoscLamp = CType(kom, UstawJasnoscLamp)
                 Dim adr(k.Jasnosci.Length - 1) As UShort
+                Dim jasnosc As JasnoscLampy
+
                 For i As Integer = 0 To k.Jasnosci.Length - 1
-                    adr(i) = k.Jasnosci(i).Adres
+                    jasnosc = k.Jasnosci(i)
+                    adr(i) = jasnosc.Adres
 
-                    PolaczenieUart.UstawJasnoscLampy(New UstawJasnoscLampyUrz() With {.AdresUrzadzenia = k.Jasnosci(i).Adres, .Jasnosc = k.Jasnosci(i).Jasnosc})
-
+                    PolaczenieUart.UstawJasnoscLampy(New UstawJasnoscLampyUrz() With {.AdresUrzadzenia = jasnosc.Adres, .Jasnosc = jasnosc.Jasnosc})
                 Next
+
                 pol.WyslijKomunikat(New ZmienionoJasnoscLamp() With {.Adresy = adr})
                 'RaiseEvent OdebranoUstawJasnoscLamp(pol.AdresStacji, CType(kom, UstawJasnoscLamp))
             End Sub
@@ -163,14 +166,14 @@ Public Class SerwerTCP
             Sub(pol, kom)
                 Dim k As DodajPociag = CType(kom, DodajPociag)
                 Dim obs As ObslugiwanyPosterunek = Nothing
-                Dim stan As StanNadaniaNumeruPociagu = StanNadaniaNumeruPociagu.NrZajety
+                Dim stan As StanDodaniaPociagu = StanDodaniaPociagu.NrZajety
                 Dim akt(0) As AktualizowanyKawalekToru
 
                 If k.NrPociagu = 0 Then
-                    stan = StanNadaniaNumeruPociagu.NieprawidlowyNumer
+                    stan = StanDodaniaPociagu.NieprawidlowyNumer
 
                 ElseIf k.LiczbaOsi = 0 Then
-                    stan = StanNadaniaNumeruPociagu.NieprawidlowaLiczbaOsi
+                    stan = StanDodaniaPociagu.NieprawidlowaLiczbaOsi
 
                 Else
 
@@ -179,13 +182,11 @@ Public Class SerwerTCP
                     End SyncLock
 
                     If obs IsNot Nothing Then
-                        Dim p As Drawing.Point = k.WspolrzedneKostki.Konwertuj
-
-                        If obs.DanePulpitu.CzyKostkaNiepusta(p) AndAlso Kostka.CzyTorBezRozjazdu(obs.DanePulpitu.Kostki(p.X, p.Y)) Then
+                        If obs.DanePulpitu.CzyKostkaNiepusta(k.WspolrzedneKostki) AndAlso Kostka.CzyTorBezRozjazdu(obs.DanePulpitu.Kostki(k.WspolrzedneKostki.X, k.WspolrzedneKostki.Y)) Then
 
                             SyncLock slockPociagi
                                 If Not PociagiPoNumerze.ContainsKey(k.NrPociagu) Then
-                                    stan = StanNadaniaNumeruPociagu.Dobrze
+                                    stan = StanDodaniaPociagu.Dobrze
                                     akt(0) = New AktualizowanyKawalekToru() With {
                                         .Polozenie = PolozenieToru.TorGlowny,
                                         .Zajetosc = ZajetoscToru.Zajety,
@@ -206,7 +207,7 @@ Public Class SerwerTCP
                             End SyncLock
 
                         Else
-                            stan = StanNadaniaNumeruPociagu.BledneWspolrzedne
+                            stan = StanDodaniaPociagu.BledneWspolrzedne
                         End If
                     End If
 
@@ -214,7 +215,7 @@ Public Class SerwerTCP
 
                 pol.WyslijKomunikat(New DodanoPociag() With {.NrPociagu = k.NrPociagu, .Stan = stan})
 
-                If stan = StanNadaniaNumeruPociagu.Dobrze Then
+                If stan = StanDodaniaPociagu.Dobrze Then
                     pol.WyslijKomunikat(New ZmienionoStanToru() With {.Tory = akt})
 
                     'RaiseEvent OdebranoDodajPociag(pol.AdresStacji, k)
@@ -429,7 +430,7 @@ Public Class SerwerTCP
                 If Przejazdy.TryGetValue(k.Numer, prz) Then
                     Dim wlaczony As Boolean = k.Stan = UstawianyStanPrzejazdu.Zamkniety
 
-                    For Each r As RogatkaPrzejazduKolejowego In prz.Rogatki
+                    For Each r As PrzejazdRogatka In prz.Rogatki
                         If k.Stan = UstawianyStanPrzejazdu.Zamkniety Then
                             PolaczenieUart.ZamknijRogatke(New ZamknijRogatkeUrz() With {.AdresUrzadzenia = r.Adres, .CzasZamykaniaMs = prz.CzasOpuszczania})
                         Else
@@ -437,7 +438,7 @@ Public Class SerwerTCP
                         End If
                     Next
 
-                    For Each s As ElementWykonaczyPrzejazduKolejowego In prz.SygnalizatoryDrogowe
+                    For Each s As PrzejazdElementWykonawczy In prz.SygnalizatoryDrogowe
                         PolaczenieUart.UstawStanSygnalizatoraDrogowego(New UstawStanSygnalizatoraDrogowegoUrz() With {.AdresUrzadzenia = s.Adres, .Wlaczony = wlaczony})
                     Next
                 End If
@@ -974,7 +975,7 @@ Public Class SerwerTCP
         If adr IsNot Nothing Then RaiseEvent ZmianaCzasuPodlaczenia(adr, "", "")
     End Sub
 
-    Private Sub ZakDzialanieKlienta(pol As PolaczenieTCP, kom As Komunikat)
+    Private Sub PrzetworzZakonczDzialanieKlienta(pol As PolaczenieTCP, kom As Komunikat)
         RozlaczPosterunek(pol.AdresStacji)
         pol.WyslijKomunikat(New ZakonczonoSesjeKlienta() With {.Przyczyna = PrzyczynaZakonczeniaSesjiKlienta.RozlaczenieKlienta})
         pol.Zakoncz(True)

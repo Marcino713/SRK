@@ -1,5 +1,4 @@
-﻿Imports System.Drawing
-Imports Zaleznosci.PlikiPulpitu
+﻿Imports Zaleznosci.PlikiPulpitu
 Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
 Imports SegmPliku = Zaleznosci.SegmentPliku(Of Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu))
 
@@ -257,11 +256,19 @@ Public Class Pulpit
         Return p
     End Function
 
-    Public Function CzyKostkaWZakresiePulpitu(wspolrzedne As Point) As Boolean
+    Public Function CzyKostkaWZakresiePulpitu(wspolrzedne As PunktCalkowity) As Boolean
         Return wspolrzedne.X >= 0 And wspolrzedne.X < _Szerokosc And wspolrzedne.Y >= 0 And wspolrzedne.Y < _Wysokosc
     End Function
 
-    Public Function CzyKostkaNiepusta(wspolrzedne As Point) As Boolean
+    Public Function CzyKostkaWZakresiePulpitu(wspolrzedne As Punkt) As Boolean
+        Return wspolrzedne.X < _Szerokosc And wspolrzedne.Y < _Wysokosc
+    End Function
+
+    Public Function CzyKostkaNiepusta(wspolrzedne As PunktCalkowity) As Boolean
+        Return CzyKostkaWZakresiePulpitu(wspolrzedne) AndAlso _Kostki(wspolrzedne.X, wspolrzedne.Y) IsNot Nothing
+    End Function
+
+    Public Function CzyKostkaNiepusta(wspolrzedne As Punkt) As Boolean
         Return CzyKostkaWZakresiePulpitu(wspolrzedne) AndAlso _Kostki(wspolrzedne.X, wspolrzedne.Y) IsNot Nothing
     End Function
 
@@ -408,13 +415,13 @@ Public Class Pulpit
 
         'Sprawdź, czy są elementy przejazdów
         For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
-            For Each r As ElementWykonaczyPrzejazduKolejowego In p.Rogatki
+            For Each r As PrzejazdElementWykonawczy In p.Rogatki
                 If CzyPunktWUsuwanymZakresie(r.X, r.Y, kierunek, wspolrzednaGraniczna) Then
                     wynik.Add(New ObiektBlokujacyZmniejszaniePulpitu(RodzajObiektuBlokujacegoZmniejszaniePulpitu.PrzejazdRogatka, p.Numer, r.Adres))
                 End If
             Next
 
-            For Each s As ElementWykonaczyPrzejazduKolejowego In p.SygnalizatoryDrogowe
+            For Each s As PrzejazdElementWykonawczy In p.SygnalizatoryDrogowe
                 If CzyPunktWUsuwanymZakresie(s.X, s.Y, kierunek, wspolrzednaGraniczna) Then
                     wynik.Add(New ObiektBlokujacyZmniejszaniePulpitu(RodzajObiektuBlokujacegoZmniejszaniePulpitu.PrzejazdSygnalizatorDrogowy, p.Numer, s.Adres))
                 End If
@@ -468,13 +475,13 @@ Public Class Pulpit
         For Each p As PrzejazdKolejowoDrogowy In _Przejazdy
 
             'Przesuń rogatki
-            For Each r As ElementWykonaczyPrzejazduKolejowego In p.Rogatki
+            For Each r As PrzejazdElementWykonawczy In p.Rogatki
                 r.X += x
                 r.Y += y
             Next
 
             'Przesuń sygnalizatory drogowe
-            For Each s As ElementWykonaczyPrzejazduKolejowego In p.SygnalizatoryDrogowe
+            For Each s As PrzejazdElementWykonawczy In p.SygnalizatoryDrogowe
                 s.X += x
                 s.Y += y
             Next

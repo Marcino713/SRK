@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class wndWyborStacji
+Partial Class wndWyborPosterunku
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -32,6 +32,7 @@ Partial Class wndWyborStacji
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.btnAnuluj = New System.Windows.Forms.Button()
         Me.rbTrybSamoczynny = New System.Windows.Forms.RadioButton()
         Me.rbTrybPolsamoczynny = New System.Windows.Forms.RadioButton()
         Me.Label4 = New System.Windows.Forms.Label()
@@ -40,7 +41,6 @@ Partial Class wndWyborStacji
         Me.ColumnHeader1 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader2 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader3 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-        Me.btnAnuluj = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
@@ -151,6 +151,16 @@ Partial Class wndWyborStacji
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Dostępne posterunki ruchu"
         '
+        'btnAnuluj
+        '
+        Me.btnAnuluj.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnAnuluj.Location = New System.Drawing.Point(601, 496)
+        Me.btnAnuluj.Name = "btnAnuluj"
+        Me.btnAnuluj.Size = New System.Drawing.Size(75, 23)
+        Me.btnAnuluj.TabIndex = 9
+        Me.btnAnuluj.Text = "Anuluj"
+        Me.btnAnuluj.UseVisualStyleBackColor = True
+        '
         'rbTrybSamoczynny
         '
         Me.rbTrybSamoczynny.AutoSize = True
@@ -223,24 +233,14 @@ Partial Class wndWyborStacji
         Me.ColumnHeader3.Text = "Stan"
         Me.ColumnHeader3.Width = 100
         '
-        'btnAnuluj
-        '
-        Me.btnAnuluj.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnAnuluj.Location = New System.Drawing.Point(601, 496)
-        Me.btnAnuluj.Name = "btnAnuluj"
-        Me.btnAnuluj.Size = New System.Drawing.Size(75, 23)
-        Me.btnAnuluj.TabIndex = 9
-        Me.btnAnuluj.Text = "Anuluj"
-        Me.btnAnuluj.UseVisualStyleBackColor = True
-        '
-        'wndWyborStacji
+        'wndWyborPosterunku
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(905, 549)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
-        Me.Name = "wndWyborStacji"
+        Me.Name = "wndWyborPosterunku"
         Me.Text = "Wybór posterunku ruchu"
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()

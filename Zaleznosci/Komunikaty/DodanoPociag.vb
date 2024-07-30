@@ -2,7 +2,7 @@
     Inherits Komunikat
 
     Public Property NrPociagu As UInteger
-    Public Property Stan As StanNadaniaNumeruPociagu
+    Public Property Stan As StanDodaniaPociagu
 
     Public Overrides ReadOnly Property Typ As UShort
         Get
@@ -18,13 +18,13 @@
     Public Shared Function Otworz(br As BinaryReader) As Komunikat
         Dim kom As New DodanoPociag
         kom.NrPociagu = br.ReadUInt32
-        kom.Stan = CType(br.ReadByte, StanNadaniaNumeruPociagu)
+        kom.Stan = CType(br.ReadByte, StanDodaniaPociagu)
 
         Return kom
     End Function
 End Class
 
-Public Enum StanNadaniaNumeruPociagu As Byte
+Public Enum StanDodaniaPociagu As Byte
     Dobrze
     NrZajety
     BledneWspolrzedne

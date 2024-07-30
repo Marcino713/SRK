@@ -36,6 +36,26 @@ Public MustInherit Class Kostka
         Return TypeOf k Is Sygnalizator
     End Function
 
+    Public Shared Function CzySygnalizatorUzalezniony(k As Kostka) As Boolean
+        Return TypeOf k Is SygnalizatorUzalezniony
+    End Function
+
+    Public Shared Function CzySygnalizatorPolsamoczynny(k As Kostka) As Boolean
+        Return TypeOf k Is SygnalizatorPolsamoczynny
+    End Function
+
+    Public Shared Function CzySygnalizatorManewrowy(k As Kostka) As Boolean
+        Return TypeOf k Is SygnalizatorManewrowy
+    End Function
+
+    Public Shared Function CzySygnalizatorTOP(k As Kostka) As Boolean
+        Return TypeOf k Is SygnalizatorOstrzegawczyPrzejazdowy
+    End Function
+
+    Public Shared Function CzyKierunek(k As Kostka) As Boolean
+        Return TypeOf k Is Kierunek
+    End Function
+
     Public Shared Function CzyTorBezRozjazdu(k As Kostka) As Boolean
         Return TypeOf k Is Tor AndAlso TypeOf k IsNot Rozjazd
     End Function

@@ -11,14 +11,17 @@
 
     Public Overrides Sub Zapisz(bw As BinaryWriter)
         bw.Write(CUShort(Pociagi.Length))
+        Dim pociag As DaneWybieralnegoPociagu
 
         For i As Integer = 0 To Pociagi.Length - 1
-            bw.Write(Pociagi(i).Numer)
-            ZapiszTekst(bw, Pociagi(i).Nazwa)
-            bw.Write(Pociagi(i).PredkoscMaksymalna)
-            bw.Write(Pociagi(i).Stan)
-            ZapiszTekst(bw, Pociagi(i).DodajacyPosterunek)
-            ZapiszTekst(bw, Pociagi(i).Lokalizacja)
+            pociag = Pociagi(i)
+
+            bw.Write(pociag.Numer)
+            ZapiszTekst(bw, pociag.Nazwa)
+            bw.Write(pociag.PredkoscMaksymalna)
+            bw.Write(pociag.Stan)
+            ZapiszTekst(bw, pociag.DodajacyPosterunek)
+            ZapiszTekst(bw, pociag.Lokalizacja)
         Next
     End Sub
 

@@ -1,8 +1,8 @@
-﻿Imports System.Drawing
+﻿Public Class Punkt
+    Implements IObiektPunktowy(Of UShort)
 
-Public Class Punkt
-    Public Property X As UShort
-    Public Property Y As UShort
+    Public Property X As UShort Implements IObiektPunktowy(Of UShort).X
+    Public Property Y As UShort Implements IObiektPunktowy(Of UShort).Y
 
     Public Sub New()
     End Sub
@@ -11,8 +11,4 @@ Public Class Punkt
         Me.X = CUShort(x)
         Me.Y = CUShort(y)
     End Sub
-
-    Public Function Konwertuj() As Point
-        Return New Point(X, Y)
-    End Function
 End Class

@@ -10,13 +10,15 @@
     End Property
 
     Public Overrides Sub Zapisz(bw As BinaryWriter)
+        Dim tor As AktualizowanyKawalekToru
         bw.Write(CUShort(Tory.Length))
 
         For i As Integer = 0 To Tory.Length - 1
-            bw.Write(Tory(i).WspolrzedneKostki.X)
-            bw.Write(Tory(i).WspolrzedneKostki.Y)
-            bw.Write(Tory(i).Polozenie)
-            bw.Write(Tory(i).Zajetosc)
+            tor = Tory(i)
+            bw.Write(tor.WspolrzedneKostki.X)
+            bw.Write(tor.WspolrzedneKostki.Y)
+            bw.Write(tor.Polozenie)
+            bw.Write(tor.Zajetosc)
         Next
     End Sub
 

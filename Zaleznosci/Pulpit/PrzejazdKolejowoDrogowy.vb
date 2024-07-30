@@ -11,22 +11,22 @@ Public Class PrzejazdKolejowoDrogowy
     Public Property CzasOpuszczania As UShort
     Public Property CzasPodnoszenia As UShort
 
-    Private _AutomatyczneZamykanie As New List(Of AutomatyczneZamykaniePrzejazduKolejowego)
-    Public ReadOnly Property AutomatyczneZamykanie As List(Of AutomatyczneZamykaniePrzejazduKolejowego)
+    Private _AutomatyczneZamykanie As New List(Of PrzejazdAutomatyczneZamykanie)
+    Public ReadOnly Property AutomatyczneZamykanie As List(Of PrzejazdAutomatyczneZamykanie)
         Get
             Return _AutomatyczneZamykanie
         End Get
     End Property
 
-    Private _Rogatki As New List(Of RogatkaPrzejazduKolejowego)
-    Public ReadOnly Property Rogatki As List(Of RogatkaPrzejazduKolejowego)
+    Private _Rogatki As New List(Of PrzejazdRogatka)
+    Public ReadOnly Property Rogatki As List(Of PrzejazdRogatka)
         Get
             Return _Rogatki
         End Get
     End Property
 
-    Private _SygnalizatoryDrogowe As New List(Of ElementWykonaczyPrzejazduKolejowego)
-    Public ReadOnly Property SygnalizatoryDrogowe As List(Of ElementWykonaczyPrzejazduKolejowego)
+    Private _SygnalizatoryDrogowe As New List(Of PrzejazdElementWykonawczy)
+    Public ReadOnly Property SygnalizatoryDrogowe As List(Of PrzejazdElementWykonawczy)
         Get
             Return _SygnalizatoryDrogowe
         End Get
@@ -51,7 +51,7 @@ Public Class PrzejazdKolejowoDrogowy
                 bw.Write(CzasPodnoszenia)
 
                 bw.Write(CUShort(_AutomatyczneZamykanie.Count))
-                For Each a As AutomatyczneZamykaniePrzejazduKolejowego In _AutomatyczneZamykanie
+                For Each a As PrzejazdAutomatyczneZamykanie In _AutomatyczneZamykanie
                     bw.Write(If(a.OdcinekWyjazd Is Nothing, PUSTE_ODWOLANIE, konf.OdcinkiTorow(a.OdcinekWyjazd)))
                     bw.Write(If(a.OdcinekPrzyjazd Is Nothing, PUSTE_ODWOLANIE, konf.OdcinkiTorow(a.OdcinekPrzyjazd)))
                     bw.Write(If(a.Sygnalizator Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(a.Sygnalizator)))
@@ -65,7 +65,7 @@ Public Class PrzejazdKolejowoDrogowy
         End Using
     End Function
 
-    Private Sub ZapiszElementyWykonawcze(Of T As ElementWykonaczyPrzejazduKolejowego)(bw As BinaryWriter, el As List(Of T))
+    Private Sub ZapiszElementyWykonawcze(Of T As PrzejazdElementWykonawczy)(bw As BinaryWriter, el As List(Of T))
         bw.Write(CUShort(el.Count))
         For Each e As T In el
             e.Zapisz(bw)
@@ -95,7 +95,7 @@ Public Class PrzejazdKolejowoDrogowy
                 _AutomatyczneZamykanie.Capacity = ile
 
                 For i As Integer = 0 To ile - 1
-                    Dim a As New AutomatyczneZamykaniePrzejazduKolejowego
+                    Dim a As New PrzejazdAutomatyczneZamykanie
                     a.OdcinekWyjazd = konf.OdcinkiTorow(br.ReadInt32)
                     a.OdcinekPrzyjazd = konf.OdcinkiTorow(br.ReadInt32)
                     a.Sygnalizator = CType(konf.Kostki(br.ReadInt32), SygnalizatorOstrzegawczyPrzejazdowy)
@@ -110,7 +110,7 @@ Public Class PrzejazdKolejowoDrogowy
         konf.Pulpit.Przejazdy.Add(Me)
     End Sub
 
-    Private Sub OdczytajElementyWykonawcze(Of T As {ElementWykonaczyPrzejazduKolejowego, New})(br As BinaryReader, el As List(Of T))
+    Private Sub OdczytajElementyWykonawcze(Of T As {PrzejazdElementWykonawczy, New})(br As BinaryReader, el As List(Of T))
         Dim ile As Integer = br.ReadUInt16
         el.Capacity = ile
 
@@ -134,63 +134,21 @@ Public Class PrzejazdKolejowoDrogowy
     End Sub
 
     Friend Sub UsunSygnalizatorZPowiazan(sygnTop As SygnalizatorOstrzegawczyPrzejazdowy)
-        For Each aut As AutomatyczneZamykaniePrzejazduKolejowego In _AutomatyczneZamykanie
+        For Each aut As PrzejazdAutomatyczneZamykanie In _AutomatyczneZamykanie
             If aut.Sygnalizator Is sygnTop Then aut.Sygnalizator = Nothing
         Next
     End Sub
 
     Friend Sub UsunOdcinekToruZPowiazan(odcinek As OdcinekToru)
-        For Each aut As AutomatyczneZamykaniePrzejazduKolejowego In _AutomatyczneZamykanie
+        For Each aut As PrzejazdAutomatyczneZamykanie In _AutomatyczneZamykanie
             If aut.OdcinekWyjazd Is odcinek Then aut.OdcinekWyjazd = Nothing
             If aut.OdcinekPrzyjazd Is odcinek Then aut.OdcinekPrzyjazd = Nothing
         Next
     End Sub
 
-    Private Function SortowanieElementowWykonawczychAdresRosnaco(e As ElementWykonaczyPrzejazduKolejowego) As UShort
+    Private Function SortowanieElementowWykonawczychAdresRosnaco(e As PrzejazdElementWykonawczy) As UShort
         Return e.Adres
     End Function
-End Class
-
-Public Class AutomatyczneZamykaniePrzejazduKolejowego
-    Public Property OdcinekWyjazd As OdcinekToru
-    Public Property OdcinekPrzyjazd As OdcinekToru
-    Public Property Sygnalizator As SygnalizatorOstrzegawczyPrzejazdowy
-End Class
-
-Public Class ElementWykonaczyPrzejazduKolejowego
-    Implements IObiektPunktowy
-
-    Public Property Adres As UShort
-    Public Property X As Single Implements IObiektPunktowy.X
-    Public Property Y As Single Implements IObiektPunktowy.Y
-
-    Public Overridable Sub Zapisz(bw As BinaryWriter)
-        bw.Write(Adres)
-        bw.Write(X)
-        bw.Write(Y)
-    End Sub
-
-    Public Overridable Sub Otworz(br As BinaryReader)
-        Adres = br.ReadUInt16
-        X = br.ReadSingle
-        Y = br.ReadSingle
-    End Sub
-End Class
-
-Public Class RogatkaPrzejazduKolejowego
-    Inherits ElementWykonaczyPrzejazduKolejowego
-
-    Public Property CzasDoZamkniecia As UShort
-
-    Public Overrides Sub Zapisz(bw As BinaryWriter)
-        MyBase.Zapisz(bw)
-        bw.Write(CzasDoZamkniecia)
-    End Sub
-
-    Public Overrides Sub Otworz(br As BinaryReader)
-        MyBase.Otworz(br)
-        CzasDoZamkniecia = br.ReadUInt16
-    End Sub
 End Class
 
 <Flags>

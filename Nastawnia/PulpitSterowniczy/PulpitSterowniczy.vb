@@ -1,4 +1,5 @@
 ﻿Imports System.ComponentModel
+Imports IPunktSingle = Zaleznosci.IObiektPunktowy(Of Single)
 
 Friend Class PulpitSterowniczy
     Private Const PUSTA_WSPOLRZEDNA As Integer = -1
@@ -19,7 +20,7 @@ Friend Class PulpitSterowniczy
     Private PoprzZaznLampyWObszarze As HashSet(Of Zaleznosci.Lampa)     'Nothing - tryb zaznaczania pojedynczej lampy; niepusty obiekt - tryb zaznaczania obszarem
     Private KolejnoscZaznaczeniaLamp As New List(Of Zaleznosci.Lampa)
     Private PoprzedniPunkt As New Point(PUSTA_WSPOLRZEDNA, PUSTA_WSPOLRZEDNA)
-    Private PoprzLokalizacjaKostki As New Point(PUSTA_WSPOLRZEDNA, PUSTA_WSPOLRZEDNA)
+    Private PoprzLokalizacjaKostki As New Zaleznosci.PunktCalkowity(PUSTA_WSPOLRZEDNA, PUSTA_WSPOLRZEDNA)
     Private WcisnietyPrzycisk As Zaleznosci.IPrzycisk = Nothing
     Private RysowanieWlaczone As Boolean = True
     Private Migacz As Migacz
@@ -286,25 +287,25 @@ Friend Class PulpitSterowniczy
         End Set
     End Property
 
-    Private _projZaznaczonyPrzejazdAutomatyzacja As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego
+    Private _projZaznaczonyPrzejazdAutomatyzacja As Zaleznosci.PrzejazdAutomatyczneZamykanie
     <Browsable(False)>
-    Public Property projZaznaczonyPrzejazdAutomatyzacja As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego
+    Public Property projZaznaczonyPrzejazdAutomatyzacja As Zaleznosci.PrzejazdAutomatyczneZamykanie
         Get
             Return _projZaznaczonyPrzejazdAutomatyzacja
         End Get
-        Set(value As Zaleznosci.AutomatyczneZamykaniePrzejazduKolejowego)
+        Set(value As Zaleznosci.PrzejazdAutomatyczneZamykanie)
             _projZaznaczonyPrzejazdAutomatyzacja = value
             If _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja Then Invalidate()
         End Set
     End Property
 
-    Private _projZaznaczonyPrzejazdRogatka As Zaleznosci.RogatkaPrzejazduKolejowego
+    Private _projZaznaczonyPrzejazdRogatka As Zaleznosci.PrzejazdRogatka
     <Browsable(False)>
-    Public Property projZaznaczonyPrzejazdRogatka As Zaleznosci.RogatkaPrzejazduKolejowego
+    Public Property projZaznaczonyPrzejazdRogatka As Zaleznosci.PrzejazdRogatka
         Get
             Return _projZaznaczonyPrzejazdRogatka
         End Get
-        Set(value As Zaleznosci.RogatkaPrzejazduKolejowego)
+        Set(value As Zaleznosci.PrzejazdRogatka)
             If _projZaznaczonyPrzejazdRogatka Is value Then Exit Property
 
             _projZaznaczonyPrzejazdRogatka = value
@@ -313,13 +314,13 @@ Friend Class PulpitSterowniczy
         End Set
     End Property
 
-    Private _projZaznaczonyPrzejazdSygnDrog As Zaleznosci.ElementWykonaczyPrzejazduKolejowego
+    Private _projZaznaczonyPrzejazdSygnDrog As Zaleznosci.PrzejazdElementWykonawczy
     <Browsable(False)>
-    Public Property projZaznaczonyPrzejazdSygnDrog As Zaleznosci.ElementWykonaczyPrzejazduKolejowego
+    Public Property projZaznaczonyPrzejazdSygnDrog As Zaleznosci.PrzejazdElementWykonawczy
         Get
             Return _projZaznaczonyPrzejazdSygnDrog
         End Get
-        Set(value As Zaleznosci.ElementWykonaczyPrzejazduKolejowego)
+        Set(value As Zaleznosci.PrzejazdElementWykonawczy)
             If _projZaznaczonyPrzejazdSygnDrog Is value Then Exit Property
 
             _projZaznaczonyPrzejazdSygnDrog = value
@@ -350,10 +351,10 @@ Friend Class PulpitSterowniczy
     Public Event projZmianaPrzypisaniaKostkiDoPrzejazdu()
 
     <Description("Zmiana zaznaczonej rogatki przejazdu kolejowo-drogowego"), Category(KATEG_ZDARZ_PROJ)>
-    Public Event projZmianaZaznaczeniaRogatki(rogatka As Zaleznosci.RogatkaPrzejazduKolejowego)
+    Public Event projZmianaZaznaczeniaRogatki(rogatka As Zaleznosci.PrzejazdRogatka)
 
     <Description("Zmiana zaznaczonego sygnalizatora drogowego przejazdu kolejowo-drogowego"), Category(KATEG_ZDARZ_PROJ)>
-    Public Event projZmianaZaznaczeniaSygnalizatoraDrogowego(sygnalizator As Zaleznosci.ElementWykonaczyPrzejazduKolejowego)
+    Public Event projZmianaZaznaczeniaSygnalizatoraDrogowego(sygnalizator As Zaleznosci.PrzejazdElementWykonawczy)
 
     Public Sub New()
         InitializeComponent()
@@ -446,16 +447,16 @@ Friend Class PulpitSterowniczy
     End Sub
 
     Private Sub PulpitSterowniczy_MouseClick(sender As Object, e As MouseEventArgs) Handles Me.MouseClick
-        Dim p As Point = PobierzKliknieteWspolrzedneKostki(e.Location)
+        Dim p As Zaleznosci.PunktCalkowity = PobierzKliknieteWspolrzedneKostki(e.Location)
 
         If TrybProjektowy Then
 
             If _projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Then
                 If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
                     Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-                    If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.Tor AndAlso _projZaznaczonyOdcinek IsNot Nothing Then
+                    Dim t As Zaleznosci.Tor = TryCast(kostka, Zaleznosci.Tor)
 
-                        Dim t As Zaleznosci.Tor = DirectCast(kostka, Zaleznosci.Tor)
+                    If t IsNot Nothing AndAlso _projZaznaczonyOdcinek IsNot Nothing Then
                         Dim nalezyDoTegoOdcinka As Boolean = t.NalezyDoOdcinka Is _projZaznaczonyOdcinek
                         t.NalezyDoOdcinka?.KostkiTory.Remove(t)
                         If nalezyDoTegoOdcinka Then
@@ -473,9 +474,9 @@ Friend Class PulpitSterowniczy
             ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy Then
                 If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
                     Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-                    If kostka IsNot Nothing AndAlso TypeOf kostka Is Zaleznosci.PrzejazdKolejowoDrogowyKostka AndAlso _projZaznaczonyPrzejazd IsNot Nothing Then
+                    Dim prz As Zaleznosci.PrzejazdKolejowoDrogowyKostka = TryCast(kostka, Zaleznosci.PrzejazdKolejowoDrogowyKostka)
 
-                        Dim prz As Zaleznosci.PrzejazdKolejowoDrogowyKostka = DirectCast(kostka, Zaleznosci.PrzejazdKolejowoDrogowyKostka)
+                    If prz IsNot Nothing AndAlso _projZaznaczonyPrzejazd IsNot Nothing Then
                         Dim nalezyDoTegoPrzejazdu As Boolean = prz.NalezyDoPrzejazdu Is _projZaznaczonyPrzejazd
                         prz.NalezyDoPrzejazdu?.KostkiPrzejazdy.Remove(prz)
                         If nalezyDoTegoPrzejazdu Then
@@ -653,7 +654,7 @@ Friend Class PulpitSterowniczy
             Exit Sub    'przy sterowaniu oświetleniem (możliwość zaznaczenia obszaru), wyłącz możliwość przesuwania pulpitu/wciskania przycisków
         End If
 
-        Dim p As Point = PobierzKliknieteWspolrzedneKostki(e.Location)
+        Dim p As Zaleznosci.PunktCalkowity = PobierzKliknieteWspolrzedneKostki(e.Location)
 
         If TrybProjektowy And projDodatkoweObiekty = RysujDodatkoweObiekty.Nic And ((ModifierKeys And Keys.Shift) <> 0) Then      'Przesuń kostkę
             If _Pulpit.CzyKostkaNiepusta(p) Then
@@ -685,7 +686,7 @@ Friend Class PulpitSterowniczy
         Dim przeciaganaKostka As Zaleznosci.Kostka = PobierzPrzeciaganaKostke(e)
         If przeciaganaKostka Is Nothing Then Exit Sub
 
-        Dim p As Point = PobierzKliknieteWspolrzedneKostki(PointToClient(New Point(e.X, e.Y)))
+        Dim p As Zaleznosci.PunktCalkowity = PobierzKliknieteWspolrzedneKostki(PointToClient(New Point(e.X, e.Y)))
 
         If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
             Dim polozonaKostka As Zaleznosci.Kostka = _Pulpit.Kostki(p.X, p.Y)
@@ -792,16 +793,16 @@ Friend Class PulpitSterowniczy
         Return New PointF((klik.X - Przesuniecie.X) / Skalowanie, (klik.Y - Przesuniecie.Y) / Skalowanie)
     End Function
 
-    Private Function PobierzKliknieteWspolrzedneKostki(klik As Point) As Point
+    Private Function PobierzKliknieteWspolrzedneKostki(klik As Point) As Zaleznosci.PunktCalkowity
         Dim p As PointF = WspolrzedneEkranuDoPulpitu(klik)
-        Return New Point(CInt(p.X - 0.5), CInt(p.Y - 0.5))
+        Return New Zaleznosci.PunktCalkowity(p.X - 0.5F, p.Y - 0.5F)
     End Function
 
-    Private Function PobierzKliknietyObiektPunktowy(elementy As IEnumerable(Of Zaleznosci.IObiektPunktowy), klik As Point) As Zaleznosci.IObiektPunktowy
+    Private Function PobierzKliknietyObiektPunktowy(elementy As IEnumerable(Of IPunktSingle), klik As Point) As IPunktSingle
         Dim s As PointF = WspolrzedneEkranuDoPulpitu(klik)
         Dim pol As Single = _Rysownik.KOLKO_SZER / 2
 
-        For Each el As Zaleznosci.IObiektPunktowy In elementy
+        For Each el As IPunktSingle In elementy
             If (s.X <= el.X + pol) And (s.X >= el.X - pol) And (s.Y <= el.Y + pol) And (s.Y >= el.Y - pol) Then
                 Return el
             End If
@@ -810,17 +811,17 @@ Friend Class PulpitSterowniczy
         Return Nothing
     End Function
 
-    Private Function PobierzKliknietaRogatke(klik As Point) As Zaleznosci.RogatkaPrzejazduKolejowego
+    Private Function PobierzKliknietaRogatke(klik As Point) As Zaleznosci.PrzejazdRogatka
         If _projZaznaczonyPrzejazd IsNot Nothing Then
-            Return CType(PobierzKliknietyObiektPunktowy(_projZaznaczonyPrzejazd.Rogatki, klik), Zaleznosci.RogatkaPrzejazduKolejowego)
+            Return CType(PobierzKliknietyObiektPunktowy(_projZaznaczonyPrzejazd.Rogatki, klik), Zaleznosci.PrzejazdRogatka)
         Else
             Return Nothing
         End If
     End Function
 
-    Private Function PobierzKliknietySygnDrog(klik As Point) As Zaleznosci.ElementWykonaczyPrzejazduKolejowego
+    Private Function PobierzKliknietySygnDrog(klik As Point) As Zaleznosci.PrzejazdElementWykonawczy
         If _projZaznaczonyPrzejazd IsNot Nothing Then
-            Return CType(PobierzKliknietyObiektPunktowy(_projZaznaczonyPrzejazd.SygnalizatoryDrogowe, klik), Zaleznosci.ElementWykonaczyPrzejazduKolejowego)
+            Return CType(PobierzKliknietyObiektPunktowy(_projZaznaczonyPrzejazd.SygnalizatoryDrogowe, klik), Zaleznosci.PrzejazdElementWykonawczy)
         Else
             Return Nothing
         End If
