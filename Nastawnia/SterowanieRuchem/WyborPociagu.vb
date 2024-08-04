@@ -140,7 +140,7 @@
         PociagiSlownik.Clear()
         lvPociagi.Items.Clear()
         If Pociagi Is Nothing Then Exit Sub
-        Dim pocEn As IEnumerable(Of Zaleznosci.DaneWybieralnegoPociagu) = Pociagi.OrderBy(Function(x) x.Numer)
+        Dim pocEn As IEnumerable(Of Zaleznosci.DaneWybieralnegoPociagu) = Pociagi.OrderBy(Function(p) p.Numer)
 
         For Each poc As Zaleznosci.DaneWybieralnegoPociagu In pocEn
             Dim lvi As New ListViewItem({

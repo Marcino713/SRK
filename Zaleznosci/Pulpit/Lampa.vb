@@ -1,5 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
+﻿Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.KonfiguracjaZapisuPulpitu, Zaleznosci.KonfiguracjaOdczytuPulpitu)
 
 Public Class Lampa
     Implements IObiektPlikuTyp, IObiektPunktowy(Of Single)
@@ -26,7 +25,7 @@ Public Class Lampa
         Return kolejka.Peek
     End Function
 
-    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
+    Friend Function Zapisz(konf As KonfiguracjaZapisuPulpitu) As Byte() Implements IObiektPlikuTyp.Zapisz
         Using ms As New MemoryStream
             Using bw As New BinaryWriter(ms)
                 bw.Write(Adres)
@@ -38,11 +37,11 @@ Public Class Lampa
         End Using
     End Function
 
-    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPlikuTyp
+    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytuPulpitu) As IObiektPlikuTyp
         Return New Lampa
     End Function
 
-    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytu) Implements IObiektPlikuTyp.Otworz
+    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytuPulpitu) Implements IObiektPlikuTyp.Otworz
         Using ms As New MemoryStream(dane)
             Using br As New BinaryReader(ms)
                 Adres = br.ReadUInt16

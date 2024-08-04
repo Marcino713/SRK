@@ -65,7 +65,6 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PulpitSterowniczy\Migacz.vb" />
     <Compile Include="Rozklady\EdytorWyswietlaczaPeronowego.Designer.vb">
       <DependentUpon>EdytorWyswietlaczaPeronowego.vb</DependentUpon>
     </Compile>
@@ -84,9 +83,6 @@
     <Compile Include="SterowanieRuchem\Oswietlenie.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PulpitSterowniczy\Dodatki.vb" />
-    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyDirect2D.vb" />
-    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyGDI.vb" />
     <Compile Include="ProjektantPosterunkuRuchu\EdytorRozmiaruPowierzchni.Designer.vb">
       <DependentUpon>EdytorRozmiaruPowierzchni.vb</DependentUpon>
     </Compile>
@@ -140,18 +136,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="PulpitSterowniczy\IRysownik.vb" />
-    <Compile Include="PulpitSterowniczy\PulpitSterowniczy.Designer.vb">
-      <DependentUpon>PulpitSterowniczy.vb</DependentUpon>
-    </Compile>
-    <Compile Include="PulpitSterowniczy\PulpitSterowniczy.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasyczny.vb" />
-    <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\IUrzadzenieRysujace.vb" />
-    <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceDirect2D.vb" />
-    <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceGDI.vb" />
-    <Compile Include="PulpitSterowniczy\WygladzanieTorowUkosnych.vb" />
     <Compile Include="SterowanieRuchem\PredkoscPociagu.Designer.vb">
       <DependentUpon>PredkoscPociagu.vb</DependentUpon>
     </Compile>
@@ -220,10 +204,6 @@
       <DependentUpon>Oswietlenie.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PulpitSterowniczy\PulpitSterowniczy.resx">
-      <DependentUpon>PulpitSterowniczy.vb</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="SterowanieRuchem\PredkoscPociagu.resx">
       <DependentUpon>PredkoscPociagu.vb</DependentUpon>
     </EmbeddedResource>
@@ -251,6 +231,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Pulpit\Pulpit.vbproj">
+      <Project>{5c815a91-c770-407f-8100-781475c4ce39}</Project>
+      <Name>Pulpit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SerwerSterujacy\SerwerSterujacy.vbproj">
       <Project>{db38cd60-7afc-4062-9289-d2e73682f056}</Project>
       <Name>SerwerSterujacy</Name>

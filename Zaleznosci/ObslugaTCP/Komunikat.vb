@@ -1,4 +1,9 @@
-﻿Friend Class TypKomunikatu
+﻿Public MustInherit Class Komunikat
+    Public MustOverride ReadOnly Property Typ As UShort
+    Public MustOverride Sub Zapisz(bw As BinaryWriter)
+End Class
+
+Friend Class TypKomunikatu
     Friend Const DH_INICJALIZUJ As UShort = 1
     Friend Const DH_ZAINICJALIZOWANO As UShort = 2
     Friend Const UWIERZYTELNIJ_SIE As UShort = 4

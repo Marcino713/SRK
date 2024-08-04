@@ -43,7 +43,7 @@ Partial Class wndNastawnia
         Me.mnuOtworzPolaczenia = New System.Windows.Forms.ToolStripMenuItem()
         Me.stStan = New System.Windows.Forms.StatusStrip()
         Me.tslStanPolaczenia = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
+        Me.plpPulpit = New Pulpit.PulpitSterowniczy()
         Me.mnuMenu.SuspendLayout()
         Me.stStan.SuspendLayout()
         Me.SuspendLayout()
@@ -180,7 +180,7 @@ Partial Class wndNastawnia
         Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
         Me.plpPulpit.MozliwoscZaznaczeniaToru = False
         Me.plpPulpit.Name = "plpPulpit"
-        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.Nic
         Me.plpPulpit.projZaznaczonaLampa = Nothing
         Me.plpPulpit.projZaznaczonyLicznik = Nothing
         Me.plpPulpit.projZaznaczonyOdcinek = Nothing
@@ -228,7 +228,7 @@ Partial Class wndNastawnia
     Friend WithEvents mnuRozlaczZSerwerem As ToolStripMenuItem
     Friend WithEvents stStan As StatusStrip
     Friend WithEvents tslStanPolaczenia As ToolStripStatusLabel
-    Friend WithEvents plpPulpit As PulpitSterowniczy
+    Friend WithEvents plpPulpit As Pulpit.PulpitSterowniczy
     Friend WithEvents ToolStripSeparator3 As ToolStripSeparator
     Friend WithEvents mnuDodajPociag As ToolStripMenuItem
     Friend WithEvents mnuOswietlenie As ToolStripMenuItem

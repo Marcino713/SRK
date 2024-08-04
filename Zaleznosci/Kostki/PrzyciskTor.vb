@@ -1,6 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-
-Public Class PrzyciskTor
+﻿Public Class PrzyciskTor
     Inherits Tor
     Implements IPrzycisk
 
@@ -41,14 +39,14 @@ Public Class PrzyciskTor
         If SygnalizatorManewrowy Is kostka Then SygnalizatorManewrowy = Nothing
     End Sub
 
-    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         MyBase.ZapiszKostke(bw, konf)
         bw.Write(CByte(TypPrzycisku))
         bw.Write(If(SygnalizatorPolsamoczynny Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(SygnalizatorPolsamoczynny)))
         bw.Write(If(SygnalizatorManewrowy Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(SygnalizatorManewrowy)))
     End Sub
 
-    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
+    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
         MyBase.OtworzKostke(br, konf)
         TypPrzycisku = CType(br.ReadByte, TypPrzyciskuTorEnum)
         SygnalizatorPolsamoczynny = CType(konf.Kostki(br.ReadInt32), SygnalizatorPolsamoczynny)

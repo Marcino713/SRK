@@ -2,8 +2,9 @@
     Private Const NAZWA_DODAJ As String = "Dodawanie kostek"
     Private Const NAZWA_USUN As String = "Usuwanie kostek"
 
-    Public KierunekEdycji As Zaleznosci.KierunekEdycjiPulpitu
-    Public LiczbaKostek As Integer
+    Public Property KierunekEdycji As Zaleznosci.KierunekEdycjiPulpitu
+    Public Property LiczbaKostek As Integer
+
     Private typ As TypEdycji
     Private szerokoscObecna As Integer
     Private wysokoscObecna As Integer

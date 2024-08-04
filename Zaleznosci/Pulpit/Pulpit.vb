@@ -1,15 +1,13 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
-Imports SegmPliku = Zaleznosci.SegmentPliku(Of Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu))
+﻿Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.KonfiguracjaZapisuPulpitu, Zaleznosci.KonfiguracjaOdczytuPulpitu)
+Imports SegmPliku = Zaleznosci.SegmentPliku(Of Zaleznosci.IObiektPliku(Of Zaleznosci.KonfiguracjaZapisuPulpitu, Zaleznosci.KonfiguracjaOdczytuPulpitu))
 
 Public Class Pulpit
     Public Delegate Sub PrzetworzKostkeZObiektem(Of T)(x As Integer, y As Integer, k As Kostka, o As T)
     Public Delegate Sub PrzetworzKostke(x As Integer, y As Integer, k As Kostka)
     Private Delegate Function CzyZgodnyTypKostki(k As Kostka) As Boolean
-    Private Delegate Function UtworzObiektPulpitu(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPlikuTyp
+    Private Delegate Function UtworzObiektPulpitu(dane As Byte(), konf As KonfiguracjaOdczytuPulpitu) As IObiektPlikuTyp
 
     Public Const ROZSZERZENIE_PLIKU As String = ".stacja"
-    Public Const OPIS_PLIKU As String = "Schemat posterunku ruchu"
     Public Const ROZMIAR_DOMYSLNY As Integer = 10
     Public Shared ReadOnly ObslugiwaneWersje As WersjaPliku() = {New WersjaPliku(0, 1)}
     Private Const NAGLOWEK As String = "STAC"
@@ -147,19 +145,19 @@ Public Class Pulpit
     End Function
 
     Public Sub SortujLampyAdresRosnaco()
-        _Lampy = _Lampy.OrderBy(Function(l As Lampa) l.Adres).ToList()
+        _Lampy = _Lampy.OrderBy(Function(l) l.Adres).ToList()
     End Sub
 
     Public Sub SortujOdcinkiNazwaRosnaco()
-        _Odcinki = _Odcinki.OrderBy(Function(o As OdcinekToru) o.Nazwa).ToList
+        _Odcinki = _Odcinki.OrderBy(Function(o) o.Nazwa).ToList
     End Sub
 
     Public Sub SortujLicznikiAdres1Rosnaco()
-        _LicznikiOsi = _LicznikiOsi.OrderBy(Function(l As ParaLicznikowOsi) l.Adres1).ToList
+        _LicznikiOsi = _LicznikiOsi.OrderBy(Function(l) l.Adres1).ToList
     End Sub
 
     Public Sub SortujPrzejazdyNazwaRosnaco()
-        _Przejazdy = _Przejazdy.OrderBy(Function(p As PrzejazdKolejowoDrogowy) p.Nazwa).ToList
+        _Przejazdy = _Przejazdy.OrderBy(Function(p) p.Nazwa).ToList
     End Sub
 
     Public Function PobierzSygnalizatory() As Dictionary(Of UShort, Kostka)
@@ -489,7 +487,7 @@ Public Class Pulpit
     End Sub
 
     Private Function _Zapisz() As Boolean
-        Dim konf As New KonfiguracjaZapisu
+        Dim konf As New KonfiguracjaZapisuPulpitu
         Dim ix As Integer = 1
 
         PrzeiterujKostki(Sub(x, y, k)
@@ -543,14 +541,14 @@ Public Class Pulpit
         Return True
     End Function
 
-    Private Sub ZapiszObiekt(bw As BinaryWriter, obiekt As IObiektPlikuTyp, typ As UShort, konf As KonfiguracjaZapisu)
+    Private Sub ZapiszObiekt(bw As BinaryWriter, obiekt As IObiektPlikuTyp, typ As UShort, konf As KonfiguracjaZapisuPulpitu)
         Dim dane As Byte() = obiekt.Zapisz(konf)
         bw.Write(typ)
         bw.Write(CUShort(dane.Length))
         bw.Write(dane)
     End Sub
 
-    Private Sub ZapiszObiekty(bw As BinaryWriter, obiekty As IEnumerable(Of IObiektPlikuTyp), typ As UShort, konf As KonfiguracjaZapisu)
+    Private Sub ZapiszObiekty(bw As BinaryWriter, obiekty As IEnumerable(Of IObiektPlikuTyp), typ As UShort, konf As KonfiguracjaZapisuPulpitu)
         For Each o As IObiektPlikuTyp In obiekty
             ZapiszObiekt(bw, o, typ, konf)
         Next
@@ -558,7 +556,7 @@ Public Class Pulpit
 
     Private Shared Function _Otworz(str As Stream) As Pulpit
         Dim p As Pulpit
-        Dim konf As New KonfiguracjaOdczytu
+        Dim konf As New KonfiguracjaOdczytuPulpitu
         Dim segmenty As New List(Of SegmPliku)
         konf.Kostki.Add(PUSTE_ODWOLANIE, Nothing)
         konf.OdcinkiTorow.Add(PUSTE_ODWOLANIE, Nothing)
@@ -601,7 +599,7 @@ Public Class Pulpit
         Return p
     End Function
 
-    Private Shared Function UtworzObiekt(br As BinaryReader, konf As KonfiguracjaOdczytu) As SegmPliku
+    Private Shared Function UtworzObiekt(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu) As SegmPliku
         Dim typ As UShort = br.ReadUInt16
         Dim ile As UShort = br.ReadUInt16
         Dim b As Byte() = br.ReadBytes(ile)

@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2D8E9CDF-F079-428A-92D8-2449C514FF89}</ProjectGuid>
+    <ProjectGuid>{5C815A91-C770-407F-8100-781475C4CE39}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Wspolne</RootNamespace>
-    <AssemblyName>Wspolne</AssemblyName>
+    <RootNamespace>Pulpit</RootNamespace>
+    <AssemblyName>Pulpit</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -19,7 +19,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>Wspolne.xml</DocumentationFile>
+    <DocumentationFile>Pulpit.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -30,7 +30,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>Wspolne.xml</DocumentationFile>
+    <DocumentationFile>Pulpit.xml</DocumentationFile>
     <NoWarn>
     </NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
@@ -58,16 +58,10 @@
     <Import Include="System.Collections.Generic" />
     <Import Include="System.Diagnostics" />
     <Import Include="System.Drawing" />
+    <Import Include="System.Linq" />
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KomunikatZLista.Designer.vb">
-      <DependentUpon>KomunikatZLista.vb</DependentUpon>
-    </Compile>
-    <Compile Include="KomunikatZLista.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Narzedzia.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -83,15 +77,32 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="PulpitSterowniczy\Dodatki.vb" />
+    <Compile Include="PulpitSterowniczy\IRysownik.vb" />
+    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasyczny.vb" />
+    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyDirect2D.vb" />
+    <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasycznyGDI.vb" />
+    <Compile Include="PulpitSterowniczy\Migacz.vb" />
+    <Compile Include="PulpitSterowniczy\PulpitSterowniczy.Designer.vb">
+      <DependentUpon>PulpitSterowniczy.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PulpitSterowniczy\PulpitSterowniczy.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\IUrzadzenieRysujace.vb" />
+    <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceDirect2D.vb" />
+    <Compile Include="PulpitSterowniczy\UrzadzeniaRysujace\UrzadzenieRysujaceGDI.vb" />
+    <Compile Include="PulpitSterowniczy\WygladzanieTorowUkosnych.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="KomunikatZLista.resx">
-      <DependentUpon>KomunikatZLista.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PulpitSterowniczy\PulpitSterowniczy.resx">
+      <DependentUpon>PulpitSterowniczy.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

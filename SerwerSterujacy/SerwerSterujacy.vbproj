@@ -77,7 +77,6 @@
     <Compile Include="ListaAdresowIP.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Narzedzia.vb" />
     <Compile Include="OknoSerwera.vb">
       <SubType>Form</SubType>
     </Compile>

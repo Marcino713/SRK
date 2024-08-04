@@ -3,31 +3,7 @@
     Public Const ARG_TYP_RYSOWNIKA As String = "-tp"
     Public Const ARG_TYP_RYSOWNIKA_KLASYCZNY_GDI As String = "klgdi"
     Public Const ARG_TYP_RYSOWNIKA_KLASYCZNY_D2D As String = "kld2d"
-    Friend WybranyTypRysownika As TypRysownika = TypRysownika.KlasycznyDirect2D
-
-    Public Sub PokazKomunikat(komunikat As String)
-        MessageBox.Show(komunikat, "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information)
-    End Sub
-
-    Public Function ZadajPytanieTrzyodpowiedziowe(pytanie As String) As DialogResult
-        Return MessageBox.Show(pytanie, "Pytanie", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)
-    End Function
-
-    Friend Function PobierzZaznaczonyElementNaLiscie(lv As ListView) As ListViewItem
-        If lv.SelectedItems Is Nothing OrElse lv.SelectedItems.Count = 0 Then
-            Return Nothing
-        Else
-            Return lv.SelectedItems(0)
-        End If
-    End Function
-
-    Friend Function PobierzTagZElementuListy(Of T)(lvi As ListViewItem) As T
-        If lvi Is Nothing Then
-            Return Nothing
-        Else
-            Return DirectCast(lvi.Tag, T)
-        End If
-    End Function
+    Friend WybranyTypRysownika As Pulpit.TypRysownika = Pulpit.TypRysownika.KlasycznyDirect2D
 
     Friend Function PrzyczynaZakonczeniaSesjiKlientaToString(przyczyna As Zaleznosci.PrzyczynaZakonczeniaSesjiKlienta) As String
         Dim dodatek As String = ""
@@ -47,13 +23,13 @@
 
         Select Case typ?.ToLower
             Case ARG_TYP_RYSOWNIKA_KLASYCZNY_GDI
-                WybranyTypRysownika = TypRysownika.KlasycznyGDI
+                WybranyTypRysownika = Pulpit.TypRysownika.KlasycznyGDI
 
             Case ARG_TYP_RYSOWNIKA_KLASYCZNY_D2D
-                WybranyTypRysownika = TypRysownika.KlasycznyDirect2D
+                WybranyTypRysownika = Pulpit.TypRysownika.KlasycznyDirect2D
 
             Case Else
-                WybranyTypRysownika = TypRysownika.KlasycznyDirect2D
+                WybranyTypRysownika = Pulpit.TypRysownika.KlasycznyDirect2D
 
         End Select
     End Sub

@@ -1,6 +1,6 @@
 ﻿Public Class wndNazwaStacji
-    Public Adres As UShort = 0
-    Public Nazwa As String = ""
+    Public Property Adres As UShort = 0
+    Public Property Nazwa As String = ""
 
     Public Sub New(AdresStacji As Integer, NazwaStacji As String, DataUtworzenia As Date)
         InitializeComponent()

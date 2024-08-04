@@ -1,6 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-
-Public Class Przycisk
+﻿Public Class Przycisk
     Inherits Kostka
     Implements IPrzycisk
 
@@ -38,7 +36,7 @@ Public Class Przycisk
         If Me.Przejazd Is przejazd Then Me.Przejazd = Nothing
     End Sub
 
-    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         bw.Write(CByte(TypPrzycisku))
         bw.Write(If(SygnalizatorPolsamoczynny Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(SygnalizatorPolsamoczynny)))
         bw.Write(If(SygnalizatorManewrowy Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(SygnalizatorManewrowy)))
@@ -47,7 +45,7 @@ Public Class Przycisk
         bw.Write(If(Przejazd Is Nothing, PUSTE_ODWOLANIE, konf.Przejazdy(Przejazd)))
     End Sub
 
-    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
+    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
         TypPrzycisku = CType(br.ReadByte, TypPrzyciskuEnum)
         SygnalizatorPolsamoczynny = CType(konf.Kostki(br.ReadInt32), SygnalizatorPolsamoczynny)
         SygnalizatorManewrowy = CType(konf.Kostki(br.ReadInt32), SygnalizatorManewrowy)

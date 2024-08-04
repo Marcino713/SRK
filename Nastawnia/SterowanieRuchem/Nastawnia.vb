@@ -2,7 +2,6 @@
 Imports System.Threading
 
 Public Class wndNastawnia
-    Private Const FILTR_PLIKU As String = Zaleznosci.PolaczeniaStacji.OPIS_PLIKU & "|*" & Zaleznosci.PolaczeniaStacji.ROZSZERZENIE_PLIKU
     Private Const CZEKANIE_NA_ZAMKNIECIE As Integer = 2000
     Private ReadOnly NAZWA_OKNA As String
 
@@ -27,7 +26,7 @@ Public Class wndNastawnia
     Private actPokazPulpit As Action(Of Zaleznosci.Pulpit) = AddressOf PokazPulpit
     Private actUsunMigacz As Action = AddressOf UsunMigacz
     Private actPokazBlad As Action(Of String) = AddressOf Wspolne.PokazBlad
-    Private actPokazKomunikat As Action(Of String) = AddressOf PokazKomunikat
+    Private actPokazKomunikat As Action(Of String) = AddressOf Wspolne.PokazKomunikat
 
     Public Sub New()
         InitializeComponent()
@@ -131,12 +130,12 @@ Public Class wndNastawnia
     End Sub
 
     Private Sub mnuNowePolaczenia_Click() Handles mnuNowePolaczenia.Click
-        PokazKomunikat("Plik połączeń należy zapisać w tym samym folderze, w którym znajdują się pliki konfiguracji posterunków ruchu.")
-        WczytajPolaczenia(New SaveFileDialog, AddressOf Zaleznosci.PolaczeniaStacji.OtworzFolder, "Nie udało się zapisać pliku.")
+        Wspolne.PokazKomunikat("Plik połączeń należy zapisać w tym samym folderze, w którym znajdują się pliki konfiguracji posterunków ruchu.")
+        WczytajPolaczenia(New SaveFileDialog, AddressOf Zaleznosci.PolaczeniaPosterunkow.OtworzFolder, "Nie udało się zapisać pliku.")
     End Sub
 
     Private Sub mnuOtworzPolaczenia_Click() Handles mnuOtworzPolaczenia.Click
-        WczytajPolaczenia(New OpenFileDialog, AddressOf Zaleznosci.PolaczeniaStacji.OtworzPlik, "Nie udało się otworzyć pliku.")
+        WczytajPolaczenia(New OpenFileDialog, AddressOf Zaleznosci.PolaczeniaPosterunkow.OtworzPlik, "Nie udało się otworzyć pliku.")
     End Sub
 
     Private Sub OknoDodawaniaPociagu_FormClosed() Handles OknoDodawaniaPociagu.FormClosed
@@ -437,11 +436,11 @@ Public Class wndNastawnia
         End If
     End Sub
 
-    Private Sub WczytajPolaczenia(Okno As FileDialog, MetodaOtwierajaca As Func(Of String, Zaleznosci.PolaczeniaStacji), KomunikatBledu As String)
-        Okno.Filter = FILTR_PLIKU
+    Private Sub WczytajPolaczenia(Okno As FileDialog, MetodaOtwierajaca As Func(Of String, Zaleznosci.PolaczeniaPosterunkow), KomunikatBledu As String)
+        Okno.Filter = Wspolne.FILTR_PLIKU_POLACZEN
 
         If Okno.ShowDialog = DialogResult.OK Then
-            Dim polaczenia As Zaleznosci.PolaczeniaStacji = MetodaOtwierajaca(Okno.FileName)
+            Dim polaczenia As Zaleznosci.PolaczeniaPosterunkow = MetodaOtwierajaca(Okno.FileName)
             If polaczenia Is Nothing Then
                 Wspolne.PokazBlad(KomunikatBledu)
             Else

@@ -1,7 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports IPunktSingle = Zaleznosci.IObiektPunktowy(Of Single)
 
-Friend Class PulpitSterowniczy
+Public Class PulpitSterowniczy
     Private Const PUSTA_WSPOLRZEDNA As Integer = -1
     Private Const SKALOWANIE_DOMYSLNE As Single = 50.0F
     Private Const SKALOWANIE_ZMIANA As Single = 0.05F

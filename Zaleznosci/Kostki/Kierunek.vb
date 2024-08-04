@@ -1,6 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-
-Public Class Kierunek
+﻿Public Class Kierunek
     Inherits Tor
 
     Public Property KierunekWyjazdu As KierunekWyjazduSBL
@@ -27,13 +25,13 @@ Public Class Kierunek
         Return MyBase.CzyMiga() OrElse _UstawionyStanZmiany <> UstawionyStanZmianyKierunkuSBL.Zaden
     End Function
 
-    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         MyBase.ZapiszKostke(bw, konf)
         bw.Write(CByte(KierunekWyjazdu))
         bw.Write(CByte(Stawnosc))
     End Sub
 
-    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
+    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
         MyBase.OtworzKostke(br, konf)
         KierunekWyjazdu = CType(br.ReadByte, KierunekWyjazduSBL)
         Stawnosc = CType(br.ReadByte, StawnoscSBL)

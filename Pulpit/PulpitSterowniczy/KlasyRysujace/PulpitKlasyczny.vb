@@ -119,6 +119,24 @@
     Private Const NAZWA_OTW As String = "Otw"   'Otwarcie przejazdu
     Private Const NAZWA_ZAM As String = "Zam"   'Zamknięcie przejazdu
 
+    Private ReadOnly METODY_RYSUJACE As New Dictionary(Of Zaleznosci.TypKostki, RysujElement) From {
+        {Zaleznosci.TypKostki.Tor, Sub(k) RysujTorProsty(CType(k, Zaleznosci.Tor), True)},
+        {Zaleznosci.TypKostki.TorKoniec, Sub(k) RysujKoniecToru(CType(k, Zaleznosci.TorKoniec).RysowanieDodatkowychTrojkatow)},
+        {Zaleznosci.TypKostki.Zakret, Sub(k) RysujTorUkosny(CType(k, Zaleznosci.Zakret))},
+        {Zaleznosci.TypKostki.RozjazdLewo, Sub(k) RysujRozjazdLewo(CType(k, Zaleznosci.RozjazdLewo))},
+        {Zaleznosci.TypKostki.RozjazdPrawo, Sub(k) RysujRozjazdPrawo(CType(k, Zaleznosci.RozjazdPrawo))},
+        {Zaleznosci.TypKostki.SygnalizatorManewrowy, Sub(k) RysujSygnalizatorManewrowy(CType(k, Zaleznosci.SygnalizatorManewrowy))},
+        {Zaleznosci.TypKostki.SygnalizatorPowtarzajacy, Sub(k) RysujSygnalizatorPowtarzajacy(CType(k, Zaleznosci.SygnalizatorPowtarzajacy))},
+        {Zaleznosci.TypKostki.SygnalizatorPolsamoczynny, Sub(k) RysujSygnalizatorPolsamoczynny(CType(k, Zaleznosci.SygnalizatorPolsamoczynny))},
+        {Zaleznosci.TypKostki.SygnalizatorSamoczynny, Sub(k) RysujSygnalizatorSamoczynny(CType(k, Zaleznosci.SygnalizatorSamoczynny))},
+        {Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy, Sub(k) RysujSygnalizatorTOP(CType(k, Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy))},
+        {Zaleznosci.TypKostki.PrzejazdKolejowy, Sub(k) RysujPrzejazd(CType(k, Zaleznosci.PrzejazdKolejowoDrogowyKostka))},
+        {Zaleznosci.TypKostki.Przycisk, Sub(k) RysujPrzyciskZwykly(CType(k, Zaleznosci.Przycisk))},
+        {Zaleznosci.TypKostki.PrzyciskTor, Sub(k) RysujPrzyciskTor(CType(k, Zaleznosci.PrzyciskTor))},
+        {Zaleznosci.TypKostki.Kierunek, Sub(k) RysujKierunek(CType(k, Zaleznosci.Kierunek))},
+        {Zaleznosci.TypKostki.Napis, Sub(k) RysujKostkeNapis(CType(k, Zaleznosci.Napis))}
+    }
+
     Protected urz As IUrzadzenieRysujace(Of TOlowek, TPedzel, TMacierz, TCzcionka)
     Private pedzelToru As TPedzel
     Private pedzelSzczelinyWprost As TPedzel
@@ -131,6 +149,8 @@
     Private rysujSzczeliny As Boolean
     Private sygnTopWyrozniony As Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy
     Private wysokiStanMigania As Boolean
+
+    Private Delegate Sub RysujElement(element As Zaleznosci.Kostka)
 
     Private ReadOnly Property IRysownik_KOLKO_SZER As Single Implements IRysownik.KOLKO_SZER
         Get
@@ -382,38 +402,8 @@
             urz.WypelnijProstokat(PEDZEL_ZAZN_KOSTKA, polKrawedzi, polKrawedzi, rozm, rozm)
         End If
 
-        Select Case kostka.Typ
-            Case Zaleznosci.TypKostki.Tor
-                RysujTorProsty(CType(kostka, Zaleznosci.Tor), True)
-            Case Zaleznosci.TypKostki.TorKoniec
-                RysujKoniecToru(CType(kostka, Zaleznosci.TorKoniec).RysowanieDodatkowychTrojkatow)
-            Case Zaleznosci.TypKostki.Zakret
-                RysujTorUkosny(CType(kostka, Zaleznosci.Zakret))
-            Case Zaleznosci.TypKostki.RozjazdLewo
-                RysujRozjazdLewo(CType(kostka, Zaleznosci.RozjazdLewo))
-            Case Zaleznosci.TypKostki.RozjazdPrawo
-                RysujRozjazdPrawo(CType(kostka, Zaleznosci.RozjazdPrawo))
-            Case Zaleznosci.TypKostki.SygnalizatorManewrowy
-                RysujSygnalizatorManewrowy(CType(kostka, Zaleznosci.SygnalizatorManewrowy))
-            Case Zaleznosci.TypKostki.SygnalizatorPowtarzajacy
-                RysujSygnalizatorPowtarzajacy(CType(kostka, Zaleznosci.SygnalizatorPowtarzajacy))
-            Case Zaleznosci.TypKostki.SygnalizatorPolsamoczynny
-                RysujSygnalizatorPolsamoczynny(CType(kostka, Zaleznosci.SygnalizatorPolsamoczynny))
-            Case Zaleznosci.TypKostki.SygnalizatorSamoczynny
-                RysujSygnalizatorSamoczynny(CType(kostka, Zaleznosci.SygnalizatorSamoczynny))
-            Case Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
-                RysujSygnalizatorTOP(CType(kostka, Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy))
-            Case Zaleznosci.TypKostki.PrzejazdKolejowy
-                RysujPrzejazd(CType(kostka, Zaleznosci.PrzejazdKolejowoDrogowyKostka))
-            Case Zaleznosci.TypKostki.Przycisk
-                RysujPrzyciskZwykly(CType(kostka, Zaleznosci.Przycisk))
-            Case Zaleznosci.TypKostki.PrzyciskTor
-                RysujPrzyciskTor(CType(kostka, Zaleznosci.PrzyciskTor))
-            Case Zaleznosci.TypKostki.Kierunek
-                RysujKierunek(CType(kostka, Zaleznosci.Kierunek))
-            Case Zaleznosci.TypKostki.Napis
-                RysujKostkeNapis(CType(kostka, Zaleznosci.Napis))
-        End Select
+        Dim metodaRysuj As RysujElement = Nothing
+        If METODY_RYSUJACE.TryGetValue(kostka.Typ, metodaRysuj) Then metodaRysuj(kostka)
     End Sub
 
     Private Sub RysujTorProsty(tor As Zaleznosci.Tor, rysujNazwe As Boolean)

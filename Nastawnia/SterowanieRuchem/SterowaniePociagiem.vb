@@ -7,7 +7,7 @@
     Private ZdarzeniaWlaczone As Boolean = False
     Private PytaniePrzyZamykaniu As Boolean = True
 
-    Private actPokazKomunikat As Action(Of String) = AddressOf PokazKomunikat
+    Private actPokazKomunikat As Action(Of String) = AddressOf Wspolne.PokazKomunikat
     Private actPokazBlad As Action(Of String) = AddressOf Wspolne.PokazBlad
     Private actUstawNazwePociagu As Action(Of String) = AddressOf UstawNazwePociagu
     Private actPokazPredkoscDozwolona As Action(Of UShort) = AddressOf PokazPredkoscDozwolona

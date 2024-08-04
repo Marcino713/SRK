@@ -1,6 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-
-Public Class SygnalizatorPowtarzajacy
+﻿Public Class SygnalizatorPowtarzajacy
     Inherits Sygnalizator
 
     Private Const BLAD As String = "Dla kostki sygnalizatora powtarzającego nie można zdefiniować nazwy."
@@ -41,13 +39,13 @@ Public Class SygnalizatorPowtarzajacy
         If SygnalizatorPowtarzany Is kostka Then SygnalizatorPowtarzany = Nothing
     End Sub
 
-    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         MyBase.ZapiszKostke(bw, konf)
         bw.Write(CByte(Kolejnosc))
         bw.Write(If(SygnalizatorPowtarzany Is Nothing, PUSTE_ODWOLANIE, konf.Kostki(SygnalizatorPowtarzany)))
     End Sub
 
-    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
+    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
         MyBase.OtworzKostke(br, konf)
         Kolejnosc = CType(br.ReadByte, KolejnoscSygnalizatoraPowtarzajacego)
         Dim id As Integer = br.ReadInt32

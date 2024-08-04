@@ -1,4 +1,4 @@
-﻿Friend Module Dodatki
+﻿Public Module Dodatki
     Public Function KolorRGB(wartosc As String, Optional przezroczystosc As Byte = 255) As Color
         If wartosc.Length <> 7 Then
             Throw New ArgumentException("Wartość koloru musi być siedmioznakowym ciagiem.")

@@ -1,6 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-
-Public MustInherit Class Rozjazd
+﻿Public MustInherit Class Rozjazd
     Inherits Tor
     Implements IAdres, IPrzycisk, IZakret
 
@@ -73,7 +71,7 @@ Public MustInherit Class Rozjazd
         Return MyBase.CzyMiga() OrElse _ZajetoscBok = ZajetoscToru.BlokadaNieustawiona Or _Rozprucie
     End Function
 
-    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         MyBase.ZapiszKostke(bw, konf)
         bw.Write(Adres)
         bw.Write(PredkoscBoczna)
@@ -86,7 +84,7 @@ Public MustInherit Class Rozjazd
         ZapiszZaleznosci(_ZaleznosciJesliBok, bw, konf)
     End Sub
 
-    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
+    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
         MyBase.OtworzKostke(br, konf)
         Adres = br.ReadUInt16
         PredkoscBoczna = br.ReadUInt16
@@ -109,7 +107,7 @@ Public MustInherit Class Rozjazd
         Next
     End Sub
 
-    Private Sub ZapiszZaleznosci(zalezn As KonfiguracjaRozjazduZaleznego(), bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Private Sub ZapiszZaleznosci(zalezn As KonfiguracjaRozjazduZaleznego(), bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         Dim zal As KonfiguracjaRozjazduZaleznego
         bw.Write(CByte(zalezn.Length))
 
@@ -120,7 +118,7 @@ Public MustInherit Class Rozjazd
         Next
     End Sub
 
-    Private Function OtworzZaleznosci(br As BinaryReader, konf As KonfiguracjaOdczytu) As KonfiguracjaRozjazduZaleznego()
+    Private Function OtworzZaleznosci(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu) As KonfiguracjaRozjazduZaleznego()
         Dim ile As Byte = br.ReadByte
         Dim zaleznosci(ile - 1) As KonfiguracjaRozjazduZaleznego
 

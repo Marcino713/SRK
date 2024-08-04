@@ -1,6 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-
-Public Class SygnalizatorPolsamoczynny
+﻿Public Class SygnalizatorPolsamoczynny
     Inherits SygnalizatorUzalezniony
 
     Public Property DostepneSwiatla As DostepneSwiatlaEnum
@@ -24,12 +22,12 @@ Public Class SygnalizatorPolsamoczynny
         Return MyBase.CzyMiga() OrElse _Stan = StanSygnalizatora.Zastepczy
     End Function
 
-    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         MyBase.ZapiszKostke(bw, konf)
         bw.Write(CUShort(DostepneSwiatla))
     End Sub
 
-    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
+    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
         MyBase.OtworzKostke(br, konf)
         DostepneSwiatla = CType(br.ReadUInt16, DostepneSwiatlaEnum)
     End Sub

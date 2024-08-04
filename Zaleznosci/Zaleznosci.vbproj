@@ -60,7 +60,7 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IMigacz.vb" />
+    <Compile Include="Kostki\IMigacz.vb" />
     <Compile Include="KomunikatyUrzadzen\OtworzRogatkeUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\UstawionoJasnoscLampyUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\UstawionoStanSygnalizatoraDrogowegoUrz.vb" />
@@ -78,7 +78,7 @@
     <Compile Include="KomunikatyUrzadzen\ZamknijRogatkeUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\ZmienionoStanRogatkiUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\ZmienionoStanZwrotnicyUrz.vb" />
-    <Compile Include="ObslugaKomunikatowUrzadzen\KomunikatUrzadzenia.vb" />
+    <Compile Include="Urzadzenia\KomunikatUrzadzenia.vb" />
     <Compile Include="Komunikaty\DHInicjalizuj.vb" />
     <Compile Include="Komunikaty\DHZainicjalizowano.vb" />
     <Compile Include="Komunikaty\Informacja.vb" />
@@ -99,12 +99,11 @@
     <Compile Include="Kostki\SygnalizatorOstrzegawczyPrzejazdowy.vb" />
     <Compile Include="Kostki\SygnalizatorPowtarzajacy.vb" />
     <Compile Include="Kostki\SygnalizatorWylaczanyPoPrzejechaniu.vb" />
-    <Compile Include="ObslugaKomunikatow\Komunikat.vb" />
+    <Compile Include="ObslugaTCP\Komunikat.vb" />
     <Compile Include="Komunikaty\ZakonczDzialanieKlienta.vb" />
     <Compile Include="Komunikaty\ZakonczonoDzialanieSerwera.vb" />
     <Compile Include="Komunikaty\DodanoPociag.vb" />
     <Compile Include="Komunikaty\Nieuwierzytelniono.vb" />
-    <Compile Include="ObslugaKomunikatow\TypKomunikatu.vb" />
     <Compile Include="Komunikaty\ZakonczonoSesjeKlienta.vb" />
     <Compile Include="Komunikaty\UstawZwrotnice.vb" />
     <Compile Include="Komunikaty\ZmienionoKierunek.vb" />
@@ -138,11 +137,11 @@
     <Compile Include="ObslugaTCP\StanPolaczenia.vb" />
     <Compile Include="ObslugaTCP\AkceptowaneAdresy.vb" />
     <Compile Include="ObslugaTCP\ZarzadzanieTCP.vb" />
-    <Compile Include="PlikiPolaczen\KonfiguracjaOdczytu.vb" />
-    <Compile Include="LaczenieStacji\LaczoneOdcinkiTorow.vb" />
-    <Compile Include="LaczenieStacji\LaczonyPlikStacji.vb" />
-    <Compile Include="LaczenieStacji\PolaczeniaStacji.vb" />
-    <Compile Include="PlikiPolaczen\KonfiguracjaZapisu.vb" />
+    <Compile Include="LaczeniePosterunkow\KonfiguracjaOdczytuPolaczen.vb" />
+    <Compile Include="LaczeniePosterunkow\LaczoneOdcinkiTorow.vb" />
+    <Compile Include="LaczeniePosterunkow\LaczonyPlikPosterunku.vb" />
+    <Compile Include="LaczeniePosterunkow\PolaczeniaPosterunkow.vb" />
+    <Compile Include="LaczeniePosterunkow\KonfiguracjaZapisuPolaczen.vb" />
     <Compile Include="ObslugaPlikow\IObiektPliku.vb" />
     <Compile Include="Kostki\Kierunek.vb" />
     <Compile Include="Kostki\Kostka.vb" />
@@ -176,8 +175,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Narzedzia.vb" />
-    <Compile Include="PlikiPulpitu\KonfiguracjaOdczytu.vb" />
-    <Compile Include="PlikiPulpitu\KonfiguracjaZapisu.vb" />
+    <Compile Include="Pulpit\KonfiguracjaOdczytuPulpitu.vb" />
+    <Compile Include="Pulpit\KonfiguracjaZapisuPulpitu.vb" />
     <Compile Include="ObslugaPlikow\OtwieraniePlikuException.vb" />
     <Compile Include="ObslugaPlikow\SegmentPliku.vb" />
     <Compile Include="Pulpit\PrzejazdAutomatyczneZamykanie.vb" />

@@ -1,6 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-
-Public Class TorKoniec
+﻿Public Class TorKoniec
     Inherits Kostka
 
     Public Property RysowanieDodatkowychTrojkatow As DodatkoweTrojkatyTorKoniec
@@ -9,10 +7,10 @@ Public Class TorKoniec
         MyBase.New(TypKostki.TorKoniec)
     End Sub
 
-    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
     End Sub
 
-    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
+    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
     End Sub
 End Class
 

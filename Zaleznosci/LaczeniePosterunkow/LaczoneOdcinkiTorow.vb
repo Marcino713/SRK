@@ -1,16 +1,15 @@
-﻿Imports Zaleznosci.PlikiPolaczen
-Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPolaczen.KonfiguracjaZapisu, Zaleznosci.PlikiPolaczen.KonfiguracjaOdczytu)
+﻿Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.KonfiguracjaZapisuPolaczen, Zaleznosci.KonfiguracjaOdczytuPolaczen)
 
 Public Class LaczoneOdcinkiTorow
     Implements IObiektPlikuTyp
 
-    Public Property Posterunek1 As LaczonyPlikStacji
+    Public Property Posterunek1 As LaczonyPlikPosterunku
     Public Property Tor1 As OdcinekToru
-    Public Property Posterunek2 As LaczonyPlikStacji
+    Public Property Posterunek2 As LaczonyPlikPosterunku
     Public Property Tor2 As OdcinekToru
     Public Property Uwagi As UwagiLaczonegoOdcinkaTorow = UwagiLaczonegoOdcinkaTorow.OK
 
-    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
+    Friend Function Zapisz(konf As KonfiguracjaZapisuPolaczen) As Byte() Implements IObiektPlikuTyp.Zapisz
         Using ms As New MemoryStream()
             Using bw As New BinaryWriter(ms)
                 bw.Write(PobierzIdPliku(Posterunek1, konf.UzytePliki))
@@ -22,7 +21,7 @@ Public Class LaczoneOdcinkiTorow
         End Using
     End Function
 
-    Private Function PobierzIdPliku(plik As LaczonyPlikStacji, uzytePliki As Dictionary(Of LaczonyPlikStacji, Integer)) As Integer
+    Private Function PobierzIdPliku(plik As LaczonyPlikPosterunku, uzytePliki As Dictionary(Of LaczonyPlikPosterunku, Integer)) As Integer
         Dim id As Integer
         If Not uzytePliki.TryGetValue(plik, id) Then
             id = uzytePliki.Count
@@ -31,11 +30,11 @@ Public Class LaczoneOdcinkiTorow
         Return id
     End Function
 
-    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPlikuTyp
+    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytuPolaczen) As IObiektPlikuTyp
         Return New LaczoneOdcinkiTorow
     End Function
 
-    Friend Sub Otworz(dane As Byte(), konf As KonfiguracjaOdczytu) Implements IObiektPlikuTyp.Otworz
+    Friend Sub Otworz(dane As Byte(), konf As KonfiguracjaOdczytuPolaczen) Implements IObiektPlikuTyp.Otworz
         Dim Tor1Istnieje As Boolean
         Dim Tor2Istnieje As Boolean
 
@@ -45,12 +44,12 @@ Public Class LaczoneOdcinkiTorow
                 Dim nazwa As String
 
                 id = br.ReadInt32()
-                Posterunek1 = konf.PlikiStacji(id)
+                Posterunek1 = konf.PlikiPosterunkow(id)
                 nazwa = OdczytajTekst(br)
                 Tor1Istnieje = PobierzTor(nazwa, Posterunek1, Tor1)
 
                 id = br.ReadInt32()
-                Posterunek2 = konf.PlikiStacji(id)
+                Posterunek2 = konf.PlikiPosterunkow(id)
                 nazwa = OdczytajTekst(br)
                 Tor2Istnieje = PobierzTor(nazwa, Posterunek2, Tor2)
             End Using
@@ -58,16 +57,16 @@ Public Class LaczoneOdcinkiTorow
 
         If Tor1Istnieje = False AndAlso Tor2Istnieje = False Then
             Uwagi = UwagiLaczonegoOdcinkaTorow.BrakObuTorow
-        ElseIf Tor1Istnieje = False
+        ElseIf Tor1Istnieje = False Then
             Uwagi = UwagiLaczonegoOdcinkaTorow.BrakToru1
-        ElseIf Tor2Istnieje = False
+        ElseIf Tor2Istnieje = False Then
             Uwagi = UwagiLaczonegoOdcinkaTorow.BrakToru2
         End If
 
         konf.Polaczenia.LaczaneTory.Add(Me)
     End Sub
 
-    Private Function PobierzTor(nazwa As String, posterunek As LaczonyPlikStacji, ByRef tor As OdcinekToru) As Boolean
+    Private Function PobierzTor(nazwa As String, posterunek As LaczonyPlikPosterunku, ByRef tor As OdcinekToru) As Boolean
         tor = Nothing
 
         If posterunek.OdcinkiTorow IsNot Nothing Then

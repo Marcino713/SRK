@@ -1,6 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-
-Public Class Napis
+﻿Public Class Napis
     Inherits Kostka
 
     Public Const ROZMIAR_DOMYSLNY As Single = 0.17F
@@ -12,12 +10,12 @@ Public Class Napis
         MyBase.New(TypKostki.Napis)
     End Sub
 
-    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         ZapiszTekst(bw, Tekst)
         bw.Write(Rozmiar)
     End Sub
 
-    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
+    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
         Tekst = OdczytajTekst(br)
         Rozmiar = br.ReadSingle
     End Sub

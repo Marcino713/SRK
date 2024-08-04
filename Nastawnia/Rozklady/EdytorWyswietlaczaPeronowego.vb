@@ -82,7 +82,7 @@
         dlg.Filter = "Pliki BMP|*.bmp"
         If dlg.ShowDialog = DialogResult.OK Then
             pctTablica.Image.Save(dlg.FileName, Imaging.ImageFormat.Bmp)
-            PokazKomunikat("Obraz wyświetlacza został zapisany.")
+            Wspolne.PokazKomunikat("Obraz wyświetlacza został zapisany.")
         End If
     End Sub
 

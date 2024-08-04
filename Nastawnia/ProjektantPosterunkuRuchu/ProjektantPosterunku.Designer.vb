@@ -36,7 +36,7 @@ Partial Class wndProjektantPosterunku
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuNazwa = New System.Windows.Forms.ToolStripMenuItem()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
-        Me.plpPulpit = New Nastawnia.PulpitSterowniczy()
+        Me.plpPulpit = New Pulpit.PulpitSterowniczy()
         Me.Label36 = New System.Windows.Forms.Label()
         Me.tabUstawienia = New System.Windows.Forms.TabControl()
         Me.tbpPulpit = New System.Windows.Forms.TabPage()
@@ -464,7 +464,7 @@ Partial Class wndProjektantPosterunku
         Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
         Me.plpPulpit.MozliwoscZaznaczeniaToru = False
         Me.plpPulpit.Name = "plpPulpit"
-        Me.plpPulpit.projDodatkoweObiekty = Nastawnia.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.Nic
         Me.plpPulpit.projZaznaczonaLampa = Nothing
         Me.plpPulpit.projZaznaczonyLicznik = Nothing
         Me.plpPulpit.projZaznaczonyOdcinek = Nothing
@@ -3281,7 +3281,7 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
     Friend WithEvents mnuZapiszJako As ToolStripMenuItem
     Friend WithEvents Label36 As Label
-    Friend WithEvents plpPulpit As PulpitSterowniczy
+    Friend WithEvents plpPulpit As Pulpit.PulpitSterowniczy
     Friend WithEvents pnlKonfSygnPowt As Panel
     Friend WithEvents rbKonfSygnPowtKolejnoscIII As RadioButton
     Friend WithEvents rbKonfSygnPowtKolejnoscII As RadioButton

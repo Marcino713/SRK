@@ -11,13 +11,13 @@ Friend Class PredkoscPociagu
     Private Const TEKST_KRESKA_MARGINES_SRODEK As Integer = 16
     Private Const TEKST_KRESKA_SZEROKOSC As Integer = 5
     Private Const KATEG_PREDKOSC As String = "Prędkość"
-    Private ReadOnly PEDZEL_PASEK As Brush = New SolidBrush(KolorRGB("#10F055"))
-    Private ReadOnly PEDZEL_PASEK_NIEAKTYWNY As Brush = New SolidBrush(KolorRGB("#C0C0C0"))
-    Private ReadOnly PEDZEL_SUWAK As Brush = New SolidBrush(KolorRGB("#24AF4D"))
-    Private ReadOnly PEDZEL_SUWAK_NIEAKTYWNY As Brush = New SolidBrush(KolorRGB("#7A7A7A"))
-    Private ReadOnly PEDZEL_GRANICA As Brush = New SolidBrush(KolorRGB("#FF0000"))
-    Private ReadOnly PEDZEL_TEKST As Brush = New SolidBrush(KolorRGB("#000000"))
-    Private ReadOnly OLOWEK_TEKST_KRESKA As New Pen(KolorRGB("#000000"))
+    Private ReadOnly PEDZEL_PASEK As Brush = New SolidBrush(Pulpit.KolorRGB("#10F055"))
+    Private ReadOnly PEDZEL_PASEK_NIEAKTYWNY As Brush = New SolidBrush(Pulpit.KolorRGB("#C0C0C0"))
+    Private ReadOnly PEDZEL_SUWAK As Brush = New SolidBrush(Pulpit.KolorRGB("#24AF4D"))
+    Private ReadOnly PEDZEL_SUWAK_NIEAKTYWNY As Brush = New SolidBrush(Pulpit.KolorRGB("#7A7A7A"))
+    Private ReadOnly PEDZEL_GRANICA As Brush = New SolidBrush(Pulpit.KolorRGB("#FF0000"))
+    Private ReadOnly PEDZEL_TEKST As Brush = New SolidBrush(Pulpit.KolorRGB("#000000"))
+    Private ReadOnly OLOWEK_TEKST_KRESKA As New Pen(Pulpit.KolorRGB("#000000"))
 
     Private PolozenieSuwaka As Rectangle
     Private WspolrzednaPrzeciaganiaY As Integer = 0

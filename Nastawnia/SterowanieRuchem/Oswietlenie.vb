@@ -1,6 +1,6 @@
 ﻿Friend Class wndOswietlenie
     Private Klient As Zaleznosci.KlientTCP
-    Private WithEvents Pulpit As PulpitSterowniczy
+    Private WithEvents Pulpit As Pulpit.PulpitSterowniczy
     Private WszystkieLampy As Dictionary(Of UShort, Zaleznosci.Lampa)
     Private ZaznaczoneLampy As New HashSet(Of Zaleznosci.Lampa)
 
@@ -13,7 +13,7 @@
         End Get
     End Property
 
-    Public Sub New(klient As Zaleznosci.KlientTCP, pulpit As PulpitSterowniczy, lampy As Dictionary(Of UShort, Zaleznosci.Lampa))
+    Public Sub New(klient As Zaleznosci.KlientTCP, pulpit As Pulpit.PulpitSterowniczy, lampy As Dictionary(Of UShort, Zaleznosci.Lampa))
         InitializeComponent()
 
         Me.Klient = klient

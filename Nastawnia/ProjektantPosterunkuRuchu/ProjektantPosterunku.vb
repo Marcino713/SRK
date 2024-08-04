@@ -1,6 +1,5 @@
 ﻿Public Class wndProjektantPosterunku
     Private ReadOnly NAZWA_OKNA As String
-    Private Const FILTR_PLIKU As String = Zaleznosci.Pulpit.OPIS_PLIKU & "|*" & Zaleznosci.Pulpit.ROZSZERZENIE_PLIKU
     Private Const ROZMIAR_KOSTKI_LISTA As Integer = 48
     Private Const ROZMIAR_CZCIONKI_MIN As Single = 0.05F
     Private Const ROZMIAR_CZCIONKI_MAX As Single = 0.5F
@@ -92,7 +91,7 @@
 
     Private Sub tabUstawienia_Selected() Handles tabUstawienia.Selected
         If tabUstawienia.SelectedTab Is tbpPulpit Then
-            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
+            plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.Nic
             Dim zazn As Zaleznosci.Kostka = plpPulpit.ZaznaczonaKostka
             If zazn IsNot Nothing Then
                 If TypeOf zazn Is Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu Then
@@ -103,16 +102,16 @@
             End If
 
         ElseIf tabUstawienia.SelectedTab Is tbpOdcinki Then
-            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow
+            plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.OdcinkiTorow
             OdswiezListeOdcinkowTorow()
 
         ElseIf tabUstawienia.SelectedTab Is tbpLiczniki Then
-            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki
+            plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.Liczniki
             OdswiezListeLicznikow()
             OdswiezListeOdcinkowWLicznikach()
 
         ElseIf tabUstawienia.SelectedTab Is tbpLampy Then
-            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy
+            plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.Lampy
 
         ElseIf tabUstawienia.SelectedTab Is tbpPrzejazdy Then
             tabPrzejazd_Selected()
@@ -123,7 +122,7 @@
         End If
     End Sub
 
-    Private Function UtworzKostkeDoListy(pulpit As PulpitSterowniczy, kostka As Zaleznosci.Kostka, nazwa As String) As ListViewItem
+    Private Function UtworzKostkeDoListy(pulpit As Pulpit.PulpitSterowniczy, kostka As Zaleznosci.Kostka, nazwa As String) As ListViewItem
         pulpit.Pulpit.Kostki(0, 0) = kostka
         Dim bm As New Bitmap(ROZMIAR_KOSTKI_LISTA, ROZMIAR_KOSTKI_LISTA)
         pulpit.DrawToBitmap(bm, New Rectangle(0, 0, ROZMIAR_KOSTKI_LISTA, ROZMIAR_KOSTKI_LISTA))
@@ -134,11 +133,11 @@
     End Function
 
     Private Sub UtworzListeKostek()
-        Dim p As New PulpitSterowniczy With {
+        Dim p As New Pulpit.PulpitSterowniczy With {
             .Skalowanie = ROZMIAR_KOSTKI_LISTA - 1,
             .RysujKrawedzieKostek = False,
             .RysujWspolrzedne = False,
-            .TypRysownika = TypRysownika.KlasycznyGDI,
+            .TypRysownika = Pulpit.TypRysownika.KlasycznyGDI,
             .TrybProjektowy = True}
 
         Dim sygnPolsam As New Zaleznosci.SygnalizatorPolsamoczynny With {.Nazwa = "A1/2m"}
@@ -162,7 +161,7 @@
             UtworzKostkeDoListy(p, New Zaleznosci.Napis() With {.Tekst = "Magazyn"}, "Napis")
         }
 
-        lvPulpitKostki.Items.AddRange(kostkiLista.OrderBy(Function(x) x.Text).ToArray())
+        lvPulpitKostki.Items.AddRange(kostkiLista.OrderBy(Function(k) k.Text).ToArray())
     End Sub
 
     Private Sub UstawTytulOkna()
@@ -205,7 +204,7 @@
 
         If plpPulpit.Pulpit.SciezkaPliku = "" Or nowyPlik Then
             Dim dlg As New SaveFileDialog With {
-                .Filter = FILTR_PLIKU
+                .Filter = Wspolne.FILTR_PLIKU_PULPITU
             }
             If dlg.ShowDialog = DialogResult.OK Then
                 nowaSciezka = dlg.FileName
@@ -224,7 +223,7 @@
             Wspolne.PokazBlad("Nie udało się zapisać pliku.")
             Return False
         Else
-            PokazKomunikat("Plik został zapisany.")
+            Wspolne.PokazKomunikat("Plik został zapisany.")
             Return True
         End If
     End Function
@@ -233,7 +232,7 @@
     ''' Pyta użytkownika o zapisanie pliku, ewentualnie zapisuje i zwraca wartość określającą, czy można przejść do następnego kroku (np. wczytania pliku)
     ''' </summary>
     Private Function PrzetworzPorzucaniePliku() As Boolean
-        Dim wynik As DialogResult = ZadajPytanieTrzyodpowiedziowe("Zapisać plik?")
+        Dim wynik As DialogResult = Wspolne.ZadajPytanieTrzyodpowiedziowe("Zapisać plik?")
 
         If wynik = DialogResult.Yes Then Return Zapisz(False)
 
@@ -258,7 +257,7 @@
     Private Sub mnuOtworz_Click() Handles mnuOtworz.Click
         If PrzetworzPorzucaniePliku() Then
             Dim dlg As New OpenFileDialog With {
-                .Filter = FILTR_PLIKU
+                .Filter = Wspolne.FILTR_PLIKU_PULPITU
             }
             If dlg.ShowDialog = DialogResult.OK Then OtworzPlik(dlg.FileName)
         End If
@@ -382,7 +381,7 @@
         If lvi IsNot Nothing Then
             lvi.Selected = True
             DoDragDrop(
-                New PrzeciaganaKostka(
+                New Pulpit.PrzeciaganaKostka(
                     CType(Activator.CreateInstance(DirectCast(lvi.Tag, Type)), Zaleznosci.Kostka),
                     plpPulpit.Handle),
                 DragDropEffects.Copy)
@@ -911,7 +910,7 @@
         Dim sygn As Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu = TryCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu)
         If sygn Is Nothing Then Exit Sub
 
-        Dim odcinki As IEnumerable(Of Zaleznosci.OdcinekToru) = plpPulpit.Pulpit.OdcinkiTorow.OrderBy(Function(t As Zaleznosci.OdcinekToru) t.Nazwa)
+        Dim odcinki As IEnumerable(Of Zaleznosci.OdcinekToru) = plpPulpit.Pulpit.OdcinkiTorow.OrderBy(Function(t) t.Nazwa)
         For Each odc As Zaleznosci.OdcinekToru In odcinki
             cboKonfSygnOdcinekNast.Items.Add(New ObiektComboBox(Of Zaleznosci.OdcinekToru)(odc, odc.Nazwa))
         Next
@@ -1133,7 +1132,7 @@
             przejazdy.Add(New ObiektComboBox(Of Zaleznosci.PrzejazdKolejowoDrogowy)(p, p.Nazwa))
         Next
 
-        Return przejazdy.OrderBy(Function(p As ObiektComboBox(Of Zaleznosci.PrzejazdKolejowoDrogowy)) p.Wartosc.Nazwa).ToArray
+        Return przejazdy.OrderBy(Function(p) p.Wartosc.Nazwa).ToArray
     End Function
 
 #End Region 'Zakładka Pulpit
@@ -1142,8 +1141,8 @@
 
     Private Sub lvOdcinki_SelectedIndexChanged() Handles lvOdcinki.SelectedIndexChanged
         ZdarzeniaWlaczone = False
-        ZaznaczonyOdcinekNaLiscie = PobierzZaznaczonyElementNaLiscie(lvOdcinki)
-        Dim odcinek As Zaleznosci.OdcinekToru = PobierzTagZElementuListy(Of Zaleznosci.OdcinekToru)(ZaznaczonyOdcinekNaLiscie)
+        ZaznaczonyOdcinekNaLiscie = Wspolne.PobierzZaznaczonyElementNaLiscie(lvOdcinki)
+        Dim odcinek As Zaleznosci.OdcinekToru = Wspolne.PobierzTagZElementuListy(Of Zaleznosci.OdcinekToru)(ZaznaczonyOdcinekNaLiscie)
         If odcinek Is Nothing Then
             txtOdcinekAdres.Text = ""
             txtOdcinekNazwa.Text = ""
@@ -1249,8 +1248,8 @@
 
     Private Sub lvLiczniki_SelectedIndexChanged() Handles lvLiczniki.SelectedIndexChanged
         ZdarzeniaWlaczone = False
-        ZaznaczonyLicznikNaLiscie = PobierzZaznaczonyElementNaLiscie(lvLiczniki)
-        Dim licznik As Zaleznosci.ParaLicznikowOsi = PobierzTagZElementuListy(Of Zaleznosci.ParaLicznikowOsi)(ZaznaczonyLicznikNaLiscie)
+        ZaznaczonyLicznikNaLiscie = Wspolne.PobierzZaznaczonyElementNaLiscie(lvLiczniki)
+        Dim licznik As Zaleznosci.ParaLicznikowOsi = Wspolne.PobierzTagZElementuListy(Of Zaleznosci.ParaLicznikowOsi)(ZaznaczonyLicznikNaLiscie)
         plpPulpit.projZaznaczonyLicznik = licznik
         If licznik Is Nothing Then
             txtLicznik1Adres.Text = ""
@@ -1439,8 +1438,8 @@
 
     Private Sub lvLampy_SelectedIndexChanged() Handles lvLampy.SelectedIndexChanged
         ZdarzeniaWlaczone = False
-        ZaznaczonaLampaNaLiscie = PobierzZaznaczonyElementNaLiscie(lvLampy)
-        Dim lampa As Zaleznosci.Lampa = PobierzTagZElementuListy(Of Zaleznosci.Lampa)(ZaznaczonaLampaNaLiscie)
+        ZaznaczonaLampaNaLiscie = Wspolne.PobierzZaznaczonyElementNaLiscie(lvLampy)
+        Dim lampa As Zaleznosci.Lampa = Wspolne.PobierzTagZElementuListy(Of Zaleznosci.Lampa)(ZaznaczonaLampaNaLiscie)
         If lampa Is Nothing Then
             txtLampaAdres.Text = ""
             txtLampaX.Text = ""
@@ -1537,8 +1536,8 @@
 
     Private Sub lvPrzejazdy_SelectedIndexChanged() Handles lvPrzejazdy.SelectedIndexChanged
         ZdarzeniaWlaczone = False
-        ZaznaczonyPrzejazdNaLiscie = PobierzZaznaczonyElementNaLiscie(lvPrzejazdy)
-        Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = PobierzTagZElementuListy(Of Zaleznosci.PrzejazdKolejowoDrogowy)(ZaznaczonyPrzejazdNaLiscie)
+        ZaznaczonyPrzejazdNaLiscie = Wspolne.PobierzZaznaczonyElementNaLiscie(lvPrzejazdy)
+        Dim przejazd As Zaleznosci.PrzejazdKolejowoDrogowy = Wspolne.PobierzTagZElementuListy(Of Zaleznosci.PrzejazdKolejowoDrogowy)(ZaznaczonyPrzejazdNaLiscie)
         plpPulpit.projZaznaczonyPrzejazd = przejazd
         If przejazd Is Nothing Then
             txtPrzejazdNumer.Text = ""
@@ -1642,24 +1641,24 @@
 
     Private Sub tabPrzejazd_Selected() Handles tabPrzejazd.Selected
         If tabPrzejazd.SelectedTab Is tbpPrzejazdOgolne Then
-            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy
+            plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.Przejazdy
 
         ElseIf tabPrzejazd.SelectedTab Is tbpPrzejazdAutomatyzacja Then
-            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja
+            plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.PrzejazdyAutomatyzacja
 
         ElseIf tabPrzejazd.SelectedTab Is tbpPrzejazdRogatki Then
-            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyRogatki
+            plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.PrzejazdyRogatki
 
         ElseIf tabPrzejazd.SelectedTab Is tbpPrzejazdSygnDrog Then
-            plpPulpit.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdySygnDrog
+            plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.PrzejazdySygnDrog
 
         End If
     End Sub
 
     Private Sub lvPrzejazdAutomatyzacja_SelectedIndexChanged() Handles lvPrzejazdAutomatyzacja.SelectedIndexChanged
         ZdarzeniaWlaczone = False
-        ZaznaczonyPrzejazdAutomatyzacjaNaLiscie = PobierzZaznaczonyElementNaLiscie(lvPrzejazdAutomatyzacja)
-        Dim automatyzacja As Zaleznosci.PrzejazdAutomatyczneZamykanie = PobierzTagZElementuListy(Of Zaleznosci.PrzejazdAutomatyczneZamykanie)(ZaznaczonyPrzejazdAutomatyzacjaNaLiscie)
+        ZaznaczonyPrzejazdAutomatyzacjaNaLiscie = Wspolne.PobierzZaznaczonyElementNaLiscie(lvPrzejazdAutomatyzacja)
+        Dim automatyzacja As Zaleznosci.PrzejazdAutomatyczneZamykanie = Wspolne.PobierzTagZElementuListy(Of Zaleznosci.PrzejazdAutomatyczneZamykanie)(ZaznaczonyPrzejazdAutomatyzacjaNaLiscie)
         plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = automatyzacja
         If automatyzacja Is Nothing Then
             cboPrzejazdAutomatyzacjaOdcinekWyjazd.SelectedItem = Nothing
@@ -1744,8 +1743,8 @@
 
     Private Sub lvPrzejazdRogatki_SelectedIndexChanged() Handles lvPrzejazdRogatki.SelectedIndexChanged
         ZdarzeniaWlaczone = False
-        ZaznaczonyPrzejazdRogatkaNaLiscie = PobierzZaznaczonyElementNaLiscie(lvPrzejazdRogatki)
-        Dim rogatka As Zaleznosci.PrzejazdRogatka = PobierzTagZElementuListy(Of Zaleznosci.PrzejazdRogatka)(ZaznaczonyPrzejazdRogatkaNaLiscie)
+        ZaznaczonyPrzejazdRogatkaNaLiscie = Wspolne.PobierzZaznaczonyElementNaLiscie(lvPrzejazdRogatki)
+        Dim rogatka As Zaleznosci.PrzejazdRogatka = Wspolne.PobierzTagZElementuListy(Of Zaleznosci.PrzejazdRogatka)(ZaznaczonyPrzejazdRogatkaNaLiscie)
         If rogatka Is Nothing Then
             txtPrzejazdRogatkaAdres.Text = ""
             txtPrzejazdRogatkaX.Text = ""
@@ -1829,8 +1828,8 @@
 
     Private Sub lvPrzejazdSygnDrog_SelectedIndexChanged() Handles lvPrzejazdSygnDrog.SelectedIndexChanged
         ZdarzeniaWlaczone = False
-        ZaznaczonyPrzejazdSygnDrogNaLiscie = PobierzZaznaczonyElementNaLiscie(lvPrzejazdSygnDrog)
-        Dim sygn As Zaleznosci.PrzejazdElementWykonawczy = PobierzTagZElementuListy(Of Zaleznosci.PrzejazdElementWykonawczy)(ZaznaczonyPrzejazdSygnDrogNaLiscie)
+        ZaznaczonyPrzejazdSygnDrogNaLiscie = Wspolne.PobierzZaznaczonyElementNaLiscie(lvPrzejazdSygnDrog)
+        Dim sygn As Zaleznosci.PrzejazdElementWykonawczy = Wspolne.PobierzTagZElementuListy(Of Zaleznosci.PrzejazdElementWykonawczy)(ZaznaczonyPrzejazdSygnDrogNaLiscie)
         If sygn Is Nothing Then
             txtPrzejazdSygnDrogAdres.Text = ""
             txtPrzejazdSygnDrogX.Text = ""
@@ -2136,7 +2135,7 @@
     Private Sub OdswiezListeOdcinkowWComboBox(cbo As ComboBox, dodajPusty As Boolean, zaznaczony As Zaleznosci.OdcinekToru, ukryty As Zaleznosci.OdcinekToru)
         cbo.Items.Clear()
         If dodajPusty Then cbo.Items.Add(PUSTY_CBO_ODCINEK_TORU)
-        Dim odcinki As IEnumerable(Of Zaleznosci.OdcinekToru) = plpPulpit.Pulpit.OdcinkiTorow.OrderBy(Function(f As Zaleznosci.OdcinekToru) f.Nazwa)
+        Dim odcinki As IEnumerable(Of Zaleznosci.OdcinekToru) = plpPulpit.Pulpit.OdcinkiTorow.OrderBy(Function(o) o.Nazwa)
 
         For Each odc As Zaleznosci.OdcinekToru In odcinki
             If odc IsNot ukryty Then
@@ -2156,7 +2155,7 @@
                                               End If
                                           End Sub)
 
-        Return kostki.OrderBy(Function(k As ObiektComboBox(Of Zaleznosci.Kostka)) k.Tekst).ToArray()
+        Return kostki.OrderBy(Function(k) k.Tekst).ToArray()
     End Function
 
     Private Function PobierzNazweToru(kostka As Zaleznosci.Kostka) As String

@@ -678,10 +678,10 @@ Public Class SerwerTCP
         Dim PosterunkiLista As New List(Of ObslugiwanyPosterunek)
 
         MaksymalnaPredkoscSieci = 0
-        Dim polaczenia As PolaczeniaStacji = PolaczeniaStacji.OtworzPlik(SciezkaPliku, False)
+        Dim polaczenia As PolaczeniaPosterunkow = PolaczeniaPosterunkow.OtworzPlik(SciezkaPliku, False)
 
         If polaczenia IsNot Nothing Then
-            For Each pol As LaczonyPlikStacji In polaczenia.LaczanePliki
+            For Each pol As LaczonyPlikPosterunku In polaczenia.LaczanePliki
                 Dim obs As New ObslugiwanyPosterunek() With {
                                        .NazwaPosterunku = pol.NazwaPosterunku,
                                        .NazwaPliku = pol.NazwaPliku,

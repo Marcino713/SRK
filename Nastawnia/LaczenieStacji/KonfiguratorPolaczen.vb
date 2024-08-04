@@ -1,11 +1,11 @@
 ﻿Imports System.ComponentModel
 
 Public Class wndKonfiguratorPolaczen
-    Private polaczenia As Zaleznosci.PolaczeniaStacji
-    Private ZaznaczonyPosterunek As Zaleznosci.LaczonyPlikStacji
+    Private polaczenia As Zaleznosci.PolaczeniaPosterunkow
+    Private ZaznaczonyPosterunek As Zaleznosci.LaczonyPlikPosterunku
     Private czyZamknacBezPytania As Boolean = False
 
-    Public Sub New(polaczenia As Zaleznosci.PolaczeniaStacji)
+    Public Sub New(polaczenia As Zaleznosci.PolaczeniaPosterunkow)
         InitializeComponent()
 
         Me.polaczenia = polaczenia
@@ -24,7 +24,7 @@ Public Class wndKonfiguratorPolaczen
         ZaznaczonyPosterunek = Nothing
 
         If cboPosterunek.SelectedItem IsNot Nothing Then
-            ZaznaczonyPosterunek = DirectCast(cboPosterunek.SelectedItem, ObiektComboBox(Of Zaleznosci.LaczonyPlikStacji)).Wartosc
+            ZaznaczonyPosterunek = DirectCast(cboPosterunek.SelectedItem, ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)).Wartosc
         End If
 
         OdswiezPolaczenia()
@@ -45,7 +45,7 @@ Public Class wndKonfiguratorPolaczen
     End Sub
 
     Private Sub btnUsun_Click() Handles btnUsun.Click
-        Dim pol As Zaleznosci.LaczoneOdcinkiTorow = PobierzTagZElementuListy(Of Zaleznosci.LaczoneOdcinkiTorow)(PobierzZaznaczonyElementNaLiscie(lvPolaczenia))
+        Dim pol As Zaleznosci.LaczoneOdcinkiTorow = Wspolne.PobierzTagZElementuListy(Of Zaleznosci.LaczoneOdcinkiTorow)(Wspolne.PobierzZaznaczonyElementNaLiscie(lvPolaczenia))
         If pol Is Nothing Then Exit Sub
 
         If Wspolne.ZadajPytanie($"Czy usunąć połączenie torów {PobierzNazweStacjiToru(pol.Posterunek1, pol.Tor1)} i {PobierzNazweStacjiToru(pol.Posterunek2, pol.Tor2)}?") = DialogResult.Yes Then
@@ -68,15 +68,15 @@ Public Class wndKonfiguratorPolaczen
     Private Sub OdswiezPosterunkiListView()
         lvPliki.Items.Clear()
 
-        For Each plik As Zaleznosci.LaczonyPlikStacji In polaczenia.LaczanePliki
+        For Each plik As Zaleznosci.LaczonyPlikPosterunku In polaczenia.LaczanePliki
             Dim uwagi As String = ""
 
             Select Case plik.Uwagi
-                Case Zaleznosci.UwagiLaczanegoPlikuStacji.Zmodyfikowany
+                Case Zaleznosci.UwagiLaczanegoPlikuPosterunku.Zmodyfikowany
                     uwagi = "Plik zmodyfikowany"
-                Case Zaleznosci.UwagiLaczanegoPlikuStacji.BrakPliku
+                Case Zaleznosci.UwagiLaczanegoPlikuPosterunku.BrakPliku
                     uwagi = "Brak pliku"
-                Case Zaleznosci.UwagiLaczanegoPlikuStacji.BrakiPolaczen
+                Case Zaleznosci.UwagiLaczanegoPlikuPosterunku.BrakiPolaczen
                     uwagi = "Braki połączeń"
             End Select
 
@@ -87,9 +87,9 @@ Public Class wndKonfiguratorPolaczen
     Private Sub OdswiezPosterunkiComboBox()
         cboPosterunek.Items.Clear()
 
-        For Each plik As Zaleznosci.LaczonyPlikStacji In polaczenia.LaczanePliki
+        For Each plik As Zaleznosci.LaczonyPlikPosterunku In polaczenia.LaczanePliki
             cboPosterunek.Items.Add(
-                New ObiektComboBox(Of Zaleznosci.LaczonyPlikStacji)(plik, plik.NazwaPosterunku)
+                New ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)(plik, plik.NazwaPosterunku)
                 )
         Next
     End Sub
@@ -101,8 +101,8 @@ Public Class wndKonfiguratorPolaczen
         Dim elementy As New List(Of PolaczoneToryNaLiscie)
 
         For Each pol As Zaleznosci.LaczoneOdcinkiTorow In polaczenia.LaczaneTory
-            Dim post1 As Zaleznosci.LaczonyPlikStacji = Nothing
-            Dim post2 As Zaleznosci.LaczonyPlikStacji = Nothing
+            Dim post1 As Zaleznosci.LaczonyPlikPosterunku = Nothing
+            Dim post2 As Zaleznosci.LaczonyPlikPosterunku = Nothing
             Dim tor1 As Zaleznosci.OdcinekToru = Nothing
             Dim tor2 As Zaleznosci.OdcinekToru = Nothing
 
@@ -136,7 +136,7 @@ Public Class wndKonfiguratorPolaczen
             End If
         Next
 
-        elementy = elementy.OrderBy(Function(el As PolaczoneToryNaLiscie) el.NazwaToru).ToList
+        elementy = elementy.OrderBy(Function(el) el.NazwaToru).ToList
 
         For Each element As PolaczoneToryNaLiscie In elementy
             lvPolaczenia.Items.Add(element.Element)
@@ -145,7 +145,7 @@ Public Class wndKonfiguratorPolaczen
         lvPolaczenia_SelectedIndexChanged()
     End Sub
 
-    Private Function PobierzNazweStacjiToru(posterunek As Zaleznosci.LaczonyPlikStacji, tor As Zaleznosci.OdcinekToru) As String
+    Private Function PobierzNazweStacjiToru(posterunek As Zaleznosci.LaczonyPlikPosterunku, tor As Zaleznosci.OdcinekToru) As String
         Return $"{tor.Nazwa} ({posterunek.NazwaPosterunku})"
     End Function
 
@@ -153,7 +153,7 @@ Public Class wndKonfiguratorPolaczen
     ''' Pyta użytkownika o zapisanie pliku, ewentualnie zapisuje i zwraca wartość określającą, czy można zamknąć okno konfiguratora
     ''' </summary>
     Private Function PrzetworzPorzuceniePliku() As Boolean
-        Dim wynik As DialogResult = ZadajPytanieTrzyodpowiedziowe("Zapisać plik?")
+        Dim wynik As DialogResult = Wspolne.ZadajPytanieTrzyodpowiedziowe("Zapisać plik?")
 
         If wynik = DialogResult.Yes Then Return ZapiszPolaczenia()
 
@@ -167,7 +167,7 @@ Public Class wndKonfiguratorPolaczen
     Private Function ZapiszPolaczenia() As Boolean
         Dim wynik As Boolean = polaczenia.Zapisz
         If wynik Then
-            PokazKomunikat("Plik został zapisany.")
+            Wspolne.PokazKomunikat("Plik został zapisany.")
         Else
             Wspolne.PokazBlad("Wystąpił błąd podczas zapisu pliku.")
         End If

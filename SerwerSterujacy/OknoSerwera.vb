@@ -38,7 +38,7 @@ Public Class wndOknoSerwera
 
     Private Sub btnPrzegladaj_Click() Handles btnPrzegladaj.Click
         Dim dlg As New OpenFileDialog With {
-            .Filter = FILTR_PLIKU_POLACZEN
+            .Filter = Wspolne.FILTR_PLIKU_POLACZEN
         }
 
         If dlg.ShowDialog = DialogResult.OK Then
@@ -208,7 +208,7 @@ Public Class wndOknoSerwera
             PosterunkiSlownik.Clear()
             btnRozlacz.Enabled = False
             If polaczenia Is Nothing Then Exit Sub
-            Dim polEn As IEnumerable(Of Zaleznosci.StanObslugiwanegoPosterunku) = polaczenia.OrderBy(Function(x) x.NazwaPosterunku)
+            Dim polEn As IEnumerable(Of Zaleznosci.StanObslugiwanegoPosterunku) = polaczenia.OrderBy(Function(p) p.NazwaPosterunku)
 
             For Each pol As Zaleznosci.StanObslugiwanegoPosterunku In polEn
                 Dim lvi As New ListViewItem(New String() {pol.NazwaPosterunku, pol.NazwaPliku, pol.Adres, pol.DataPodlaczenia, pol.OstatnieZapytanie, pol.AdresIp}) With {
@@ -266,7 +266,7 @@ Public Class wndOknoSerwera
         Dim znalezionoPlik As Boolean = False
 
         For Each arg As String In argumenty
-            If arg.EndsWith(Zaleznosci.PolaczeniaStacji.ROZSZERZENIE_PLIKU) AndAlso File.Exists(arg) Then
+            If arg.EndsWith(Zaleznosci.PolaczeniaPosterunkow.ROZSZERZENIE_PLIKU) AndAlso File.Exists(arg) Then
                 znalezionoPlik = True
 
                 If Serwer.WczytajPolaczenie(arg) Then

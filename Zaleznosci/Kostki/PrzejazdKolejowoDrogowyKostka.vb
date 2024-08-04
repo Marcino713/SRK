@@ -1,6 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-
-Public Class PrzejazdKolejowoDrogowyKostka
+﻿Public Class PrzejazdKolejowoDrogowyKostka
     Inherits Tor
 
     Private Const BLAD As String = "Kostka przejazdu kolejowego nie obsługuje właściwości Nazwa."
@@ -41,12 +39,12 @@ Public Class PrzejazdKolejowoDrogowyKostka
         If NalezyDoPrzejazdu Is przejazd Then NalezyDoPrzejazdu = Nothing
     End Sub
 
-    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         MyBase.ZapiszKostke(bw, konf)
         bw.Write(If(NalezyDoPrzejazdu Is Nothing, PUSTE_ODWOLANIE, konf.Przejazdy(NalezyDoPrzejazdu)))
     End Sub
 
-    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
+    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
         MyBase.OtworzKostke(br, konf)
         Dim id As Integer = br.ReadInt32
         NalezyDoPrzejazdu = konf.Przejazdy(id)

@@ -1,5 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
+﻿Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.KonfiguracjaZapisuPulpitu, Zaleznosci.KonfiguracjaOdczytuPulpitu)
 
 Public Class PrzejazdKolejowoDrogowy
     Implements IObiektPlikuTyp
@@ -39,7 +38,7 @@ Public Class PrzejazdKolejowoDrogowy
         End Get
     End Property
 
-    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
+    Friend Function Zapisz(konf As KonfiguracjaZapisuPulpitu) As Byte() Implements IObiektPlikuTyp.Zapisz
         Using ms As New MemoryStream
             Using bw As New BinaryWriter(ms)
                 bw.Write(konf.Przejazdy(Me))
@@ -72,7 +71,7 @@ Public Class PrzejazdKolejowoDrogowy
         Next
     End Sub
 
-    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPlikuTyp
+    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytuPulpitu) As IObiektPlikuTyp
         Dim id As Integer = PobierzInt32(dane, 0, 4)
         Dim p As New PrzejazdKolejowoDrogowy
         konf.Przejazdy.Add(id, p)
@@ -80,7 +79,7 @@ Public Class PrzejazdKolejowoDrogowy
         Return p
     End Function
 
-    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytu) Implements IObiektPlikuTyp.Otworz
+    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytuPulpitu) Implements IObiektPlikuTyp.Otworz
         Using ms As New MemoryStream(dane)
             Using br As New BinaryReader(ms)
                 ms.Seek(4, SeekOrigin.Begin)
@@ -126,11 +125,11 @@ Public Class PrzejazdKolejowoDrogowy
     End Sub
 
     Public Sub SortujRogatkiAdresRosnaco()
-        _Rogatki = _Rogatki.OrderBy(AddressOf SortowanieElementowWykonawczychAdresRosnaco).ToList
+        _Rogatki = _Rogatki.OrderBy(Function(r) r.Adres).ToList
     End Sub
 
     Public Sub SortujSygnalizatoryDrogoweAdresRosnaco()
-        _SygnalizatoryDrogowe = _SygnalizatoryDrogowe.OrderBy(AddressOf SortowanieElementowWykonawczychAdresRosnaco).ToList
+        _SygnalizatoryDrogowe = _SygnalizatoryDrogowe.OrderBy(Function(s) s.Adres).ToList
     End Sub
 
     Friend Sub UsunSygnalizatorZPowiazan(sygnTop As SygnalizatorOstrzegawczyPrzejazdowy)
@@ -145,10 +144,6 @@ Public Class PrzejazdKolejowoDrogowy
             If aut.OdcinekPrzyjazd Is odcinek Then aut.OdcinekPrzyjazd = Nothing
         Next
     End Sub
-
-    Private Function SortowanieElementowWykonawczychAdresRosnaco(e As PrzejazdElementWykonawczy) As UShort
-        Return e.Adres
-    End Function
 End Class
 
 <Flags>

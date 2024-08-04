@@ -1,4 +1,4 @@
-﻿Friend Interface IRysownik
+﻿Public Interface IRysownik
     ReadOnly Property KOLKO_SZER As Single
     ReadOnly Property KOLOR_TOR_TEN_ODCINEK As Color
     ReadOnly Property KOLOR_TOR_PRZYPISANY As Color

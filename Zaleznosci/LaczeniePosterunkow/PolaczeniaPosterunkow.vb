@@ -1,11 +1,9 @@
-﻿Imports Zaleznosci.PlikiPolaczen
-Imports SegmPliku = Zaleznosci.SegmentPliku(Of Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPolaczen.KonfiguracjaZapisu, Zaleznosci.PlikiPolaczen.KonfiguracjaOdczytu))
-Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPolaczen.KonfiguracjaZapisu, Zaleznosci.PlikiPolaczen.KonfiguracjaOdczytu)
+﻿Imports SegmPliku = Zaleznosci.SegmentPliku(Of Zaleznosci.IObiektPliku(Of Zaleznosci.KonfiguracjaZapisuPolaczen, Zaleznosci.KonfiguracjaOdczytuPolaczen))
+Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.KonfiguracjaZapisuPolaczen, Zaleznosci.KonfiguracjaOdczytuPolaczen)
 
-Public Class PolaczeniaStacji
+Public Class PolaczeniaPosterunkow
     Public Shared ReadOnly ObslugiwaneWersje As WersjaPliku() = {New WersjaPliku(0, 1)}
     Public Const ROZSZERZENIE_PLIKU As String = ".pol"
-    Public Const OPIS_PLIKU As String = "Połączenia posterunków ruchu"
     Private Const NAGLOWEK As String = "POLC"
 
     Public ReadOnly Property Wersja As New WersjaPliku(0, 1)
@@ -24,8 +22,8 @@ Public Class PolaczeniaStacji
         End Get
     End Property
 
-    Private _LaczanePliki As New List(Of LaczonyPlikStacji)
-    Public ReadOnly Property LaczanePliki As List(Of LaczonyPlikStacji)
+    Private _LaczanePliki As New List(Of LaczonyPlikPosterunku)
+    Public ReadOnly Property LaczanePliki As List(Of LaczonyPlikPosterunku)
         Get
             Return _LaczanePliki
         End Get
@@ -48,10 +46,10 @@ Public Class PolaczeniaStacji
         Me.Wersja = wersja
     End Sub
 
-    Public Shared Function OtworzPlik(sciezkaPliku As String, Optional dodajNowePliki As Boolean = True) As PolaczeniaStacji
+    Public Shared Function OtworzPlik(sciezkaPliku As String, Optional dodajNowePliki As Boolean = True) As PolaczeniaPosterunkow
         Try
-            Dim pol As PolaczeniaStacji = _Otworz(sciezkaPliku)
-            PorownajStacjeIPolacz(pol, pol.OtworzStacjeZFolderu(Path.GetDirectoryName(sciezkaPliku)), dodajNowePliki)
+            Dim pol As PolaczeniaPosterunkow = _Otworz(sciezkaPliku)
+            PorownajPosterunkiIPolacz(pol, pol.OtworzPosterunkiZFolderu(Path.GetDirectoryName(sciezkaPliku)), dodajNowePliki)
             pol.SortujPosterunki()
             Return pol
         Catch
@@ -59,21 +57,21 @@ Public Class PolaczeniaStacji
         End Try
     End Function
 
-    Public Shared Function OtworzFolder(sciezkaPlikuDoZapisu As String) As PolaczeniaStacji
-        Dim polaczenia As New PolaczeniaStacji(sciezkaPlikuDoZapisu)
+    Public Shared Function OtworzFolder(sciezkaPlikuDoZapisu As String) As PolaczeniaPosterunkow
+        Dim polaczenia As New PolaczeniaPosterunkow(sciezkaPlikuDoZapisu)
         If Not polaczenia.Zapisz Then Return Nothing
-        polaczenia._LaczanePliki = polaczenia.OtworzStacjeZFolderu(Path.GetDirectoryName(sciezkaPlikuDoZapisu))
+        polaczenia._LaczanePliki = polaczenia.OtworzPosterunkiZFolderu(Path.GetDirectoryName(sciezkaPlikuDoZapisu))
         polaczenia.SortujPosterunki()
         Return polaczenia
     End Function
 
-    Private Function OtworzStacjeZFolderu(sciezka As String) As List(Of LaczonyPlikStacji)
-        Dim pliki As New List(Of LaczonyPlikStacji)
+    Private Function OtworzPosterunkiZFolderu(sciezka As String) As List(Of LaczonyPlikPosterunku)
+        Dim pliki As New List(Of LaczonyPlikPosterunku)
         Dim sciezki As String() = Directory.GetFiles(sciezka)
 
         For i As Integer = 0 To sciezki.Length - 1
             If sciezki(i).EndsWith(Pulpit.ROZSZERZENIE_PLIKU) Then
-                Dim plik As LaczonyPlikStacji = LaczonyPlikStacji.WczytajPulpit(sciezki(i))
+                Dim plik As LaczonyPlikPosterunku = LaczonyPlikPosterunku.WczytajPulpit(sciezki(i))
                 If plik IsNot Nothing Then pliki.Add(plik)
             End If
         Next
@@ -81,36 +79,36 @@ Public Class PolaczeniaStacji
         Return pliki
     End Function
 
-    Private Shared Sub PorownajStacjeIPolacz(plikPol As PolaczeniaStacji, plikiStacji As List(Of LaczonyPlikStacji), dodajNowePliki As Boolean)
-        'Sprawdź, czy pliki stacji się zmieniły
-        For Each pol As LaczonyPlikStacji In plikPol.LaczanePliki
-            Dim dopasowanaStacja As LaczonyPlikStacji = ZnajdzIUsun(pol.NazwaPliku, plikiStacji)
+    Private Shared Sub PorownajPosterunkiIPolacz(plikPol As PolaczeniaPosterunkow, plikiPosterunkow As List(Of LaczonyPlikPosterunku), dodajNowePliki As Boolean)
+        'Sprawdź, czy pliki posterunkow się zmieniły
+        For Each pol As LaczonyPlikPosterunku In plikPol.LaczanePliki
+            Dim dopasowanyPosterunek As LaczonyPlikPosterunku = ZnajdzIUsun(pol.NazwaPliku, plikiPosterunkow)
 
-            If dopasowanaStacja Is Nothing Then
-                pol.Uwagi = UwagiLaczanegoPlikuStacji.BrakPliku
-            ElseIf Not CzyRowne(pol.Skrot, dopasowanaStacja.Skrot) Then
-                pol.Uwagi = UwagiLaczanegoPlikuStacji.Zmodyfikowany
-                pol.Skrot = dopasowanaStacja.Skrot
+            If dopasowanyPosterunek Is Nothing Then
+                pol.Uwagi = UwagiLaczanegoPlikuPosterunku.BrakPliku
+            ElseIf Not CzyRowne(pol.Skrot, dopasowanyPosterunek.Skrot) Then
+                pol.Uwagi = UwagiLaczanegoPlikuPosterunku.Zmodyfikowany
+                pol.Skrot = dopasowanyPosterunek.Skrot
             ElseIf CzyBrakujePolaczen(pol, plikPol.LaczaneTory) Then
-                pol.Uwagi = UwagiLaczanegoPlikuStacji.BrakiPolaczen
+                pol.Uwagi = UwagiLaczanegoPlikuPosterunku.BrakiPolaczen
             End If
 
         Next
 
         'Dodaj nowe pliki z folderu do połączeń
         If dodajNowePliki Then
-            For Each pol As LaczonyPlikStacji In plikiStacji
+            For Each pol As LaczonyPlikPosterunku In plikiPosterunkow
                 plikPol.LaczanePliki.Add(pol)
             Next
         End If
     End Sub
 
-    Private Shared Function ZnajdzIUsun(nazwa As String, pliki As List(Of LaczonyPlikStacji)) As LaczonyPlikStacji
-        Dim znaleziony As LaczonyPlikStacji = Nothing
+    Private Shared Function ZnajdzIUsun(nazwa As String, pliki As List(Of LaczonyPlikPosterunku)) As LaczonyPlikPosterunku
+        Dim znaleziony As LaczonyPlikPosterunku = Nothing
 
-        For Each stacja As LaczonyPlikStacji In pliki
-            If stacja.NazwaPliku = nazwa Then
-                znaleziony = stacja
+        For Each posterunek As LaczonyPlikPosterunku In pliki
+            If posterunek.NazwaPliku = nazwa Then
+                znaleziony = posterunek
                 Exit For
             End If
         Next
@@ -129,7 +127,7 @@ Public Class PolaczeniaStacji
     End Function
 
     Private Function _Zapisz() As Boolean
-        Dim konf As New KonfiguracjaZapisu
+        Dim konf As New KonfiguracjaZapisuPolaczen
 
         Using fs As New FileStream(_SciezkaPliku, FileMode.Create, FileAccess.Write)
             Using bw As New BinaryWriter(fs)
@@ -146,7 +144,7 @@ Public Class PolaczeniaStacji
         Return True
     End Function
 
-    Private Sub ZapiszObiekty(bw As BinaryWriter, obiekty As IEnumerable(Of IObiektPlikuTyp), typ As UShort, konf As KonfiguracjaZapisu)
+    Private Sub ZapiszObiekty(bw As BinaryWriter, obiekty As IEnumerable(Of IObiektPlikuTyp), typ As UShort, konf As KonfiguracjaZapisuPolaczen)
         For Each o As IObiektPlikuTyp In obiekty
             Dim b As Byte() = o.Zapisz(konf)
             If b IsNot Nothing Then
@@ -157,10 +155,10 @@ Public Class PolaczeniaStacji
         Next
     End Sub
 
-    Private Shared Function _Otworz(sciezka As String) As PolaczeniaStacji
-        Dim p As PolaczeniaStacji
+    Private Shared Function _Otworz(sciezka As String) As PolaczeniaPosterunkow
+        Dim p As PolaczeniaPosterunkow
         Dim segmenty As New List(Of SegmPliku)
-        Dim konf As New KonfiguracjaOdczytu
+        Dim konf As New KonfiguracjaOdczytuPolaczen
         konf.SciezkaFolderu = Path.GetDirectoryName(sciezka)
         If Not konf.SciezkaFolderu.EndsWith(Path.DirectorySeparatorChar) Then konf.SciezkaFolderu &= Path.DirectorySeparatorChar
 
@@ -175,7 +173,7 @@ Public Class PolaczeniaStacji
 
                 Dim wersja_glowna As UShort = br.ReadUInt16
                 Dim wersja_boczna As UShort = br.ReadUInt16
-                p = New PolaczeniaStacji(New WersjaPliku(wersja_glowna, wersja_boczna))
+                p = New PolaczeniaPosterunkow(New WersjaPliku(wersja_glowna, wersja_boczna))
                 p._SciezkaPliku = sciezka
                 p._DataUtworzenia = Date.FromBinary(br.ReadInt64)
                 konf.Polaczenia = p
@@ -195,7 +193,7 @@ Public Class PolaczeniaStacji
         Return p
     End Function
 
-    Private Shared Function UtworzObiekt(br As BinaryReader, konf As KonfiguracjaOdczytu) As SegmPliku
+    Private Shared Function UtworzObiekt(br As BinaryReader, konf As KonfiguracjaOdczytuPolaczen) As SegmPliku
         Dim typ As UShort = br.ReadUInt16
         Dim ile As UShort = br.ReadUInt16
         Dim b As Byte() = br.ReadBytes(ile)
@@ -205,19 +203,19 @@ Public Class PolaczeniaStacji
             Case TypObiektuPlikuPolaczen.LACZONE_TORY
                 ob = LaczoneOdcinkiTorow.UtworzObiekt(b, konf)
             Case TypObiektuPlikuPolaczen.LACZONE_PLIKI
-                ob = LaczonyPlikStacji.UtworzObiekt(b, konf)
+                ob = LaczonyPlikPosterunku.UtworzObiekt(b, konf)
         End Select
 
         Return New SegmPliku() With {.Dane = b, .Obiekt = ob}
     End Function
 
     Private Sub SortujPosterunki()
-        _LaczanePliki = _LaczanePliki.OrderBy(Function(p As LaczonyPlikStacji) p.NazwaPosterunku).ToList
+        _LaczanePliki = _LaczanePliki.OrderBy(Function(p) p.NazwaPosterunku).ToList
     End Sub
 
-    Private Shared Function CzyBrakujePolaczen(stacja As LaczonyPlikStacji, polaczoneTory As List(Of LaczoneOdcinkiTorow)) As Boolean
+    Private Shared Function CzyBrakujePolaczen(posterunek As LaczonyPlikPosterunku, polaczoneTory As List(Of LaczoneOdcinkiTorow)) As Boolean
         For Each tor As LaczoneOdcinkiTorow In polaczoneTory
-            If (tor.Posterunek1 Is stacja Or tor.Posterunek2 Is stacja) And tor.Uwagi <> UwagiLaczonegoOdcinkaTorow.OK Then
+            If (tor.Posterunek1 Is posterunek Or tor.Posterunek2 Is posterunek) And tor.Uwagi <> UwagiLaczonegoOdcinkaTorow.OK Then
                 Return True
             End If
         Next

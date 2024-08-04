@@ -148,7 +148,7 @@
         lvPosterunki.Items.Clear()
         btnWybierz.Enabled = False
         If post Is Nothing Then Exit Sub
-        Dim postEn As IEnumerable(Of Zaleznosci.DanePosterunku) = post.OrderBy(Function(x) x.Adres)
+        Dim postEn As IEnumerable(Of Zaleznosci.DanePosterunku) = post.OrderBy(Function(p) p.Adres)
 
         For Each p As Zaleznosci.DanePosterunku In postEn
             Dim lvi As New ListViewItem(New String() {p.Adres.ToString, p.Nazwa, StanPosterunkuToString(p.Stan)}) With {

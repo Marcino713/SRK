@@ -1,6 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-
-Public Class Tor
+﻿Public Class Tor
     Inherits Kostka
 
     Public Property PredkoscZasadnicza As UShort = 0
@@ -40,7 +38,7 @@ Public Class Tor
         If NalezyDoOdcinka Is odcinek Then NalezyDoOdcinka = Nothing
     End Sub
 
-    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         bw.Write(PredkoscZasadnicza)
         ZapiszTekst(bw, Nazwa)
         bw.Write(Dlugosc)
@@ -49,7 +47,7 @@ Public Class Tor
         bw.Write(If(NalezyDoOdcinka Is Nothing, PUSTE_ODWOLANIE, konf.OdcinkiTorow(NalezyDoOdcinka)))
     End Sub
 
-    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
+    Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
         PredkoscZasadnicza = br.ReadUInt16
         Nazwa = OdczytajTekst(br)
         Dlugosc = br.ReadSingle

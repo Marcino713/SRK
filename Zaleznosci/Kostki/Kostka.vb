@@ -1,5 +1,4 @@
-﻿Imports Zaleznosci.PlikiPulpitu
-Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.PlikiPulpitu.KonfiguracjaZapisu, Zaleznosci.PlikiPulpitu.KonfiguracjaOdczytu)
+﻿Imports IObiektPlikuTyp = Zaleznosci.IObiektPliku(Of Zaleznosci.KonfiguracjaZapisuPulpitu, Zaleznosci.KonfiguracjaOdczytuPulpitu)
 
 Public MustInherit Class Kostka
     Implements IObiektPlikuTyp
@@ -81,9 +80,9 @@ Public MustInherit Class Kostka
     Protected Friend Overridable Sub UsunPrzejazdZPowiazan(przejazd As PrzejazdKolejowoDrogowy)
     End Sub
 
-    Friend MustOverride Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisu)
+    Friend MustOverride Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
 
-    Friend Function Zapisz(konf As KonfiguracjaZapisu) As Byte() Implements IObiektPlikuTyp.Zapisz
+    Friend Function Zapisz(konf As KonfiguracjaZapisuPulpitu) As Byte() Implements IObiektPlikuTyp.Zapisz
         Using ms As New MemoryStream
             Using bw As New BinaryWriter(ms)
                 bw.Write(CUShort(Typ))
@@ -98,7 +97,7 @@ Public MustInherit Class Kostka
         End Using
     End Function
 
-    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytu) As IObiektPlikuTyp
+    Friend Shared Function UtworzObiekt(dane As Byte(), konf As KonfiguracjaOdczytuPulpitu) As IObiektPlikuTyp
         Dim typ As TypKostki = CType(PobierzInt32(dane, 0, 2), TypKostki)
         Dim id As Integer = PobierzInt32(dane, 2, 4)
         Dim k As Kostka = Nothing
@@ -113,9 +112,9 @@ Public MustInherit Class Kostka
         Return Nothing
     End Function
 
-    Friend MustOverride Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytu)
+    Friend MustOverride Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
 
-    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytu) Implements IObiektPlikuTyp.Otworz
+    Friend Sub Otworz(dane() As Byte, konf As KonfiguracjaOdczytuPulpitu) Implements IObiektPlikuTyp.Otworz
         Dim x As UShort
         Dim y As UShort
         Using ms As New MemoryStream(dane)
