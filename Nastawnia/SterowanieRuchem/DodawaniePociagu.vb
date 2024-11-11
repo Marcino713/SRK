@@ -2,7 +2,7 @@
     Private Const STAN_DODAWANIE As String = "Dodawanie..."
 
     Private WithEvents Klient As Zaleznosci.KlientTCP
-    Private Pulpit As Pulpit.PulpitSterowniczy
+    Private WithEvents Pulpit As Pulpit.PulpitSterowniczy
     Private Numer As UInteger
 
     Private actPokazStan As Action(Of String) = Sub(s) lblDodawanie.Text = s
@@ -16,17 +16,20 @@
 
         Me.Klient = klient
         Me.Pulpit = pulpit
+
+        PokazNazweOdcinka(pulpit.ZaznaczonyOdcinek)
     End Sub
 
     Private Sub wndDodawaniePociagu_FormClosing() Handles Me.FormClosing
         Klient = Nothing
+        Pulpit = Nothing
     End Sub
 
     Private Sub btnDodaj_Click() Handles btnDodaj.Click
         Dim nrPoc As UInteger
         Dim osie As UShort
         Dim predkosc As UShort
-        Dim zazn As Zaleznosci.Kostka = Pulpit.ZaznaczonaKostka
+        Dim zazn As Zaleznosci.OdcinekToru = Pulpit.ZaznaczonyOdcinek
 
         If Not UInteger.TryParse(txtNrPociagu.Text, nrPoc) Then
             actPokazBlad("W polu Numer pociągu należy podać liczbę całkowitą dodatnią.")
@@ -60,17 +63,16 @@
             End If
         End If
 
-        If zazn Is Nothing OrElse Not Zaleznosci.Kostka.CzyTorBezRozjazdu(zazn) Then
-            actPokazBlad("Należy na schemacie zaznaczyć kostkę, na której znajduje się pociąg.")
+        If zazn Is Nothing Then
+            actPokazBlad("Należy na schemacie zaznaczyć odcinek toru, na którym znajduje się pociąg.")
             Exit Sub
         End If
 
         Numer = nrPoc
         actPokazStan(STAN_DODAWANIE)
         actPokazDostepnoscKontrolek(False)
-        Dim p As Zaleznosci.Punkt = Pulpit.Pulpit.ZnajdzKostke(zazn)
         Klient.WyslijDodajPociag(New Zaleznosci.DodajPociag() With
-                {.NrPociagu = nrPoc, .Nazwa = txtNazwa.Text, .LiczbaOsi = osie, .PredkoscMaksymalna = predkosc, .PojazdSterowalny = cboSterowalny.Checked, .WspolrzedneKostki = p})
+                {.NrPociagu = nrPoc, .Nazwa = txtNazwa.Text, .LiczbaOsi = osie, .PredkoscMaksymalna = predkosc, .PojazdSterowalny = cboSterowalny.Checked, .AdresOdcinka = zazn.Adres})
     End Sub
 
     Private Sub btnAnuluj_Click() Handles btnAnuluj.Click
@@ -89,8 +91,8 @@
                     Invoke(actZamknij)
                 Case Zaleznosci.StanDodaniaPociagu.NrZajety
                     Invoke(actPokazBlad, "Pociąg o podanym numerze już istnieje.")
-                Case Zaleznosci.StanDodaniaPociagu.BledneWspolrzedne
-                    Invoke(actPokazBlad, "Pociąg nie mógł zostać dodany na wskazanej kostce.")
+                Case Zaleznosci.StanDodaniaPociagu.BlednyAdresOdcinka
+                    Invoke(actPokazBlad, "Pociąg nie mógł zostać dodany na wskazanym odcinku.")
                 Case Zaleznosci.StanDodaniaPociagu.NieprawidlowyNumer
                     Invoke(actPokazBlad, "Numer pociągu jest nieprawidłowy.")
                 Case Zaleznosci.StanDodaniaPociagu.NieprawidlowaLiczbaOsi
@@ -99,7 +101,15 @@
         End If
     End Sub
 
+    Private Sub Pulpit_ZaznaczonoOdcinek(odcinek As Zaleznosci.OdcinekToru) Handles Pulpit.ZaznaczonoOdcinek
+        PokazNazweOdcinka(odcinek)
+    End Sub
+
     Private Sub PokazDostepnoscKontrolek(dostepne As Boolean)
         btnDodaj.Enabled = dostepne
+    End Sub
+
+    Private Sub PokazNazweOdcinka(odc As Zaleznosci.OdcinekToru)
+        lblOdcinekToru.Text = If(odc IsNot Nothing, odc.Nazwa, "")
     End Sub
 End Class

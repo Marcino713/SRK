@@ -27,7 +27,7 @@ End Class
 Public Enum StanDodaniaPociagu As Byte
     Dobrze
     NrZajety
-    BledneWspolrzedne
+    BlednyAdresOdcinka
     NieprawidlowyNumer
     NieprawidlowaLiczbaOsi
 End Enum

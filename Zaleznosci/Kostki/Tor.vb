@@ -1,8 +1,8 @@
 ﻿Public Class Tor
     Inherits Kostka
 
-    Public Property PredkoscZasadnicza As UShort = 0
-    Public Property Nazwa As String = ""
+    Public Property Predkosc As UShort = 0
+    Public Overridable Property Nazwa As String = ""
     Public Property Dlugosc As Single = 0.0F
     Public Property Zelektryfikowany As Boolean = True
     Public Property KontrolaNiezajetosci As Boolean = True
@@ -39,7 +39,7 @@
     End Sub
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
-        bw.Write(PredkoscZasadnicza)
+        bw.Write(Predkosc)
         ZapiszTekst(bw, Nazwa)
         bw.Write(Dlugosc)
         bw.Write(Zelektryfikowany)
@@ -48,7 +48,7 @@
     End Sub
 
     Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
-        PredkoscZasadnicza = br.ReadUInt16
+        Predkosc = br.ReadUInt16
         Nazwa = OdczytajTekst(br)
         Dlugosc = br.ReadSingle
         Zelektryfikowany = br.ReadBoolean
@@ -56,7 +56,7 @@
 
         Dim id As Integer = br.ReadInt32
         NalezyDoOdcinka = konf.OdcinkiTorow(id)
-        NalezyDoOdcinka?.KostkiTory.Add(Me)
+        NalezyDoOdcinka?.DodajTor(Me, PrzynaleznoscToruDoOdcinka.Pierwszy)
     End Sub
 End Class
 

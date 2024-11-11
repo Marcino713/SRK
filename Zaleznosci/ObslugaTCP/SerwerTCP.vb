@@ -128,18 +128,27 @@ Public Class SerwerTCP
                 If DodatkoweDane.TryGetValue(pol.AdresStacji, dod) Then
                     Dim odc As OdcinekToru = Nothing
 
-                    If dod.OdcinkiTorow.TryGetValue(k.Adres, odc) AndAlso odc.KostkiTory.Count > 0 Then
-                        Dim akt As New List(Of AktualizowanyKawalekToru)(odc.KostkiTory.Count)
+                    If dod.OdcinkiTorow.TryGetValue(k.Adres, odc) AndAlso odc.LiczbaTorow > 0 Then
+                        Dim akt As New List(Of AktualizowanyKawalekToru)(odc.LiczbaTorow)
 
-                        For Each t As Tor In odc.KostkiTory
-                            Dim p As Punkt = Nothing
-                            If dod.Kostki.TryGetValue(t, p) Then
-                                akt.Add(New AktualizowanyKawalekToru() With {
-                                        .Polozenie = PolozenieToru.TorGlowny,
-                                        .Zajetosc = zajetoscToru,
-                                        .WspolrzedneKostki = p})
-                            End If
-                        Next
+                        odc.PrzeiterujTory(Sub(kostka, polozenie)
+                                               Dim p As Punkt = Nothing
+                                               If dod.Kostki.TryGetValue(kostka, p) Then
+                                                   If (polozenie And PrzynaleznoscToruDoOdcinka.Pierwszy) <> 0 Then
+                                                       akt.Add(New AktualizowanyKawalekToru() With {
+                                                               .Polozenie = PolozenieToru.TorPierwszy,
+                                                               .Zajetosc = zajetoscToru,
+                                                               .WspolrzedneKostki = p})
+                                                   End If
+
+                                                   If (polozenie And PrzynaleznoscToruDoOdcinka.Drugi) <> 0 Then
+                                                       akt.Add(New AktualizowanyKawalekToru() With {
+                                                               .Polozenie = PolozenieToru.TorDrugi,
+                                                               .Zajetosc = zajetoscToru,
+                                                               .WspolrzedneKostki = p})
+                                                   End If
+                                               End If
+                                           End Sub)
 
                         If akt.Count > 0 Then
                             pol.WyslijKomunikat(New ZmienionoStanToru() With {.Tory = akt.ToArray})
@@ -167,7 +176,6 @@ Public Class SerwerTCP
                 Dim k As DodajPociag = CType(kom, DodajPociag)
                 Dim obs As ObslugiwanyPosterunek = Nothing
                 Dim stan As StanDodaniaPociagu = StanDodaniaPociagu.NrZajety
-                Dim akt(0) As AktualizowanyKawalekToru
 
                 If k.NrPociagu = 0 Then
                     stan = StanDodaniaPociagu.NieprawidlowyNumer
@@ -182,16 +190,13 @@ Public Class SerwerTCP
                     End SyncLock
 
                     If obs IsNot Nothing Then
-                        If obs.DanePulpitu.CzyKostkaNiepusta(k.WspolrzedneKostki) AndAlso Kostka.CzyTorBezRozjazdu(obs.DanePulpitu.Kostki(k.WspolrzedneKostki.X, k.WspolrzedneKostki.Y)) Then
+                        Dim dod As DaneDodatkowePosterunku = Nothing
+                        Dim odc As OdcinekToru = Nothing
 
+                        If DodatkoweDane.TryGetValue(pol.AdresStacji, dod) AndAlso dod.OdcinkiTorow.TryGetValue(k.AdresOdcinka, odc) Then
                             SyncLock slockPociagi
                                 If Not PociagiPoNumerze.ContainsKey(k.NrPociagu) Then
                                     stan = StanDodaniaPociagu.Dobrze
-                                    akt(0) = New AktualizowanyKawalekToru() With {
-                                        .Polozenie = PolozenieToru.TorGlowny,
-                                        .Zajetosc = ZajetoscToru.Zajety,
-                                        .WspolrzedneKostki = k.WspolrzedneKostki
-                                    }
 
                                     PociagiPoNumerze.Add(k.NrPociagu, New Pociag() With {
                                         .DodajacyPosterunek = obs,
@@ -207,7 +212,7 @@ Public Class SerwerTCP
                             End SyncLock
 
                         Else
-                            stan = StanDodaniaPociagu.BledneWspolrzedne
+                            stan = StanDodaniaPociagu.BlednyAdresOdcinka
                         End If
                     End If
 
@@ -216,8 +221,6 @@ Public Class SerwerTCP
                 pol.WyslijKomunikat(New DodanoPociag() With {.NrPociagu = k.NrPociagu, .Stan = stan})
 
                 If stan = StanDodaniaPociagu.Dobrze Then
-                    pol.WyslijKomunikat(New ZmienionoStanToru() With {.Tory = akt})
-
                     'RaiseEvent OdebranoDodajPociag(pol.AdresStacji, k)
                     RaiseEvent DodanoPociag(New StanPociagu With {
                         .DodajacyPosterunek = obs.NazwaPosterunku,
@@ -986,12 +989,12 @@ Public Class SerwerTCP
                                Dim t As Tor = TryCast(k, Tor)
                                Dim r As Rozjazd = TryCast(k, Rozjazd)
 
-                               If t IsNot Nothing AndAlso t.PredkoscZasadnicza > MaksymalnaPredkoscSieci Then
-                                   MaksymalnaPredkoscSieci = t.PredkoscZasadnicza
+                               If t IsNot Nothing AndAlso t.Predkosc > MaksymalnaPredkoscSieci Then
+                                   MaksymalnaPredkoscSieci = t.Predkosc
                                End If
 
-                               If r IsNot Nothing AndAlso r.PredkoscBoczna > MaksymalnaPredkoscSieci Then
-                                   MaksymalnaPredkoscSieci = r.PredkoscBoczna
+                               If r IsNot Nothing AndAlso r.PredkoscDrugi > MaksymalnaPredkoscSieci Then
+                                   MaksymalnaPredkoscSieci = r.PredkoscDrugi
                                End If
                            End Sub)
     End Sub

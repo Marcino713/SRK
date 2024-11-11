@@ -178,12 +178,12 @@ Partial Class wndNastawnia
         Me.plpPulpit.Location = New System.Drawing.Point(0, 24)
         Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
         Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
-        Me.plpPulpit.MozliwoscZaznaczeniaToru = False
+        Me.plpPulpit.MozliwoscZaznaczeniaOdcinka = False
         Me.plpPulpit.Name = "plpPulpit"
-        Me.plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projDodatkoweObiekty = Pulpit.Dodatki.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projZaznaczonaKostka = Nothing
         Me.plpPulpit.projZaznaczonaLampa = Nothing
         Me.plpPulpit.projZaznaczonyLicznik = Nothing
-        Me.plpPulpit.projZaznaczonyOdcinek = Nothing
         Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
         Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
         Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
@@ -194,7 +194,7 @@ Partial Class wndNastawnia
         Me.plpPulpit.Pulpit = Pulpit1
         Me.plpPulpit.Size = New System.Drawing.Size(645, 504)
         Me.plpPulpit.TabIndex = 2
-        Me.plpPulpit.ZaznaczonaKostka = Nothing
+        Me.plpPulpit.ZaznaczonyOdcinek = Nothing
         '
         'wndNastawnia
         '

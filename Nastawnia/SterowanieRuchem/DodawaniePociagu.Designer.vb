@@ -35,12 +35,14 @@ Partial Class wndDodawaniePociagu
         Me.lblDodawanie = New System.Windows.Forms.Label()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.txtPredkosc = New System.Windows.Forms.TextBox()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.lblOdcinekToru = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(12, 48)
+        Me.Label1.Location = New System.Drawing.Point(12, 46)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(82, 13)
         Me.Label1.TabIndex = 0
@@ -49,7 +51,7 @@ Partial Class wndDodawaniePociagu
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(12, 100)
+        Me.Label2.Location = New System.Drawing.Point(12, 98)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(57, 13)
         Me.Label2.TabIndex = 1
@@ -57,22 +59,22 @@ Partial Class wndDodawaniePociagu
         '
         'txtNrPociagu
         '
-        Me.txtNrPociagu.Location = New System.Drawing.Point(104, 45)
+        Me.txtNrPociagu.Location = New System.Drawing.Point(104, 43)
         Me.txtNrPociagu.Name = "txtNrPociagu"
-        Me.txtNrPociagu.Size = New System.Drawing.Size(125, 20)
+        Me.txtNrPociagu.Size = New System.Drawing.Size(174, 20)
         Me.txtNrPociagu.TabIndex = 1
         '
         'txtLiczbaOsi
         '
-        Me.txtLiczbaOsi.Location = New System.Drawing.Point(104, 97)
+        Me.txtLiczbaOsi.Location = New System.Drawing.Point(104, 95)
         Me.txtLiczbaOsi.Name = "txtLiczbaOsi"
-        Me.txtLiczbaOsi.Size = New System.Drawing.Size(125, 20)
+        Me.txtLiczbaOsi.Size = New System.Drawing.Size(174, 20)
         Me.txtLiczbaOsi.TabIndex = 3
         '
         'cboSterowalny
         '
         Me.cboSterowalny.AutoSize = True
-        Me.cboSterowalny.Location = New System.Drawing.Point(104, 149)
+        Me.cboSterowalny.Location = New System.Drawing.Point(104, 147)
         Me.cboSterowalny.Name = "cboSterowalny"
         Me.cboSterowalny.Size = New System.Drawing.Size(111, 17)
         Me.cboSterowalny.TabIndex = 5
@@ -81,7 +83,7 @@ Partial Class wndDodawaniePociagu
         '
         'btnDodaj
         '
-        Me.btnDodaj.Location = New System.Drawing.Point(104, 172)
+        Me.btnDodaj.Location = New System.Drawing.Point(152, 170)
         Me.btnDodaj.Name = "btnDodaj"
         Me.btnDodaj.Size = New System.Drawing.Size(60, 23)
         Me.btnDodaj.TabIndex = 6
@@ -90,7 +92,7 @@ Partial Class wndDodawaniePociagu
         '
         'btnAnuluj
         '
-        Me.btnAnuluj.Location = New System.Drawing.Point(169, 172)
+        Me.btnAnuluj.Location = New System.Drawing.Point(218, 170)
         Me.btnAnuluj.Name = "btnAnuluj"
         Me.btnAnuluj.Size = New System.Drawing.Size(60, 23)
         Me.btnAnuluj.TabIndex = 7
@@ -102,14 +104,14 @@ Partial Class wndDodawaniePociagu
         Me.Label3.AutoSize = True
         Me.Label3.Location = New System.Drawing.Point(12, 9)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(217, 26)
+        Me.Label3.Size = New System.Drawing.Size(277, 13)
         Me.Label3.TabIndex = 7
-        Me.Label3.Text = "Wybierz na schemacie tor prosty lub ukośny," & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "na którym znajduje się pociąg."
+        Me.Label3.Text = "Wybierz na schemacie tor, na którym znajduje się pociąg."
         '
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(12, 74)
+        Me.Label4.Location = New System.Drawing.Point(12, 72)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(43, 13)
         Me.Label4.TabIndex = 8
@@ -117,9 +119,9 @@ Partial Class wndDodawaniePociagu
         '
         'txtNazwa
         '
-        Me.txtNazwa.Location = New System.Drawing.Point(104, 71)
+        Me.txtNazwa.Location = New System.Drawing.Point(104, 69)
         Me.txtNazwa.Name = "txtNazwa"
-        Me.txtNazwa.Size = New System.Drawing.Size(125, 20)
+        Me.txtNazwa.Size = New System.Drawing.Size(174, 20)
         Me.txtNazwa.TabIndex = 2
         '
         'lblDodawanie
@@ -133,7 +135,7 @@ Partial Class wndDodawaniePociagu
         'Label5
         '
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(12, 126)
+        Me.Label5.Location = New System.Drawing.Point(12, 124)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(86, 13)
         Me.Label5.TabIndex = 10
@@ -141,16 +143,36 @@ Partial Class wndDodawaniePociagu
         '
         'txtPredkosc
         '
-        Me.txtPredkosc.Location = New System.Drawing.Point(104, 123)
+        Me.txtPredkosc.Location = New System.Drawing.Point(104, 121)
         Me.txtPredkosc.Name = "txtPredkosc"
-        Me.txtPredkosc.Size = New System.Drawing.Size(125, 20)
+        Me.txtPredkosc.Size = New System.Drawing.Size(174, 20)
         Me.txtPredkosc.TabIndex = 4
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(12, 27)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(67, 13)
+        Me.Label6.TabIndex = 11
+        Me.Label6.Text = "Wybrany tor:"
+        '
+        'lblOdcinekToru
+        '
+        Me.lblOdcinekToru.AutoSize = True
+        Me.lblOdcinekToru.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
+        Me.lblOdcinekToru.Location = New System.Drawing.Point(85, 27)
+        Me.lblOdcinekToru.Name = "lblOdcinekToru"
+        Me.lblOdcinekToru.Size = New System.Drawing.Size(0, 13)
+        Me.lblOdcinekToru.TabIndex = 12
         '
         'wndDodawaniePociagu
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(241, 208)
+        Me.ClientSize = New System.Drawing.Size(290, 205)
+        Me.Controls.Add(Me.lblOdcinekToru)
+        Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.txtPredkosc)
         Me.Controls.Add(Me.Label5)
         Me.Controls.Add(Me.lblDodawanie)
@@ -187,4 +209,6 @@ Partial Class wndDodawaniePociagu
     Friend WithEvents lblDodawanie As Label
     Friend WithEvents Label5 As Label
     Friend WithEvents txtPredkosc As TextBox
+    Friend WithEvents Label6 As Label
+    Friend WithEvents lblOdcinekToru As Label
 End Class

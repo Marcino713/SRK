@@ -1,12 +1,11 @@
 ﻿Public Class SygnalizatorPowtarzajacy
     Inherits Sygnalizator
 
-    Private Const BLAD As String = "Dla kostki sygnalizatora powtarzającego nie można zdefiniować nazwy."
     Private Const NAZWA_SP As String = "Sp"
 
     Public Property Kolejnosc As KolejnoscSygnalizatoraPowtarzajacego
     Public Property SygnalizatorPowtarzany As SygnalizatorPolsamoczynny
-    Public Overloads Property Nazwa As String
+    Public Overrides Property Nazwa As String
         Get
             Dim n As String = ""
 
@@ -19,12 +18,9 @@
                     n = "III"
             End Select
 
-            n &= NAZWA_SP
-            If SygnalizatorPowtarzany IsNot Nothing Then n &= SygnalizatorPowtarzany.Nazwa
-            Return n
+            Return $"{n}{NAZWA_SP}{SygnalizatorPowtarzany?.Nazwa}"
         End Get
         Set(value As String)
-            Throw New NotSupportedException(BLAD)
         End Set
     End Property
 

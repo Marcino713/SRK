@@ -6,7 +6,7 @@
     Public Property Nazwa As String
     Public Property PredkoscMaksymalna As UShort
     Public Property PojazdSterowalny As Boolean
-    Public Property WspolrzedneKostki As Punkt
+    Public Property AdresOdcinka As UShort
 
     Public Overrides ReadOnly Property Typ As UShort
         Get
@@ -20,8 +20,7 @@
         ZapiszTekst(bw, Nazwa)
         bw.Write(PredkoscMaksymalna)
         bw.Write(PojazdSterowalny)
-        bw.Write(WspolrzedneKostki.X)
-        bw.Write(WspolrzedneKostki.Y)
+        bw.Write(AdresOdcinka)
     End Sub
 
     Public Shared Function Otworz(br As BinaryReader) As Komunikat
@@ -31,9 +30,7 @@
         kom.Nazwa = OdczytajTekst(br)
         kom.PredkoscMaksymalna = br.ReadUInt16
         kom.PojazdSterowalny = br.ReadBoolean
-        kom.WspolrzedneKostki = New Punkt
-        kom.WspolrzedneKostki.X = br.ReadUInt16
-        kom.WspolrzedneKostki.Y = br.ReadUInt16
+        kom.AdresOdcinka = br.ReadUInt16
 
         Return kom
     End Function

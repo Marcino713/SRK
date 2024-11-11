@@ -93,7 +93,7 @@ Public Class wndNastawnia
             OknoDodawaniaPociagu = New wndDodawaniePociagu(Klient, plpPulpit)
             OknoDodawaniaPociagu.Show()
             plpPulpit.MozliwoscWcisnieciaPrzycisku = False
-            plpPulpit.MozliwoscZaznaczeniaToru = True
+            plpPulpit.MozliwoscZaznaczeniaOdcinka = True
         Else
             OknoDodawaniaPociagu.Focus()
         End If
@@ -140,7 +140,7 @@ Public Class wndNastawnia
 
     Private Sub OknoDodawaniaPociagu_FormClosed() Handles OknoDodawaniaPociagu.FormClosed
         OknoDodawaniaPociagu = Nothing
-        plpPulpit.MozliwoscZaznaczeniaToru = False
+        plpPulpit.MozliwoscZaznaczeniaOdcinka = False
         plpPulpit.MozliwoscWcisnieciaPrzycisku = True
     End Sub
 
@@ -351,9 +351,9 @@ Public Class wndNastawnia
             If Not plpPulpit.Pulpit.CzyKostkaNiepusta(akt.WspolrzedneKostki) Then Continue For
 
             Dim k As Zaleznosci.Kostka = plpPulpit.Pulpit.Kostki(akt.WspolrzedneKostki.X, akt.WspolrzedneKostki.Y)
-            If akt.Polozenie = Zaleznosci.PolozenieToru.RozjazdWBok Then
-                Dim rozjazd As Zaleznosci.Rozjazd = TryCast(k, Zaleznosci.Rozjazd)
-                If rozjazd IsNot Nothing Then rozjazd.ZajetoscBok = akt.Zajetosc
+            If akt.Polozenie = Zaleznosci.PolozenieToru.TorDrugi Then
+                Dim torPodw As Zaleznosci.TorPodwojny = TryCast(k, Zaleznosci.TorPodwojny)
+                If torPodw IsNot Nothing Then torPodw.ZajetoscDrugi = akt.Zajetosc
             Else
                 Dim tor As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
                 If tor IsNot Nothing Then tor.Zajetosc = akt.Zajetosc

@@ -272,7 +272,10 @@ Public Class Pulpit
 
     Public Sub UsunKostke(kostka As Kostka)
         Dim tor As Tor = TryCast(kostka, Tor)
-        tor?.NalezyDoOdcinka?.KostkiTory.Remove(tor)
+        tor?.NalezyDoOdcinka?.UsunTor(tor, PrzynaleznoscToruDoOdcinka.Oba)
+
+        Dim podw As TorPodwojnyNiezalezny = TryCast(kostka, TorPodwojnyNiezalezny)
+        podw?.NalezyDoOdcinkaDrugi?.UsunTor(podw, PrzynaleznoscToruDoOdcinka.Oba)
 
         Dim przejazd As PrzejazdKolejowoDrogowyKostka = TryCast(kostka, PrzejazdKolejowoDrogowyKostka)
         przejazd?.NalezyDoPrzejazdu?.KostkiPrzejazdy.Remove(przejazd)

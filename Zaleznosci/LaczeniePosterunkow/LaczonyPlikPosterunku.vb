@@ -49,11 +49,11 @@ Public Class LaczonyPlikPosterunku
         For Each tor As OdcinekToru In tory
             Dim kierunek As Integer = 0
 
-            For Each kostkaTor As Tor In tor.KostkiTory
-                If kostkaTor.Typ = TypKostki.Kierunek Then
-                    kierunek += 1
-                End If
-            Next
+            tor.PrzeiterujTory(Sub(kostka, polozenie)
+                                   If kostka.Typ = TypKostki.Kierunek Then
+                                       kierunek += 1
+                                   End If
+                               End Sub)
 
             If kierunek = 1 Then dostepneTory.Add(tor)
         Next

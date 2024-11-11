@@ -1,14 +1,10 @@
 ﻿Public MustInherit Class Rozjazd
-    Inherits Tor
+    Inherits TorPodwojny
     Implements IAdres, IPrzycisk, IZakret
 
     Private Const LICZBA_ROZJAZDOW_ZALEZNYCH As Integer = 2
 
     Public Property Adres As UShort = 0 Implements IAdres.Adres
-    Public Property PredkoscBoczna As UShort = 0
-    Public Property DlugoscBok As Single = 0.0F
-    Public Property ZelektryfikowanyBok As Boolean = True
-    Public Property KontrolaNiezajetosciBok As Boolean = True
     Public Property KierunekZasadniczy As UstawienieRozjazduEnum = UstawienieRozjazduEnum.Wprost
     Public Property PosiadaPrzycisk As Boolean = True Implements IPrzycisk.PosiadaPrzycisk
 
@@ -38,17 +34,6 @@
     Public Property PrzytnijZakret As PrzycinanieZakretu Implements IZakret.PrzytnijZakret
     Public Property Stan As StanRozjazdu = StanRozjazdu.Niezdefiniowany
 
-    Private _ZajetoscBok As ZajetoscToru = ZajetoscToru.Wolny
-    Public Property ZajetoscBok As ZajetoscToru
-        Get
-            Return _ZajetoscBok
-        End Get
-        Set(value As ZajetoscToru)
-            _ZajetoscBok = value
-            Migacz?.UstawKostke(Me)
-        End Set
-    End Property
-
     Private _Rozprucie As Boolean = False
     Public Property Rozprucie As Boolean
         Get
@@ -68,16 +53,12 @@
     End Sub
 
     Public Overrides Function CzyMiga() As Boolean
-        Return MyBase.CzyMiga() OrElse _ZajetoscBok = ZajetoscToru.BlokadaNieustawiona Or _Rozprucie
+        Return MyBase.CzyMiga() OrElse _Rozprucie
     End Function
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         MyBase.ZapiszKostke(bw, konf)
         bw.Write(Adres)
-        bw.Write(PredkoscBoczna)
-        bw.Write(DlugoscBok)
-        bw.Write(ZelektryfikowanyBok)
-        bw.Write(KontrolaNiezajetosciBok)
         bw.Write(CByte(KierunekZasadniczy))
         bw.Write(PosiadaPrzycisk)
         ZapiszZaleznosci(_ZaleznosciJesliWprost, bw, konf)
@@ -87,10 +68,6 @@
     Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
         MyBase.OtworzKostke(br, konf)
         Adres = br.ReadUInt16
-        PredkoscBoczna = br.ReadUInt16
-        DlugoscBok = br.ReadSingle
-        ZelektryfikowanyBok = br.ReadBoolean
-        KontrolaNiezajetosciBok = br.ReadBoolean
         KierunekZasadniczy = CType(br.ReadByte, UstawienieRozjazduEnum)
         PosiadaPrzycisk = br.ReadBoolean
         ZaleznosciJesliWprost = OtworzZaleznosci(br, konf)

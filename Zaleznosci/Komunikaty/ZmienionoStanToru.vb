@@ -49,6 +49,6 @@ Public Class AktualizowanyKawalekToru
 End Class
 
 Public Enum PolozenieToru As Byte
-    TorGlowny
-    RozjazdWBok
+    TorPierwszy = 1
+    TorDrugi = 2
 End Enum

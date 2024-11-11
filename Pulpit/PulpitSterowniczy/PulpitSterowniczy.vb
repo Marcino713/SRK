@@ -1,4 +1,5 @@
 ﻿Imports System.ComponentModel
+Imports System.Drawing.Drawing2D
 Imports IPunktSingle = Zaleznosci.IObiektPunktowy(Of Single)
 
 Public Class PulpitSterowniczy
@@ -7,6 +8,8 @@ Public Class PulpitSterowniczy
     Private Const SKALOWANIE_ZMIANA As Single = 0.05F
     Private Const SKALOWANIE_MIN As Single = 30.0F
     Private Const SKALOWANIE_MAX As Single = 200.0F
+    Private Const POL As Single = 0.5F
+    Private Const JEDNA_TRZECIA As Single = 1.0F / 3.0F
     Private Const ZWIEKSZ_OBROT As Integer = 90
     Private Const KAT_PELNY As Integer = 360
     Private Const CZAS_WCISKANIA_PRZYCISKU_MS As Integer = 300
@@ -154,21 +157,6 @@ Public Class PulpitSterowniczy
         End Set
     End Property
 
-    Private _ZaznaczonaKostka As Zaleznosci.Kostka
-    <Browsable(False)>
-    Public Property ZaznaczonaKostka As Zaleznosci.Kostka
-        Get
-            Return _ZaznaczonaKostka
-        End Get
-        Set(value As Zaleznosci.Kostka)
-            If _ZaznaczonaKostka Is value Then Exit Property
-
-            _ZaznaczonaKostka = value
-            RaiseEvent ZmianaZaznaczeniaKostki(value)
-            If Not TrybProjektowy Or _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then Invalidate()
-        End Set
-    End Property
-
     Private _ZaznaczoneLampy As New HashSet(Of Zaleznosci.Lampa)
     <Browsable(False)>
     Public ReadOnly Property ZaznaczoneLampy As HashSet(Of Zaleznosci.Lampa)
@@ -177,18 +165,16 @@ Public Class PulpitSterowniczy
         End Get
     End Property
 
-    Private _MozliwoscZaznaczeniaToru As Boolean = False
+    Private _MozliwoscZaznaczeniaOdcinka As Boolean = False
     <Browsable(False)>
-    Public Property MozliwoscZaznaczeniaToru As Boolean
+    Public Property MozliwoscZaznaczeniaOdcinka As Boolean
         Get
-            Return _MozliwoscZaznaczeniaToru
+            Return _MozliwoscZaznaczeniaOdcinka
         End Get
         Set(value As Boolean)
-            _MozliwoscZaznaczeniaToru = value
-            If value Then
+            If (Not TrybProjektowy) And value <> _MozliwoscZaznaczeniaOdcinka Then
+                _MozliwoscZaznaczeniaOdcinka = value
                 Invalidate()
-            Else
-                ZaznaczonaKostka = Nothing
             End If
         End Set
     End Property
@@ -219,6 +205,25 @@ Public Class PulpitSterowniczy
         End Set
     End Property
 
+    Private _ZaznaczonyOdcinek As Zaleznosci.OdcinekToru
+    <Browsable(False)>
+    Public Property ZaznaczonyOdcinek As Zaleznosci.OdcinekToru
+        Get
+            Return _ZaznaczonyOdcinek
+        End Get
+        Set(value As Zaleznosci.OdcinekToru)
+            If value IsNot _ZaznaczonyOdcinek Then
+                Dim zaznTrybDzialania As Boolean = (Not TrybProjektowy) And _MozliwoscZaznaczeniaOdcinka
+
+                If (TrybProjektowy And _projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow) Or zaznTrybDzialania Then
+                    _ZaznaczonyOdcinek = value
+                    If zaznTrybDzialania Then RaiseEvent ZaznaczonoOdcinek(_ZaznaczonyOdcinek)
+                    Invalidate()
+                End If
+            End If
+        End Set
+    End Property
+
     Private _projDodatkoweObiekty As RysujDodatkoweObiekty = RysujDodatkoweObiekty.Nic
     <Browsable(False)>
     Public Property projDodatkoweObiekty As RysujDodatkoweObiekty
@@ -228,6 +233,21 @@ Public Class PulpitSterowniczy
         Set(value As RysujDodatkoweObiekty)
             _projDodatkoweObiekty = value
             Invalidate()
+        End Set
+    End Property
+
+    Private _projZaznaczonaKostka As Zaleznosci.Kostka
+    <Browsable(False)>
+    Public Property projZaznaczonaKostka As Zaleznosci.Kostka
+        Get
+            Return _projZaznaczonaKostka
+        End Get
+        Set(value As Zaleznosci.Kostka)
+            If _projZaznaczonaKostka Is value Then Exit Property
+
+            _projZaznaczonaKostka = value
+            RaiseEvent projZmianaZaznaczeniaKostki(value)
+            If Not TrybProjektowy Or _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then Invalidate()
         End Set
     End Property
 
@@ -243,18 +263,6 @@ Public Class PulpitSterowniczy
             _projZaznaczonaLampa = value
             RaiseEvent projZmianaZaznaczeniaLampy(value)
             If _projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then Invalidate()
-        End Set
-    End Property
-
-    Private _projZaznaczonyOdcinek As Zaleznosci.OdcinekToru
-    <Browsable(False)>
-    Public Property projZaznaczonyOdcinek As Zaleznosci.OdcinekToru
-        Get
-            Return _projZaznaczonyOdcinek
-        End Get
-        Set(value As Zaleznosci.OdcinekToru)
-            _projZaznaczonyOdcinek = value
-            If _projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Then Invalidate()
         End Set
     End Property
 
@@ -332,8 +340,8 @@ Public Class PulpitSterowniczy
     <Description("Wciśnięto przycisk na pulpicie"), Category(KATEG_ZDARZ)>
     Public Event WcisnietoPrzycisk(kostka As Zaleznosci.Kostka)
 
-    <Description("Zmiana zaznaczonej kostki"), Category(KATEG_ZDARZ)>
-    Public Event ZmianaZaznaczeniaKostki(kostka As Zaleznosci.Kostka)
+    <Description("Zaznaczono odcinek toru w trybie działania"), Category(KATEG_ZDARZ)>
+    Public Event ZaznaczonoOdcinek(odcinek As Zaleznosci.OdcinekToru)
 
     <Description("Zmiana ostatnio zaznaczonej lampy"), Category(KATEG_ZDARZ)>
     Public Event ZmianaZaznaczeniaOstatniejLampy(lampa As Zaleznosci.Lampa)
@@ -343,6 +351,9 @@ Public Class PulpitSterowniczy
 
     <Description("Zmiana zaznaczonej lampy"), Category(KATEG_ZDARZ_PROJ)>
     Public Event projZmianaZaznaczeniaLampy(lampa As Zaleznosci.Lampa)
+
+    <Description("Zmiana zaznaczonej kostki"), Category(KATEG_ZDARZ_PROJ)>
+    Public Event projZmianaZaznaczeniaKostki(kostka As Zaleznosci.Kostka)
 
     <Description("Zmiana przypisania toru do odcinka"), Category(KATEG_ZDARZ_PROJ)>
     Public Event projZmianaPrzypisaniaToruDoOdcinka()
@@ -366,14 +377,14 @@ Public Class PulpitSterowniczy
         _Skalowanie = SKALOWANIE_DOMYSLNE
         _Przesuniecie = PobierzPozycjeDlaWysrodkowania()
         _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
-        _projZaznaczonyOdcinek = Nothing
+        _ZaznaczonyOdcinek = Nothing
         _projZaznaczonyLicznik = Nothing
         _projZaznaczonyPrzejazd = Nothing
         _projZaznaczonyPrzejazdAutomatyzacja = Nothing
         _projZaznaczonyPrzejazdRogatka = Nothing
         _projZaznaczonyPrzejazdSygnDrog = Nothing
         _Rysownik.UniewaznioneSasiedztwoTorow = True
-        ZaznaczonaKostka = Nothing  'przypisanie do własności zamiast zmiennej, żeby wywołały się zdarzenia
+        projZaznaczonaKostka = Nothing  'przypisanie do własności zamiast zmiennej, żeby wywołały się zdarzenia
         projZaznaczonaLampa = Nothing
         Invalidate()
     End Sub
@@ -428,19 +439,19 @@ Public Class PulpitSterowniczy
     End Sub
 
     Private Sub PulpitSterowniczy_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
-        If TrybProjektowy And ZaznaczonaKostka IsNot Nothing Then
+        If TrybProjektowy And projZaznaczonaKostka IsNot Nothing Then
 
             If e.KeyData = Keys.R Then
-                Dim obrot As Integer = ZaznaczonaKostka.Obrot
+                Dim obrot As Integer = projZaznaczonaKostka.Obrot
                 obrot = (obrot + ZWIEKSZ_OBROT) Mod KAT_PELNY
-                ZaznaczonaKostka.Obrot = obrot
+                projZaznaczonaKostka.Obrot = obrot
                 _Rysownik.UniewaznioneSasiedztwoTorow = True
                 Invalidate()
 
             ElseIf e.KeyData = Keys.Delete Then
-                Pulpit.UsunKostke(ZaznaczonaKostka)
+                Pulpit.UsunKostke(projZaznaczonaKostka)
                 _Rysownik.UniewaznioneSasiedztwoTorow = True
-                ZaznaczonaKostka = Nothing
+                projZaznaczonaKostka = Nothing
             End If
 
         End If
@@ -452,21 +463,47 @@ Public Class PulpitSterowniczy
         If TrybProjektowy Then
 
             If _projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Then
-                If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
-                    Dim kostka As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-                    Dim t As Zaleznosci.Tor = TryCast(kostka, Zaleznosci.Tor)
+                If _Pulpit.CzyKostkaWZakresiePulpitu(p) AndAlso _ZaznaczonyOdcinek IsNot Nothing Then
+                    Dim tor As Zaleznosci.Tor = TryCast(Pulpit.Kostki(p.X, p.Y), Zaleznosci.Tor)
 
-                    If t IsNot Nothing AndAlso _projZaznaczonyOdcinek IsNot Nothing Then
-                        Dim nalezyDoTegoOdcinka As Boolean = t.NalezyDoOdcinka Is _projZaznaczonyOdcinek
-                        t.NalezyDoOdcinka?.KostkiTory.Remove(t)
-                        If nalezyDoTegoOdcinka Then
-                            t.NalezyDoOdcinka = Nothing
-                        Else
-                            t.NalezyDoOdcinka = _projZaznaczonyOdcinek
-                            _projZaznaczonyOdcinek.KostkiTory.Add(t)
+                    If tor IsNot Nothing Then
+                        Dim pozycja As Zaleznosci.PrzynaleznoscToruDoOdcinka = Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy
+
+                        Dim podw As Zaleznosci.TorPodwojnyNiezalezny = TryCast(tor, Zaleznosci.TorPodwojnyNiezalezny)
+                        If podw IsNot Nothing Then
+                            pozycja = PobierzFragmentToruPodwojnego(e.Location, podw)
                         End If
-                        RaiseEvent projZmianaPrzypisaniaToruDoOdcinka()
-                        Invalidate()
+
+                        If pozycja <> Zaleznosci.PrzynaleznoscToruDoOdcinka.Zaden Then
+
+                            Dim nalezyDoTegoOdcinka As Boolean
+
+                            If pozycja = Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy Then
+                                nalezyDoTegoOdcinka = tor.NalezyDoOdcinka Is _ZaznaczonyOdcinek
+                                tor.NalezyDoOdcinka?.UsunTor(tor, Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy)
+                                If nalezyDoTegoOdcinka Then
+                                    tor.NalezyDoOdcinka = Nothing
+                                Else
+                                    tor.NalezyDoOdcinka = _ZaznaczonyOdcinek
+                                    _ZaznaczonyOdcinek.DodajTor(tor, Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy)
+                                End If
+
+                            Else
+
+                                nalezyDoTegoOdcinka = podw.NalezyDoOdcinkaDrugi Is _ZaznaczonyOdcinek
+                                podw.NalezyDoOdcinkaDrugi?.UsunTor(podw, Zaleznosci.PrzynaleznoscToruDoOdcinka.Drugi)
+                                If nalezyDoTegoOdcinka Then
+                                    podw.NalezyDoOdcinkaDrugi = Nothing
+                                Else
+                                    podw.NalezyDoOdcinkaDrugi = _ZaznaczonyOdcinek
+                                    _ZaznaczonyOdcinek.DodajTor(podw, Zaleznosci.PrzynaleznoscToruDoOdcinka.Drugi)
+                                End If
+
+                            End If
+
+                            RaiseEvent projZmianaPrzypisaniaToruDoOdcinka()
+                            Invalidate()
+                        End If
 
                     End If
                 End If
@@ -503,73 +540,82 @@ Public Class PulpitSterowniczy
             ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then
 
                 If _Pulpit.CzyKostkaNiepusta(p) Then
-                    ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
+                    projZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
                 Else
-                    ZaznaczonaKostka = Nothing
+                    projZaznaczonaKostka = Nothing
                 End If
 
             End If
 
         Else
 
-            If MozliwoscZaznaczeniaToru Then
+            If _MozliwoscZaznaczeniaOdcinka Then
+                Dim zazn As Zaleznosci.OdcinekToru = Nothing
 
-                Dim zaznaczono As Boolean = False
+                If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
+                    Dim tor As Zaleznosci.Tor = TryCast(Pulpit.Kostki(p.X, p.Y), Zaleznosci.Tor)
 
-                If _Pulpit.CzyKostkaNiepusta(p) Then
-                    Dim k As Zaleznosci.Kostka = Pulpit.Kostki(p.X, p.Y)
-                    If Zaleznosci.Kostka.CzyTorBezRozjazdu(k) Then
-                        ZaznaczonaKostka = k
-                        zaznaczono = True
+                    If tor IsNot Nothing Then
+                        Dim pozycja As Zaleznosci.PrzynaleznoscToruDoOdcinka = Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy
+
+                        Dim podw As Zaleznosci.TorPodwojnyNiezalezny = TryCast(tor, Zaleznosci.TorPodwojnyNiezalezny)
+                        If podw IsNot Nothing Then
+                            pozycja = PobierzFragmentToruPodwojnego(e.Location, podw)
+                        End If
+
+                        If pozycja = Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy Then
+                            zazn = tor.NalezyDoOdcinka
+                        ElseIf pozycja = Zaleznosci.PrzynaleznoscToruDoOdcinka.Drugi Then
+                            zazn = podw.NalezyDoOdcinkaDrugi
+                        End If
                     End If
                 End If
 
-                If Not zaznaczono Then ZaznaczonaKostka = Nothing
-
+                ZaznaczonyOdcinek = zazn
             End If
 
-            If MozliwoscZaznaczeniaLamp And PoprzZaznLampyWObszarze Is Nothing Then     'zaznaczenie pojedynczej lampy kliknięciem
-                Dim lampa As Zaleznosci.Lampa = PobierzKliknietaLampe(e.Location)
-                Dim zmiana As Boolean = True
-                Dim pusteZazn As Boolean = _ZaznaczoneLampy.Count = 0
-                Dim czyNieCtrl As Boolean = (ModifierKeys And Keys.Control) = 0
+            If _MozliwoscZaznaczeniaLamp And PoprzZaznLampyWObszarze Is Nothing Then     'zaznaczenie pojedynczej lampy kliknięciem
+                    Dim lampa As Zaleznosci.Lampa = PobierzKliknietaLampe(e.Location)
+                    Dim zmiana As Boolean = True
+                    Dim pusteZazn As Boolean = _ZaznaczoneLampy.Count = 0
+                    Dim czyNieCtrl As Boolean = (ModifierKeys And Keys.Control) = 0
 
-                If czyNieCtrl Then
-                    If lampa IsNot Nothing And _ZaznaczoneLampy.Count = 1 And _ZaznaczoneLampy.Contains(lampa) Then
-                        zmiana = False
-                    Else
-                        _ZaznaczoneLampy.Clear()
-                        KolejnoscZaznaczeniaLamp.Clear()
-                    End If
-                End If
-
-                If lampa IsNot Nothing And zmiana Then
-                    'nie udało się usunąć, więc nie było lampy w zaznaczeniu - dodaj ją
-                    If Not _ZaznaczoneLampy.Remove(lampa) Then
-                        _ZaznaczoneLampy.Add(lampa)
-                        KolejnoscZaznaczeniaLamp.Add(lampa)
-                        RaiseEvent ZmianaZaznaczeniaOstatniejLampy(lampa)
-                    Else
-                        Dim ostLampa As Zaleznosci.Lampa = If(KolejnoscZaznaczeniaLamp.Count = 0, Nothing, KolejnoscZaznaczeniaLamp.Last)
-                        KolejnoscZaznaczeniaLamp.Remove(lampa)
-                        Dim nowaOstLampa As Zaleznosci.Lampa = If(KolejnoscZaznaczeniaLamp.Count = 0, Nothing, KolejnoscZaznaczeniaLamp.Last)
-                        If nowaOstLampa IsNot ostLampa Then
-                            RaiseEvent ZmianaZaznaczeniaOstatniejLampy(nowaOstLampa)
+                    If czyNieCtrl Then
+                        If lampa IsNot Nothing And _ZaznaczoneLampy.Count = 1 And _ZaznaczoneLampy.Contains(lampa) Then
+                            zmiana = False
+                        Else
+                            _ZaznaczoneLampy.Clear()
+                            KolejnoscZaznaczeniaLamp.Clear()
                         End If
                     End If
 
-                    RaiseEvent ZmianaZaznaczeniaLamp(ZaznaczoneLampy)
+                    If lampa IsNot Nothing And zmiana Then
+                        'nie udało się usunąć, więc nie było lampy w zaznaczeniu - dodaj ją
+                        If Not _ZaznaczoneLampy.Remove(lampa) Then
+                            _ZaznaczoneLampy.Add(lampa)
+                            KolejnoscZaznaczeniaLamp.Add(lampa)
+                            RaiseEvent ZmianaZaznaczeniaOstatniejLampy(lampa)
+                        Else
+                            Dim ostLampa As Zaleznosci.Lampa = If(KolejnoscZaznaczeniaLamp.Count = 0, Nothing, KolejnoscZaznaczeniaLamp.Last)
+                            KolejnoscZaznaczeniaLamp.Remove(lampa)
+                            Dim nowaOstLampa As Zaleznosci.Lampa = If(KolejnoscZaznaczeniaLamp.Count = 0, Nothing, KolejnoscZaznaczeniaLamp.Last)
+                            If nowaOstLampa IsNot ostLampa Then
+                                RaiseEvent ZmianaZaznaczeniaOstatniejLampy(nowaOstLampa)
+                            End If
+                        End If
 
-                ElseIf czyNieCtrl And lampa Is Nothing And Not pusteZazn Then
-                    RaiseEvent ZmianaZaznaczeniaOstatniejLampy(Nothing)
-                    RaiseEvent ZmianaZaznaczeniaLamp(ZaznaczoneLampy)
+                        RaiseEvent ZmianaZaznaczeniaLamp(ZaznaczoneLampy)
 
+                    ElseIf czyNieCtrl And lampa Is Nothing And Not pusteZazn Then
+                        RaiseEvent ZmianaZaznaczeniaOstatniejLampy(Nothing)
+                        RaiseEvent ZmianaZaznaczeniaLamp(ZaznaczoneLampy)
+
+                    End If
+
+                    Invalidate()
                 End If
 
-                Invalidate()
             End If
-
-        End If
     End Sub
 
     Private Sub PulpitSterowniczy_MouseWheel(sender As Object, e As MouseEventArgs) Handles Me.MouseWheel
@@ -659,8 +705,8 @@ Public Class PulpitSterowniczy
         If TrybProjektowy And projDodatkoweObiekty = RysujDodatkoweObiekty.Nic And ((ModifierKeys And Keys.Shift) <> 0) Then      'Przesuń kostkę
             If _Pulpit.CzyKostkaNiepusta(p) Then
                 PoprzLokalizacjaKostki = p
-                ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
-                DoDragDrop(New PrzeciaganaKostka(_ZaznaczonaKostka, Handle), DragDropEffects.Move)
+                projZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
+                DoDragDrop(New PrzeciaganaKostka(_projZaznaczonaKostka, Handle), DragDropEffects.Move)
             End If
         Else        'Przesuń cały pulpit
             PoprzedniPunkt = e.Location
@@ -692,17 +738,17 @@ Public Class PulpitSterowniczy
             Dim polozonaKostka As Zaleznosci.Kostka = _Pulpit.Kostki(p.X, p.Y)
             If polozonaKostka IsNot Nothing AndAlso polozonaKostka IsNot przeciaganaKostka Then Exit Sub
 
-            Dim dodajKostke As Boolean = _ZaznaczonaKostka IsNot przeciaganaKostka
+            Dim dodajKostke As Boolean = _projZaznaczonaKostka IsNot przeciaganaKostka
             Dim przesunKostke As Boolean = PoprzLokalizacjaKostki <> p
 
             If dodajKostke Or przesunKostke Then
                 If dodajKostke Then
-                    ZaznaczonaKostka = przeciaganaKostka
+                    projZaznaczonaKostka = przeciaganaKostka
                 Else
                     _Pulpit.Kostki(PoprzLokalizacjaKostki.X, PoprzLokalizacjaKostki.Y) = Nothing
                 End If
 
-                _Pulpit.Kostki(p.X, p.Y) = _ZaznaczonaKostka
+                _Pulpit.Kostki(p.X, p.Y) = _projZaznaczonaKostka
                 PoprzLokalizacjaKostki = p
                 _Rysownik.UniewaznioneSasiedztwoTorow = True
                 Invalidate()
@@ -728,8 +774,8 @@ Public Class PulpitSterowniczy
     Protected Overrides Function ProcessCmdKey(ByRef msg As Message, keyData As Keys) As Boolean
         Dim wynik As Boolean = False
 
-        If TrybProjektowy AndAlso _ZaznaczonaKostka IsNot Nothing AndAlso KLAWISZE_STRZALEK.Contains(keyData) Then
-            Dim p As Zaleznosci.Punkt = _Pulpit.ZnajdzKostke(_ZaznaczonaKostka)
+        If TrybProjektowy AndAlso _projZaznaczonaKostka IsNot Nothing AndAlso KLAWISZE_STRZALEK.Contains(keyData) Then
+            Dim p As Zaleznosci.Punkt = _Pulpit.ZnajdzKostke(_projZaznaczonaKostka)
             Dim przesX As Integer
             Dim przesY As Integer
             Dim maxX As Integer
@@ -754,12 +800,47 @@ Public Class PulpitSterowniczy
 
             If przesX <> 0 Or przesY <> 0 Then
                 Dim nast As Zaleznosci.Kostka = ZnajdzNajblizszaKostke(p.X + przesX, p.Y + przesY, przesX, przesY, maxX, maxY)
-                If nast IsNot Nothing Then ZaznaczonaKostka = nast
+                If nast IsNot Nothing Then projZaznaczonaKostka = nast
                 wynik = True
             End If
         End If
 
         Return wynik
+    End Function
+
+    Private Function PobierzFragmentToruPodwojnego(klik As Point, tor As Zaleznosci.TorPodwojnyNiezalezny) As Zaleznosci.PrzynaleznoscToruDoOdcinka
+        Dim p As PointF = WspolrzedneEkranuDoWspolrzednychKostki(klik)
+
+        If tor.Obrot <> 0 Then
+            Dim punkty As PointF() = {p}
+            Dim m As New Matrix()
+
+            m.Translate(POL, POL)
+            m.Rotate(-tor.Obrot)
+            m.Translate(-POL, -POL)
+            m.TransformPoints(punkty)
+            p = punkty(0)
+        End If
+
+        If TypeOf tor Is Zaleznosci.ZakretPodwojny Then
+
+            If (1.0F - p.Y) < p.X Then
+                Return Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy
+            Else
+                Return Zaleznosci.PrzynaleznoscToruDoOdcinka.Drugi
+            End If
+
+        ElseIf TypeOf tor Is Zaleznosci.Most Then
+
+            If p.Y >= JEDNA_TRZECIA AndAlso p.Y <= 2.0F * JEDNA_TRZECIA Then
+                Return Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy
+            ElseIf p.X >= JEDNA_TRZECIA AndAlso p.X <= 2.0F * JEDNA_TRZECIA Then
+                Return Zaleznosci.PrzynaleznoscToruDoOdcinka.Drugi
+            End If
+
+        End If
+
+        Return Zaleznosci.PrzynaleznoscToruDoOdcinka.Zaden
     End Function
 
     Private Function ZnajdzNajblizszaKostke(x As Integer, y As Integer, przesX As Integer, przesY As Integer, maxX As Integer, maxY As Integer) As Zaleznosci.Kostka
@@ -793,9 +874,16 @@ Public Class PulpitSterowniczy
         Return New PointF((klik.X - Przesuniecie.X) / Skalowanie, (klik.Y - Przesuniecie.Y) / Skalowanie)
     End Function
 
+    Private Function WspolrzedneEkranuDoWspolrzednychKostki(klik As Point) As PointF
+        Dim p As PointF = WspolrzedneEkranuDoPulpitu(klik)
+        p.X -= CSng(Math.Floor(p.X))
+        p.Y -= CSng(Math.Floor(p.Y))
+        Return p
+    End Function
+
     Private Function PobierzKliknieteWspolrzedneKostki(klik As Point) As Zaleznosci.PunktCalkowity
         Dim p As PointF = WspolrzedneEkranuDoPulpitu(klik)
-        Return New Zaleznosci.PunktCalkowity(p.X - 0.5F, p.Y - 0.5F)
+        Return New Zaleznosci.PunktCalkowity(p.X - POL, p.Y - POL)
     End Function
 
     Private Function PobierzKliknietyObiektPunktowy(elementy As IEnumerable(Of IPunktSingle), klik As Point) As IPunktSingle

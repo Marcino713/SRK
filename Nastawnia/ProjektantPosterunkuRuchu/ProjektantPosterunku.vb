@@ -49,7 +49,7 @@
         plpPulpit.TypRysownika = WybranyTypRysownika
         plpPulpit.Wysrodkuj()
 
-        PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygnSygnNast, pnlKonfSygnOdcNast, pnlKonfSygnPrzycisk, pnlKonfSygnSwiatla, pnlKonfSygnPowt, pnlKonfTor, pnlKonfNapis, pnlKonfKier, pnlKonfAdres}
+        PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygnSygnNast, pnlKonfSygnOdcNast, pnlKonfPosiadaPrzycisk, pnlKonfSygnSwiatla, pnlKonfSygnPowt, pnlKonfTor, pnlKonfNapis, pnlKonfKier, pnlKonfAdres, pnlKonfNazwa, pnlKonfTorPodwojny}
         For i As Integer = 0 To PaneleKonfKostek.Length - 1
             PaneleKonfKostek(i).Width = splKartaPulpit.Panel2.Width
         Next
@@ -92,7 +92,7 @@
     Private Sub tabUstawienia_Selected() Handles tabUstawienia.Selected
         If tabUstawienia.SelectedTab Is tbpPulpit Then
             plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.Nic
-            Dim zazn As Zaleznosci.Kostka = plpPulpit.ZaznaczonaKostka
+            Dim zazn As Zaleznosci.Kostka = plpPulpit.projZaznaczonaKostka
             If zazn IsNot Nothing Then
                 If TypeOf zazn Is Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu Then
                     PokazKonfSygnOdcinki()
@@ -158,7 +158,9 @@
             UtworzKostkeDoListy(p, New Zaleznosci.Przycisk() With {.SygnalizatorPolsamoczynny = sygnPolsam}, "Przycisk"),
             UtworzKostkeDoListy(p, New Zaleznosci.PrzyciskTor() With {.SygnalizatorPolsamoczynny = sygnPolsam}, "Przycisk z torem"),
             UtworzKostkeDoListy(p, New Zaleznosci.Kierunek() With {.Nazwa = "Tor 9"}, "Wjazd/wyjazd ze stacji"),
-            UtworzKostkeDoListy(p, New Zaleznosci.Napis() With {.Tekst = "Magazyn"}, "Napis")
+            UtworzKostkeDoListy(p, New Zaleznosci.Napis() With {.Tekst = "Magazyn"}, "Napis"),
+            UtworzKostkeDoListy(p, New Zaleznosci.ZakretPodwojny(), "Zakręt podwójny"),
+            UtworzKostkeDoListy(p, New Zaleznosci.Most(), "Most")
         }
 
         lvPulpitKostki.Items.AddRange(kostkiLista.OrderBy(Function(k) k.Text).ToArray())
@@ -391,99 +393,82 @@
 
     'Adres
     Private Sub txtKonfAdres_TextChanged() Handles txtKonfAdres.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.IAdres).Adres = PobierzKrotkaLiczbeNieujemna(txtKonfAdres)
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.IAdres).Adres = PobierzKrotkaLiczbeNieujemna(txtKonfAdres)
     End Sub
 
-
-    'Tor
-    Private Sub txtKonfTorPredkosc_TextChanged() Handles txtKonfTorPredkosc.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Tor).PredkoscZasadnicza = PobierzKrotkaLiczbeNieujemna(txtKonfTorPredkosc)
-    End Sub
-
-    Private Sub txtKonfTorNazwa_TextChanged() Handles txtKonfTorNazwa.TextChanged
-        Dim typ As Zaleznosci.TypKostki = plpPulpit.ZaznaczonaKostka.Typ
-
-        If Not (
-            typ <> Zaleznosci.TypKostki.SygnalizatorPowtarzajacy AndAlso
-            typ <> Zaleznosci.TypKostki.PrzejazdKolejowy AndAlso
-            typ <> Zaleznosci.TypKostki.PrzyciskTor) Then Exit Sub
-
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Tor).Nazwa = txtKonfTorNazwa.Text
+    'Nazwa
+    Private Sub txtKonfNazwa_TextChanged() Handles txtKonfNazwa.TextChanged
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Tor).Nazwa = txtKonfNazwa.Text
         plpPulpit.Invalidate()
     End Sub
 
+    'Tor
+    Private Sub txtKonfTorPredkosc_TextChanged() Handles txtKonfTorPredkosc.TextChanged
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Tor).Predkosc = PobierzKrotkaLiczbeNieujemna(txtKonfTorPredkosc)
+    End Sub
+
     Private Sub txtKonfTorDlugosc_TextChanged() Handles txtKonfTorDlugosc.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Tor).Dlugosc = PobierzLiczbeRzeczywistaNieujemna(txtKonfTorDlugosc)
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Tor).Dlugosc = PobierzLiczbeRzeczywistaNieujemna(txtKonfTorDlugosc)
     End Sub
 
     Private Sub cbKonfTorZelektryfikowany_CheckedChanged() Handles cbKonfTorZelektryfikowany.CheckedChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Tor).Zelektryfikowany = cbKonfTorZelektryfikowany.Checked
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Tor).Zelektryfikowany = cbKonfTorZelektryfikowany.Checked
         plpPulpit.Invalidate()
     End Sub
 
     Private Sub cbKonfTorNiezajetosc_CheckedChanged() Handles cbKonfTorNiezajetosc.CheckedChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Tor).KontrolaNiezajetosci = cbKonfTorNiezajetosc.Checked
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Tor).KontrolaNiezajetosci = cbKonfTorNiezajetosc.Checked
         plpPulpit.Invalidate()
     End Sub
 
+    'Tor podwójny
+    Private Sub txtKonfTorPodwPredk1_TextChanged() Handles txtKonfTorPodwPredk1.TextChanged
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.TorPodwojny).Predkosc = PobierzKrotkaLiczbeNieujemna(txtKonfTorPodwPredk1)
+    End Sub
+
+    Private Sub txtKonfTorPodwPredk2_TextChanged() Handles txtKonfTorPodwPredk2.TextChanged
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.TorPodwojny).PredkoscDrugi = PobierzKrotkaLiczbeNieujemna(txtKonfTorPodwPredk2)
+    End Sub
+
+    Private Sub txtKonfTorPodwDlugosc1_TextChanged() Handles txtKonfTorPodwDlugosc1.TextChanged
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.TorPodwojny).Dlugosc = PobierzLiczbeRzeczywistaNieujemna(txtKonfTorPodwDlugosc1)
+    End Sub
+
+    Private Sub txtKonfTorPodwDlugosc2_TextChanged() Handles txtKonfTorPodwDlugosc2.TextChanged
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.TorPodwojny).DlugoscDrugi = PobierzLiczbeRzeczywistaNieujemna(txtKonfTorPodwDlugosc2)
+    End Sub
+
+    Private Sub cbKonfTorPodwElektr1_CheckedChanged() Handles cbKonfTorPodwElektr1.CheckedChanged
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.TorPodwojny).Zelektryfikowany = cbKonfTorPodwElektr1.Checked
+        plpPulpit.Invalidate()
+    End Sub
+
+    Private Sub cbKonfTorPodwElektr2_CheckedChanged() Handles cbKonfTorPodwElektr2.CheckedChanged
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.TorPodwojny).ZelektryfikowanyDrugi = cbKonfTorPodwElektr2.Checked
+        plpPulpit.Invalidate()
+    End Sub
+
+    Private Sub cbKonfTorPodwNiezajetosc1_CheckedChanged() Handles cbKonfTorPodwNiezajetosc1.CheckedChanged
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.TorPodwojny).KontrolaNiezajetosci = cbKonfTorPodwNiezajetosc1.Checked
+        plpPulpit.Invalidate()
+    End Sub
+
+    Private Sub cbKonfTorPodwNiezajetosc2_CheckedChanged() Handles cbKonfTorPodwNiezajetosc2.CheckedChanged
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.TorPodwojny).KontrolaNiezajetosciDrugi = cbKonfTorPodwNiezajetosc2.Checked
+        plpPulpit.Invalidate()
+    End Sub
 
     'Rozjazd
-    Private Sub txtKonfRozjazdNazwa_TextChanged() Handles txtKonfRozjazdNazwa.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).Nazwa = txtKonfRozjazdNazwa.Text
-        plpPulpit.Invalidate()
-    End Sub
-
-    Private Sub txtKonfRozjazdPredkWprost_TextChanged() Handles txtKonfRozjazdPredkWprost.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).PredkoscZasadnicza = PobierzKrotkaLiczbeNieujemna(txtKonfRozjazdPredkWprost)
-    End Sub
-
-    Private Sub txtKonfRozjazdPredkBok_TextChanged() Handles txtKonfRozjazdPredkBok.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).PredkoscBoczna = PobierzKrotkaLiczbeNieujemna(txtKonfRozjazdPredkBok)
-    End Sub
-
-    Private Sub txtKonfRozjazdDlugoscWprost_TextChanged() Handles txtKonfRozjazdDlugoscWprost.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).Dlugosc = PobierzLiczbeRzeczywistaNieujemna(txtKonfRozjazdDlugoscWprost)
-    End Sub
-
-    Private Sub txtKonfRozjazdDlugoscBok_TextChanged() Handles txtKonfRozjazdDlugoscBok.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).DlugoscBok = PobierzLiczbeRzeczywistaNieujemna(txtKonfRozjazdDlugoscBok)
-    End Sub
-
-    Private Sub cbKonfRozjazdElektrWprost_CheckedChanged() Handles cbKonfRozjazdElektrWprost.CheckedChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).Zelektryfikowany = cbKonfRozjazdElektrWprost.Checked
-        plpPulpit.Invalidate()
-    End Sub
-
-    Private Sub cbKonfRozjazdElektrBok_CheckedChanged() Handles cbKonfRozjazdElektrBok.CheckedChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZelektryfikowanyBok = cbKonfRozjazdElektrBok.Checked
-        plpPulpit.Invalidate()
-    End Sub
-
-    Private Sub cbKonfRozjazdNiezajetoscWprost_CheckedChanged() Handles cbKonfRozjazdNiezajetoscWprost.CheckedChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).KontrolaNiezajetosci = cbKonfRozjazdNiezajetoscWprost.Checked
-        plpPulpit.Invalidate()
-    End Sub
-
-    Private Sub cbKonfRozjazdNiezajetoscBok_CheckedChanged() Handles cbKonfRozjazdNiezajetoscBok.CheckedChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).KontrolaNiezajetosciBok = cbKonfRozjazdNiezajetoscBok.Checked
-        plpPulpit.Invalidate()
-    End Sub
-
-    Private Sub cbKonfRozjazdPrzycisk_CheckedChanged() Handles cbKonfRozjazdPrzycisk.CheckedChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).PosiadaPrzycisk = cbKonfRozjazdPrzycisk.Checked
-        plpPulpit.Invalidate()
-    End Sub
-
     Private Sub rbKonfRozjazdZasadniczyPlus_CheckedChanged() Handles rbKonfRozjazdZasadniczyPlus.CheckedChanged
         If rbKonfRozjazdZasadniczyPlus.Checked Then
-            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).KierunekZasadniczy = Zaleznosci.UstawienieRozjazduEnum.Wprost
+            DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).KierunekZasadniczy = Zaleznosci.UstawienieRozjazduEnum.Wprost
         End If
         plpPulpit.Invalidate()
     End Sub
 
     Private Sub rbKonfRozjazdZasadniczyMinus_CheckedChanged() Handles rbKonfRozjazdZasadniczyMinus.CheckedChanged
         If rbKonfRozjazdZasadniczyMinus.Checked Then
-            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).KierunekZasadniczy = Zaleznosci.UstawienieRozjazduEnum.Bok
+            DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).KierunekZasadniczy = Zaleznosci.UstawienieRozjazduEnum.Bok
         End If
         plpPulpit.Invalidate()
     End Sub
@@ -493,7 +478,7 @@
 
         Dim roz As Zaleznosci.Rozjazd = Nothing
         If PrzetworzZaznaczenieRozjazduZaleznego(cboKonfRozjazdWprost1, rbKonfRozjazdWprost1Plus, rbKonfRozjazdWprost1Minus, roz) Then
-            Dim rozZazn As Zaleznosci.Rozjazd = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd)
+            Dim rozZazn As Zaleznosci.Rozjazd = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd)
             rozZazn.ZaleznosciJesliWprost(0).RozjazdZalezny = roz
 
             ZdarzeniaWlaczone = False
@@ -507,7 +492,7 @@
 
         Dim roz As Zaleznosci.Rozjazd = Nothing
         If PrzetworzZaznaczenieRozjazduZaleznego(cboKonfRozjazdWprost2, rbKonfRozjazdWprost2Plus, rbKonfRozjazdWprost2Minus, roz) Then
-            Dim rozZazn As Zaleznosci.Rozjazd = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd)
+            Dim rozZazn As Zaleznosci.Rozjazd = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd)
             rozZazn.ZaleznosciJesliWprost(1).RozjazdZalezny = roz
 
             ZdarzeniaWlaczone = False
@@ -521,7 +506,7 @@
 
         Dim roz As Zaleznosci.Rozjazd = Nothing
         If PrzetworzZaznaczenieRozjazduZaleznego(cboKonfRozjazdBok1, rbKonfRozjazdBok1Plus, rbKonfRozjazdBok1Minus, roz) Then
-            Dim rozZazn As Zaleznosci.Rozjazd = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd)
+            Dim rozZazn As Zaleznosci.Rozjazd = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd)
             rozZazn.ZaleznosciJesliBok(0).RozjazdZalezny = roz
 
             ZdarzeniaWlaczone = False
@@ -535,7 +520,7 @@
 
         Dim roz As Zaleznosci.Rozjazd = Nothing
         If PrzetworzZaznaczenieRozjazduZaleznego(cboKonfRozjazdBok2, rbKonfRozjazdBok2Plus, rbKonfRozjazdBok2Minus, roz) Then
-            Dim rozZazn As Zaleznosci.Rozjazd = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd)
+            Dim rozZazn As Zaleznosci.Rozjazd = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd)
             rozZazn.ZaleznosciJesliBok(1).RozjazdZalezny = roz
 
             ZdarzeniaWlaczone = False
@@ -545,42 +530,42 @@
     End Sub
 
     Private Sub rbKonfRozjazdWprost1Plus_CheckedChanged() Handles rbKonfRozjazdWprost1Plus.CheckedChanged
-        If rbKonfRozjazdWprost1Plus.Checked Then DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(0).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Wprost
+        If rbKonfRozjazdWprost1Plus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(0).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Wprost
     End Sub
 
     Private Sub rbKonfRozjazdWprost1Minus_CheckedChanged() Handles rbKonfRozjazdWprost1Minus.CheckedChanged
-        If rbKonfRozjazdWprost1Minus.Checked Then DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(0).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Bok
+        If rbKonfRozjazdWprost1Minus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(0).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Bok
     End Sub
 
     Private Sub rbKonfRozjazdWprost2Plus_CheckedChanged() Handles rbKonfRozjazdWprost2Plus.CheckedChanged
-        If rbKonfRozjazdWprost2Plus.Checked Then DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(1).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Wprost
+        If rbKonfRozjazdWprost2Plus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(1).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Wprost
     End Sub
 
     Private Sub rbKonfRozjazdWprost2Minus_CheckedChanged() Handles rbKonfRozjazdWprost2Minus.CheckedChanged
-        If rbKonfRozjazdWprost2Minus.Checked Then DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(1).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Bok
+        If rbKonfRozjazdWprost2Minus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliWprost(1).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Bok
     End Sub
 
     Private Sub rbKonfRozjazdBok1Plus_CheckedChanged() Handles rbKonfRozjazdBok1Plus.CheckedChanged
-        If rbKonfRozjazdBok1Plus.Checked Then DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(0).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Wprost
+        If rbKonfRozjazdBok1Plus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(0).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Wprost
     End Sub
 
     Private Sub rbKonfRozjazdBok1Minus_CheckedChanged() Handles rbKonfRozjazdBok1Minus.CheckedChanged
-        If rbKonfRozjazdBok1Minus.Checked Then DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(0).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Bok
+        If rbKonfRozjazdBok1Minus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(0).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Bok
     End Sub
 
     Private Sub rbKonfRozjazdBok2Plus_CheckedChanged() Handles rbKonfRozjazdBok2Plus.CheckedChanged
-        If rbKonfRozjazdBok2Plus.Checked Then DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(1).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Wprost
+        If rbKonfRozjazdBok2Plus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(1).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Wprost
     End Sub
 
     Private Sub rbKonfRozjazdBok2Minus_CheckedChanged() Handles rbKonfRozjazdBok2Minus.CheckedChanged
-        If rbKonfRozjazdBok2Minus.Checked Then DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(1).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Bok
+        If rbKonfRozjazdBok2Minus.Checked Then DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd).ZaleznosciJesliBok(1).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Bok
     End Sub
 
 
     'Sygnalizacja
     Private Sub cboKonfSygnOdcinekNast_SelectedIndexChanged() Handles cboKonfSygnOdcinekNast.SelectedIndexChanged
         If cboKonfSygnOdcinekNast.SelectedItem Is Nothing Then Exit Sub
-        Dim sygn As Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu = TryCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu)
+        Dim sygn As Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu = TryCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu)
 
         If sygn IsNot Nothing Then
             Dim el As ObiektComboBox(Of Zaleznosci.OdcinekToru) = DirectCast(cboKonfSygnOdcinekNast.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru))
@@ -590,17 +575,12 @@
 
     Private Sub cboKonfSygnSygnNast_SelectedIndexChanged() Handles cboKonfSygnSygnNast.SelectedIndexChanged
         If cboKonfSygnSygnNast.SelectedItem Is Nothing Then Exit Sub
-        Dim sygn As Zaleznosci.SygnalizatorUzalezniony = TryCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorUzalezniony)
+        Dim sygn As Zaleznosci.SygnalizatorUzalezniony = TryCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorUzalezniony)
 
         If sygn IsNot Nothing Then
             Dim el As ObiektComboBox(Of Zaleznosci.Kostka) = DirectCast(cboKonfSygnSygnNast.SelectedItem, ObiektComboBox(Of Zaleznosci.Kostka))
             sygn.SygnalizatorNastepny = DirectCast(el.Wartosc, Zaleznosci.Sygnalizator)
         End If
-    End Sub
-
-    Private Sub cbKonfSygnPrzycisk_CheckedChanged() Handles cbKonfSygnPrzycisk.CheckedChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorManewrowy).PosiadaPrzycisk = cbKonfSygnPrzycisk.Checked
-        plpPulpit.Invalidate()
     End Sub
 
     Private Sub cbKonfSygnZiel_CheckedChanged() Handles cbKonfSygnZiel.CheckedChanged
@@ -652,10 +632,17 @@
     Private Sub cboKonfSygnPowtSygnObslugiwany_SelectedIndexChanged() Handles cboKonfSygnPowtSygnObslugiwany.SelectedIndexChanged
         If cboKonfSygnPowtSygnObslugiwany.SelectedItem Is Nothing Then Exit Sub
         Dim el As ObiektComboBox(Of Zaleznosci.Kostka) = DirectCast(cboKonfSygnPowtSygnObslugiwany.SelectedItem, ObiektComboBox(Of Zaleznosci.Kostka))
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy).SygnalizatorPowtarzany = DirectCast(el.Wartosc, Zaleznosci.SygnalizatorPolsamoczynny)
+        Dim sygnPowt As Zaleznosci.SygnalizatorPowtarzajacy = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy)
+        sygnPowt.SygnalizatorPowtarzany = DirectCast(el.Wartosc, Zaleznosci.SygnalizatorPolsamoczynny)
+        txtKonfNazwa.Text = sygnPowt.Nazwa
         plpPulpit.Invalidate()
     End Sub
 
+    'Posiadanie przycisku
+    Private Sub cbKonfPrzycisk_CheckedChanged() Handles cbKonfPrzycisk.CheckedChanged
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.IPrzycisk).PosiadaPrzycisk = cbKonfPrzycisk.Checked
+        plpPulpit.Invalidate()
+    End Sub
 
     'Przycisk
     Private Sub cboKonfPrzyciskTyp_SelectedIndexChanged() Handles cboKonfPrzyciskTyp.SelectedIndexChanged
@@ -664,10 +651,10 @@
         If el IsNot Nothing Then
             cboKonfPrzyciskObiekt.Items.Clear()
 
-            Select Case plpPulpit.ZaznaczonaKostka.Typ
+            Select Case plpPulpit.projZaznaczonaKostka.Typ
                 Case Zaleznosci.TypKostki.Przycisk
                     Dim typ As Zaleznosci.TypPrzyciskuEnum = DirectCast(el, ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuEnum))).Wartosc.Element
-                    Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Przycisk)
+                    Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Przycisk)
                     prz.TypPrzycisku = typ
 
                     Select Case typ
@@ -695,7 +682,7 @@
 
                 Case Zaleznosci.TypKostki.PrzyciskTor
                     Dim typ As Zaleznosci.TypPrzyciskuTorEnum = DirectCast(el, ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuTorEnum))).Wartosc.Element
-                    Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
+                    Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.PrzyciskTor)
                     prz.TypPrzycisku = typ
 
                     Select Case typ
@@ -719,10 +706,10 @@
         If cboKonfPrzyciskObiekt.SelectedItem Is Nothing Then Exit Sub
 
         Dim zazn As Object = cboKonfPrzyciskObiekt.SelectedItem
-        Select Case plpPulpit.ZaznaczonaKostka.Typ
+        Select Case plpPulpit.projZaznaczonaKostka.Typ
 
             Case Zaleznosci.TypKostki.Przycisk
-                Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Przycisk)
+                Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Przycisk)
 
                 Select Case prz.TypPrzycisku
                     Case Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegu, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego
@@ -743,7 +730,7 @@
                 End Select
 
             Case Zaleznosci.TypKostki.PrzyciskTor
-                Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
+                Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.PrzyciskTor)
 
                 Select Case prz.TypPrzycisku
                     Case Zaleznosci.TypPrzyciskuTorEnum.JazdaSygnalizatorPolsamoczynny, Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorPolsamoczynny
@@ -762,14 +749,14 @@
 
     'Napis
     Private Sub txtKonfNapisTekst_TextChanged() Handles txtKonfNapisTekst.TextChanged
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Napis).Tekst = txtKonfNapisTekst.Text
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Napis).Tekst = txtKonfNapisTekst.Text
         plpPulpit.Invalidate()
     End Sub
 
     Private Sub txtKonfNapisRozmiar_TextChanged() Handles txtKonfNapisRozmiar.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Napis).Rozmiar = PobierzLiczbeRzeczywistaWZakresie(txtKonfNapisRozmiar, ROZMIAR_CZCIONKI_MIN, ROZMIAR_CZCIONKI_MAX)
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Napis).Rozmiar = PobierzLiczbeRzeczywistaWZakresie(txtKonfNapisRozmiar, ROZMIAR_CZCIONKI_MIN, ROZMIAR_CZCIONKI_MAX)
         plpPulpit.Invalidate()
     End Sub
 
@@ -777,21 +764,21 @@
     'Kierunek
     Private Sub rbKonfKierWyjazdLewo_CheckedChanged() Handles rbKonfKierWyjazdLewo.CheckedChanged
         If rbKonfKierWyjazdLewo.Checked Then
-            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Lewo
+            DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Lewo
             plpPulpit.Invalidate()
         End If
     End Sub
 
     Private Sub rbKonfKierWyjazdPrawo_CheckedChanged() Handles rbKonfKierWyjazdPrawo.CheckedChanged
         If rbKonfKierWyjazdPrawo.Checked Then
-            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Prawo
+            DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Kierunek).KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Prawo
             plpPulpit.Invalidate()
         End If
     End Sub
 
     Private Sub cboKonfKierStawnosc_SelectedIndexChanged() Handles cboKonfKierStawnosc.SelectedIndexChanged
         If cboKonfKierStawnosc.SelectedItem Is Nothing Then Exit Sub
-        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek).Stawnosc =
+        DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Kierunek).Stawnosc =
             DirectCast(cboKonfKierStawnosc.SelectedItem, ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.StawnoscSBL))).Wartosc.Element
     End Sub
 
@@ -800,12 +787,16 @@
     Private Sub PokazPanelKonf()
         Dim nowePanele As List(Of Panel) = Nothing
 
-        If plpPulpit.ZaznaczonaKostka IsNot Nothing Then
+        If plpPulpit.projZaznaczonaKostka IsNot Nothing Then
             ZdarzeniaWlaczone = False
 
-            Select Case plpPulpit.ZaznaczonaKostka.Typ
-                Case Zaleznosci.TypKostki.Tor, Zaleznosci.TypKostki.Zakret, Zaleznosci.TypKostki.PrzejazdKolejowy
+            Select Case plpPulpit.projZaznaczonaKostka.Typ
+                Case Zaleznosci.TypKostki.Tor, Zaleznosci.TypKostki.Zakret
                     nowePanele = PokazKonfTor()
+                Case Zaleznosci.TypKostki.ZakretPodwojny, Zaleznosci.TypKostki.Most
+                    nowePanele = PokazKonfTorPodwojny()
+                Case Zaleznosci.TypKostki.PrzejazdKolejowy
+                    nowePanele = PokazKonfPrzejazd()
                 Case Zaleznosci.TypKostki.RozjazdLewo, Zaleznosci.TypKostki.RozjazdPrawo
                     nowePanele = PokazKonfRozjazd()
                 Case Zaleznosci.TypKostki.SygnalizatorManewrowy, Zaleznosci.TypKostki.SygnalizatorSamoczynny, Zaleznosci.TypKostki.SygnalizatorPolsamoczynny, Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
@@ -841,45 +832,60 @@
     End Sub
 
     Private Sub PokazKonfAdres()
-        Dim adr As Zaleznosci.IAdres = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.IAdres)
+        Dim adr As Zaleznosci.IAdres = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.IAdres)
         txtKonfAdres.Text = adr.Adres.ToString
     End Sub
 
-    Private Sub PokazKonfTor(pokazNazwe As Boolean)
-        Dim tor As Zaleznosci.Tor = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Tor)
+    Private Sub PokazKonfNazwa(Optional wlaczony As Boolean = True)
+        Dim tor As Zaleznosci.Tor = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Tor)
+        txtKonfNazwa.Text = tor.Nazwa
+        txtKonfNazwa.Enabled = wlaczony
+    End Sub
 
-        If pokazNazwe Then
-            txtKonfTorNazwa.Text = tor.Nazwa
-            txtKonfTorNazwa.Enabled = True
-        Else
-            txtKonfTorNazwa.Text = ""
-            txtKonfTorNazwa.Enabled = False
-        End If
+    Private Sub PokazKonfTorPodwojny(tor As Zaleznosci.TorPodwojny)
+        txtKonfTorPodwPredk1.Text = tor.Predkosc.ToString
+        txtKonfTorPodwPredk2.Text = tor.PredkoscDrugi.ToString
+        txtKonfTorPodwDlugosc1.Text = tor.Dlugosc.ToString
+        txtKonfTorPodwDlugosc2.Text = tor.DlugoscDrugi.ToString
+        cbKonfTorPodwElektr1.Checked = tor.Zelektryfikowany
+        cbKonfTorPodwElektr2.Checked = tor.ZelektryfikowanyDrugi
+        cbKonfTorPodwNiezajetosc1.Checked = tor.KontrolaNiezajetosci
+        cbKonfTorPodwNiezajetosc2.Checked = tor.KontrolaNiezajetosciDrugi
+    End Sub
 
-        txtKonfTorPredkosc.Text = tor.PredkoscZasadnicza.ToString()
+    Private Sub PokazKonfTor(tor As Zaleznosci.Tor)
+        txtKonfTorPredkosc.Text = tor.Predkosc.ToString()
         txtKonfTorDlugosc.Text = tor.Dlugosc.ToString()
         cbKonfTorZelektryfikowany.Checked = tor.Zelektryfikowany
         cbKonfTorNiezajetosc.Checked = tor.KontrolaNiezajetosci
     End Sub
 
     Private Function PokazKonfTor() As List(Of Panel)
-        PokazKonfTor(plpPulpit.ZaznaczonaKostka.Typ <> Zaleznosci.TypKostki.PrzejazdKolejowy)
+        Dim tor As Zaleznosci.Tor = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Tor)
+        PokazKonfNazwa()
+        PokazKonfTor(tor)
+        Return New List(Of Panel) From {pnlKonfNazwa, pnlKonfTor}
+    End Function
+
+    Private Function PokazKonfTorPodwojny() As List(Of Panel)
+        Dim podw As Zaleznosci.TorPodwojny = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.TorPodwojny)
+        PokazKonfTorPodwojny(podw)
+        Return New List(Of Panel) From {pnlKonfTorPodwojny}
+    End Function
+
+    Private Function PokazKonfPrzejazd() As List(Of Panel)
+        Dim prz As Zaleznosci.PrzejazdKolejowoDrogowyKostka = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.PrzejazdKolejowoDrogowyKostka)
+        PokazKonfTor(prz)
         Return New List(Of Panel) From {pnlKonfTor}
     End Function
 
     Private Function PokazKonfRozjazd() As List(Of Panel)
-        Dim roz As Zaleznosci.Rozjazd = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Rozjazd)
+        Dim roz As Zaleznosci.Rozjazd = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Rozjazd)
         PokazKonfAdres()
-        txtKonfRozjazdNazwa.Text = roz.Nazwa
-        txtKonfRozjazdPredkWprost.Text = roz.PredkoscZasadnicza.ToString
-        txtKonfRozjazdPredkBok.Text = roz.PredkoscBoczna.ToString
-        txtKonfRozjazdDlugoscWprost.Text = roz.Dlugosc.ToString
-        txtKonfRozjazdDlugoscBok.Text = roz.DlugoscBok.ToString
-        cbKonfRozjazdElektrWprost.Checked = roz.Zelektryfikowany
-        cbKonfRozjazdElektrBok.Checked = roz.ZelektryfikowanyBok
-        cbKonfRozjazdNiezajetoscWprost.Checked = roz.KontrolaNiezajetosci
-        cbKonfRozjazdNiezajetoscBok.Checked = roz.KontrolaNiezajetosciBok
-        cbKonfRozjazdPrzycisk.Checked = roz.PosiadaPrzycisk
+        PokazKonfNazwa()
+        PokazKonfTorPodwojny(roz)
+        PokazKonfPosiadaPrzycisk(roz)
+
         If roz.KierunekZasadniczy = Zaleznosci.UstawienieRozjazduEnum.Wprost Then
             rbKonfRozjazdZasadniczyPlus.Checked = True
         Else
@@ -901,13 +907,17 @@
         If roz.ZaleznosciJesliBok(0).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Wprost Then rbKonfRozjazdBok1Plus.Checked = True Else rbKonfRozjazdBok1Minus.Checked = True
         If roz.ZaleznosciJesliBok(1).Konfiguracja = Zaleznosci.UstawienieRozjazduEnum.Wprost Then rbKonfRozjazdBok2Plus.Checked = True Else rbKonfRozjazdBok2Minus.Checked = True
 
-        Return New List(Of Panel) From {pnlKonfAdres, pnlKonfRozjazd}
+        Return New List(Of Panel) From {pnlKonfAdres, pnlKonfNazwa, pnlKonfTorPodwojny, pnlKonfPosiadaPrzycisk, pnlKonfRozjazd}
     End Function
+
+    Private Sub PokazKonfPosiadaPrzycisk(przycisk As Zaleznosci.IPrzycisk)
+        cbKonfPrzycisk.Checked = przycisk.PosiadaPrzycisk
+    End Sub
 
     Private Sub PokazKonfSygnOdcinki()
         cboKonfSygnOdcinekNast.Items.Clear()
 
-        Dim sygn As Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu = TryCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu)
+        Dim sygn As Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu = TryCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu)
         If sygn Is Nothing Then Exit Sub
 
         Dim odcinki As IEnumerable(Of Zaleznosci.OdcinekToru) = plpPulpit.Pulpit.OdcinkiTorow.OrderBy(Function(t) t.Nazwa)
@@ -919,11 +929,12 @@
     End Sub
 
     Private Function PokazKonfSygn() As List(Of Panel)
-        Dim sygn As Zaleznosci.Sygnalizator = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Sygnalizator)
-        Dim panele As New List(Of Panel) From {pnlKonfAdres, pnlKonfTor}
+        Dim sygn As Zaleznosci.Sygnalizator = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Sygnalizator)
+        Dim panele As New List(Of Panel) From {pnlKonfAdres, pnlKonfNazwa, pnlKonfTor}
 
         PokazKonfAdres()
-        PokazKonfTor(True)
+        PokazKonfNazwa()
+        PokazKonfTor(sygn)
 
         If sygn.Typ <> Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy Then
             panele.Add(pnlKonfSygnOdcNast)
@@ -941,14 +952,14 @@
         End If
 
         If sygn.Typ = Zaleznosci.TypKostki.SygnalizatorManewrowy Then
-            panele.Add(pnlKonfSygnPrzycisk)
-            Dim tm As Zaleznosci.SygnalizatorManewrowy = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorManewrowy)
-            cbKonfSygnPrzycisk.Checked = tm.PosiadaPrzycisk
+            panele.Add(pnlKonfPosiadaPrzycisk)
+            Dim tm As Zaleznosci.SygnalizatorManewrowy = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorManewrowy)
+            PokazKonfPosiadaPrzycisk(tm)
         End If
 
         If sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Then
             panele.Add(pnlKonfSygnSwiatla)
-            Dim sw As Zaleznosci.DostepneSwiatlaEnum = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny).DostepneSwiatla
+            Dim sw As Zaleznosci.DostepneSwiatlaEnum = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny).DostepneSwiatla
             cbKonfSygnZiel.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.Zielone) <> 0
             cbKonfSygnPomGor.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.PomaranczoweGora) <> 0
             cbKonfSygnCzer.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.Czerwone) <> 0
@@ -963,10 +974,11 @@
     End Function
 
     Private Function PokazKonfSygnPowt() As List(Of Panel)
-        Dim sygn As Zaleznosci.SygnalizatorPowtarzajacy = CType(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy)
+        Dim sygn As Zaleznosci.SygnalizatorPowtarzajacy = CType(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy)
 
         PokazKonfAdres()
-        PokazKonfTor(False)
+        PokazKonfNazwa(False)
+        PokazKonfTor(sygn)
 
         Select Case sygn.Kolejnosc
             Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Pierwszy
@@ -982,25 +994,25 @@
         cboKonfSygnPowtSygnObslugiwany.Items.AddRange(sygnalizatory)
         ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfSygnPowtSygnObslugiwany, sygn.SygnalizatorPowtarzany)
 
-        Return New List(Of Panel) From {pnlKonfAdres, pnlKonfTor, pnlKonfSygnPowt}
+        Return New List(Of Panel) From {pnlKonfAdres, pnlKonfNazwa, pnlKonfTor, pnlKonfSygnPowt}
     End Function
 
     Private Function PokazKonfPrzycisk() As List(Of Panel)
         cboKonfPrzyciskTyp.Items.Clear()
         Dim panele As New List(Of Panel)
 
-        Select Case plpPulpit.ZaznaczonaKostka.Typ
+        Select Case plpPulpit.projZaznaczonaKostka.Typ
             Case Zaleznosci.TypKostki.Przycisk
-                Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Przycisk)
+                Dim prz As Zaleznosci.Przycisk = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Przycisk)
                 cboKonfPrzyciskTyp.Items.AddRange(LISTA_TYP_PRZYCISKU)
                 ZaznaczElement(cboKonfPrzyciskTyp, TYP_PRZYCISKU(prz.TypPrzycisku))
 
             Case Zaleznosci.TypKostki.PrzyciskTor
-                Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.PrzyciskTor)
+                Dim prz As Zaleznosci.PrzyciskTor = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.PrzyciskTor)
                 cboKonfPrzyciskTyp.Items.AddRange(LISTA_TYP_PRZYCISKU_TOR)
                 ZaznaczElement(cboKonfPrzyciskTyp, TYP_PRZYCISKU_TOR(prz.TypPrzycisku))
 
-                PokazKonfTor(False)
+                PokazKonfTor(prz)
                 panele.Add(pnlKonfTor)
         End Select
 
@@ -1009,7 +1021,7 @@
     End Function
 
     Private Function PokazKonfNapis() As List(Of Panel)
-        Dim napis As Zaleznosci.Napis = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Napis)
+        Dim napis As Zaleznosci.Napis = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Napis)
 
         txtKonfNapisTekst.Text = napis.Tekst
         txtKonfNapisRozmiar.Text = napis.Rozmiar.ToString
@@ -1017,9 +1029,10 @@
     End Function
 
     Private Function PokazKonfKier() As List(Of Panel)
-        Dim kierunek As Zaleznosci.Kierunek = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Kierunek)
+        Dim kierunek As Zaleznosci.Kierunek = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.Kierunek)
 
-        PokazKonfTor(True)
+        PokazKonfNazwa()
+        PokazKonfTor(kierunek)
 
         If kierunek.KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Lewo Then
             rbKonfKierWyjazdLewo.Checked = True
@@ -1028,7 +1041,7 @@
         End If
         ZaznaczElement(cboKonfKierStawnosc, STAWNOSC_SBL(kierunek.Stawnosc))
 
-        Return New List(Of Panel) From {pnlKonfTor, pnlKonfKier}
+        Return New List(Of Panel) From {pnlKonfNazwa, pnlKonfTor, pnlKonfKier}
     End Function
 
     'Inne
@@ -1110,7 +1123,7 @@
     End Sub
 
     Private Sub UstawDostepneSwiatlo(cb As CheckBox, kolor As Zaleznosci.DostepneSwiatlaEnum)
-        Dim sygn As Zaleznosci.SygnalizatorPolsamoczynny = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny)
+        Dim sygn As Zaleznosci.SygnalizatorPolsamoczynny = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny)
         If cb.Checked Then
             sygn.DostepneSwiatla = sygn.DostepneSwiatla Or kolor
         Else
@@ -1120,7 +1133,9 @@
 
     Private Sub UstawKolejnoscSygnalizatoraPowtarzajacego(rb As RadioButton, kolejnosc As Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego)
         If rb.Checked Then
-            DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy).Kolejnosc = kolejnosc
+            Dim sygnPowt As Zaleznosci.SygnalizatorPowtarzajacy = DirectCast(plpPulpit.projZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy)
+            sygnPowt.Kolejnosc = kolejnosc
+            txtKonfNazwa.Text = sygnPowt.Nazwa
             plpPulpit.Invalidate()
         End If
     End Sub
@@ -1154,7 +1169,7 @@
             txtOdcinekOpis.Text = odcinek.Opis.ToString
             UstawAktywnoscPolOdcinkow(True)
         End If
-        plpPulpit.projZaznaczonyOdcinek = odcinek
+        plpPulpit.ZaznaczonyOdcinek = odcinek
         ZdarzeniaWlaczone = True
     End Sub
 
@@ -1164,7 +1179,7 @@
     End Sub
 
     Private Sub btnOdcinekUsun_Click() Handles btnOdcinekUsun.Click
-        Dim odcinek As Zaleznosci.OdcinekToru = plpPulpit.projZaznaczonyOdcinek
+        Dim odcinek As Zaleznosci.OdcinekToru = plpPulpit.ZaznaczonyOdcinek
         If odcinek Is Nothing Then Exit Sub
 
         Dim pyt As String = "Czy usunąć odcinek torów"
@@ -1179,7 +1194,7 @@
     Private Sub txtOdcinekAdres_TextChanged() Handles txtOdcinekAdres.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim odc As Zaleznosci.OdcinekToru = plpPulpit.projZaznaczonyOdcinek
+        Dim odc As Zaleznosci.OdcinekToru = plpPulpit.ZaznaczonyOdcinek
         If odc IsNot Nothing Then
             odc.Adres = PobierzKrotkaLiczbeNieujemna(txtOdcinekAdres)
             ZaznaczonyOdcinekNaLiscie.SubItems(0).Text = odc.Adres.ToString
@@ -1189,7 +1204,7 @@
     Private Sub txtOdcinekNazwa_TextChanged() Handles txtOdcinekNazwa.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim odc As Zaleznosci.OdcinekToru = plpPulpit.projZaznaczonyOdcinek
+        Dim odc As Zaleznosci.OdcinekToru = plpPulpit.ZaznaczonyOdcinek
         If odc IsNot Nothing Then
             odc.Nazwa = txtOdcinekNazwa.Text
             ZaznaczonyOdcinekNaLiscie.SubItems(1).Text = odc.Nazwa
@@ -1199,19 +1214,19 @@
     Private Sub txtOdcinekOpis_TextChanged() Handles txtOdcinekOpis.TextChanged
         If Not ZdarzeniaWlaczone Then Exit Sub
 
-        Dim odc As Zaleznosci.OdcinekToru = plpPulpit.projZaznaczonyOdcinek
+        Dim odc As Zaleznosci.OdcinekToru = plpPulpit.ZaznaczonyOdcinek
         If odc IsNot Nothing Then
             odc.Opis = txtOdcinekOpis.Text
         End If
     End Sub
 
     Private Sub OdswiezListeOdcinkowTorow()
-        Dim odcinek As Zaleznosci.OdcinekToru = plpPulpit.projZaznaczonyOdcinek
+        Dim odcinek As Zaleznosci.OdcinekToru = plpPulpit.ZaznaczonyOdcinek
         lvOdcinki.Items.Clear()
         ZaznaczonyOdcinekNaLiscie = Nothing
 
         For Each o As Zaleznosci.OdcinekToru In plpPulpit.Pulpit.OdcinkiTorow
-            Dim lvi As New ListViewItem(New String() {o.Adres.ToString, o.Nazwa.ToString, o.KostkiTory.Count.ToString()}) With {
+            Dim lvi As New ListViewItem(New String() {o.Adres.ToString, o.Nazwa.ToString, o.LiczbaTorow.ToString()}) With {
                 .Tag = o
             }
             If o Is odcinek Then
@@ -1238,7 +1253,7 @@
         For i As Integer = 0 To lvOdcinki.Items.Count - 1
             lvi = lvOdcinki.Items(i)
             Dim o As Zaleznosci.OdcinekToru = DirectCast(lvi.Tag, Zaleznosci.OdcinekToru)
-            lvi.SubItems(2).Text = o.KostkiTory.Count.ToString()
+            lvi.SubItems(2).Text = o.LiczbaTorow.ToString()
         Next
     End Sub
 
@@ -2098,7 +2113,7 @@
 
 #Region "Pulpit"
 
-    Private Sub plpPulpit_ZmianaZaznaczeniaKostki(kostka As Zaleznosci.Kostka) Handles plpPulpit.ZmianaZaznaczeniaKostki
+    Private Sub plpPulpit_projZmianaZaznaczeniaKostki(kostka As Zaleznosci.Kostka) Handles plpPulpit.projZmianaZaznaczeniaKostki
         PokazPanelKonf()
     End Sub
 
@@ -2150,7 +2165,7 @@
         Dim kostki As New List(Of ObiektComboBox(Of Zaleznosci.Kostka))
 
         plpPulpit.Pulpit.PrzeiterujKostki(Sub(x, y, k)
-                                              If sprawdzanie(k) AndAlso (Not pominZaznaczony Or k IsNot plpPulpit.ZaznaczonaKostka) AndAlso k IsNot obiektUnikany Then
+                                              If sprawdzanie(k) AndAlso (Not pominZaznaczony Or k IsNot plpPulpit.projZaznaczonaKostka) AndAlso k IsNot obiektUnikany Then
                                                   kostki.Add(New ObiektComboBox(Of Zaleznosci.Kostka)(k, nazwa(k)))
                                               End If
                                           End Sub)

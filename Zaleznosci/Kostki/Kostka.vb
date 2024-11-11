@@ -20,7 +20,9 @@ Public MustInherit Class Kostka
         {TypKostki.Napis, Function() New Napis},
         {TypKostki.SygnalizatorPowtarzajacy, Function() New SygnalizatorPowtarzajacy},
         {TypKostki.SygnalizatorOstrzegawczyPrzejazdowy, Function() New SygnalizatorOstrzegawczyPrzejazdowy},
-        {TypKostki.PrzejazdKolejowy, Function() New PrzejazdKolejowoDrogowyKostka}
+        {TypKostki.PrzejazdKolejowy, Function() New PrzejazdKolejowoDrogowyKostka},
+        {TypKostki.ZakretPodwojny, Function() New ZakretPodwojny},
+        {TypKostki.Most, Function() New Most}
     }
 
     Public ReadOnly Property Typ As TypKostki
@@ -53,14 +55,6 @@ Public MustInherit Class Kostka
 
     Public Shared Function CzyKierunek(k As Kostka) As Boolean
         Return TypeOf k Is Kierunek
-    End Function
-
-    Public Shared Function CzyTorBezRozjazdu(k As Kostka) As Boolean
-        Return TypeOf k Is Tor AndAlso TypeOf k IsNot Rozjazd
-    End Function
-
-    Public Shared Function CzyTor(k As Kostka) As Boolean
-        Return TypeOf k Is Tor OrElse TypeOf k Is TorKoniec
     End Function
 
     Public Sub New(typ As TypKostki)
@@ -147,4 +141,6 @@ Public Enum TypKostki
     SygnalizatorPowtarzajacy = 13
     SygnalizatorOstrzegawczyPrzejazdowy = 14
     PrzejazdKolejowy = 15
+    ZakretPodwojny = 16
+    Most = 17
 End Enum

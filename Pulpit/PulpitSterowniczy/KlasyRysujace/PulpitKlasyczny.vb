@@ -15,6 +15,7 @@
     Private Const TOR_ELEKTR_ROZJAZD As Single = 2.0F * TOR_ELEKTR                  'skrócona współrzędna końca linii elektryfikacji na rozjeździe
     Private Const TOR_KONC_DLUGOSC As Single = 0.27F       'długość toru na kostce z końcem
     Private Const TOR_KONC_SZEROKOSC As Single = 0.5F      'szerokość odcinka prostopadłego na kostce z końcem
+    Private Const TOR_PODMOST_DLUGOSC As Single = 1.0F / 3.0F   'długość toru pod mostem
     Private Const SZCZELINA_MARGINES_POZIOM As Single = 0.1F    'margines szczeliny w poziomie
     Private Const SZCZEL_MARG_POZIOM_ZAKRET As Single = 0.05F   'margines szczeliny w poziomie toru ukośnego
     Private Const SZCZEL_MARG_POZIOM_ROZJ As Single = 0.08F     'margines szczeliny w poziomie toru bocznego rozjazdu, na końcu przylegającym do toru prostego
@@ -134,13 +135,16 @@
         {Zaleznosci.TypKostki.Przycisk, Sub(k) RysujPrzyciskZwykly(CType(k, Zaleznosci.Przycisk))},
         {Zaleznosci.TypKostki.PrzyciskTor, Sub(k) RysujPrzyciskTor(CType(k, Zaleznosci.PrzyciskTor))},
         {Zaleznosci.TypKostki.Kierunek, Sub(k) RysujKierunek(CType(k, Zaleznosci.Kierunek))},
-        {Zaleznosci.TypKostki.Napis, Sub(k) RysujKostkeNapis(CType(k, Zaleznosci.Napis))}
+        {Zaleznosci.TypKostki.Napis, Sub(k) RysujKostkeNapis(CType(k, Zaleznosci.Napis))},
+        {Zaleznosci.TypKostki.ZakretPodwojny, Sub(k) RysujZakretPodwojny(CType(k, Zaleznosci.ZakretPodwojny))},
+        {Zaleznosci.TypKostki.Most, Sub(k) RysujMost(CType(k, Zaleznosci.Most))}
     }
 
     Protected urz As IUrzadzenieRysujace(Of TOlowek, TPedzel, TMacierz, TCzcionka)
-    Private pedzelToru As TPedzel
-    Private pedzelSzczelinyWprost As TPedzel
-    Private pedzelSzczelinyBok As TPedzel
+    Private pedzelToruPierwszy As TPedzel
+    Private pedzelToruDrugi As TPedzel
+    Private pedzelSzczelinyPierwszy As TPedzel
+    Private pedzelSzczelinyDrugi As TPedzel
     Private obrot As Integer
     Private glownaTransformacja As TMacierz
     Private trybProjektowy As Boolean
@@ -282,7 +286,8 @@
 
         urz.WypelnijProstokat(PEDZEL_TLO_KOSTKI, 0, 0, ps.Pulpit.Szerokosc, ps.Pulpit.Wysokosc)
 
-        pedzelToru = PEDZEL_TOR_WOLNY
+        pedzelToruPierwszy = PEDZEL_TOR_WOLNY
+        pedzelToruDrugi = PEDZEL_TOR_WOLNY
         trybProjektowy = ps.TrybProjektowy
 
         If ps.RysujKrawedzieKostek Then
@@ -380,7 +385,7 @@
 
         Select Case ps.projDodatkoweObiekty
             Case RysujDodatkoweObiekty.OdcinkiTorow
-                UstawKolorToru(kostka, ps.projZaznaczonyOdcinek)
+                UstawKolorToruDlaOdcinka(kostka, ps.ZaznaczonyOdcinek)
             Case RysujDodatkoweObiekty.Liczniki
                 UstawKolorToruDlaLicznika(kostka, ps.projZaznaczonyLicznik)
             Case RysujDodatkoweObiekty.Przejazdy
@@ -389,13 +394,17 @@
                 UstawKolorToruDlaPrzejazduAutomatyzacja(kostka, ps.projZaznaczonyPrzejazdAutomatyzacja)
         End Select
 
+        If ps.MozliwoscZaznaczeniaOdcinka Then
+            UstawKolorToruDlaOdcinkaTrybDzialania(kostka, ps.ZaznaczonyOdcinek)
+        End If
+
         urz.TransformacjaResetuj()
         urz.TransformacjaObroc(kostka.Obrot, POL, POL)
         urz.TransformacjaPrzesun(x, y)
         urz.TransformacjaDolacz(glownaTransformacja)
         obrot = kostka.Obrot
 
-        Dim zaznaczona As Boolean = kostka Is ps.ZaznaczonaKostka AndAlso ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic AndAlso (ps.TrybProjektowy Or ps.MozliwoscZaznaczeniaToru)
+        Dim zaznaczona As Boolean = ps.TrybProjektowy AndAlso kostka Is ps.projZaznaczonaKostka AndAlso ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
         If zaznaczona Then
             Dim polKrawedzi As Single = KRAWEDZ_SZER * POL
             Dim rozm As Single = 1.0F - KRAWEDZ_SZER
@@ -407,18 +416,18 @@
     End Sub
 
     Private Sub RysujTorProsty(tor As Zaleznosci.Tor, rysujNazwe As Boolean)
-        RysujTor(tor.RysowanieDodatkowychTrojkatow, 1.0F)
-        If tor.KontrolaNiezajetosci Then RysujSzczelineToru()
-        If tor.Zelektryfikowany Then RysujProstaLinieElektryfikacji()
+        RysujTor(pedzelToruPierwszy, tor.RysowanieDodatkowychTrojkatow, 1.0F)
+        If tor.KontrolaNiezajetosci Then RysujSzczelineToru(pedzelSzczelinyPierwszy)
+        If tor.Zelektryfikowany Then RysujProstaLinieElektryfikacji(CzyObrocicObiekty)
         If rysujNazwe Then RysujNazweDolKostki(tor.Nazwa)
     End Sub
 
-    Private Sub RysujProstaLinieElektryfikacji(Optional dlugosc As Single = 1.0F)
-        Dim y As Single = If(CzyObrocicObiekty(), 1.0F - TOR_ELEKTR, TOR_ELEKTR)
+    Private Sub RysujProstaLinieElektryfikacji(czyObrocic As Boolean, Optional dlugosc As Single = 1.0F)
+        Dim y As Single = If(czyObrocic, 1.0F - TOR_ELEKTR, TOR_ELEKTR)
         urz.RysujLinie(PEDZEL_KRAWEDZ, KRAWEDZ_SZER, 0.0F, y, dlugosc, y)
     End Sub
 
-    Private Sub RysujTor(dodatkoweTrojkaty As Zaleznosci.DodatkoweTrojkatyTor, dlugosc As Single)
+    Private Sub RysujTor(pedzel As TPedzel, dodatkoweTrojkaty As Zaleznosci.DodatkoweTrojkatyTor, dlugosc As Single)
         Dim punkty As New List(Of PointF)
 
         If (dodatkoweTrojkaty And Zaleznosci.DodatkoweTrojkatyTor.LewoGora) <> 0 Then
@@ -449,46 +458,48 @@
             punkty.Add(New PointF(dlugosc, POL - TOR_SZEROKOSC / 2))
         End If
 
-        urz.WypelnijFigure(pedzelToru, punkty.ToArray)
+        urz.WypelnijFigure(pedzel, punkty.ToArray)
     End Sub
 
-    Private Sub RysujSzczelineToru()
+    Private Sub RysujSzczelineToru(pedzel As TPedzel, Optional dlugosc As Single = 1.0F)
         If Not rysujSzczeliny Then Exit Sub
 
-        urz.WypelnijProstokat(pedzelSzczelinyWprost, SZCZELINA_MARGINES_POZIOM, POL - TOR_SZEROKOSC / 2.0F + SZCZELINA_MARGINES_PION, 1.0F - 2.0F * SZCZELINA_MARGINES_POZIOM, TOR_SZEROKOSC - 2.0F * SZCZELINA_MARGINES_PION)
+        urz.WypelnijProstokat(pedzel, SZCZELINA_MARGINES_POZIOM, POL - TOR_SZEROKOSC / 2.0F + SZCZELINA_MARGINES_PION, dlugosc - 2.0F * SZCZELINA_MARGINES_POZIOM, TOR_SZEROKOSC - 2.0F * SZCZELINA_MARGINES_PION)
     End Sub
 
     Private Sub RysujKoniecToru(dodatkoweTrojkaty As Zaleznosci.DodatkoweTrojkatyTorKoniec)
-        RysujTor(CType(dodatkoweTrojkaty, Zaleznosci.DodatkoweTrojkatyTor), TOR_KONC_DLUGOSC)
-        urz.WypelnijProstokat(pedzelToru, TOR_KONC_DLUGOSC - DODATKOWY_MARGINES, POL - TOR_KONC_SZEROKOSC / 2, TOR_SZEROKOSC, TOR_KONC_SZEROKOSC)
+        RysujTor(pedzelToruPierwszy, CType(dodatkoweTrojkaty, Zaleznosci.DodatkoweTrojkatyTor), TOR_KONC_DLUGOSC)
+        urz.WypelnijProstokat(pedzelToruPierwszy, TOR_KONC_DLUGOSC - DODATKOWY_MARGINES, POL - TOR_KONC_SZEROKOSC / 2, TOR_SZEROKOSC, TOR_KONC_SZEROKOSC)
     End Sub
 
     Private Sub RysujTorUkosny(zakret As Zaleznosci.Zakret)
-        RysujZakret(zakret)
-        If zakret.KontrolaNiezajetosci Then RysujSzczelineZakretu(pedzelSzczelinyWprost)
-        If zakret.Zelektryfikowany Then RysujUkosnaLinieElektryfikacji(False, False)
+        RysujZakret(pedzelToruPierwszy, zakret.PrzytnijZakret)
+        If zakret.KontrolaNiezajetosci Then RysujSzczelineZakretu(pedzelSzczelinyPierwszy)
+        If zakret.Zelektryfikowany Then RysujUkosnaLinieElektryfikacji(KonfiguracjaElektryfikacjiUkosnej.Brak)
         RysujNazwe(zakret.Nazwa, TEKST_POZ_X, TEKST_POZ_Y)
     End Sub
 
-    Private Sub RysujUkosnaLinieElektryfikacji(rozjLewo As Boolean, rozjPrawo As Boolean)
+    Private Sub RysujUkosnaLinieElektryfikacji(ust As KonfiguracjaElektryfikacjiUkosnej)
         Dim x1, y1, x2, y2 As Single
 
-        If rozjLewo Then
-            x1 = If(CzyObrocicObiekty(), 1.0F, TOR_ELEKTR_ROZJAZD)
+        If ust = KonfiguracjaElektryfikacjiUkosnej.RozjazdLewo Then
+            Dim obrot As Boolean = CzyObrocicObiekty()
+            x1 = If(obrot, 1.0F, TOR_ELEKTR_ROZJAZD)
             y1 = 1.0F - TOR_ELEKTR
-            x2 = If(CzyObrocicObiekty(), 1.0F - TOR_ELEKTR, TOR_ELEKTR)
+            x2 = If(obrot, 1.0F - TOR_ELEKTR, TOR_ELEKTR)
             y2 = 1.0F
 
-        ElseIf rozjPrawo Then
-            Dim przesun As Boolean = obrot = 0 Or obrot = 3 * KAT_PROSTY
+        ElseIf ust = KonfiguracjaElektryfikacjiUkosnej.RozjazdPrawo Then
+            Dim przesun As Boolean = CzyObrocicObiekty((obrot + 3 * KAT_PROSTY) Mod (4 * KAT_PROSTY))
             x1 = 1.0F
             y1 = If(przesun, 1.0F - TOR_ELEKTR, TOR_ELEKTR)
             x2 = 1.0F - TOR_ELEKTR
             y2 = If(przesun, 1.0F, TOR_ELEKTR_ROZJAZD)
 
         Else
+            Dim dodObrot As Boolean = ust = KonfiguracjaElektryfikacjiUkosnej.DodatkowyObrot
             x1 = 1.0F
-            y1 = If(CzyObrocicObiekty(), 1.0F - TOR_ELEKTR, TOR_ELEKTR)
+            y1 = If(CzyObrocicObiekty() Xor dodObrot, 1.0F - TOR_ELEKTR, TOR_ELEKTR)
             x2 = y1
             y2 = 1.0F
 
@@ -497,13 +508,13 @@
         urz.RysujLinie(PEDZEL_KRAWEDZ, KRAWEDZ_SZER, x1, y1, x2, y2)
     End Sub
 
-    Private Sub RysujZakret(zakret As Zaleznosci.IZakret)
+    Private Sub RysujZakret(pedzel As TPedzel, przycinanie As Zaleznosci.PrzycinanieZakretu)
         Dim punkty As New List(Of PointF)
         Dim dodatkowePrzesuniecie As Single
 
-        If (zakret.PrzytnijZakret And Zaleznosci.PrzycinanieZakretu.Prawo) <> 0 Then
+        If (przycinanie And Zaleznosci.PrzycinanieZakretu.Prawo) <> 0 Then
             dodatkowePrzesuniecie = 0.0F
-            If (zakret.PrzytnijZakret And Zaleznosci.PrzycinanieZakretu.UmniejszPrawo) <> 0 Then dodatkowePrzesuniecie = DODATKOWY_MARGINES
+            If (przycinanie And Zaleznosci.PrzycinanieZakretu.UmniejszPrawo) <> 0 Then dodatkowePrzesuniecie = DODATKOWY_MARGINES
 
             punkty.Add(New PointF(1 - TOR_TROJKAT - dodatkowePrzesuniecie, POL - TOR_SZEROKOSC / 2.0F + dodatkowePrzesuniecie))
             punkty.Add(New PointF(1, POL - TOR_SZEROKOSC / 2.0F + dodatkowePrzesuniecie))
@@ -514,9 +525,9 @@
         punkty.Add(New PointF(1, POL + TOR_SZER_ZAKRET / 2.0F))
         punkty.Add(New PointF(POL + TOR_SZER_ZAKRET / 2.0F, 1))
 
-        If (zakret.PrzytnijZakret And Zaleznosci.PrzycinanieZakretu.Dol) <> 0 Then
+        If (przycinanie And Zaleznosci.PrzycinanieZakretu.Dol) <> 0 Then
             dodatkowePrzesuniecie = 0.0F
-            If (zakret.PrzytnijZakret And Zaleznosci.PrzycinanieZakretu.UmniejszDol) <> 0 Then dodatkowePrzesuniecie = DODATKOWY_MARGINES
+            If (przycinanie And Zaleznosci.PrzycinanieZakretu.UmniejszDol) <> 0 Then dodatkowePrzesuniecie = DODATKOWY_MARGINES
 
             punkty.Add(New PointF(POL - TOR_SZEROKOSC / 2.0F + dodatkowePrzesuniecie, 1))
             punkty.Add(New PointF(POL - TOR_SZEROKOSC / 2.0F + dodatkowePrzesuniecie, 1 - TOR_TROJKAT - dodatkowePrzesuniecie))
@@ -524,7 +535,22 @@
             punkty.Add(New PointF(POL - TOR_SZER_ZAKRET / 2.0F, 1))
         End If
 
-        urz.WypelnijFigure(pedzelToru, punkty.ToArray)
+        urz.WypelnijFigure(pedzel, punkty.ToArray)
+    End Sub
+
+    Private Sub RysujZakretPodwojny(zakret As Zaleznosci.ZakretPodwojny)
+        RysujZakret(pedzelToruPierwszy, zakret.PrzytnijZakret)
+        If zakret.KontrolaNiezajetosci Then RysujSzczelineZakretu(pedzelSzczelinyPierwszy)
+        If zakret.Zelektryfikowany Then RysujUkosnaLinieElektryfikacji(KonfiguracjaElektryfikacjiUkosnej.Brak)
+
+        Dim transformacja As TMacierz = urz.TransformacjaPobierz
+        urz.TransformacjaResetuj()
+        urz.TransformacjaObroc(2 * KAT_PROSTY, POL, POL)
+        urz.TransformacjaDolacz(transformacja)
+
+        RysujZakret(pedzelToruDrugi, zakret.PrzytnijZakretDrugi)
+        If zakret.KontrolaNiezajetosciDrugi Then RysujSzczelineZakretu(pedzelSzczelinyDrugi)
+        If zakret.ZelektryfikowanyDrugi Then RysujUkosnaLinieElektryfikacji(KonfiguracjaElektryfikacjiUkosnej.DodatkowyObrot)
     End Sub
 
     Private Sub RysujSzczelineZakretu(pedzel As TPedzel, Optional margines_lewy As Single = SZCZEL_MARG_POZIOM_ZAKRET, Optional margines_prawy As Single = SZCZEL_MARG_POZIOM_ZAKRET)
@@ -584,12 +610,15 @@
 
     Private Sub RysujRozjazdLewo(rozjazd As Zaleznosci.RozjazdLewo)
         Dim dodMargines As Single = TEKST_POZ_X
-        RysujZakret(rozjazd)
-        RysujTor(rozjazd.RysowanieDodatkowychTrojkatow, 1)
-        If rozjazd.KontrolaNiezajetosci Then RysujSzczelineToru()
-        If rozjazd.KontrolaNiezajetosciBok Then RysujSzczelineZakretu(pedzelSzczelinyBok, margines_prawy:=SZCZEL_MARG_POZIOM_ROZJ)
-        If rozjazd.Zelektryfikowany Then RysujProstaLinieElektryfikacji(If(CzyObrocicObiekty(), TOR_ELEKTR_ROZJAZD, 1.0F))
-        If rozjazd.ZelektryfikowanyBok Then RysujUkosnaLinieElektryfikacji(True, False)
+        RysujZakret(pedzelToruPierwszy, rozjazd.PrzytnijZakret)
+        RysujTor(pedzelToruPierwszy, rozjazd.RysowanieDodatkowychTrojkatow, 1)
+        If rozjazd.KontrolaNiezajetosci Then RysujSzczelineToru(pedzelSzczelinyPierwszy)
+        If rozjazd.KontrolaNiezajetosciDrugi Then RysujSzczelineZakretu(pedzelSzczelinyDrugi, margines_prawy:=SZCZEL_MARG_POZIOM_ROZJ)
+        If rozjazd.Zelektryfikowany Then
+            Dim obrocic As Boolean = CzyObrocicObiekty()
+            RysujProstaLinieElektryfikacji(obrocic, If(obrocic, TOR_ELEKTR_ROZJAZD, 1.0F))
+        End If
+        If rozjazd.ZelektryfikowanyDrugi Then RysujUkosnaLinieElektryfikacji(KonfiguracjaElektryfikacjiUkosnej.RozjazdLewo)
         If rozjazd.PosiadaPrzycisk Then
             RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, PEDZEL_PRZYCISK_CZARNY, 2)
             dodMargines += 2.0F * SYGN_TLO_PROMIEN
@@ -606,18 +635,21 @@
 
     Private Sub RysujRozjazdPrawo(rozjazd As Zaleznosci.RozjazdPrawo)
         Dim dodMargines As Single = TEKST_POZ_X
-        RysujTor(rozjazd.RysowanieDodatkowychTrojkatow, 1)
+        RysujTor(pedzelToruPierwszy, rozjazd.RysowanieDodatkowychTrojkatow, 1)
         Dim transformacja As TMacierz = urz.TransformacjaPobierz
         urz.TransformacjaResetuj()
         urz.TransformacjaObroc(3 * KAT_PROSTY, POL, POL)
         urz.TransformacjaDolacz(transformacja)
-        RysujZakret(rozjazd)
-        If rozjazd.KontrolaNiezajetosciBok Then RysujSzczelineZakretu(pedzelSzczelinyBok, margines_lewy:=SZCZEL_MARG_POZIOM_ROZJ)
-        If rozjazd.ZelektryfikowanyBok Then RysujUkosnaLinieElektryfikacji(False, True)
+        RysujZakret(pedzelToruPierwszy, rozjazd.PrzytnijZakret)
+        If rozjazd.KontrolaNiezajetosciDrugi Then RysujSzczelineZakretu(pedzelSzczelinyDrugi, margines_lewy:=SZCZEL_MARG_POZIOM_ROZJ)
+        If rozjazd.ZelektryfikowanyDrugi Then RysujUkosnaLinieElektryfikacji(KonfiguracjaElektryfikacjiUkosnej.RozjazdPrawo)
         urz.TransformacjaResetuj()
         urz.TransformacjaDolacz(transformacja)
-        If rozjazd.KontrolaNiezajetosci Then RysujSzczelineToru()
-        If rozjazd.Zelektryfikowany Then RysujProstaLinieElektryfikacji(If(Not CzyObrocicObiekty(), TOR_ELEKTR_ROZJAZD, 1.0F))
+        If rozjazd.KontrolaNiezajetosci Then RysujSzczelineToru(pedzelSzczelinyPierwszy)
+        If rozjazd.Zelektryfikowany Then
+            Dim obrocic As Boolean = CzyObrocicObiekty()
+            RysujProstaLinieElektryfikacji(obrocic, If(Not obrocic, TOR_ELEKTR_ROZJAZD, 1.0F))
+        End If
         If rozjazd.PosiadaPrzycisk Then
             RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, PEDZEL_PRZYCISK_CZARNY, 2, 2)
             dodMargines += 2.0F * SYGN_TLO_PROMIEN
@@ -826,6 +858,40 @@
         RysujTrojkatKierunku(kier, Zaleznosci.KierunekWyjazduSBL.Prawo, Zaleznosci.UstawionyKierunekSBL.Prawo)
     End Sub
 
+    Private Function PobierzDodatkoweTrojkatyMostTor1(dodatkoweTrojkaty As Zaleznosci.DodatkoweTrojkatyTor) As Zaleznosci.DodatkoweTrojkatyTor
+        Dim wynik As Zaleznosci.DodatkoweTrojkatyTor = 0
+        If (dodatkoweTrojkaty And Zaleznosci.DodatkoweTrojkatyTor.PrawoDol) <> 0 Then wynik = wynik Or Zaleznosci.DodatkoweTrojkatyTor.LewoGora
+        If (dodatkoweTrojkaty And Zaleznosci.DodatkoweTrojkatyTor.PrawoGora) <> 0 Then wynik = wynik Or Zaleznosci.DodatkoweTrojkatyTor.LewoDol
+        Return wynik
+    End Function
+
+    Private Function PobierzDodatkoweTrojkatyMostTor2(dodatkoweTrojkaty As Zaleznosci.DodatkoweTrojkatyTor) As Zaleznosci.DodatkoweTrojkatyTor
+        Return dodatkoweTrojkaty And (Zaleznosci.DodatkoweTrojkatyTor.LewoDol Or Zaleznosci.DodatkoweTrojkatyTor.LewoGora)
+    End Function
+
+    Private Sub RysujMost(most As Zaleznosci.Most)
+        Dim obrocic As Boolean = CzyObrocicObiekty(obrot + KAT_PROSTY)
+
+        RysujTorProsty(most, False)
+
+        Dim transformacja As TMacierz = urz.TransformacjaPobierz
+        urz.TransformacjaResetuj()
+        urz.TransformacjaObroc(1 * KAT_PROSTY, POL, POL)
+        urz.TransformacjaDolacz(transformacja)
+
+        RysujTor(pedzelToruDrugi, PobierzDodatkoweTrojkatyMostTor1(most.RysowanieDodatkowychTrojkatowDrugi), TOR_PODMOST_DLUGOSC)
+        If most.KontrolaNiezajetosciDrugi Then RysujSzczelineToru(pedzelSzczelinyDrugi, TOR_PODMOST_DLUGOSC)
+        If most.ZelektryfikowanyDrugi Then RysujProstaLinieElektryfikacji(obrocic, TOR_PODMOST_DLUGOSC)
+
+        urz.TransformacjaResetuj()
+        urz.TransformacjaObroc(3 * KAT_PROSTY, POL, POL)
+        urz.TransformacjaDolacz(transformacja)
+
+        RysujTor(pedzelToruDrugi, PobierzDodatkoweTrojkatyMostTor2(most.RysowanieDodatkowychTrojkatowDrugi), TOR_PODMOST_DLUGOSC)
+        If most.KontrolaNiezajetosciDrugi Then RysujSzczelineToru(pedzelSzczelinyDrugi, TOR_PODMOST_DLUGOSC)
+        If most.ZelektryfikowanyDrugi Then RysujProstaLinieElektryfikacji(Not obrocic, TOR_PODMOST_DLUGOSC)
+    End Sub
+
     Private Sub RysujKostkeNapis(napis As Zaleznosci.Napis)
         If String.IsNullOrWhiteSpace(napis.Tekst) Then urz.WypelnijKolo(PEDZEL_KOLKO_TEKST, KOLKO_TEKST_POZ, KOLKO_TEKST_POZ, KOLKO_TEKST_PROMIEN)
         Dim czcionka As TCzcionka = urz.UtworzCzcionke(NAZWA_CZCIONKI, napis.Rozmiar, True)
@@ -887,60 +953,102 @@
     End Sub
 
     Private Function CzyObrocicObiekty() As Boolean
-        Return obrot >= 2 * KAT_PROSTY And obrot < 4 * KAT_PROSTY
+        Return CzyObrocicObiekty(obrot)
     End Function
 
-    Private Sub UstawKolorToru(k As Zaleznosci.Kostka, zazn As Zaleznosci.OdcinekToru)
-        pedzelToru = PEDZEL_TOR_WOLNY
-        Dim t As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
+    Private Function CzyObrocicObiekty(obr As Single) As Boolean
+        Return obr >= 2 * KAT_PROSTY And obr < 4 * KAT_PROSTY
+    End Function
+
+    Private Function InicjalizujPedzleIPobierzTor(k As Zaleznosci.Kostka) As Zaleznosci.Tor
+        pedzelToruPierwszy = PEDZEL_TOR_WOLNY
+        pedzelToruDrugi = PEDZEL_TOR_WOLNY
+        Return TryCast(k, Zaleznosci.Tor)
+    End Function
+
+    Private Sub UstawKolorToruDlaOdcinkaTrybDzialania(k As Zaleznosci.Kostka, zazn As Zaleznosci.OdcinekToru)
+        Dim t As Zaleznosci.Tor = InicjalizujPedzleIPobierzTor(k)
+
+        If zazn IsNot Nothing AndAlso t IsNot Nothing Then
+            Dim p As Zaleznosci.TorPodwojnyNiezalezny = TryCast(k, Zaleznosci.TorPodwojnyNiezalezny)
+
+            If t.NalezyDoOdcinka Is zazn Then pedzelToruPierwszy = PEDZEL_TOR_TEN_ODCINEK
+            If p?.NalezyDoOdcinkaDrugi Is zazn Then pedzelToruDrugi = PEDZEL_TOR_TEN_ODCINEK
+        End If
+    End Sub
+
+    Private Sub UstawKolorToruDlaOdcinka(k As Zaleznosci.Kostka, zazn As Zaleznosci.OdcinekToru)
+        Dim t As Zaleznosci.Tor = InicjalizujPedzleIPobierzTor(k)
 
         If t IsNot Nothing Then
-            If zazn IsNot Nothing AndAlso t.NalezyDoOdcinka Is zazn Then
-                pedzelToru = PEDZEL_TOR_TEN_ODCINEK
-            ElseIf t.NalezyDoOdcinka Is Nothing Then
-                pedzelToru = PEDZEL_TOR_NIEPRZYPISANY
+            Dim p As Zaleznosci.TorPodwojnyNiezalezny = TryCast(k, Zaleznosci.TorPodwojnyNiezalezny)
+
+            If zazn IsNot Nothing Then
+                If t.NalezyDoOdcinka Is zazn Then pedzelToruPierwszy = PEDZEL_TOR_TEN_ODCINEK
+                If p?.NalezyDoOdcinkaDrugi Is zazn Then pedzelToruDrugi = PEDZEL_TOR_TEN_ODCINEK
             End If
+
+            If t.NalezyDoOdcinka Is Nothing Then pedzelToruPierwszy = PEDZEL_TOR_NIEPRZYPISANY
+            If p IsNot Nothing AndAlso p.NalezyDoOdcinkaDrugi Is Nothing Then pedzelToruDrugi = PEDZEL_TOR_NIEPRZYPISANY
         End If
     End Sub
 
     Private Sub UstawKolorToruDlaLicznika(k As Zaleznosci.Kostka, zazn As Zaleznosci.ParaLicznikowOsi)
-        pedzelToru = PEDZEL_TOR_WOLNY
-        Dim t As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
+        Dim t As Zaleznosci.Tor = InicjalizujPedzleIPobierzTor(k)
 
         If zazn IsNot Nothing AndAlso t IsNot Nothing Then
             If t.NalezyDoOdcinka IsNot Nothing Then
                 If t.NalezyDoOdcinka Is zazn.Odcinek1 Then
-                    pedzelToru = PEDZEL_TOR_TEN_ODCINEK
+                    pedzelToruPierwszy = PEDZEL_TOR_TEN_ODCINEK
                 ElseIf t.NalezyDoOdcinka Is zazn.Odcinek2 Then
-                    pedzelToru = PEDZEL_TOR_LICZNIK_ODCINEK_2
+                    pedzelToruPierwszy = PEDZEL_TOR_LICZNIK_ODCINEK_2
+                End If
+            End If
+
+            Dim p As Zaleznosci.TorPodwojnyNiezalezny = TryCast(k, Zaleznosci.TorPodwojnyNiezalezny)
+
+            If p?.NalezyDoOdcinkaDrugi IsNot Nothing Then
+                If p.NalezyDoOdcinkaDrugi Is zazn.Odcinek1 Then
+                    pedzelToruDrugi = PEDZEL_TOR_TEN_ODCINEK
+                ElseIf p.NalezyDoOdcinkaDrugi Is zazn.Odcinek2 Then
+                    pedzelToruDrugi = PEDZEL_TOR_LICZNIK_ODCINEK_2
                 End If
             End If
         End If
     End Sub
 
     Private Sub UstawKolorToruDlaPrzejazdu(k As Zaleznosci.Kostka, zazn As Zaleznosci.PrzejazdKolejowoDrogowy)
-        pedzelToru = PEDZEL_TOR_WOLNY
+        pedzelToruPierwszy = PEDZEL_TOR_WOLNY
         Dim p As Zaleznosci.PrzejazdKolejowoDrogowyKostka = TryCast(k, Zaleznosci.PrzejazdKolejowoDrogowyKostka)
 
         If p IsNot Nothing Then
             If zazn IsNot Nothing AndAlso p.NalezyDoPrzejazdu Is zazn Then
-                pedzelToru = PEDZEL_TOR_TEN_ODCINEK
+                pedzelToruPierwszy = PEDZEL_TOR_TEN_ODCINEK
             ElseIf p.NalezyDoPrzejazdu Is Nothing Then
-                pedzelToru = PEDZEL_TOR_NIEPRZYPISANY
+                pedzelToruPierwszy = PEDZEL_TOR_NIEPRZYPISANY
             End If
         End If
     End Sub
 
     Private Sub UstawKolorToruDlaPrzejazduAutomatyzacja(k As Zaleznosci.Kostka, zazn As Zaleznosci.PrzejazdAutomatyczneZamykanie)
-        pedzelToru = PEDZEL_TOR_WOLNY
-        Dim t As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
+        Dim t As Zaleznosci.Tor = InicjalizujPedzleIPobierzTor(k)
 
         If zazn IsNot Nothing AndAlso t IsNot Nothing Then
             If t.NalezyDoOdcinka IsNot Nothing Then
                 If t.NalezyDoOdcinka Is zazn.OdcinekWyjazd Then
-                    pedzelToru = PEDZEL_TOR_TEN_ODCINEK
+                    pedzelToruPierwszy = PEDZEL_TOR_TEN_ODCINEK
                 ElseIf t.NalezyDoOdcinka Is zazn.OdcinekPrzyjazd Then
-                    pedzelToru = PEDZEL_TOR_LICZNIK_ODCINEK_2
+                    pedzelToruPierwszy = PEDZEL_TOR_LICZNIK_ODCINEK_2
+                End If
+            End If
+
+            Dim p As Zaleznosci.TorPodwojnyNiezalezny = TryCast(k, Zaleznosci.TorPodwojnyNiezalezny)
+
+            If p?.NalezyDoOdcinkaDrugi IsNot Nothing Then
+                If p.NalezyDoOdcinkaDrugi Is zazn.OdcinekWyjazd Then
+                    pedzelToruDrugi = PEDZEL_TOR_TEN_ODCINEK
+                ElseIf p.NalezyDoOdcinkaDrugi Is zazn.OdcinekPrzyjazd Then
+                    pedzelToruDrugi = PEDZEL_TOR_LICZNIK_ODCINEK_2
                 End If
             End If
         End If
@@ -949,48 +1057,45 @@
     Private Sub UstawKolorSzczeliny(k As Zaleznosci.Kostka)
         If Not rysujSzczeliny Then Exit Sub
 
-        pedzelSzczelinyWprost = PEDZEL_SZCZELINA_WOLNY
-        pedzelSzczelinyBok = PEDZEL_SZCZELINA_WOLNY
+        pedzelSzczelinyPierwszy = PEDZEL_SZCZELINA_WOLNY
+        pedzelSzczelinyDrugi = PEDZEL_SZCZELINA_WOLNY
 
-        Dim pedzelUstawiony As Boolean = False
         Dim tor As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
 
         If tor IsNot Nothing Then
-            Dim roz As Zaleznosci.Rozjazd = TryCast(k, Zaleznosci.Rozjazd)
-            pedzelSzczelinyWprost = PobierzPedzelToruNiezwolnionego(tor.Zajetosc, pedzelUstawiony)
+            Dim podw As Zaleznosci.TorPodwojny = TryCast(k, Zaleznosci.TorPodwojny)
+            Dim rozprucie As Boolean = False
+            Dim ustawionaZwrotnica As Boolean = False
 
-            If roz IsNot Nothing Then
-                If Not pedzelUstawiony Then
-                    If roz.Rozprucie And wysokiStanMigania Then
-                        pedzelSzczelinyWprost = PEDZEL_SZCZELINA_ROZPRUCIE
-                    ElseIf roz.Stan = Zaleznosci.StanRozjazdu.Wprost Then
-                        pedzelSzczelinyWprost = PEDZEL_SZCZELINA_ZWROTNICA
-                    End If
+            If podw IsNot Nothing Then
+                Dim roz As Zaleznosci.Rozjazd = TryCast(k, Zaleznosci.Rozjazd)
+                Dim ustawionaZwrotnicaBok As Boolean = False
+
+                If roz IsNot Nothing Then
+                    rozprucie = roz.Rozprucie
+                    ustawionaZwrotnica = roz.Stan = Zaleznosci.StanRozjazdu.Wprost
+                    ustawionaZwrotnicaBok = roz.Stan = Zaleznosci.StanRozjazdu.Bok
                 End If
 
-                pedzelSzczelinyBok = PobierzPedzelToruNiezwolnionego(roz.ZajetoscBok, pedzelUstawiony)
-                If Not pedzelUstawiony Then
-                    If roz.Rozprucie And wysokiStanMigania Then
-                        pedzelSzczelinyBok = PEDZEL_SZCZELINA_ROZPRUCIE
-                    ElseIf roz.Stan = Zaleznosci.StanRozjazdu.Bok Then
-                        pedzelSzczelinyBok = PEDZEL_SZCZELINA_ZWROTNICA
-                    End If
-                End If
+                pedzelSzczelinyDrugi = PobierzPedzelSzczeliny(podw.ZajetoscDrugi, rozprucie, ustawionaZwrotnicaBok)
             End If
+
+            pedzelSzczelinyPierwszy = PobierzPedzelSzczeliny(tor.Zajetosc, rozprucie, ustawionaZwrotnica)
         End If
     End Sub
 
-    Private Function PobierzPedzelToruNiezwolnionego(zajetosc As Zaleznosci.ZajetoscToru, ByRef pedzelUstawiony As Boolean) As TPedzel
-        pedzelUstawiony = True
-
-        If zajetosc = Zaleznosci.ZajetoscToru.Zajety Then
+    Private Function PobierzPedzelSzczeliny(zajetosc As Zaleznosci.ZajetoscToru, rozprucie As Boolean, ustawionaZwrotnica As Boolean) As TPedzel
+        If rozprucie AndAlso wysokiStanMigania Then
+            Return PEDZEL_SZCZELINA_ROZPRUCIE
+        ElseIf zajetosc = Zaleznosci.ZajetoscToru.Zajety Then
             Return PEDZEL_SZCZELINA_ZAJETY
         ElseIf zajetosc = Zaleznosci.ZajetoscToru.PrzebiegUtwierdzony Or (zajetosc = Zaleznosci.ZajetoscToru.BlokadaNieustawiona And wysokiStanMigania) Then
             Return PEDZEL_SZCZELINA_UTWIERDZONY
+        ElseIf ustawionaZwrotnica Then
+            Return PEDZEL_SZCZELINA_ZWROTNICA
+        Else
+            Return PEDZEL_SZCZELINA_WOLNY
         End If
-
-        pedzelUstawiony = False
-        Return PEDZEL_SZCZELINA_WOLNY
     End Function
 
     Private Function ObliczWspolrzedneKierunku() As PointF()
@@ -1058,4 +1163,11 @@
 
         Return New PointF() {Aprim, Bprim, Cprim}
     End Function
+
+    Private Enum KonfiguracjaElektryfikacjiUkosnej
+        Brak
+        RozjazdLewo
+        RozjazdPrawo
+        DodatkowyObrot
+    End Enum
 End Class
