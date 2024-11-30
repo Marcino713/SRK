@@ -344,6 +344,23 @@
             RysujZaznaczenieLamp(ps.PoczatekZaznaczeniaLamp, ps.KoniecZaznaczeniaLamp)
         End If
 
+        If Not ps.TrybProjektowy AndAlso ps.DodatkoweObiekty = DodatkoweObiektyTrybDzialania.LicznikiOsi Then
+            Dim pedzel1, pedzel2 As TPedzel
+
+            For Each licznik As Zaleznosci.ParaLicznikowOsi In ps.Pulpit.LicznikiOsi
+                pedzel1 = PEDZEL_TOR_LICZNIK_ODCINEK_2
+                pedzel2 = PEDZEL_TOR_LICZNIK_ODCINEK_2
+
+                If ps.ZaznaczonyLicznikOsiAdres.HasValue Then
+                    If ps.ZaznaczonyLicznikOsiAdres.Value = licznik.Adres1 Then pedzel1 = PEDZEL_TOR_TEN_ODCINEK
+                    If ps.ZaznaczonyLicznikOsiAdres.Value = licznik.Adres2 Then pedzel2 = PEDZEL_TOR_TEN_ODCINEK
+                End If
+
+                RysujKolko(pedzel1, licznik.X1, licznik.Y1)
+                RysujKolko(pedzel2, licznik.X2, licznik.Y2)
+            Next
+        End If
+
         'Rysuj współrzędne
         If ps.RysujWspolrzedne Then
             urz.TransformacjaResetuj()
@@ -404,7 +421,7 @@
         urz.TransformacjaDolacz(glownaTransformacja)
         obrot = kostka.Obrot
 
-        Dim zaznaczona As Boolean = ps.TrybProjektowy AndAlso kostka Is ps.projZaznaczonaKostka AndAlso ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic
+        Dim zaznaczona As Boolean = kostka Is ps.ZaznaczonaKostka And ((ps.TrybProjektowy And ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic) Or ((Not ps.TrybProjektowy) And ps.MozliwoscZaznaczeniaKostki))
         If zaznaczona Then
             Dim polKrawedzi As Single = KRAWEDZ_SZER * POL
             Dim rozm As Single = 1.0F - KRAWEDZ_SZER
@@ -1073,8 +1090,8 @@
 
                 If roz IsNot Nothing Then
                     rozprucie = roz.Rozprucie
-                    ustawionaZwrotnica = roz.Stan = Zaleznosci.StanRozjazdu.Wprost
-                    ustawionaZwrotnicaBok = roz.Stan = Zaleznosci.StanRozjazdu.Bok
+                    ustawionaZwrotnica = (roz.Stan And Zaleznosci.StanRozjazdu.Wprost) <> 0
+                    ustawionaZwrotnicaBok = (roz.Stan And Zaleznosci.StanRozjazdu.Bok) <> 0
                 End If
 
                 pedzelSzczelinyDrugi = PobierzPedzelSzczeliny(podw.ZajetoscDrugi, rozprucie, ustawionaZwrotnicaBok)

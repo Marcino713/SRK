@@ -15,7 +15,7 @@
         Dim post As Zaleznosci.LaczonyPlikPosterunku = Nothing
 
         If cboPosterunek1.SelectedItem IsNot Nothing Then
-            post = DirectCast(cboPosterunek1.SelectedItem, ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)).Wartosc
+            post = DirectCast(cboPosterunek1.SelectedItem, Wspolne.ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)).Wartosc
         End If
 
         OdswiezListeTorow(cboTor1, post)
@@ -25,7 +25,7 @@
         Dim post As Zaleznosci.LaczonyPlikPosterunku = Nothing
 
         If cboPosterunek2.SelectedItem IsNot Nothing Then
-            post = DirectCast(cboPosterunek2.SelectedItem, ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)).Wartosc
+            post = DirectCast(cboPosterunek2.SelectedItem, Wspolne.ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)).Wartosc
         End If
 
         OdswiezListeTorow(cboTor2, post)
@@ -43,10 +43,10 @@
         End If
 
         DodawanePolaczenie = New Zaleznosci.LaczoneOdcinkiTorow() With {
-        .Posterunek1 = DirectCast(cboPosterunek1.SelectedItem, ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)).Wartosc,
-        .Posterunek2 = DirectCast(cboPosterunek2.SelectedItem, ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)).Wartosc,
-        .Tor1 = DirectCast(cboTor1.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru)).Wartosc,
-        .Tor2 = DirectCast(cboTor2.SelectedItem, ObiektComboBox(Of Zaleznosci.OdcinekToru)).Wartosc
+        .Posterunek1 = DirectCast(cboPosterunek1.SelectedItem, Wspolne.ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)).Wartosc,
+        .Posterunek2 = DirectCast(cboPosterunek2.SelectedItem, Wspolne.ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)).Wartosc,
+        .Tor1 = DirectCast(cboTor1.SelectedItem, Wspolne.ObiektComboBox(Of Zaleznosci.OdcinekToru)).Wartosc,
+        .Tor2 = DirectCast(cboTor2.SelectedItem, Wspolne.ObiektComboBox(Of Zaleznosci.OdcinekToru)).Wartosc
         }
 
         DialogResult = DialogResult.OK
@@ -61,7 +61,7 @@
         cbo.Items.Clear()
 
         For Each plik As Zaleznosci.LaczonyPlikPosterunku In polaczenia.LaczanePliki
-            cbo.Items.Add(New ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)(plik, plik.NazwaPosterunku))
+            cbo.Items.Add(New Wspolne.ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)(plik, plik.NazwaPosterunku))
         Next
     End Sub
 
@@ -70,7 +70,7 @@
         If posterunek Is Nothing Then Exit Sub
 
         For Each tor As Zaleznosci.OdcinekToru In posterunek.OdcinkiTorow
-            cbo.Items.Add(New ObiektComboBox(Of Zaleznosci.OdcinekToru)(tor, tor.Nazwa))
+            cbo.Items.Add(New Wspolne.ObiektComboBox(Of Zaleznosci.OdcinekToru)(tor, tor.Nazwa))
         Next
     End Sub
 End Class

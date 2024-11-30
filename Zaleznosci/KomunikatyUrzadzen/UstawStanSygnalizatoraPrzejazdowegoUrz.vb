@@ -9,7 +9,7 @@
 
     Public Property Stan As StanSygnalizatoraOstrzegawczegoPrzejazdowego
 
-    Protected Overrides Function ZapiszKomunikat() As UShort
+    Public Overrides Function ZapiszKomunikat() As UShort
         Dim stanSwiatel As UShort
 
         If Stan = StanSygnalizatoraOstrzegawczegoPrzejazdowego.PrzejazdZamkniety Then

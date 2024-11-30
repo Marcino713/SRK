@@ -24,7 +24,7 @@ Public Class wndKonfiguratorPolaczen
         ZaznaczonyPosterunek = Nothing
 
         If cboPosterunek.SelectedItem IsNot Nothing Then
-            ZaznaczonyPosterunek = DirectCast(cboPosterunek.SelectedItem, ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)).Wartosc
+            ZaznaczonyPosterunek = DirectCast(cboPosterunek.SelectedItem, Wspolne.ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)).Wartosc
         End If
 
         OdswiezPolaczenia()
@@ -89,7 +89,7 @@ Public Class wndKonfiguratorPolaczen
 
         For Each plik As Zaleznosci.LaczonyPlikPosterunku In polaczenia.LaczanePliki
             cboPosterunek.Items.Add(
-                New ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)(plik, plik.NazwaPosterunku)
+                New Wspolne.ObiektComboBox(Of Zaleznosci.LaczonyPlikPosterunku)(plik, plik.NazwaPosterunku)
                 )
         Next
     End Sub

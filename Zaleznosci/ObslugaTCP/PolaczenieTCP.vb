@@ -6,7 +6,7 @@ Friend Class PolaczenieTCP
     Private Const ROZMIAR_BLOKU_AES As Integer = 16
     Private Const CZEKANIE_ZAMKNIECIE_MS As Integer = 100
 
-    Friend Property AdresStacji As UShort
+    Friend Property AdresPosterunku As UShort
 
     Private _Stan As StanPolaczenia = StanPolaczenia.UstalanieKluczaSzyfrujacego
     Friend ReadOnly Property Stan As StanPolaczenia

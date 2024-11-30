@@ -9,7 +9,7 @@
 
     Public Property CzasZamykaniaMs As UShort
 
-    Protected Overrides Function ZapiszKomunikat() As UShort
+    Public Overrides Function ZapiszKomunikat() As UShort
         Return CzasZamykaniaMs
     End Function
 End Class

@@ -9,7 +9,7 @@
 
     Public Property Stan As StanSygnalizatoraManewrowego
 
-    Protected Overrides Function ZapiszKomunikat() As UShort
+    Public Overrides Function ZapiszKomunikat() As UShort
         Dim stanSwiatel As UShort
         Dim kolejnosc As Integer = If(Stan = StanSygnalizatoraManewrowego.BrakWyjazdu, 0, 1)
 

@@ -9,7 +9,7 @@
 
     Public Property Jasnosc As Byte
 
-    Protected Overrides Function ZapiszKomunikat() As UShort
+    Public Overrides Function ZapiszKomunikat() As UShort
         Return Jasnosc
     End Function
 End Class

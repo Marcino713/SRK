@@ -9,7 +9,7 @@
 
     Public Property Ustawienie As UstawienieRozjazduEnum
 
-    Protected Overrides Function ZapiszKomunikat() As UShort
+    Public Overrides Function ZapiszKomunikat() As UShort
         Return CUShort(Ustawienie)
     End Function
 End Class

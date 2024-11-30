@@ -9,7 +9,7 @@
 
     Public Property Wlaczony As Boolean
 
-    Protected Overrides Function ZapiszKomunikat() As UShort
+    Public Overrides Function ZapiszKomunikat() As UShort
         Return If(Wlaczony, 1US, 0US)
     End Function
 End Class

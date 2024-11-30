@@ -11,7 +11,7 @@
     Public Property Predkosc As PredkoscSygnalizatora
     Public Property KierunekPrzeciwny As Boolean
 
-    Protected Overrides Function ZapiszKomunikat() As UShort
+    Public Overrides Function ZapiszKomunikat() As UShort
         Dim stanSwiatel As UShort
 
         If Predkosc <> PredkoscSygnalizatora.Manewrowy AndAlso Predkosc <> PredkoscSygnalizatora.Zastepczy AndAlso Predkosc <> PredkoscSygnalizatora.V0 Then

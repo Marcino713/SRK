@@ -33,6 +33,7 @@
     End Sub
 End Class
 
+<Flags>
 Public Enum DostepneSwiatlaEnum
     Zielone = 1 << 0
     PomaranczoweGora = 1 << 1

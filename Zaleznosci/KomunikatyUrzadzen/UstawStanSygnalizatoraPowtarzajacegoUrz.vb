@@ -9,7 +9,7 @@
 
     Public Property PredkoscPowtarzana As PredkoscPowtarzanaSygnalizatora
 
-    Protected Overrides Function ZapiszKomunikat() As UShort
+    Public Overrides Function ZapiszKomunikat() As UShort
         Dim stanSwiatel As UShort
 
         Select Case PredkoscPowtarzana

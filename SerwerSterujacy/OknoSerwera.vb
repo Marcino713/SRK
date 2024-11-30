@@ -6,7 +6,9 @@ Public Class wndOknoSerwera
     Private WithEvents Serwer As New Zaleznosci.SerwerTCP
     Private WithEvents OknoPociagow As wndPociagi
     Private WithEvents OknoAdresyIp As wndListaAdresowIP
+    Private WithEvents OknoSymulatora As wndSymulator
     Private PosterunkiSlownik As New Dictionary(Of String, ListViewItem)
+    Private UrzadzenieSterujace As Zaleznosci.KomunikacjaZUrzadzeniami
 
     Private actZmianaCzasuPodlaczenia As Action(Of String, String, String) = AddressOf PokazZmianeCzasuPodlaczenia
     Private slockListaPosterunkow As New Object
@@ -29,7 +31,7 @@ Public Class wndOknoSerwera
         If Serwer.Uruchomiony Then
             If Wspolne.ZadajPytanie("Czy zamknąć okno? Spowoduje to zatrzymanie serwera.") = DialogResult.Yes Then
                 Serwer.Zatrzymaj()
-                Serwer.RozlaczZUrzadzeniami()
+                RozlaczZUrzadzeniami()
             Else
                 e.Cancel = True
             End If
@@ -101,10 +103,15 @@ Public Class wndOknoSerwera
     End Sub
 
     Private Sub btnUartPolacz_Click() Handles btnUartPolacz.Click
+        If OknoSymulatora IsNot Nothing Then Exit Sub
+
         Try
             spKomunikacja.PortName = txtUartPort.Text
             spKomunikacja.Open()
-            Serwer.PolaczZUrzadzeniami(spKomunikacja.BaseStream)
+            Dim urz As New Zaleznosci.UrzadzenieFizyczne
+            urz.Polacz(spKomunikacja.BaseStream)
+            UrzadzenieSterujace = urz
+            Serwer.UstawUrzadzenie(urz)
             PokazStanKontrolekUart()
         Catch
             Wspolne.PokazBlad("Nie udało się nawiązać połączenia z modułem UART.")
@@ -112,7 +119,7 @@ Public Class wndOknoSerwera
     End Sub
 
     Private Sub txtUartRozlacz_Click() Handles btnUartRozlacz.Click
-        Serwer.RozlaczZUrzadzeniami()
+        RozlaczZUrzadzeniami()
         PokazStanKontrolekUart()
     End Sub
 
@@ -134,6 +141,21 @@ Public Class wndOknoSerwera
         If Not Serwer.Uruchomiony And spKomunikacja.IsOpen Then
             Dim wnd As New wndKonfiguratorZwrotnic(Serwer)
             wnd.ShowDialog()
+        End If
+    End Sub
+
+    Private Sub btnSymulator_Click() Handles btnSymulator.Click
+        If Not Serwer.Uruchomiony Then Exit Sub
+
+        If OknoSymulatora Is Nothing Then
+            Dim urz As New UrzadzenieSymulator
+            UrzadzenieSterujace = urz
+            Serwer.UstawUrzadzenie(UrzadzenieSterujace)
+
+            OknoSymulatora = New wndSymulator(Serwer.PobierzPosterunki, urz)
+            OknoSymulatora.Show()
+        Else
+            OknoSymulatora.Focus()
         End If
     End Sub
 
@@ -176,12 +198,26 @@ Public Class wndOknoSerwera
         OknoAdresyIp = Nothing
     End Sub
 
+    Private Sub OknoSymulatora_FormClosed() Handles OknoSymulatora.FormClosed
+        OknoSymulatora = Nothing
+        Serwer.UstawUrzadzenie(Nothing)
+    End Sub
+
     Private Sub Serwer_UniewaznionoListePosterunkow() Handles Serwer.UniewaznionoListePosterunkow
         OdswiezPosterunki()
     End Sub
 
     Private Sub Serwer_ZmianaCzasuPodlaczenia(post As String, dataPodlaczenia As String, adresIp As String) Handles Serwer.ZmianaCzasuPodlaczenia
         Invoke(actZmianaCzasuPodlaczenia, post, dataPodlaczenia, adresIp)
+    End Sub
+
+    Private Sub RozlaczZUrzadzeniami()
+        Dim urz As Zaleznosci.UrzadzenieFizyczne = TryCast(UrzadzenieSterujace, Zaleznosci.UrzadzenieFizyczne)
+
+        If urz IsNot Nothing Then
+            urz.Rozlacz()
+            Serwer.UstawUrzadzenie(Nothing)
+        End If
     End Sub
 
     Private Sub PokazZmianeCzasuPodlaczenia(adres As String, data As String, adresIp As String)
@@ -245,6 +281,7 @@ Public Class wndOknoSerwera
         If Not serwerUruchomiony Then
             btnRozlacz.Enabled = False
             OknoPociagow?.Close()
+            OknoSymulatora?.ZamknijBezPytania()
         End If
 
         PokazStanKontrolekUart()

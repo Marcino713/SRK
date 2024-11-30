@@ -9,7 +9,7 @@
 
     Public Property CzasWypelnienia As UShort
 
-    Protected Overrides Function ZapiszKomunikat() As UShort
+    Public Overrides Function ZapiszKomunikat() As UShort
         Return CzasWypelnienia
     End Function
 End Class

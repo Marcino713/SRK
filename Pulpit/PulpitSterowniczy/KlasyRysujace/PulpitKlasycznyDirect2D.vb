@@ -6,6 +6,8 @@
     End Sub
 
     Friend Overrides Sub Rysuj(ps As PulpitSterowniczy, grp As Graphics)
-        MyBase.Rysuj(ps, grp)
+        SyncLock Me
+            MyBase.Rysuj(ps, grp)
+        End SyncLock
     End Sub
 End Class

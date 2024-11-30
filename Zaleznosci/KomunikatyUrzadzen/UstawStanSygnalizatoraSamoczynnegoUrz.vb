@@ -10,7 +10,7 @@
     Public Property WolneOdstepy As Integer
     Public Property Stawnosc As StawnoscSBL
 
-    Protected Overrides Function ZapiszKomunikat() As UShort
+    Public Overrides Function ZapiszKomunikat() As UShort
         Dim stanSwiatel As UShort
 
         If Stawnosc = StawnoscSBL.Dwustawna Then

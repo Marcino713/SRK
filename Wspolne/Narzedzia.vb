@@ -41,4 +41,11 @@
         If Not String.IsNullOrEmpty(nazwa) Then ozn &= " " & nazwa
         Return ozn
     End Function
+
+    Public Function CzyRozne(a As UShort?, b As UShort?) As Boolean
+        Return _
+            (a.HasValue And (Not b.HasValue)) OrElse
+            ((Not a.HasValue) And b.HasValue) OrElse
+            (a.HasValue AndAlso b.HasValue AndAlso a.Value <> b.Value)
+    End Function
 End Module

@@ -105,6 +105,48 @@
     <Compile Include="Pociagi.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Symulator\ListaZwrotnic.Designer.vb">
+      <DependentUpon>ListaZwrotnic.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Symulator\ListaZwrotnic.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Symulator\StanZwrotnic.Designer.vb">
+      <DependentUpon>StanZwrotnic.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Symulator\StanZwrotnic.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Symulator\Sygnalizator\Migacz.vb" />
+    <Compile Include="Symulator\Sygnalizator\PokazywaczSygnalizatora.Designer.vb">
+      <DependentUpon>PokazywaczSygnalizatora.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Symulator\Sygnalizator\PokazywaczSygnalizatora.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Symulator\StanSygnalizatorow.Designer.vb">
+      <DependentUpon>StanSygnalizatorow.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Symulator\StanSygnalizatorow.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Symulator\StanPulpitu.Designer.vb">
+      <DependentUpon>StanPulpitu.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Symulator\StanPulpitu.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Symulator\Sygnalizator\Sygnalizator.vb" />
+    <Compile Include="Symulator\Sygnalizator\SygnalizatorOstrzegawczyPrzejazdowy.vb" />
+    <Compile Include="Symulator\Sygnalizator\SygnalizatorPodstawowy.vb" />
+    <Compile Include="Symulator\Sygnalizator\SygnalizatorZeWskaznikami.vb" />
+    <Compile Include="Symulator\Symulator.Designer.vb">
+      <DependentUpon>Symulator.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Symulator\Symulator.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Symulator\UrzadzenieSymulator.vb" />
     <Compile Include="ZmianaNazwyPociagu.Designer.vb">
       <DependentUpon>ZmianaNazwyPociagu.vb</DependentUpon>
     </Compile>
@@ -132,6 +174,21 @@
     <EmbeddedResource Include="Pociagi.resx">
       <DependentUpon>Pociagi.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Symulator\ListaZwrotnic.resx">
+      <DependentUpon>ListaZwrotnic.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Symulator\StanSygnalizatorow.resx">
+      <DependentUpon>StanSygnalizatorow.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Symulator\StanZwrotnic.resx">
+      <DependentUpon>StanZwrotnic.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Symulator\StanPulpitu.resx">
+      <DependentUpon>StanPulpitu.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Symulator\Symulator.resx">
+      <DependentUpon>Symulator.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ZmianaNazwyPociagu.resx">
       <DependentUpon>ZmianaNazwyPociagu.vb</DependentUpon>
     </EmbeddedResource>
@@ -149,6 +206,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Pulpit\Pulpit.vbproj">
+      <Project>{5c815a91-c770-407f-8100-781475c4ce39}</Project>
+      <Name>Pulpit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Wspolne\Wspolne.vbproj">
       <Project>{2d8e9cdf-f079-428a-92d8-2449c514ff89}</Project>
       <Name>Wspolne</Name>

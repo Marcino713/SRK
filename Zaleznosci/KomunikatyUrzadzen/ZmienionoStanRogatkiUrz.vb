@@ -9,6 +9,9 @@
 
     Public Property Stan As StanRogatki
 
+    Public Sub New()
+    End Sub
+
     Public Sub New(br As BinaryReader)
         Stan = CType(Otworz(br), StanRogatki)
     End Sub

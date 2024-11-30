@@ -192,6 +192,7 @@
     <Compile Include="PunktCalkowity.vb" />
     <Compile Include="Urzadzenia\KomunikacjaZUrzadzeniami.vb" />
     <Compile Include="Urzadzenia\SygnalizatorPolsamoczynnyUrz.vb" />
+    <Compile Include="Urzadzenia\UrzadzenieFizyczne.vb" />
     <Compile Include="WersjaPliku.vb" />
     <Compile Include="Pulpit\Lampa.vb" />
     <Compile Include="Pulpit\ParaLicznikowOsi.vb" />

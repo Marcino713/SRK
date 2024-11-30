@@ -39,9 +39,9 @@ Public Class SerwerTCP
         End Set
     End Property
 
-    Private WithEvents PolaczenieUart As New KomunikacjaZUrzadzeniami
+    Private WithEvents PolaczenieUart As KomunikacjaZUrzadzeniami
     Private Posterunki As ObslugiwanyPosterunek()
-    Private KlienciPoAdresieStacji As New Dictionary(Of UShort, ObslugiwanyPosterunek)
+    Private KlienciPoAdresiePosterunku As New Dictionary(Of UShort, ObslugiwanyPosterunek)
     Private PociagiPoNumerze As New Dictionary(Of UInteger, Pociag)
     Private WszyscyKlienci As New List(Of PolaczenieTCP)
     Private SygnalizatoryPowtDlaSygnalizatoraPolsamoczynego As New Dictionary(Of UShort, List(Of SygnalizatorPowtarzajacy))
@@ -100,7 +100,7 @@ Public Class SerwerTCP
                     jasnosc = k.Jasnosci(i)
                     adr(i) = jasnosc.Adres
 
-                    PolaczenieUart.UstawJasnoscLampy(New UstawJasnoscLampyUrz() With {.AdresUrzadzenia = jasnosc.Adres, .Jasnosc = jasnosc.Jasnosc})
+                    PolaczenieUart?.UstawJasnoscLampy(New UstawJasnoscLampyUrz() With {.AdresPosterunku = pol.AdresPosterunku, .AdresUrzadzenia = jasnosc.Adres, .Jasnosc = jasnosc.Jasnosc})
                 Next
 
                 pol.WyslijKomunikat(New ZmienionoJasnoscLamp() With {.Adresy = adr})
@@ -125,7 +125,7 @@ Public Class SerwerTCP
 
                 Dim dod As DaneDodatkowePosterunku = Nothing
 
-                If DodatkoweDane.TryGetValue(pol.AdresStacji, dod) Then
+                If DodatkoweDane.TryGetValue(pol.AdresPosterunku, dod) Then
                     Dim odc As OdcinekToru = Nothing
 
                     If dod.OdcinkiTorow.TryGetValue(k.Adres, odc) AndAlso odc.LiczbaTorow > 0 Then
@@ -157,7 +157,7 @@ Public Class SerwerTCP
                     End If
                 End If
 
-                RaiseEvent OdebranoUstawKierunek(pol.AdresStacji, k)
+                RaiseEvent OdebranoUstawKierunek(pol.AdresPosterunku, k)
             End Sub
         ))
 
@@ -166,7 +166,7 @@ Public Class SerwerTCP
             Sub(pol, kom)
                 Dim k As PotwierdzKierunek = CType(kom, PotwierdzKierunek)
                 pol.WyslijKomunikat(New ZmienionoKierunek() With {.Adres = k.Adres, .Stan = ObecnyStanKierunku.Przyjazd})
-                RaiseEvent OdebranoPotwierdzKierunek(pol.AdresStacji, k)
+                RaiseEvent OdebranoPotwierdzKierunek(pol.AdresPosterunku, k)
             End Sub
         ))
 
@@ -186,14 +186,14 @@ Public Class SerwerTCP
                 Else
 
                     SyncLock slockRezerwacjaPosterunku
-                        KlienciPoAdresieStacji.TryGetValue(pol.AdresStacji, obs)
+                        KlienciPoAdresiePosterunku.TryGetValue(pol.AdresPosterunku, obs)
                     End SyncLock
 
                     If obs IsNot Nothing Then
                         Dim dod As DaneDodatkowePosterunku = Nothing
                         Dim odc As OdcinekToru = Nothing
 
-                        If DodatkoweDane.TryGetValue(pol.AdresStacji, dod) AndAlso dod.OdcinkiTorow.TryGetValue(k.AdresOdcinka, odc) Then
+                        If DodatkoweDane.TryGetValue(pol.AdresPosterunku, dod) AndAlso dod.OdcinkiTorow.TryGetValue(k.AdresOdcinka, odc) Then
                             SyncLock slockPociagi
                                 If Not PociagiPoNumerze.ContainsKey(k.NrPociagu) Then
                                     stan = StanDodaniaPociagu.Dobrze
@@ -245,7 +245,7 @@ Public Class SerwerTCP
                     Dim poc As Pociag = Nothing
 
                     If PociagiPoNumerze.TryGetValue(k.NrPociagu, poc) Then
-                        If poc.SterujacyPosterunek IsNot Nothing AndAlso poc.SterujacyPosterunek.Adres = pol.AdresStacji Then
+                        If poc.SterujacyPosterunek IsNot Nothing AndAlso poc.SterujacyPosterunek.Adres = pol.AdresPosterunku Then
                             poc.Predkosc = k.Predkosc
                             stan = StanZmianyPredkosci.Zmieniono
                         Else
@@ -260,7 +260,7 @@ Public Class SerwerTCP
                                     .Stan = stan,
                                     .Zrodlo = ZrodloZmianyPredkosci.Program}
                                     )
-                RaiseEvent OdebranoUstawPredkoscPociagu(pol.AdresStacji, k)
+                RaiseEvent OdebranoUstawPredkoscPociagu(pol.AdresPosterunku, k)
             End Sub
         ))
 
@@ -298,10 +298,10 @@ Public Class SerwerTCP
                 End If
 
 
-                PolaczenieUart.UstawStanSygnalizatoraPolsamoczynnego(New UstawStanSygnalizatoraPolsamoczynnegoUrz() With {.AdresUrzadzenia = k.Adres, .Predkosc = p, .PredkoscPowtarzana = PredkoscPowtarzanaSygnalizatora.VMax})
+                PolaczenieUart?.UstawStanSygnalizatoraPolsamoczynnego(New UstawStanSygnalizatoraPolsamoczynnegoUrz() With {.AdresPosterunku = pol.AdresPosterunku, .AdresUrzadzenia = k.Adres, .Predkosc = p, .PredkoscPowtarzana = PredkoscPowtarzanaSygnalizatora.VMax})
 
 
-                RaiseEvent OdebranoUstawStanSygnalizatora(pol.AdresStacji, k)
+                RaiseEvent OdebranoUstawStanSygnalizatora(pol.AdresPosterunku, k)
             End Sub
         ))
 
@@ -309,9 +309,8 @@ Public Class SerwerTCP
             AddressOf UstawZwrotnice.Otworz,
             Sub(pol, kom)
                 Dim k As UstawZwrotnice = CType(kom, UstawZwrotnice)
-                pol.WyslijKomunikat(New ZmienionoStanZwrotnicy() With {.Adres = k.Adres, .Stan = If(k.Ustawienie = UstawianyStanRozjazdu.Wprost, StanRozjazdu.Wprost, StanRozjazdu.Bok)})
-                PolaczenieUart.UstawZwrotnice(New UstawZwrotniceUrz() With {.AdresUrzadzenia = k.Adres, .Ustawienie = If(k.Ustawienie = UstawianyStanRozjazdu.Wprost, UstawienieRozjazduEnum.Wprost, UstawienieRozjazduEnum.Bok)})
-                RaiseEvent OdebranoUstawZwrotnice(pol.AdresStacji, k)
+                PolaczenieUart?.UstawZwrotnice(New UstawZwrotniceUrz() With {.AdresPosterunku = pol.AdresPosterunku, .AdresUrzadzenia = k.Adres, .Ustawienie = If(k.Ustawienie = UstawianyStanRozjazdu.Wprost, UstawienieRozjazduEnum.Wprost, UstawienieRozjazduEnum.Bok)})
+                RaiseEvent OdebranoUstawZwrotnice(pol.AdresPosterunku, k)
             End Sub
         ))
 
@@ -330,10 +329,10 @@ Public Class SerwerTCP
             Sub(pol, kom)
                 Dim k As ZwolnijPrzebieg = CType(kom, ZwolnijPrzebieg)
                 pol.WyslijKomunikat(New ZmienionoStanSygnalizatora() With {.Adres = k.Adres, .Stan = StanSygnalizatora.BrakWyjazdu})
-                RaiseEvent OdebranoZwolnijPrzebieg(pol.AdresStacji, k)
+                RaiseEvent OdebranoZwolnijPrzebieg(pol.AdresPosterunku, k)
 
 
-                PolaczenieUart.UstawStanSygnalizatoraPolsamoczynnego(New UstawStanSygnalizatoraPolsamoczynnegoUrz() With {.AdresUrzadzenia = k.Adres, .Predkosc = PredkoscSygnalizatora.V0})
+                PolaczenieUart?.UstawStanSygnalizatoraPolsamoczynnego(New UstawStanSygnalizatoraPolsamoczynnegoUrz() With {.AdresPosterunku = pol.AdresPosterunku, .AdresUrzadzenia = k.Adres, .Predkosc = PredkoscSygnalizatora.V0})
 
 
             End Sub
@@ -374,7 +373,7 @@ Public Class SerwerTCP
                 Dim post As ObslugiwanyPosterunek = Nothing
 
                 SyncLock slockRezerwacjaPosterunku
-                    KlienciPoAdresieStacji.TryGetValue(pol.AdresStacji, post)
+                    KlienciPoAdresiePosterunku.TryGetValue(pol.AdresPosterunku, post)
                 End SyncLock
 
                 If post IsNot Nothing Then
@@ -427,7 +426,7 @@ Public Class SerwerTCP
                 pol.WyslijKomunikat(New ZmienionoStanPrzejazdu() With {
                                     .Numer = k.Numer,
                                     .Stan = If(k.Stan = UstawianyStanPrzejazdu.Zamkniety, StanPrzejazduKolejowego.Zamkniety, StanPrzejazduKolejowego.Otwarty)})
-                RaiseEvent OdebranoUstawStanPrzejazdu(pol.AdresStacji, k)
+                RaiseEvent OdebranoUstawStanPrzejazdu(pol.AdresPosterunku, k)
 
                 Dim prz As PrzejazdKolejowoDrogowy = Nothing
                 If Przejazdy.TryGetValue(k.Numer, prz) Then
@@ -435,14 +434,14 @@ Public Class SerwerTCP
 
                     For Each r As PrzejazdRogatka In prz.Rogatki
                         If k.Stan = UstawianyStanPrzejazdu.Zamkniety Then
-                            PolaczenieUart.ZamknijRogatke(New ZamknijRogatkeUrz() With {.AdresUrzadzenia = r.Adres, .CzasZamykaniaMs = prz.CzasOpuszczania})
+                            PolaczenieUart?.ZamknijRogatke(New ZamknijRogatkeUrz() With {.AdresPosterunku = pol.AdresPosterunku, .AdresUrzadzenia = r.Adres, .CzasZamykaniaMs = prz.CzasOpuszczania})
                         Else
-                            PolaczenieUart.OtworzRogatke(New OtworzRogatkeUrz() With {.AdresUrzadzenia = r.Adres, .CzasOtwieraniaMs = prz.CzasPodnoszenia})
+                            PolaczenieUart?.OtworzRogatke(New OtworzRogatkeUrz() With {.AdresPosterunku = pol.AdresPosterunku, .AdresUrzadzenia = r.Adres, .CzasOtwieraniaMs = prz.CzasPodnoszenia})
                         End If
                     Next
 
                     For Each s As PrzejazdElementWykonawczy In prz.SygnalizatoryDrogowe
-                        PolaczenieUart.UstawStanSygnalizatoraDrogowego(New UstawStanSygnalizatoraDrogowegoUrz() With {.AdresUrzadzenia = s.Adres, .Wlaczony = wlaczony})
+                        PolaczenieUart?.UstawStanSygnalizatoraDrogowego(New UstawStanSygnalizatoraDrogowegoUrz() With {.AdresPosterunku = pol.AdresPosterunku, .AdresUrzadzenia = s.Adres, .Wlaczony = wlaczony})
                     Next
                 End If
 
@@ -507,7 +506,7 @@ Public Class SerwerTCP
     End Sub
 
     Public Sub UstawZwrotniceSerwisowo(kom As UstawZwrotniceSerwisowoUrz)
-        PolaczenieUart.UstawZwrotniceSerwisowo(kom)
+        PolaczenieUart?.UstawZwrotniceSerwisowo(kom)
     End Sub
 
     Public Sub ZmienNazwePociagu(NrPociagu As UInteger, Nazwa As String)
@@ -543,7 +542,7 @@ Public Class SerwerTCP
                 If pol Is Nothing Then
                     stan = StanUsuwaniaPociagu.Usunieto
                 Else
-                    If poc.SterujacyPosterunek Is Nothing OrElse poc.SterujacyPosterunek.Adres = pol.AdresStacji Then
+                    If poc.SterujacyPosterunek Is Nothing OrElse poc.SterujacyPosterunek.Adres = pol.AdresPosterunku Then
                         stan = StanUsuwaniaPociagu.Usunieto
                     Else
                         stan = StanUsuwaniaPociagu.PociagZajety
@@ -560,7 +559,7 @@ Public Class SerwerTCP
             Dim obs As ObslugiwanyPosterunek = Nothing
 
             SyncLock slockRezerwacjaPosterunku
-                KlienciPoAdresieStacji.TryGetValue(post.Value, obs)
+                KlienciPoAdresiePosterunku.TryGetValue(post.Value, obs)
                 pol = obs?.Polaczenie
             End SyncLock
         End If
@@ -590,7 +589,7 @@ Public Class SerwerTCP
 
                 Else
 
-                    If poc.SterujacyPosterunek IsNot Nothing AndAlso poc.SterujacyPosterunek.Adres = pol.AdresStacji Then
+                    If poc.SterujacyPosterunek IsNot Nothing AndAlso poc.SterujacyPosterunek.Adres = pol.AdresPosterunku Then
                         poc.SterujacyPosterunek = Nothing
                         stan = StanWysiadzniecia.Wysiadznieto
                     Else
@@ -656,7 +655,7 @@ Public Class SerwerTCP
             End If
         Next
 
-        For Each obs As ObslugiwanyPosterunek In KlienciPoAdresieStacji.Values
+        For Each obs As ObslugiwanyPosterunek In KlienciPoAdresiePosterunku.Values
             obs.Polaczenie = Nothing
         Next
         RaiseEvent UniewaznionoListePosterunkow()
@@ -664,18 +663,14 @@ Public Class SerwerTCP
         _Uruchomiony = False
     End Sub
 
-    Public Sub PolaczZUrzadzeniami(strumien As Stream)
-        PolaczenieUart.Polacz(strumien)
-    End Sub
-
-    Public Sub RozlaczZUrzadzeniami()
-        PolaczenieUart.Rozlacz()
+    Public Sub UstawUrzadzenie(urz As KomunikacjaZUrzadzeniami)
+        PolaczenieUart = urz
     End Sub
 
     Public Function WczytajPolaczenie(SciezkaPliku As String) As Boolean
         If Uruchomiony Then Return False
 
-        KlienciPoAdresieStacji = New Dictionary(Of UShort, ObslugiwanyPosterunek)
+        KlienciPoAdresiePosterunku = New Dictionary(Of UShort, ObslugiwanyPosterunek)
         SygnalizatoryPowtDlaSygnalizatoraPolsamoczynego = New Dictionary(Of UShort, List(Of SygnalizatorPowtarzajacy))
         DodatkoweDane = New Dictionary(Of UShort, DaneDodatkowePosterunku)
         Dim PosterunkiLista As New List(Of ObslugiwanyPosterunek)
@@ -692,8 +687,8 @@ Public Class SerwerTCP
                                        .Zawartosc = pol.ZawartoscPosterunku,
                                        .DanePulpitu = pol.DanePulpitu}
 
-                If Not KlienciPoAdresieStacji.ContainsKey(pol.Adres) Then
-                    KlienciPoAdresieStacji.Add(pol.Adres, obs)
+                If Not KlienciPoAdresiePosterunku.ContainsKey(pol.Adres) Then
+                    KlienciPoAdresiePosterunku.Add(pol.Adres, obs)
                 End If
 
                 PosterunkiLista.Add(obs)
@@ -722,7 +717,7 @@ Public Class SerwerTCP
         Dim pol As PolaczenieTCP = Nothing
 
         SyncLock slockRezerwacjaPosterunku
-            If KlienciPoAdresieStacji.TryGetValue(adres, obs) Then
+            If KlienciPoAdresiePosterunku.TryGetValue(adres, obs) Then
                 pol = obs.Polaczenie
             End If
         End SyncLock
@@ -812,7 +807,7 @@ Public Class SerwerTCP
             WszyscyKlienci.Remove(pol)
         End SyncLock
 
-        RozlaczPosterunek(pol.AdresStacji)
+        RozlaczPosterunek(pol.AdresPosterunku)
     End Sub
 
     Private Function CzyAdresAkceptowany(adres As EndPoint) As Boolean
@@ -899,7 +894,7 @@ Public Class SerwerTCP
         Dim pol As ObslugiwanyPosterunek = Nothing
 
         SyncLock slockRezerwacjaPosterunku
-            KlienciPoAdresieStacji.TryGetValue(post, pol)
+            KlienciPoAdresiePosterunku.TryGetValue(post, pol)
         End SyncLock
 
         pol?.Polaczenie?.WyslijKomunikat(kom)
@@ -946,9 +941,9 @@ Public Class SerwerTCP
         Dim adresIp As String = Nothing
 
         SyncLock slockRezerwacjaPosterunku
-            If KlienciPoAdresieStacji.TryGetValue(k.Adres, obs) AndAlso obs.Polaczenie Is Nothing Then
+            If KlienciPoAdresiePosterunku.TryGetValue(k.Adres, obs) AndAlso obs.Polaczenie Is Nothing Then
                 obs.Polaczenie = pol
-                pol.AdresStacji = k.Adres
+                pol.AdresPosterunku = k.Adres
                 odp = New WybranoPosterunek() With {.Stan = StanUstawianegoPosterunku.WybranoPoprawnie, .ZawartoscPliku = obs.Zawartosc}
                 dataPodl = pol.CzasNawiazaniaPolaczenia.ToString(FORMAT_DATY)
                 adresIp = pol.AdresIp
@@ -969,7 +964,7 @@ Public Class SerwerTCP
         Dim adr As String = Nothing
 
         SyncLock slockRezerwacjaPosterunku
-            If KlienciPoAdresieStacji.TryGetValue(adres, obs) AndAlso obs.Polaczenie IsNot Nothing Then
+            If KlienciPoAdresiePosterunku.TryGetValue(adres, obs) AndAlso obs.Polaczenie IsNot Nothing Then
                 obs.Polaczenie = Nothing
                 adr = adres.ToString
             End If
@@ -979,7 +974,7 @@ Public Class SerwerTCP
     End Sub
 
     Private Sub PrzetworzZakonczDzialanieKlienta(pol As PolaczenieTCP, kom As Komunikat)
-        RozlaczPosterunek(pol.AdresStacji)
+        RozlaczPosterunek(pol.AdresPosterunku)
         pol.WyslijKomunikat(New ZakonczonoSesjeKlienta() With {.Przyczyna = PrzyczynaZakonczeniaSesjiKlienta.RozlaczenieKlienta})
         pol.Zakoncz(True)
     End Sub
@@ -1018,6 +1013,16 @@ Public Class SerwerTCP
                            End Sub)
     End Sub
 
+    Public Function PobierzPosterunki() As Pulpit()
+        Dim lista As New List(Of Pulpit)(Posterunki.Length)
+
+        For i As Integer = 0 To Posterunki.Length - 1
+            lista.Add(Posterunki(i).DanePulpitu)
+        Next
+
+        Return lista.OrderBy(Function(p) p.Nazwa).ToArray()
+    End Function
+
     Private Sub PolaczenieUart_OdebranoUstawionoJasnoscLampy(kom As UstawionoJasnoscLampyUrz) Handles PolaczenieUart.OdebranoUstawionoJasnoscLampy
         Debug.Print("Jasność lampy " & kom.AdresUrzadzenia)
     End Sub
@@ -1040,6 +1045,10 @@ Public Class SerwerTCP
 
     Private Sub PolaczenieUart_OdebranoZmienionoStanZwrotnicy(kom As ZmienionoStanZwrotnicyUrz) Handles PolaczenieUart.OdebranoZmienionoStanZwrotnicy
         Debug.Print("Zmieniono stan zwrotnicy " & kom.AdresUrzadzenia & ": " & kom.Stan.ToString)
+        Dim obs As ObslugiwanyPosterunek = Nothing
+        If KlienciPoAdresiePosterunku.TryGetValue(kom.AdresPosterunku, obs) Then
+            obs.Polaczenie?.WyslijKomunikat(New ZmienionoStanZwrotnicy() With {.Adres = kom.AdresUrzadzenia, .Stan = kom.Stan, .Rozprucie = kom.Stan = StanRozjazdu.Oba})
+        End If
     End Sub
 
     Private Class DaneDodatkowePosterunku

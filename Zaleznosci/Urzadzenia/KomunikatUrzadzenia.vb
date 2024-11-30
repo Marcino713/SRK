@@ -1,16 +1,21 @@
 ﻿Public MustInherit Class KomunikatUrzadzenia
+    Friend Const DLUGOSC_KOMUNIKATU As Integer = 7
     Private Const MASKA_SWIATLA As Byte = 3
 
     Public MustOverride ReadOnly Property Typ As Byte
     Public Property AdresPosterunku As UShort
     Public Property AdresUrzadzenia As UShort
 
-    Protected Overridable Function ZapiszKomunikat() As UShort
+    Public Overridable Function ZapiszKomunikat() As UShort
         Return 0US
     End Function
 
+    Public Shared Function UtworzKomunikat(Of T As {New, KomunikatUrzadzenia})(kom As KomunikatUrzadzenia) As T
+        Return New T() With {.AdresPosterunku = kom.AdresPosterunku, .AdresUrzadzenia = kom.AdresUrzadzenia}
+    End Function
+
     Friend Function Zapisz() As Byte()
-        Using ms As New MemoryStream(KomunikacjaZUrzadzeniami.DLUGOSC_KOMUNIKATU)
+        Using ms As New MemoryStream(DLUGOSC_KOMUNIKATU)
             Using bw As New BinaryWriter(ms)
                 bw.Write(Typ)
                 bw.Write(AdresPosterunku)

@@ -37,4 +37,9 @@
         PrzejazdyRogatki
         PrzejazdySygnDrog
     End Enum
+
+    Public Enum DodatkoweObiektyTrybDzialania
+        Nic
+        LicznikiOsi
+    End Enum
 End Module

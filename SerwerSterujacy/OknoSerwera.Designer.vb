@@ -47,6 +47,7 @@ Partial Class wndOknoSerwera
         Me.ColumnHeader3 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader4 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader5 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader6 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.Label6 = New System.Windows.Forms.Label()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.btnKonfZwrotnic = New System.Windows.Forms.Button()
@@ -58,7 +59,7 @@ Partial Class wndOknoSerwera
         Me.btnUartPolacz = New System.Windows.Forms.Button()
         Me.txtUartPort = New System.Windows.Forms.TextBox()
         Me.spKomunikacja = New System.IO.Ports.SerialPort(Me.components)
-        Me.ColumnHeader6 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.btnSymulator = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
@@ -70,6 +71,7 @@ Partial Class wndOknoSerwera
         '
         Me.GroupBox1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox1.Controls.Add(Me.btnSymulator)
         Me.GroupBox1.Controls.Add(Me.lblStanWczytania)
         Me.GroupBox1.Controls.Add(Me.btnWczytaj)
         Me.GroupBox1.Controls.Add(Me.btnPrzegladaj)
@@ -295,6 +297,11 @@ Partial Class wndOknoSerwera
         Me.ColumnHeader5.Text = "Ostatnie zapytanie"
         Me.ColumnHeader5.Width = 120
         '
+        'ColumnHeader6
+        '
+        Me.ColumnHeader6.Text = "Adres IP"
+        Me.ColumnHeader6.Width = 130
+        '
         'Label6
         '
         Me.Label6.AutoSize = True
@@ -399,10 +406,14 @@ Partial Class wndOknoSerwera
         '
         Me.spKomunikacja.BaudRate = 19200
         '
-        'ColumnHeader6
+        'btnSymulator
         '
-        Me.ColumnHeader6.Text = "Adres IP"
-        Me.ColumnHeader6.Width = 130
+        Me.btnSymulator.Location = New System.Drawing.Point(340, 45)
+        Me.btnSymulator.Name = "btnSymulator"
+        Me.btnSymulator.Size = New System.Drawing.Size(137, 23)
+        Me.btnSymulator.TabIndex = 5
+        Me.btnSymulator.Text = "Symulator srk"
+        Me.btnSymulator.UseVisualStyleBackColor = True
         '
         'wndOknoSerwera
         '
@@ -465,4 +476,5 @@ Partial Class wndOknoSerwera
     Friend WithEvents btnKonfZwrotnic As Button
     Friend WithEvents btnFiltrujAdresy As Button
     Friend WithEvents ColumnHeader6 As ColumnHeader
+    Friend WithEvents btnSymulator As Button
 End Class

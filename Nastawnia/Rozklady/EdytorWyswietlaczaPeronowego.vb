@@ -73,7 +73,7 @@
     End Sub
 
     Private Sub cboStyl_SelectedIndexChanged() Handles cboStyl.SelectedIndexChanged
-        wyswietlacz = CType(cboStyl.SelectedItem, ObiektComboBox(Of WyswietlaczPeronowy)).Wartosc
+        wyswietlacz = CType(cboStyl.SelectedItem, Wspolne.ObiektComboBox(Of WyswietlaczPeronowy)).Wartosc
         Rysuj()
     End Sub
 
@@ -89,7 +89,7 @@
     Private Sub PokazStyleWyswietlaczy()
         cboStyl.Items.Clear()
 
-        cboStyl.Items.Add(New ObiektComboBox(Of WyswietlaczPeronowy)(New WyswietlaczAustriacki, "Austriacki"))
+        cboStyl.Items.Add(New Wspolne.ObiektComboBox(Of WyswietlaczPeronowy)(New WyswietlaczAustriacki, "Austriacki"))
     End Sub
 
     Private Sub Rysuj()

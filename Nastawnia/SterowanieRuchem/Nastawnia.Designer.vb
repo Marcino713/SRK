@@ -181,7 +181,7 @@ Partial Class wndNastawnia
         Me.plpPulpit.MozliwoscZaznaczeniaOdcinka = False
         Me.plpPulpit.Name = "plpPulpit"
         Me.plpPulpit.projDodatkoweObiekty = Pulpit.Dodatki.RysujDodatkoweObiekty.Nic
-        Me.plpPulpit.projZaznaczonaKostka = Nothing
+        Me.plpPulpit.ZaznaczonaKostka = Nothing
         Me.plpPulpit.projZaznaczonaLampa = Nothing
         Me.plpPulpit.projZaznaczonyLicznik = Nothing
         Me.plpPulpit.projZaznaczonyPrzejazd = Nothing

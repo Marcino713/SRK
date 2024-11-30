@@ -9,6 +9,9 @@
 
     Public Property Stan As StanRozjazdu
 
+    Public Sub New()
+    End Sub
+
     Public Sub New(br As BinaryReader)
         Stan = CType(Otworz(br), StanRozjazdu)
     End Sub

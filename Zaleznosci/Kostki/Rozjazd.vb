@@ -137,8 +137,10 @@ Public Enum UstawienieRozjazduEnum
     Bok = 2
 End Enum
 
+<Flags>
 Public Enum StanRozjazdu As Byte
     Niezdefiniowany = 0
     Wprost = 1
     Bok = 2
+    Oba = 3
 End Enum
