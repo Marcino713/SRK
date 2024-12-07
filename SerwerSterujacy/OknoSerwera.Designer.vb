@@ -24,6 +24,10 @@ Partial Class wndOknoSerwera
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.cbObserwatorzy = New System.Windows.Forms.CheckBox()
+        Me.txtHasloObserwator = New System.Windows.Forms.TextBox()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.btnSymulator = New System.Windows.Forms.Button()
         Me.lblStanWczytania = New System.Windows.Forms.Label()
         Me.btnWczytaj = New System.Windows.Forms.Button()
         Me.btnPrzegladaj = New System.Windows.Forms.Button()
@@ -39,6 +43,7 @@ Partial Class wndOknoSerwera
         Me.txtPortTCP = New System.Windows.Forms.TextBox()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
+        Me.btnObserwatorzy = New System.Windows.Forms.Button()
         Me.btnRozlacz = New System.Windows.Forms.Button()
         Me.btnOdswiez = New System.Windows.Forms.Button()
         Me.lvPosterunki = New System.Windows.Forms.ListView()
@@ -48,6 +53,7 @@ Partial Class wndOknoSerwera
         Me.ColumnHeader4 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader5 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader6 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.ColumnHeader7 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.Label6 = New System.Windows.Forms.Label()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.btnKonfZwrotnic = New System.Windows.Forms.Button()
@@ -59,7 +65,6 @@ Partial Class wndOknoSerwera
         Me.btnUartPolacz = New System.Windows.Forms.Button()
         Me.txtUartPort = New System.Windows.Forms.TextBox()
         Me.spKomunikacja = New System.IO.Ports.SerialPort(Me.components)
-        Me.btnSymulator = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
@@ -71,6 +76,9 @@ Partial Class wndOknoSerwera
         '
         Me.GroupBox1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox1.Controls.Add(Me.cbObserwatorzy)
+        Me.GroupBox1.Controls.Add(Me.txtHasloObserwator)
+        Me.GroupBox1.Controls.Add(Me.Label5)
         Me.GroupBox1.Controls.Add(Me.btnSymulator)
         Me.GroupBox1.Controls.Add(Me.lblStanWczytania)
         Me.GroupBox1.Controls.Add(Me.btnWczytaj)
@@ -83,6 +91,45 @@ Partial Class wndOknoSerwera
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Plik połączeń"
+        '
+        'cbObserwatorzy
+        '
+        Me.cbObserwatorzy.AutoSize = True
+        Me.cbObserwatorzy.Checked = True
+        Me.cbObserwatorzy.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.cbObserwatorzy.Location = New System.Drawing.Point(283, 49)
+        Me.cbObserwatorzy.Name = "cbObserwatorzy"
+        Me.cbObserwatorzy.Size = New System.Drawing.Size(239, 17)
+        Me.cbObserwatorzy.TabIndex = 8
+        Me.cbObserwatorzy.Text = "Zezwalaj na połączenia w trybie obserwatora"
+        Me.cbObserwatorzy.UseVisualStyleBackColor = True
+        '
+        'txtHasloObserwator
+        '
+        Me.txtHasloObserwator.Location = New System.Drawing.Point(679, 47)
+        Me.txtHasloObserwator.Name = "txtHasloObserwator"
+        Me.txtHasloObserwator.PasswordChar = Global.Microsoft.VisualBasic.ChrW(9679)
+        Me.txtHasloObserwator.Size = New System.Drawing.Size(100, 20)
+        Me.txtHasloObserwator.TabIndex = 7
+        Me.txtHasloObserwator.Text = "b"
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(547, 50)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(126, 13)
+        Me.Label5.TabIndex = 6
+        Me.Label5.Text = "Hasło trybu obserwatora:"
+        '
+        'btnSymulator
+        '
+        Me.btnSymulator.Location = New System.Drawing.Point(140, 45)
+        Me.btnSymulator.Name = "btnSymulator"
+        Me.btnSymulator.Size = New System.Drawing.Size(137, 23)
+        Me.btnSymulator.TabIndex = 5
+        Me.btnSymulator.Text = "Symulator srk"
+        Me.btnSymulator.UseVisualStyleBackColor = True
         '
         'lblStanWczytania
         '
@@ -225,6 +272,7 @@ Partial Class wndOknoSerwera
         Me.GroupBox3.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox3.Controls.Add(Me.btnObserwatorzy)
         Me.GroupBox3.Controls.Add(Me.btnRozlacz)
         Me.GroupBox3.Controls.Add(Me.btnOdswiez)
         Me.GroupBox3.Controls.Add(Me.lvPosterunki)
@@ -235,6 +283,16 @@ Partial Class wndOknoSerwera
         Me.GroupBox3.TabIndex = 17
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Posterunki i klienci"
+        '
+        'btnObserwatorzy
+        '
+        Me.btnObserwatorzy.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnObserwatorzy.Location = New System.Drawing.Point(567, 397)
+        Me.btnObserwatorzy.Name = "btnObserwatorzy"
+        Me.btnObserwatorzy.Size = New System.Drawing.Size(93, 23)
+        Me.btnObserwatorzy.TabIndex = 21
+        Me.btnObserwatorzy.Text = "Obserwatorzy"
+        Me.btnObserwatorzy.UseVisualStyleBackColor = True
         '
         'btnRozlacz
         '
@@ -261,7 +319,7 @@ Partial Class wndOknoSerwera
         Me.lvPosterunki.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lvPosterunki.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3, Me.ColumnHeader4, Me.ColumnHeader5, Me.ColumnHeader6})
+        Me.lvPosterunki.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.ColumnHeader1, Me.ColumnHeader2, Me.ColumnHeader3, Me.ColumnHeader4, Me.ColumnHeader5, Me.ColumnHeader6, Me.ColumnHeader7})
         Me.lvPosterunki.FullRowSelect = True
         Me.lvPosterunki.HideSelection = False
         Me.lvPosterunki.Location = New System.Drawing.Point(6, 32)
@@ -280,7 +338,7 @@ Partial Class wndOknoSerwera
         'ColumnHeader2
         '
         Me.ColumnHeader2.Text = "Plik"
-        Me.ColumnHeader2.Width = 200
+        Me.ColumnHeader2.Width = 150
         '
         'ColumnHeader3
         '
@@ -301,6 +359,11 @@ Partial Class wndOknoSerwera
         '
         Me.ColumnHeader6.Text = "Adres IP"
         Me.ColumnHeader6.Width = 130
+        '
+        'ColumnHeader7
+        '
+        Me.ColumnHeader7.Text = "Obserwatorzy"
+        Me.ColumnHeader7.Width = 90
         '
         'Label6
         '
@@ -406,15 +469,6 @@ Partial Class wndOknoSerwera
         '
         Me.spKomunikacja.BaudRate = 19200
         '
-        'btnSymulator
-        '
-        Me.btnSymulator.Location = New System.Drawing.Point(340, 45)
-        Me.btnSymulator.Name = "btnSymulator"
-        Me.btnSymulator.Size = New System.Drawing.Size(137, 23)
-        Me.btnSymulator.TabIndex = 5
-        Me.btnSymulator.Text = "Symulator srk"
-        Me.btnSymulator.UseVisualStyleBackColor = True
-        '
         'wndOknoSerwera
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -477,4 +531,9 @@ Partial Class wndOknoSerwera
     Friend WithEvents btnFiltrujAdresy As Button
     Friend WithEvents ColumnHeader6 As ColumnHeader
     Friend WithEvents btnSymulator As Button
+    Friend WithEvents cbObserwatorzy As CheckBox
+    Friend WithEvents txtHasloObserwator As TextBox
+    Friend WithEvents Label5 As Label
+    Friend WithEvents ColumnHeader7 As ColumnHeader
+    Friend WithEvents btnObserwatorzy As Button
 End Class

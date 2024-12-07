@@ -16,6 +16,13 @@
         End Get
     End Property
 
+    Private _TrybObserwatora As Boolean
+    Friend ReadOnly Property TrybObserwatora As Boolean
+        Get
+            Return _TrybObserwatora
+        End Get
+    End Property
+
     Private WithEvents Klient As Zaleznosci.KlientTCP
     Private WybranyAdres As UShort
     Private post As Zaleznosci.DanePosterunku()
@@ -38,6 +45,10 @@
         If _Pulpit Is Nothing Then k.Zakoncz(False)
     End Sub
 
+    Private Sub cbTrybObserwatora_CheckedChanged() Handles cbTrybObserwatora.CheckedChanged
+        _TrybObserwatora = cbTrybObserwatora.Checked
+    End Sub
+
     Private Sub btnPolacz_Click() Handles btnPolacz.Click
         Dim port As UShort
 
@@ -58,7 +69,7 @@
 
         actWyczyscPosterunki()
         actPokazStan(False, "Łączenie...")
-        Klient.Polacz(txtAdres.Text, port, txtHaslo.Text)
+        Klient.Polacz(txtAdres.Text, port, txtHaslo.Text, _TrybObserwatora)
     End Sub
 
     Private Sub lvPosterunki_SelectedIndexChanged() Handles lvPosterunki.SelectedIndexChanged
@@ -82,7 +93,18 @@
     End Sub
 
     Private Sub Klient_OdebranoNieuwierzytelniono(kom As Zaleznosci.Nieuwierzytelniono) Handles Klient.OdebranoNieuwierzytelniono
-        Invoke(actPokazStan, True, "Błędne hasło")
+        Dim przyczyna As String
+
+        Select Case kom.Przyczyna
+            Case Zaleznosci.PrzyczynaNieuwierzytelnienia.BledneHaslo
+                przyczyna = "Błędne hasło"
+            Case Zaleznosci.PrzyczynaNieuwierzytelnienia.BrakTrybuObserwatora
+                przyczyna = "Nieobsługiwany tryb obserwatora"
+            Case Else
+                przyczyna = "Błąd uwierzytelniania"
+        End Select
+
+        Invoke(actPokazStan, True, przyczyna)
     End Sub
 
     Private Sub Klient_OdebranoUwierzytelnionoPoprawnie(kom As Zaleznosci.UwierzytelnionoPoprawnie) Handles Klient.OdebranoUwierzytelnionoPoprawnie
@@ -132,7 +154,7 @@
         If lvPosterunki.SelectedItems Is Nothing OrElse lvPosterunki.SelectedItems.Count = 0 Then Exit Sub
 
         Dim dane As Zaleznosci.DanePosterunku = CType(lvPosterunki.SelectedItems(0).Tag, Zaleznosci.DanePosterunku)
-        If dane.Stan = Zaleznosci.StanPosterunku.Zajety Then
+        If (Not _TrybObserwatora) AndAlso dane.Stan = Zaleznosci.StanPosterunku.Zajety Then
             Wspolne.PokazBlad("Posterunek jest już zajęty.")
             Exit Sub
         End If
@@ -158,11 +180,12 @@
         Next
     End Sub
 
-    Private Sub PokazStanPolaczenia(dostepnoscPrzycisku As Boolean, opis As String)
-        txtAdres.Enabled = dostepnoscPrzycisku
-        txtPort.Enabled = dostepnoscPrzycisku
-        txtHaslo.Enabled = dostepnoscPrzycisku
-        btnPolacz.Enabled = dostepnoscPrzycisku
+    Private Sub PokazStanPolaczenia(dostepnosc As Boolean, opis As String)
+        txtAdres.Enabled = dostepnosc
+        txtPort.Enabled = dostepnosc
+        txtHaslo.Enabled = dostepnosc
+        btnPolacz.Enabled = dostepnosc
+        cbTrybObserwatora.Enabled = dostepnosc
         lblStanLaczenia.Text = opis
     End Sub
 

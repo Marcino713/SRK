@@ -2,6 +2,7 @@
     Private Const NAPIS_WYSWIETLONO As String = "Wyświetlono"
 
     Private symulator As UrzadzenieSymulator
+    Private konfiguracja As KonfiguracjaSymulatora
     Private migacz As New Migacz
     Private zaznaczonyWiersz As DaneOkien
     Private oknaSymulatora As New Dictionary(Of UShort, DaneOkien)
@@ -9,10 +10,11 @@
     Private rysownik As Pulpit.TypRysownika = Pulpit.TypRysownika.KlasycznyDirect2D
     Private zdarzenia As Boolean = True
 
-    Friend Sub New(posterunki As Zaleznosci.Pulpit(), symulator As UrzadzenieSymulator)
+    Friend Sub New(posterunki As Zaleznosci.Pulpit(), symulator As UrzadzenieSymulator, konfiguracja As KonfiguracjaSymulatora)
         InitializeComponent()
 
         Me.symulator = symulator
+        Me.konfiguracja = konfiguracja
         symulator.Polacz(Me)
         PokazRysownikow()
         PokazPosterunki(posterunki)
@@ -138,7 +140,7 @@
         If zaznaczonyWiersz.OknoPulpitu IsNot Nothing Then
             zaznaczonyWiersz.OknoPulpitu.Focus()
         Else
-            zaznaczonyWiersz.OknoPulpitu = New wndStanPulpitu(Me, zaznaczonyWiersz.Pulpit, symulator, rysownik)
+            zaznaczonyWiersz.OknoPulpitu = New wndStanPulpitu(Me, zaznaczonyWiersz.Pulpit, symulator, rysownik, konfiguracja)
             zaznaczonyWiersz.OknoPulpitu.Show()
             zaznaczonyWiersz.ElementListy.SubItems(1).Text = NAPIS_WYSWIETLONO
         End If

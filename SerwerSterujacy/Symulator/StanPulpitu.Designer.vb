@@ -25,6 +25,9 @@ Partial Class wndStanPulpitu
         Me.components = New System.ComponentModel.Container()
         Dim Pulpit1 As Zaleznosci.Pulpit = New Zaleznosci.Pulpit()
         Me.plpPulpit = New Pulpit.PulpitSterowniczy()
+        Me.stStan = New System.Windows.Forms.StatusStrip()
+        Me.tslStanPolaczenia = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.stStan.SuspendLayout()
         Me.SuspendLayout()
         '
         'plpPulpit
@@ -35,7 +38,7 @@ Partial Class wndStanPulpitu
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
         Me.plpPulpit.DodatkoweObiekty = Pulpit.Dodatki.DodatkoweObiektyTrybDzialania.LicznikiOsi
-        Me.plpPulpit.Location = New System.Drawing.Point(12, 12)
+        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
         Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = False
         Me.plpPulpit.MozliwoscZaznaczeniaKostki = True
         Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
@@ -52,23 +55,46 @@ Partial Class wndStanPulpitu
         Pulpit1.Adres = CType(0US, UShort)
         Pulpit1.Nazwa = ""
         Me.plpPulpit.Pulpit = Pulpit1
-        Me.plpPulpit.Size = New System.Drawing.Size(776, 426)
+        Me.plpPulpit.Size = New System.Drawing.Size(800, 425)
         Me.plpPulpit.TabIndex = 0
         Me.plpPulpit.WarunekZaznaczeniaKostki = Nothing
         Me.plpPulpit.ZaznaczonaKostka = Nothing
         Me.plpPulpit.ZaznaczonyOdcinek = Nothing
+        '
+        'stStan
+        '
+        Me.stStan.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tslStanPolaczenia})
+        Me.stStan.Location = New System.Drawing.Point(0, 428)
+        Me.stStan.Name = "stStan"
+        Me.stStan.Size = New System.Drawing.Size(800, 22)
+        Me.stStan.TabIndex = 1
+        Me.stStan.Text = "StatusStrip1"
+        '
+        'tslStanPolaczenia
+        '
+        Me.tslStanPolaczenia.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
+        Me.tslStanPolaczenia.ForeColor = System.Drawing.Color.Red
+        Me.tslStanPolaczenia.Name = "tslStanPolaczenia"
+        Me.tslStanPolaczenia.Size = New System.Drawing.Size(95, 17)
+        Me.tslStanPolaczenia.Text = "Brak połączenia"
         '
         'wndStanPulpitu
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 450)
+        Me.Controls.Add(Me.stStan)
         Me.Controls.Add(Me.plpPulpit)
         Me.Name = "wndStanPulpitu"
         Me.Text = "Stan pulpitu"
+        Me.stStan.ResumeLayout(False)
+        Me.stStan.PerformLayout()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
 
     Friend WithEvents plpPulpit As Pulpit.PulpitSterowniczy
+    Friend WithEvents stStan As StatusStrip
+    Friend WithEvents tslStanPolaczenia As ToolStripStatusLabel
 End Class

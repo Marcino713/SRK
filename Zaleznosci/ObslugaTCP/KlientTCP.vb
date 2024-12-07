@@ -214,13 +214,13 @@ Public Class KlientTCP
         Klient?.WyslijKomunikat(kom)
     End Sub
 
-    Public Sub Polacz(AdresIp As String, Port As UShort, Haslo As String)
+    Public Sub Polacz(AdresIp As String, Port As UShort, Haslo As String, Obserwator As Boolean)
         Me.AdresIP = AdresIp
         Me.Port = Port
         Me.Haslo = Haslo
 
         WatekNawiazywaniaPolaczenia = New Thread(AddressOf PolaczZSerwerem)
-        WatekNawiazywaniaPolaczenia.Start()
+        WatekNawiazywaniaPolaczenia.Start(Obserwator)
     End Sub
 
     Public Sub Zakoncz(czekaj As Boolean)
@@ -244,11 +244,13 @@ Public Class KlientTCP
         RaiseEvent ZakonczonoPolaczenie()
     End Sub
 
-    Private Sub PolaczZSerwerem()
+    Private Sub PolaczZSerwerem(obserwator As Object)
         Try
             Dim tcp As New TcpClient()
             tcp.Connect(New IPEndPoint(IPAddress.Parse(AdresIP), Port))
-            Klient = New PolaczenieTCP(Me, tcp)
+            Klient = New PolaczenieTCP(Me, tcp) With {
+                .TrybObserwatora = CBool(obserwator)
+            }
             _Uruchomiony = True
 
             DaneDH = New KlientDaneDH()
@@ -267,8 +269,7 @@ Public Class KlientTCP
         Dim klucz As BigInteger = BigInteger.ModPow(dh.LiczbaB, DaneDH.LiczbaPrywA, DaneDH.LiczbaP)
         DaneDH = Nothing
         Klient.InicjujAes(klucz.ToByteArray)
-
-        Klient.WyslijKomunikat(New UwierzytelnijSie() With {.Haslo = Haslo})
+        Klient.WyslijKomunikat(New UwierzytelnijSie() With {.Haslo = Haslo, .TrybObserwatora = pol.TrybObserwatora})
     End Sub
 
     Private Sub PoprUwierzytelniono(pol As PolaczenieTCP, kom As Komunikat)
@@ -286,7 +287,11 @@ Public Class KlientTCP
     Private Sub WybrPosterunek(pol As PolaczenieTCP, kom As Komunikat)
         Dim wybrPost As WybranoPosterunek = CType(kom, WybranoPosterunek)
         If wybrPost.Stan = StanUstawianegoPosterunku.WybranoPoprawnie Then
-            pol.UstawStanSterowanieRuchem()
+            If pol.TrybObserwatora Then
+                pol.UstawStanTrybObserwatora()
+            Else
+                pol.UstawStanSterowanieRuchem()
+            End If
         End If
         RaiseEvent OdebranoWybranoPosterunek(wybrPost)
     End Sub

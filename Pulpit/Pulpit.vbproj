@@ -77,6 +77,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ObslugiwaczTrybuDzialania.vb" />
     <Compile Include="PulpitSterowniczy\Dodatki.vb" />
     <Compile Include="PulpitSterowniczy\IRysownik.vb" />
     <Compile Include="PulpitSterowniczy\KlasyRysujace\PulpitKlasyczny.vb" />

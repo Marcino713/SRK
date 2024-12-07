@@ -23,6 +23,7 @@ Partial Class wndWyborPosterunku
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.cbTrybObserwatora = New System.Windows.Forms.CheckBox()
         Me.lblStanLaczenia = New System.Windows.Forms.Label()
         Me.btnPolacz = New System.Windows.Forms.Button()
         Me.txtHaslo = New System.Windows.Forms.TextBox()
@@ -49,6 +50,7 @@ Partial Class wndWyborPosterunku
         '
         Me.GroupBox1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox1.Controls.Add(Me.cbTrybObserwatora)
         Me.GroupBox1.Controls.Add(Me.lblStanLaczenia)
         Me.GroupBox1.Controls.Add(Me.btnPolacz)
         Me.GroupBox1.Controls.Add(Me.txtHaslo)
@@ -64,20 +66,30 @@ Partial Class wndWyborPosterunku
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Połączenie z serwerem"
         '
+        'cbTrybObserwatora
+        '
+        Me.cbTrybObserwatora.AutoSize = True
+        Me.cbTrybObserwatora.Location = New System.Drawing.Point(6, 136)
+        Me.cbTrybObserwatora.Name = "cbTrybObserwatora"
+        Me.cbTrybObserwatora.Size = New System.Drawing.Size(108, 17)
+        Me.cbTrybObserwatora.TabIndex = 4
+        Me.cbTrybObserwatora.Text = "Tryb obserwatora"
+        Me.cbTrybObserwatora.UseVisualStyleBackColor = True
+        '
         'lblStanLaczenia
         '
         Me.lblStanLaczenia.AutoSize = True
-        Me.lblStanLaczenia.Location = New System.Drawing.Point(6, 162)
+        Me.lblStanLaczenia.Location = New System.Drawing.Point(6, 185)
         Me.lblStanLaczenia.Name = "lblStanLaczenia"
         Me.lblStanLaczenia.Size = New System.Drawing.Size(0, 13)
         Me.lblStanLaczenia.TabIndex = 7
         '
         'btnPolacz
         '
-        Me.btnPolacz.Location = New System.Drawing.Point(5, 136)
+        Me.btnPolacz.Location = New System.Drawing.Point(6, 159)
         Me.btnPolacz.Name = "btnPolacz"
         Me.btnPolacz.Size = New System.Drawing.Size(75, 23)
-        Me.btnPolacz.TabIndex = 4
+        Me.btnPolacz.TabIndex = 5
         Me.btnPolacz.Text = "Połącz"
         Me.btnPolacz.UseVisualStyleBackColor = True
         '
@@ -147,7 +159,7 @@ Partial Class wndWyborPosterunku
         Me.GroupBox2.Location = New System.Drawing.Point(211, 12)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Size = New System.Drawing.Size(682, 525)
-        Me.GroupBox2.TabIndex = 1
+        Me.GroupBox2.TabIndex = 6
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Dostępne posterunki ruchu"
         '
@@ -157,7 +169,7 @@ Partial Class wndWyborPosterunku
         Me.btnAnuluj.Location = New System.Drawing.Point(601, 496)
         Me.btnAnuluj.Name = "btnAnuluj"
         Me.btnAnuluj.Size = New System.Drawing.Size(75, 23)
-        Me.btnAnuluj.TabIndex = 9
+        Me.btnAnuluj.TabIndex = 11
         Me.btnAnuluj.Text = "Anuluj"
         Me.btnAnuluj.UseVisualStyleBackColor = True
         '
@@ -167,7 +179,7 @@ Partial Class wndWyborPosterunku
         Me.rbTrybSamoczynny.Location = New System.Drawing.Point(178, 19)
         Me.rbTrybSamoczynny.Name = "rbTrybSamoczynny"
         Me.rbTrybSamoczynny.Size = New System.Drawing.Size(85, 17)
-        Me.rbTrybSamoczynny.TabIndex = 6
+        Me.rbTrybSamoczynny.TabIndex = 8
         Me.rbTrybSamoczynny.Text = "Samoczynny"
         Me.rbTrybSamoczynny.UseVisualStyleBackColor = True
         '
@@ -178,7 +190,7 @@ Partial Class wndWyborPosterunku
         Me.rbTrybPolsamoczynny.Location = New System.Drawing.Point(72, 19)
         Me.rbTrybPolsamoczynny.Name = "rbTrybPolsamoczynny"
         Me.rbTrybPolsamoczynny.Size = New System.Drawing.Size(100, 17)
-        Me.rbTrybPolsamoczynny.TabIndex = 5
+        Me.rbTrybPolsamoczynny.TabIndex = 7
         Me.rbTrybPolsamoczynny.TabStop = True
         Me.rbTrybPolsamoczynny.Text = "Półsamoczynny"
         Me.rbTrybPolsamoczynny.UseVisualStyleBackColor = True
@@ -199,7 +211,7 @@ Partial Class wndWyborPosterunku
         Me.btnWybierz.Location = New System.Drawing.Point(520, 496)
         Me.btnWybierz.Name = "btnWybierz"
         Me.btnWybierz.Size = New System.Drawing.Size(75, 23)
-        Me.btnWybierz.TabIndex = 8
+        Me.btnWybierz.TabIndex = 10
         Me.btnWybierz.Text = "Wybierz"
         Me.btnWybierz.UseVisualStyleBackColor = True
         '
@@ -215,7 +227,7 @@ Partial Class wndWyborPosterunku
         Me.lvPosterunki.MultiSelect = False
         Me.lvPosterunki.Name = "lvPosterunki"
         Me.lvPosterunki.Size = New System.Drawing.Size(670, 448)
-        Me.lvPosterunki.TabIndex = 7
+        Me.lvPosterunki.TabIndex = 9
         Me.lvPosterunki.UseCompatibleStateImageBehavior = False
         Me.lvPosterunki.View = System.Windows.Forms.View.Details
         '
@@ -269,4 +281,5 @@ Partial Class wndWyborPosterunku
     Friend WithEvents rbTrybPolsamoczynny As RadioButton
     Friend WithEvents Label4 As Label
     Friend WithEvents btnAnuluj As Button
+    Friend WithEvents cbTrybObserwatora As CheckBox
 End Class

@@ -36,6 +36,8 @@ Friend Class PolaczenieTCP
         End Get
     End Property
 
+    Friend Property TrybObserwatora As Boolean
+
     Private tcp As ZarzadzanieTCP
     Private Szyfrator As ICryptoTransform
     Private Deszyfrator As ICryptoTransform
@@ -133,6 +135,12 @@ Friend Class PolaczenieTCP
         End SyncLock
     End Sub
 
+    Friend Sub UstawStanTrybObserwatora()
+        SyncLock slockStanPolaczenia
+            If _Stan = StanPolaczenia.WyborPosterunku Then _Stan = StanPolaczenia.Obserwator
+        End SyncLock
+    End Sub
+
     Friend Sub WyslijKomunikat(kom As Komunikat)
         SyncLock slockStanPolaczenia
             If _Stan = StanPolaczenia.Rozlaczony Then Exit Sub
@@ -142,7 +150,7 @@ Friend Class PolaczenieTCP
 
         If TypKomunikatu.CzyKomunikatDH(kom.Typ) Then
             szyfruj = False
-        ElseIf Szyfrator Is Nothing
+        ElseIf Szyfrator Is Nothing Then
             Exit Sub
         End If
 
@@ -219,6 +227,7 @@ Friend Class PolaczenieTCP
             (_Stan = StanPolaczenia.UwierzytelnianieHaslem AndAlso TypKomunikatu.CzyKomunikatUwierzytelniania(typ)) Or
             (_Stan = StanPolaczenia.WyborPosterunku AndAlso TypKomunikatu.CzyKomunikatWyboruPosterunku(typ)) Or
             (_Stan = StanPolaczenia.SterowanieRuchem AndAlso TypKomunikatu.CzyKomunikatSterowaniaRuchem(typ)) Or
+            (_Stan = StanPolaczenia.Obserwator AndAlso TypKomunikatu.CzyKomunikatObserwatora(typ)) Or
             (_Stan <> StanPolaczenia.UstalanieKluczaSzyfrujacego AndAlso TypKomunikatu.CzyKomunikatZakonczenia(typ))
             ) Then
                 Exit Sub

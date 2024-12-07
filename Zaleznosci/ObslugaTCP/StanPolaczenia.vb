@@ -3,5 +3,6 @@
     UwierzytelnianieHaslem
     WyborPosterunku
     SterowanieRuchem
+    Obserwator
     Rozlaczony
 End Enum

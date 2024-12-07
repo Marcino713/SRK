@@ -9,12 +9,10 @@ Public Class wndNastawnia
     Private WithEvents OknoDodawaniaPociagu As wndDodawaniePociagu = Nothing
     Private WithEvents OknoWybieraniaPociagu As wndWyborPociagu = Nothing
     Private WithEvents OknoOswietlenia As wndOswietlenie = Nothing
+    Private ObslugiwaczPulpitu As Pulpit.ObslugiwaczTrybuDzialania
+    Private TrybObserwatora As Boolean = False
     Private WlaczoneOknoWyboruPost As Boolean = False
-    Private Sygnalizatory As New Dictionary(Of UShort, Zaleznosci.Kostka)
-    Private Rozjazdy As New Dictionary(Of UShort, Zaleznosci.Rozjazd)
-    Private Kierunki As New Dictionary(Of UShort, Zaleznosci.Kierunek)
     Private Lampy As New Dictionary(Of UShort, Zaleznosci.Lampa)
-    Private Przejazdy As New Dictionary(Of UShort, Zaleznosci.PrzejazdKolejowoDrogowy)
     Private PredkoscMaksymalna As UShort
     Private KursorDomyslny As Cursor
     Private OknaSterowaniaPociagami As New HashSet(Of wndSterowaniePociagiem)
@@ -23,8 +21,6 @@ Public Class wndNastawnia
     Private actPokazStatus As Action(Of String, Color, Boolean) = AddressOf PokazStatusPolaczenia
     Private actPokazNazweOkna As Action(Of String) = AddressOf PokazNazweOkna
     Private actZamknijOkna As Action = Sub() ZamknijOkna()
-    Private actPokazPulpit As Action(Of Zaleznosci.Pulpit) = AddressOf PokazPulpit
-    Private actUsunMigacz As Action = AddressOf UsunMigacz
     Private actPokazBlad As Action(Of String) = AddressOf Wspolne.PokazBlad
     Private actPokazKomunikat As Action(Of String) = AddressOf Wspolne.PokazKomunikat
 
@@ -55,6 +51,7 @@ Public Class wndNastawnia
             Dim t As New Thread(AddressOf ZamknijPolaczenie)
             t.Start(Klient)
             Klient = Nothing
+            ObslugiwaczPulpitu?.Czysc()
         Else
             e.Cancel = True
         End If
@@ -66,9 +63,12 @@ Public Class wndNastawnia
         wnd.ShowDialog()
         WlaczoneOknoWyboruPost = False
         If wnd.Pulpit IsNot Nothing Then
+            TrybObserwatora = wnd.TrybObserwatora
+            plpPulpit.MozliwoscWcisnieciaPrzycisku = Not TrybObserwatora
             PredkoscMaksymalna = wnd.PredkoscMaksymalnaSieci
-            actPokazPulpit(wnd.Pulpit)
-            plpPulpit.InicjalizujMigacz()
+            ObslugiwaczPulpitu = New Pulpit.ObslugiwaczTrybuDzialania(plpPulpit, Klient, True)
+            ObslugiwaczPulpitu.PokazPulpit(wnd.Pulpit)
+            Lampy = wnd.Pulpit.PobierzLampy()
             actPokazStatus("Połączono", Color.Green, True)
             actPokazNazweOkna(wnd.Pulpit.Nazwa)
         End If
@@ -308,106 +308,6 @@ Public Class wndNastawnia
         If Not WlaczoneOknoWyboruPost Then Invoke(actPokazBlad, "Serwer został zatrzymany.")
     End Sub
 
-    Private Sub Klient_OdebranoZmienionoStanSygnalizatora(kom As Zaleznosci.ZmienionoStanSygnalizatora) Handles Klient.OdebranoZmienionoStanSygnalizatora
-        Dim sygn As Zaleznosci.Kostka = Nothing
-        If Not Sygnalizatory.TryGetValue(kom.Adres, sygn) Then Exit Sub
-
-        Select Case sygn.Typ
-            Case Zaleznosci.TypKostki.SygnalizatorManewrowy
-                Dim s As Zaleznosci.SygnalizatorManewrowy = DirectCast(sygn, Zaleznosci.SygnalizatorManewrowy)
-                If kom.Stan = Zaleznosci.StanSygnalizatora.BrakWyjazdu Then
-                    s.Stan = Zaleznosci.StanSygnalizatoraManewrowego.BrakWyjazdu
-                Else
-                    s.Stan = Zaleznosci.StanSygnalizatoraManewrowego.Manewrowy
-                End If
-
-            Case Zaleznosci.TypKostki.SygnalizatorSamoczynny
-                Dim s As Zaleznosci.SygnalizatorSamoczynny = DirectCast(sygn, Zaleznosci.SygnalizatorSamoczynny)
-                If kom.Stan = Zaleznosci.StanSygnalizatora.BrakWyjazdu Then
-                    s.Stan = Zaleznosci.StanSygnalizatoraSamoczynnego.BrakWyjazdu
-                Else
-                    s.Stan = Zaleznosci.StanSygnalizatoraSamoczynnego.Zezwalajacy
-                End If
-
-            Case Zaleznosci.TypKostki.SygnalizatorPolsamoczynny
-                Dim s As Zaleznosci.SygnalizatorPolsamoczynny = DirectCast(sygn, Zaleznosci.SygnalizatorPolsamoczynny)
-                s.Stan = kom.Stan
-
-            Case Zaleznosci.TypKostki.SygnalizatorPowtarzajacy
-                Dim s As Zaleznosci.SygnalizatorPowtarzajacy = DirectCast(sygn, Zaleznosci.SygnalizatorPowtarzajacy)
-                If kom.Stan = Zaleznosci.StanSygnalizatora.Zezwalajacy Then
-                    s.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.Zezwalajacy
-                Else
-                    s.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.BrakWyjazdu
-                End If
-        End Select
-
-        plpPulpit.Invalidate()
-    End Sub
-
-    Private Sub Klient_OdebranoZmienionoStanToru(kom As Zaleznosci.ZmienionoStanToru) Handles Klient.OdebranoZmienionoStanToru
-        For i As Integer = 0 To kom.Tory.Length - 1
-            Dim akt As Zaleznosci.AktualizowanyKawalekToru = kom.Tory(i)
-            If Not plpPulpit.Pulpit.CzyKostkaNiepusta(akt.WspolrzedneKostki) Then Continue For
-
-            Dim k As Zaleznosci.Kostka = plpPulpit.Pulpit.Kostki(akt.WspolrzedneKostki.X, akt.WspolrzedneKostki.Y)
-            If akt.Polozenie = Zaleznosci.PolozenieToru.TorDrugi Then
-                Dim torPodw As Zaleznosci.TorPodwojny = TryCast(k, Zaleznosci.TorPodwojny)
-                If torPodw IsNot Nothing Then torPodw.ZajetoscDrugi = akt.Zajetosc
-            Else
-                Dim tor As Zaleznosci.Tor = TryCast(k, Zaleznosci.Tor)
-                If tor IsNot Nothing Then tor.Zajetosc = akt.Zajetosc
-            End If
-        Next
-
-        plpPulpit.Invalidate()
-    End Sub
-
-    Private Sub Klient_OdebranoZmienionoStanZwrotnicy(kom As Zaleznosci.ZmienionoStanZwrotnicy) Handles Klient.OdebranoZmienionoStanZwrotnicy
-        Dim rozj As Zaleznosci.Rozjazd = Nothing
-        If Not Rozjazdy.TryGetValue(kom.Adres, rozj) Then Exit Sub
-
-        rozj.Rozprucie = kom.Rozprucie
-        rozj.Stan = kom.Stan
-        plpPulpit.Invalidate()
-    End Sub
-
-    Private Sub Klient_OdebranoZmienionoKierunek(kom As Zaleznosci.ZmienionoKierunek) Handles Klient.OdebranoZmienionoKierunek
-        Dim kier As Zaleznosci.Kierunek = Nothing
-
-        If kom.Blad = Zaleznosci.BladZmianyKierunku.Brak AndAlso Kierunki.TryGetValue(kom.Adres, kier) Then
-            Select Case kom.Stan
-                Case Zaleznosci.ObecnyStanKierunku.Neutralny
-                    kier.UstawionyKierunek = Zaleznosci.UstawionyKierunekSBL.Zaden
-
-                Case Zaleznosci.ObecnyStanKierunku.Wyjazd
-                    kier.UstawionyKierunek = If(kier.KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Lewo, Zaleznosci.UstawionyKierunekSBL.Lewo, Zaleznosci.UstawionyKierunekSBL.Prawo)
-
-                Case Zaleznosci.ObecnyStanKierunku.Przyjazd
-                    kier.UstawionyKierunek = If(kier.KierunekWyjazdu = Zaleznosci.KierunekWyjazduSBL.Lewo, Zaleznosci.UstawionyKierunekSBL.Prawo, Zaleznosci.UstawionyKierunekSBL.Lewo)
-
-            End Select
-
-            Select Case kom.StanZmiany
-                Case Zaleznosci.StanZmianyKierunku.Brak
-                    kier.UstawionyStanZmiany = Zaleznosci.UstawionyStanZmianyKierunkuSBL.Zaden
-
-                Case Zaleznosci.StanZmianyKierunku.ZadanieWlaczenia
-                    kier.UstawionyStanZmiany = Zaleznosci.UstawionyStanZmianyKierunkuSBL.OczekiwanieNaPotwierdzenie
-
-                Case Zaleznosci.StanZmianyKierunku.ZadanieWlaczenia
-                Case Zaleznosci.StanZmianyKierunku.AnulowanieWlaczenia
-                    kier.UstawionyStanZmiany = Zaleznosci.UstawionyStanZmianyKierunkuSBL.Wlaczanie
-
-                Case Zaleznosci.StanZmianyKierunku.Zwalnianie
-                    kier.UstawionyStanZmiany = Zaleznosci.UstawionyStanZmianyKierunkuSBL.Wylaczanie
-
-            End Select
-
-            plpPulpit.Invalidate()
-        End If
-    End Sub
-
     Private Sub Klient_OdebranoZmienionoJasnoscLamp(kom As Zaleznosci.ZmienionoJasnoscLamp) Handles Klient.OdebranoZmienionoJasnoscLamp
         Dim l As Zaleznosci.Lampa = Nothing
         Dim zaznaczona As Integer = -1
@@ -421,19 +321,6 @@ Public Class wndNastawnia
                 End If
             End If
         Next
-    End Sub
-
-    Private Sub Klient_OdebranoZmienionoStanPrzejazdu(kom As Zaleznosci.ZmienionoStanPrzejazdu) Handles Klient.OdebranoZmienionoStanPrzejazdu
-        Dim prz As Zaleznosci.PrzejazdKolejowoDrogowy = Nothing
-
-        If kom.Blad = Zaleznosci.BladZmianyStanuPrzejazdu.Brak AndAlso Przejazdy.TryGetValue(kom.Numer, prz) Then
-            For Each k As Zaleznosci.PrzejazdKolejowoDrogowyKostka In prz.KostkiPrzejazdy
-                k.Stan = kom.Stan
-                k.Awaria = kom.Awaria
-            Next
-
-            plpPulpit.Invalidate()
-        End If
     End Sub
 
     Private Sub WczytajPolaczenia(Okno As FileDialog, MetodaOtwierajaca As Func(Of String, Zaleznosci.PolaczeniaPosterunkow), KomunikatBledu As String)
@@ -453,8 +340,6 @@ Public Class wndNastawnia
     Private Sub CzyscOkno()
         Invoke(actPokazStatus, "Rozłączono", Color.Red, False)
         Invoke(actPokazNazweOkna, String.Empty)
-        Invoke(actPokazPulpit, New Zaleznosci.Pulpit)
-        Invoke(actUsunMigacz)
         Invoke(actZamknijOkna)
     End Sub
 
@@ -469,35 +354,25 @@ Public Class wndNastawnia
     End Sub
 
     Private Sub PokazStatusPolaczenia(tekst As String, kolor As Color, polaczony As Boolean)
+        Dim dostepnyBezObserwatora As Boolean = polaczony And (Not TrybObserwatora)
+
         tslStanPolaczenia.Text = tekst
         tslStanPolaczenia.ForeColor = kolor
         mnuPolaczZSerwerem.Enabled = Not polaczony
         mnuRozlaczZSerwerem.Enabled = polaczony
-        mnuDodajPociag.Enabled = polaczony
-        mnuSterujPociagiem.Enabled = polaczony
-        mnuOswietlenie.Enabled = polaczony
+        mnuDodajPociag.Enabled = dostepnyBezObserwatora
+        mnuSterujPociagiem.Enabled = dostepnyBezObserwatora
+        mnuOswietlenie.Enabled = dostepnyBezObserwatora
     End Sub
 
     Private Sub PokazNazweOkna(nazwaPosterunku As String)
         If String.IsNullOrEmpty(nazwaPosterunku) Then
             Text = NAZWA_OKNA
         Else
-            Text = $"{NAZWA_OKNA} - {nazwaPosterunku}"
+            Dim obs As String = Nothing
+            If TrybObserwatora Then obs = $" (tryb obserwatora)"
+            Text = $"{NAZWA_OKNA} - {nazwaPosterunku}{obs}"
         End If
-    End Sub
-
-    Private Sub PokazPulpit(pulpit As Zaleznosci.Pulpit)
-        plpPulpit.Pulpit = pulpit
-
-        Sygnalizatory = pulpit.PobierzSygnalizatory()
-        Rozjazdy = pulpit.PobierzRozjazdy()
-        Kierunki = pulpit.PobierzKierunkiPoAdresieOdcinka()
-        Lampy = pulpit.PobierzLampy()
-        Przejazdy = pulpit.PobierzPrzejazdyKolejowoDrogowe()
-    End Sub
-
-    Private Sub UsunMigacz()
-        plpPulpit.UsunMigacz()
     End Sub
 
     Private Sub ZamknijOkna()

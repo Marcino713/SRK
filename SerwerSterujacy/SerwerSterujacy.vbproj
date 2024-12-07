@@ -77,6 +77,12 @@
     <Compile Include="ListaAdresowIP.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Obserwatorzy.Designer.vb">
+      <DependentUpon>Obserwatorzy.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Obserwatorzy.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="OknoSerwera.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -105,6 +111,7 @@
     <Compile Include="Pociagi.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Symulator\KonfiguracjaSymulatora.vb" />
     <Compile Include="Symulator\ListaZwrotnic.Designer.vb">
       <DependentUpon>ListaZwrotnic.vb</DependentUpon>
     </Compile>
@@ -167,6 +174,9 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Obserwatorzy.resx">
+      <DependentUpon>Obserwatorzy.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="OknoSerwera.resx">
       <DependentUpon>OknoSerwera.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -185,6 +195,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Symulator\StanPulpitu.resx">
       <DependentUpon>StanPulpitu.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Symulator\Symulator.resx">
       <DependentUpon>Symulator.vb</DependentUpon>

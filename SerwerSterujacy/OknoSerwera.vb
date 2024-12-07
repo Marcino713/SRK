@@ -11,6 +11,7 @@ Public Class wndOknoSerwera
     Private UrzadzenieSterujace As Zaleznosci.KomunikacjaZUrzadzeniami
 
     Private actZmianaCzasuPodlaczenia As Action(Of String, String, String) = AddressOf PokazZmianeCzasuPodlaczenia
+    Private actZmianaLiczbyObserwatorow As Action(Of String, Integer) = AddressOf OdswiezLiczbeObserwatorow
     Private slockListaPosterunkow As New Object
 
     Public Sub New()
@@ -71,8 +72,18 @@ Public Class wndOknoSerwera
             Exit Sub
         End If
 
-        If txtHaslo.Text = "" Then
+        If txtHaslo.Text = String.Empty Then
             Wspolne.PokazBlad("Należy podać hasło.")
+            Exit Sub
+        End If
+
+        If txtHasloObserwator.Text = String.Empty Then
+            Wspolne.PokazBlad("Należy podać hasło trybu obserwatora.")
+            Exit Sub
+        End If
+
+        If txtHaslo.Text = txtHasloObserwator.Text Then
+            Wspolne.PokazBlad("Hasło musi być różne od hasła trybu obserwatora.")
             Exit Sub
         End If
 
@@ -81,7 +92,7 @@ Public Class wndOknoSerwera
             Exit Sub
         End If
 
-        If Not Serwer.Uruchom(port, txtHaslo.Text) Then
+        If Not Serwer.Uruchom(port, txtHaslo.Text, txtHasloObserwator.Text) Then
             Wspolne.PokazBlad("Nie udało się uruchomić serwera.")
         Else
             PokazUruchomienie()
@@ -152,11 +163,30 @@ Public Class wndOknoSerwera
             UrzadzenieSterujace = urz
             Serwer.UstawUrzadzenie(UrzadzenieSterujace)
 
-            OknoSymulatora = New wndSymulator(Serwer.PobierzPosterunki, urz)
+            Dim konf As New KonfiguracjaSymulatora With {.HasloObserwatora = txtHasloObserwator.Text, .Port = Serwer.Port}
+
+            OknoSymulatora = New wndSymulator(Serwer.PobierzPosterunki, urz, konf)
             OknoSymulatora.Show()
         Else
             OknoSymulatora.Focus()
         End If
+    End Sub
+
+    Private Sub btnObserwatorzy_Click() Handles btnObserwatorzy.Click
+        Dim obs As Zaleznosci.StanObslugiwanegoPosterunku
+
+        SyncLock slockListaPosterunkow
+            obs = Wspolne.PobierzTagZElementuListy(Of Zaleznosci.StanObslugiwanegoPosterunku)(Wspolne.PobierzZaznaczonyElementNaLiscie(lvPosterunki))
+        End SyncLock
+
+        If obs IsNot Nothing Then
+            Dim wnd As New wndObserwatorzy(obs.NazwaPosterunku, UShort.Parse(obs.Adres), Serwer)
+            wnd.Show()
+        End If
+    End Sub
+
+    Private Sub cbObserwatorzy_CheckedChanged() Handles cbObserwatorzy.CheckedChanged
+        Serwer.DostepnyTrybObserwatora = cbObserwatorzy.Checked
     End Sub
 
     Private Sub lvPosterunki_SelectedIndexChanged() Handles lvPosterunki.SelectedIndexChanged
@@ -211,6 +241,10 @@ Public Class wndOknoSerwera
         Invoke(actZmianaCzasuPodlaczenia, post, dataPodlaczenia, adresIp)
     End Sub
 
+    Private Sub Serwer_ZmienionoLiczbeObserwatorow(post As String, liczba As Integer) Handles Serwer.ZmienionoLiczbeObserwatorow
+        Invoke(actZmianaLiczbyObserwatorow, post, liczba)
+    End Sub
+
     Private Sub RozlaczZUrzadzeniami()
         Dim urz As Zaleznosci.UrzadzenieFizyczne = TryCast(UrzadzenieSterujace, Zaleznosci.UrzadzenieFizyczne)
 
@@ -236,6 +270,18 @@ Public Class wndOknoSerwera
         End SyncLock
     End Sub
 
+    Private Sub OdswiezLiczbeObserwatorow(adres As String, liczba As Integer)
+        Dim lvi As ListViewItem = Nothing
+
+        SyncLock slockListaPosterunkow
+            If PosterunkiSlownik.TryGetValue(adres, lvi) Then
+                lvi.SubItems(6).Text = liczba.ToString
+                Dim post As Zaleznosci.StanObslugiwanegoPosterunku = CType(lvi.Tag, Zaleznosci.StanObslugiwanegoPosterunku)
+                post.Obserwatorzy = liczba
+            End If
+        End SyncLock
+    End Sub
+
     Private Sub OdswiezPosterunki()
         Dim polaczenia As Zaleznosci.StanObslugiwanegoPosterunku() = Serwer.PobierzStanPolaczen()
 
@@ -247,7 +293,7 @@ Public Class wndOknoSerwera
             Dim polEn As IEnumerable(Of Zaleznosci.StanObslugiwanegoPosterunku) = polaczenia.OrderBy(Function(p) p.NazwaPosterunku)
 
             For Each pol As Zaleznosci.StanObslugiwanegoPosterunku In polEn
-                Dim lvi As New ListViewItem(New String() {pol.NazwaPosterunku, pol.NazwaPliku, pol.Adres, pol.DataPodlaczenia, pol.OstatnieZapytanie, pol.AdresIp}) With {
+                Dim lvi As New ListViewItem(New String() {pol.NazwaPosterunku, pol.NazwaPliku, pol.Adres, pol.DataPodlaczenia, pol.OstatnieZapytanie, pol.AdresIp, pol.Obserwatorzy.ToString}) With {
                         .Tag = pol
                     }
 

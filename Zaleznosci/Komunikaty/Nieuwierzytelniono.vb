@@ -23,4 +23,5 @@ End Class
 
 Public Enum PrzyczynaNieuwierzytelnienia As Byte
     BledneHaslo
+    BrakTrybuObserwatora
 End Enum

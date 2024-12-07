@@ -5,4 +5,5 @@
     Public DataPodlaczenia As String
     Public OstatnieZapytanie As String
     Public AdresIp As String
+    Public Obserwatorzy As Integer
 End Class
