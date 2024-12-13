@@ -78,6 +78,8 @@
     <Compile Include="KomunikatyUrzadzen\ZamknijRogatkeUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\ZmienionoStanRogatkiUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\ZmienionoStanZwrotnicyUrz.vb" />
+    <Compile Include="Kostki\SygnalizatorInformujacy.vb" />
+    <Compile Include="Kostki\SygnalizatorOstrzegawczy.vb" />
     <Compile Include="Kostki\TorPodwojnyNiezalezny.vb" />
     <Compile Include="Kostki\Most.vb" />
     <Compile Include="Kostki\TorPodwojny.vb" />
@@ -157,7 +159,6 @@
     <Compile Include="Kostki\SygnalizatorManewrowy.vb" />
     <Compile Include="Kostki\SygnalizatorPolsamoczynny.vb" />
     <Compile Include="Kostki\SygnalizatorSamoczynny.vb" />
-    <Compile Include="Kostki\SygnalizatorUzalezniony.vb" />
     <Compile Include="Kostki\Tor.vb" />
     <Compile Include="Kostki\TorKoniec.vb" />
     <Compile Include="Kostki\Zakret.vb" />

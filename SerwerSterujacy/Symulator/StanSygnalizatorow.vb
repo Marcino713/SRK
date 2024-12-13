@@ -3,9 +3,9 @@
     Private Const WYS_SYGN As Integer = 215
     Private Const WYS_NAZWA As Integer = 30
 
-    Private Const SWIATLA_DODATKOWE As Zaleznosci.DostepneSwiatlaEnum = Zaleznosci.DostepneSwiatlaEnum.ZielonyPas Or
-        Zaleznosci.DostepneSwiatlaEnum.PomaranczowyPas Or
-        Zaleznosci.DostepneSwiatlaEnum.WskaznikKierunkuPrzeciwnego
+    Private Const SWIATLA_DODATKOWE As Zaleznosci.DostepneSwiatlaSygnPolsamoczynny = Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.ZielonyPas Or
+        Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.PomaranczowyPas Or
+        Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.WskaznikKierunkuPrzeciwnego
 
     Private oknoSymulatora As wndSymulator
     Private pulpit As Zaleznosci.Pulpit
@@ -127,6 +127,10 @@
                 swiatla = UtworzSwiatlaSygnPowtarzajacego()
                 sygn = New SygnalizatorPodstawowy(migacz, swiatla, swiatla.Count)
 
+            Case Zaleznosci.TypKostki.SygnalizatorOstrzegawczy
+                swiatla = UtworzSwiatlaSygnOstrzegawczego(CType(kostka, Zaleznosci.SygnalizatorOstrzegawczy))
+                sygn = New SygnalizatorPodstawowy(migacz, swiatla, swiatla.Count)
+
             Case Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
                 sygn = New SygnalizatorOstrzegawczyPrzejazdowy(migacz, UtworzSwiatlaSygnTOP)
 
@@ -146,6 +150,13 @@
         Return New List(Of SwiatloSygnalizatora) From {SwiatloSygnalizatora.Pomaranczowe, SwiatloSygnalizatora.Zielone, SwiatloSygnalizatora.Biale}
     End Function
 
+    Private Function UtworzSwiatlaSygnOstrzegawczego(sygn As Zaleznosci.SygnalizatorOstrzegawczy) As List(Of SwiatloSygnalizatora)
+        Dim wynik As New List(Of SwiatloSygnalizatora)
+        If (sygn.DostepneSwiatla And Zaleznosci.DostepneSwiatlaSygnInformujacy.Zielone) <> 0 Then wynik.Add(SwiatloSygnalizatora.Zielone)
+        wynik.Add(SwiatloSygnalizatora.Pomaranczowe)
+        Return wynik
+    End Function
+
     Private Function UtworzSwiatlaSygnTOP() As List(Of SwiatloSygnalizatora)
         Return New List(Of SwiatloSygnalizatora) From {SwiatloSygnalizatora.Biale, SwiatloSygnalizatora.Biale, SwiatloSygnalizatora.Pomaranczowe, SwiatloSygnalizatora.Pomaranczowe}
     End Function
@@ -158,16 +169,16 @@
         End If
     End Function
 
-    Private Function UtworzSygnalizatorPolsamoczynny(konf As Zaleznosci.DostepneSwiatlaEnum) As SygnalizatorPodstawowy
+    Private Function UtworzSygnalizatorPolsamoczynny(konf As Zaleznosci.DostepneSwiatlaSygnPolsamoczynny) As SygnalizatorPodstawowy
         Dim swiatla As New List(Of SwiatloSygnalizatora)
         Dim liczba As Integer
         Dim sygn As SygnalizatorPodstawowy
 
-        If (konf And Zaleznosci.DostepneSwiatlaEnum.Zielone) <> 0 Then swiatla.Add(SwiatloSygnalizatora.Zielone)
-        If (konf And Zaleznosci.DostepneSwiatlaEnum.PomaranczoweGora) <> 0 Then swiatla.Add(SwiatloSygnalizatora.Pomaranczowe)
-        If (konf And Zaleznosci.DostepneSwiatlaEnum.Czerwone) <> 0 Then swiatla.Add(SwiatloSygnalizatora.Czerwone)
-        If (konf And Zaleznosci.DostepneSwiatlaEnum.PomaranczoweDol) <> 0 Then swiatla.Add(SwiatloSygnalizatora.Pomaranczowe)
-        If (konf And Zaleznosci.DostepneSwiatlaEnum.Biale) <> 0 Then swiatla.Add(SwiatloSygnalizatora.Biale)
+        If (konf And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.Zielone) <> 0 Then swiatla.Add(SwiatloSygnalizatora.Zielone)
+        If (konf And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.PomaranczoweGora) <> 0 Then swiatla.Add(SwiatloSygnalizatora.Pomaranczowe)
+        If (konf And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.Czerwone) <> 0 Then swiatla.Add(SwiatloSygnalizatora.Czerwone)
+        If (konf And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.PomaranczoweDol) <> 0 Then swiatla.Add(SwiatloSygnalizatora.Pomaranczowe)
+        If (konf And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.Biale) <> 0 Then swiatla.Add(SwiatloSygnalizatora.Biale)
 
         liczba = swiatla.Count
 
@@ -176,17 +187,17 @@
         Else
             Dim dodSwiatla As New DodatkoweSwiatlaSygnalizatora
 
-            If (konf And Zaleznosci.DostepneSwiatlaEnum.ZielonyPas) <> 0 Then
+            If (konf And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.ZielonyPas) <> 0 Then
                 dodSwiatla.ZielonyPas = swiatla.Count
                 swiatla.Add(SwiatloSygnalizatora.Zielone)
             End If
 
-            If (konf And Zaleznosci.DostepneSwiatlaEnum.PomaranczowyPas) <> 0 Then
+            If (konf And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.PomaranczowyPas) <> 0 Then
                 dodSwiatla.PomaranczowyPas = swiatla.Count
                 swiatla.Add(SwiatloSygnalizatora.Pomaranczowe)
             End If
 
-            If (konf And Zaleznosci.DostepneSwiatlaEnum.WskaznikKierunkuPrzeciwnego) <> 0 Then
+            If (konf And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.WskaznikKierunkuPrzeciwnego) <> 0 Then
                 dodSwiatla.WskaznikKierPrzeciwnego = swiatla.Count
                 swiatla.Add(SwiatloSygnalizatora.Biale)
             End If

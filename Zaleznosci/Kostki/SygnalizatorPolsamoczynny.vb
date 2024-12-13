@@ -1,7 +1,11 @@
 ﻿Public Class SygnalizatorPolsamoczynny
-    Inherits SygnalizatorUzalezniony
+    Inherits SygnalizatorWylaczanyPoPrzejechaniu
 
-    Public Property DostepneSwiatla As DostepneSwiatlaEnum
+    Private Const USTAWIENIA_DOMYSLNE As UstawieniaSygnalizatoraPolsamoczynnego = UstawieniaSygnalizatoraPolsamoczynnego.DostepneManewry
+    Private Const DOSTEPNE_SWIATLA_DOMYSLNE As DostepneSwiatlaSygnPolsamoczynny = DostepneSwiatlaSygnPolsamoczynny.Zielone Or DostepneSwiatlaSygnPolsamoczynny.Czerwone Or DostepneSwiatlaSygnPolsamoczynny.PomaranczoweDol Or DostepneSwiatlaSygnPolsamoczynny.Biale
+
+    Public Property Ustawienia As UstawieniaSygnalizatoraPolsamoczynnego = USTAWIENIA_DOMYSLNE
+    Public Property DostepneSwiatla As DostepneSwiatlaSygnPolsamoczynny = DOSTEPNE_SWIATLA_DOMYSLNE
 
     Private _Stan As StanSygnalizatora = StanSygnalizatora.BrakWyjazdu
     Public Property Stan As StanSygnalizatora
@@ -24,17 +28,25 @@
 
     Friend Overrides Sub ZapiszKostke(bw As BinaryWriter, konf As KonfiguracjaZapisuPulpitu)
         MyBase.ZapiszKostke(bw, konf)
+        bw.Write(CUShort(Ustawienia))
         bw.Write(CUShort(DostepneSwiatla))
     End Sub
 
     Friend Overrides Sub OtworzKostke(br As BinaryReader, konf As KonfiguracjaOdczytuPulpitu)
         MyBase.OtworzKostke(br, konf)
-        DostepneSwiatla = CType(br.ReadUInt16, DostepneSwiatlaEnum)
+        Ustawienia = CType(br.ReadUInt16, UstawieniaSygnalizatoraPolsamoczynnego)
+        DostepneSwiatla = CType(br.ReadUInt16, DostepneSwiatlaSygnPolsamoczynny)
     End Sub
 End Class
 
 <Flags>
-Public Enum DostepneSwiatlaEnum
+Public Enum UstawieniaSygnalizatoraPolsamoczynnego
+    DostepneManewry = 1 << 0
+    BrakDrogiHamowania = 1 << 1
+End Enum
+
+<Flags>
+Public Enum DostepneSwiatlaSygnPolsamoczynny
     Zielone = 1 << 0
     PomaranczoweGora = 1 << 1
     Czerwone = 1 << 2

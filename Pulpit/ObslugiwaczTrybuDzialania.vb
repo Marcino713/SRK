@@ -59,12 +59,12 @@
                 Dim s As Zaleznosci.SygnalizatorPolsamoczynny = DirectCast(sygn, Zaleznosci.SygnalizatorPolsamoczynny)
                 s.Stan = kom.Stan
 
-            Case Zaleznosci.TypKostki.SygnalizatorPowtarzajacy
-                Dim s As Zaleznosci.SygnalizatorPowtarzajacy = DirectCast(sygn, Zaleznosci.SygnalizatorPowtarzajacy)
+            Case Zaleznosci.TypKostki.SygnalizatorPowtarzajacy, Zaleznosci.TypKostki.SygnalizatorOstrzegawczy
+                Dim s As Zaleznosci.SygnalizatorInformujacy = DirectCast(sygn, Zaleznosci.SygnalizatorInformujacy)
                 If kom.Stan = Zaleznosci.StanSygnalizatora.Zezwalajacy Then
-                    s.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.Zezwalajacy
+                    s.Stan = Zaleznosci.StanSygnalizatoraInformujacego.Zezwalajacy
                 Else
-                    s.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.BrakWyjazdu
+                    s.Stan = Zaleznosci.StanSygnalizatoraInformujacego.BrakWyjazdu
                 End If
         End Select
 

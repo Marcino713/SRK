@@ -36,13 +36,28 @@ Partial Class wndProjektantPosterunku
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuNazwa = New System.Windows.Forms.ToolStripMenuItem()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
-        Me.plpPulpit = New Pulpit.PulpitSterowniczy()
         Me.Label36 = New System.Windows.Forms.Label()
         Me.tabUstawienia = New System.Windows.Forms.TabControl()
         Me.tbpPulpit = New System.Windows.Forms.TabPage()
         Me.splKartaPulpit = New System.Windows.Forms.SplitContainer()
         Me.lvPulpitKostki = New System.Windows.Forms.ListView()
         Me.imlKostki = New System.Windows.Forms.ImageList(Me.components)
+        Me.pnlKonfSygnInfSygnPowtarzany = New System.Windows.Forms.Panel()
+        Me.cboKonfSygnInfSygnPowtarzany = New System.Windows.Forms.ComboBox()
+        Me.Label38 = New System.Windows.Forms.Label()
+        Me.pnlKonfSygnPowtKolejnosc = New System.Windows.Forms.Panel()
+        Me.rbKonfSygnPowtKolejnoscIII = New System.Windows.Forms.RadioButton()
+        Me.rbKonfSygnPowtKolejnoscII = New System.Windows.Forms.RadioButton()
+        Me.rbKonfSygnPowtKolejnoscI = New System.Windows.Forms.RadioButton()
+        Me.Label40 = New System.Windows.Forms.Label()
+        Me.pnlKonfSygnInfSwiatla = New System.Windows.Forms.Panel()
+        Me.cbKonfSygnInfPom = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnInfZiel = New System.Windows.Forms.CheckBox()
+        Me.Label39 = New System.Windows.Forms.Label()
+        Me.pnlKonfSygnPolsamUstawienia = New System.Windows.Forms.Panel()
+        Me.cbKonfSygnPolsamBrakDrogiHamowania = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnPolsamManewry = New System.Windows.Forms.CheckBox()
+        Me.Label13 = New System.Windows.Forms.Label()
         Me.pnlKonfTorPodwojny = New System.Windows.Forms.Panel()
         Me.TableLayoutPanel1 = New System.Windows.Forms.TableLayoutPanel()
         Me.cbKonfTorPodwNiezajetosc1 = New System.Windows.Forms.CheckBox()
@@ -59,6 +74,16 @@ Partial Class wndProjektantPosterunku
         Me.Label16 = New System.Windows.Forms.Label()
         Me.lblKonfTorPodwojnyDrugi = New System.Windows.Forms.Label()
         Me.lblKonfTorPodwojnyPierwszy = New System.Windows.Forms.Label()
+        Me.pnlKonfSygnPolsamSwiatla = New System.Windows.Forms.Panel()
+        Me.cbKonfSygnPolsamKierPrzeciwny = New System.Windows.Forms.CheckBox()
+        Me.Label20 = New System.Windows.Forms.Label()
+        Me.cbKonfSygnPolsamPomPas = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnPolsamZielPas = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnPolsamBiale = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnPolsamPomDol = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnPolsamCzer = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnPolsamPomGor = New System.Windows.Forms.CheckBox()
+        Me.cbKonfSygnPolsamZiel = New System.Windows.Forms.CheckBox()
         Me.pnlKonfRozjazd = New System.Windows.Forms.Panel()
         Me.rbKonfRozjazdZasadniczyMinus = New System.Windows.Forms.RadioButton()
         Me.rbKonfRozjazdZasadniczyPlus = New System.Windows.Forms.RadioButton()
@@ -88,26 +113,9 @@ Partial Class wndProjektantPosterunku
         Me.Label63 = New System.Windows.Forms.Label()
         Me.txtKonfTorPredkosc = New System.Windows.Forms.TextBox()
         Me.Label12 = New System.Windows.Forms.Label()
-        Me.pnlKonfSygnPowt = New System.Windows.Forms.Panel()
-        Me.rbKonfSygnPowtKolejnoscIII = New System.Windows.Forms.RadioButton()
-        Me.rbKonfSygnPowtKolejnoscII = New System.Windows.Forms.RadioButton()
-        Me.rbKonfSygnPowtKolejnoscI = New System.Windows.Forms.RadioButton()
-        Me.cboKonfSygnPowtSygnObslugiwany = New System.Windows.Forms.ComboBox()
-        Me.Label40 = New System.Windows.Forms.Label()
-        Me.Label38 = New System.Windows.Forms.Label()
         Me.pnlKonfAdres = New System.Windows.Forms.Panel()
         Me.txtKonfAdres = New System.Windows.Forms.TextBox()
         Me.Label64 = New System.Windows.Forms.Label()
-        Me.pnlKonfSygnSwiatla = New System.Windows.Forms.Panel()
-        Me.cbKonfSygnKierPrzeciwny = New System.Windows.Forms.CheckBox()
-        Me.Label20 = New System.Windows.Forms.Label()
-        Me.cbKonfSygnPomPas = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnZielPas = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnBiale = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnPomDol = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnCzer = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnPomGor = New System.Windows.Forms.CheckBox()
-        Me.cbKonfSygnZiel = New System.Windows.Forms.CheckBox()
         Me.pnlKonfSygnOdcNast = New System.Windows.Forms.Panel()
         Me.Label19 = New System.Windows.Forms.Label()
         Me.cboKonfSygnOdcinekNast = New System.Windows.Forms.ComboBox()
@@ -116,9 +124,6 @@ Partial Class wndProjektantPosterunku
         Me.cboKonfPrzyciskTyp = New System.Windows.Forms.ComboBox()
         Me.Label22 = New System.Windows.Forms.Label()
         Me.Label21 = New System.Windows.Forms.Label()
-        Me.pnlKonfSygnSygnNast = New System.Windows.Forms.Panel()
-        Me.Label23 = New System.Windows.Forms.Label()
-        Me.cboKonfSygnSygnNast = New System.Windows.Forms.ComboBox()
         Me.pnlKonfPosiadaPrzycisk = New System.Windows.Forms.Panel()
         Me.cbKonfPrzycisk = New System.Windows.Forms.CheckBox()
         Me.pnlKonfNazwa = New System.Windows.Forms.Panel()
@@ -290,6 +295,7 @@ Partial Class wndProjektantPosterunku
         Me.Label53 = New System.Windows.Forms.Label()
         Me.btnPrzejazdSygnDrogUsun = New System.Windows.Forms.Button()
         Me.btnPrzejazdSygnDrogDodaj = New System.Windows.Forms.Button()
+        Me.plpPulpit = New Pulpit.PulpitSterowniczy()
         Me.mnuMenu.SuspendLayout()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
@@ -301,8 +307,13 @@ Partial Class wndProjektantPosterunku
         Me.splKartaPulpit.Panel1.SuspendLayout()
         Me.splKartaPulpit.Panel2.SuspendLayout()
         Me.splKartaPulpit.SuspendLayout()
+        Me.pnlKonfSygnInfSygnPowtarzany.SuspendLayout()
+        Me.pnlKonfSygnPowtKolejnosc.SuspendLayout()
+        Me.pnlKonfSygnInfSwiatla.SuspendLayout()
+        Me.pnlKonfSygnPolsamUstawienia.SuspendLayout()
         Me.pnlKonfTorPodwojny.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
+        Me.pnlKonfSygnPolsamSwiatla.SuspendLayout()
         Me.pnlKonfRozjazd.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
         Me.Panel4.SuspendLayout()
@@ -311,12 +322,9 @@ Partial Class wndProjektantPosterunku
         Me.Panel2.SuspendLayout()
         Me.Panel1.SuspendLayout()
         Me.pnlKonfTor.SuspendLayout()
-        Me.pnlKonfSygnPowt.SuspendLayout()
         Me.pnlKonfAdres.SuspendLayout()
-        Me.pnlKonfSygnSwiatla.SuspendLayout()
         Me.pnlKonfSygnOdcNast.SuspendLayout()
         Me.pnlKonfPrzycisk.SuspendLayout()
-        Me.pnlKonfSygnSygnNast.SuspendLayout()
         Me.pnlKonfPosiadaPrzycisk.SuspendLayout()
         Me.pnlKonfNazwa.SuspendLayout()
         Me.pnlKonfKier.SuspendLayout()
@@ -455,35 +463,6 @@ Partial Class wndProjektantPosterunku
         Me.splOkno.SplitterDistance = 788
         Me.splOkno.TabIndex = 1
         '
-        'plpPulpit
-        '
-        Me.plpPulpit.AllowDrop = True
-        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
-        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
-        Me.plpPulpit.MozliwoscWcisnieciaPrzycisku = True
-        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
-        Me.plpPulpit.MozliwoscZaznaczeniaOdcinka = False
-        Me.plpPulpit.Name = "plpPulpit"
-        Me.plpPulpit.projDodatkoweObiekty = Pulpit.Dodatki.RysujDodatkoweObiekty.Nic
-        Me.plpPulpit.ZaznaczonaKostka = Nothing
-        Me.plpPulpit.projZaznaczonaLampa = Nothing
-        Me.plpPulpit.projZaznaczonyLicznik = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
-        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit1.Adres = CType(0US, UShort)
-        Pulpit1.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit1
-        Me.plpPulpit.Size = New System.Drawing.Size(790, 645)
-        Me.plpPulpit.TabIndex = 4
-        Me.plpPulpit.TrybProjektowy = True
-        Me.plpPulpit.ZaznaczonyOdcinek = Nothing
-        '
         'Label36
         '
         Me.Label36.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
@@ -535,15 +514,17 @@ Partial Class wndProjektantPosterunku
         '
         'splKartaPulpit.Panel2
         '
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnInfSygnPowtarzany)
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnPowtKolejnosc)
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnInfSwiatla)
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnPolsamUstawienia)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfTorPodwojny)
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnPolsamSwiatla)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfRozjazd)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfTor)
-        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnPowt)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfAdres)
-        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnSwiatla)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnOdcNast)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfPrzycisk)
-        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnSygnNast)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfPosiadaPrzycisk)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfNazwa)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfKier)
@@ -569,6 +550,178 @@ Partial Class wndProjektantPosterunku
         Me.imlKostki.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit
         Me.imlKostki.ImageSize = New System.Drawing.Size(48, 48)
         Me.imlKostki.TransparentColor = System.Drawing.Color.Transparent
+        '
+        'pnlKonfSygnInfSygnPowtarzany
+        '
+        Me.pnlKonfSygnInfSygnPowtarzany.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfSygnInfSygnPowtarzany.Controls.Add(Me.cboKonfSygnInfSygnPowtarzany)
+        Me.pnlKonfSygnInfSygnPowtarzany.Controls.Add(Me.Label38)
+        Me.pnlKonfSygnInfSygnPowtarzany.Location = New System.Drawing.Point(50, 13)
+        Me.pnlKonfSygnInfSygnPowtarzany.Name = "pnlKonfSygnInfSygnPowtarzany"
+        Me.pnlKonfSygnInfSygnPowtarzany.Size = New System.Drawing.Size(170, 42)
+        Me.pnlKonfSygnInfSygnPowtarzany.TabIndex = 35
+        Me.pnlKonfSygnInfSygnPowtarzany.Visible = False
+        '
+        'cboKonfSygnInfSygnPowtarzany
+        '
+        Me.cboKonfSygnInfSygnPowtarzany.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfSygnInfSygnPowtarzany.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfSygnInfSygnPowtarzany.FormattingEnabled = True
+        Me.cboKonfSygnInfSygnPowtarzany.Location = New System.Drawing.Point(0, 16)
+        Me.cboKonfSygnInfSygnPowtarzany.Name = "cboKonfSygnInfSygnPowtarzany"
+        Me.cboKonfSygnInfSygnPowtarzany.Size = New System.Drawing.Size(170, 21)
+        Me.cboKonfSygnInfSygnPowtarzany.TabIndex = 36
+        '
+        'Label38
+        '
+        Me.Label38.AutoSize = True
+        Me.Label38.Location = New System.Drawing.Point(0, 0)
+        Me.Label38.Name = "Label38"
+        Me.Label38.Size = New System.Drawing.Size(124, 13)
+        Me.Label38.TabIndex = 1
+        Me.Label38.Text = "Sygnalizator powtarzany:"
+        '
+        'pnlKonfSygnPowtKolejnosc
+        '
+        Me.pnlKonfSygnPowtKolejnosc.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfSygnPowtKolejnosc.Controls.Add(Me.rbKonfSygnPowtKolejnoscIII)
+        Me.pnlKonfSygnPowtKolejnosc.Controls.Add(Me.rbKonfSygnPowtKolejnoscII)
+        Me.pnlKonfSygnPowtKolejnosc.Controls.Add(Me.rbKonfSygnPowtKolejnoscI)
+        Me.pnlKonfSygnPowtKolejnosc.Controls.Add(Me.Label40)
+        Me.pnlKonfSygnPowtKolejnosc.Location = New System.Drawing.Point(26, 10)
+        Me.pnlKonfSygnPowtKolejnosc.Name = "pnlKonfSygnPowtKolejnosc"
+        Me.pnlKonfSygnPowtKolejnosc.Size = New System.Drawing.Size(115, 36)
+        Me.pnlKonfSygnPowtKolejnosc.TabIndex = 29
+        Me.pnlKonfSygnPowtKolejnosc.Visible = False
+        '
+        'rbKonfSygnPowtKolejnoscIII
+        '
+        Me.rbKonfSygnPowtKolejnoscIII.AutoSize = True
+        Me.rbKonfSygnPowtKolejnoscIII.Location = New System.Drawing.Point(71, 16)
+        Me.rbKonfSygnPowtKolejnoscIII.Name = "rbKonfSygnPowtKolejnoscIII"
+        Me.rbKonfSygnPowtKolejnoscIII.Size = New System.Drawing.Size(34, 17)
+        Me.rbKonfSygnPowtKolejnoscIII.TabIndex = 32
+        Me.rbKonfSygnPowtKolejnoscIII.TabStop = True
+        Me.rbKonfSygnPowtKolejnoscIII.Text = "III"
+        Me.rbKonfSygnPowtKolejnoscIII.UseVisualStyleBackColor = True
+        '
+        'rbKonfSygnPowtKolejnoscII
+        '
+        Me.rbKonfSygnPowtKolejnoscII.AutoSize = True
+        Me.rbKonfSygnPowtKolejnoscII.Location = New System.Drawing.Point(34, 16)
+        Me.rbKonfSygnPowtKolejnoscII.Name = "rbKonfSygnPowtKolejnoscII"
+        Me.rbKonfSygnPowtKolejnoscII.Size = New System.Drawing.Size(31, 17)
+        Me.rbKonfSygnPowtKolejnoscII.TabIndex = 31
+        Me.rbKonfSygnPowtKolejnoscII.TabStop = True
+        Me.rbKonfSygnPowtKolejnoscII.Text = "II"
+        Me.rbKonfSygnPowtKolejnoscII.UseVisualStyleBackColor = True
+        '
+        'rbKonfSygnPowtKolejnoscI
+        '
+        Me.rbKonfSygnPowtKolejnoscI.AutoSize = True
+        Me.rbKonfSygnPowtKolejnoscI.Location = New System.Drawing.Point(0, 16)
+        Me.rbKonfSygnPowtKolejnoscI.Name = "rbKonfSygnPowtKolejnoscI"
+        Me.rbKonfSygnPowtKolejnoscI.Size = New System.Drawing.Size(28, 17)
+        Me.rbKonfSygnPowtKolejnoscI.TabIndex = 30
+        Me.rbKonfSygnPowtKolejnoscI.TabStop = True
+        Me.rbKonfSygnPowtKolejnoscI.Text = "I"
+        Me.rbKonfSygnPowtKolejnoscI.UseVisualStyleBackColor = True
+        '
+        'Label40
+        '
+        Me.Label40.AutoSize = True
+        Me.Label40.Location = New System.Drawing.Point(0, 0)
+        Me.Label40.Name = "Label40"
+        Me.Label40.Size = New System.Drawing.Size(56, 13)
+        Me.Label40.TabIndex = 3
+        Me.Label40.Text = "Kolejność:"
+        '
+        'pnlKonfSygnInfSwiatla
+        '
+        Me.pnlKonfSygnInfSwiatla.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfSygnInfSwiatla.Controls.Add(Me.cbKonfSygnInfPom)
+        Me.pnlKonfSygnInfSwiatla.Controls.Add(Me.cbKonfSygnInfZiel)
+        Me.pnlKonfSygnInfSwiatla.Controls.Add(Me.Label39)
+        Me.pnlKonfSygnInfSwiatla.Location = New System.Drawing.Point(87, 7)
+        Me.pnlKonfSygnInfSwiatla.Name = "pnlKonfSygnInfSwiatla"
+        Me.pnlKonfSygnInfSwiatla.Size = New System.Drawing.Size(120, 59)
+        Me.pnlKonfSygnInfSwiatla.TabIndex = 40
+        Me.pnlKonfSygnInfSwiatla.Visible = False
+        '
+        'cbKonfSygnInfPom
+        '
+        Me.cbKonfSygnInfPom.AutoSize = True
+        Me.cbKonfSygnInfPom.Location = New System.Drawing.Point(0, 39)
+        Me.cbKonfSygnInfPom.Name = "cbKonfSygnInfPom"
+        Me.cbKonfSygnInfPom.Size = New System.Drawing.Size(99, 17)
+        Me.cbKonfSygnInfPom.TabIndex = 42
+        Me.cbKonfSygnInfPom.Text = "Pomarańczowe"
+        Me.cbKonfSygnInfPom.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnInfZiel
+        '
+        Me.cbKonfSygnInfZiel.AutoSize = True
+        Me.cbKonfSygnInfZiel.Location = New System.Drawing.Point(0, 16)
+        Me.cbKonfSygnInfZiel.Name = "cbKonfSygnInfZiel"
+        Me.cbKonfSygnInfZiel.Size = New System.Drawing.Size(61, 17)
+        Me.cbKonfSygnInfZiel.TabIndex = 41
+        Me.cbKonfSygnInfZiel.Text = "Zielone"
+        Me.cbKonfSygnInfZiel.UseVisualStyleBackColor = True
+        '
+        'Label39
+        '
+        Me.Label39.AutoSize = True
+        Me.Label39.Location = New System.Drawing.Point(0, 0)
+        Me.Label39.Name = "Label39"
+        Me.Label39.Size = New System.Drawing.Size(93, 13)
+        Me.Label39.TabIndex = 0
+        Me.Label39.Text = "Dostępne światła:"
+        '
+        'pnlKonfSygnPolsamUstawienia
+        '
+        Me.pnlKonfSygnPolsamUstawienia.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfSygnPolsamUstawienia.Controls.Add(Me.cbKonfSygnPolsamBrakDrogiHamowania)
+        Me.pnlKonfSygnPolsamUstawienia.Controls.Add(Me.cbKonfSygnPolsamManewry)
+        Me.pnlKonfSygnPolsamUstawienia.Controls.Add(Me.Label13)
+        Me.pnlKonfSygnPolsamUstawienia.Location = New System.Drawing.Point(103, 10)
+        Me.pnlKonfSygnPolsamUstawienia.Name = "pnlKonfSygnPolsamUstawienia"
+        Me.pnlKonfSygnPolsamUstawienia.Size = New System.Drawing.Size(150, 61)
+        Me.pnlKonfSygnPolsamUstawienia.TabIndex = 40
+        Me.pnlKonfSygnPolsamUstawienia.Visible = False
+        '
+        'cbKonfSygnPolsamBrakDrogiHamowania
+        '
+        Me.cbKonfSygnPolsamBrakDrogiHamowania.AutoSize = True
+        Me.cbKonfSygnPolsamBrakDrogiHamowania.Location = New System.Drawing.Point(0, 39)
+        Me.cbKonfSygnPolsamBrakDrogiHamowania.Name = "cbKonfSygnPolsamBrakDrogiHamowania"
+        Me.cbKonfSygnPolsamBrakDrogiHamowania.Size = New System.Drawing.Size(131, 17)
+        Me.cbKonfSygnPolsamBrakDrogiHamowania.TabIndex = 42
+        Me.cbKonfSygnPolsamBrakDrogiHamowania.Text = "Brak drogi hamowania"
+        Me.cbKonfSygnPolsamBrakDrogiHamowania.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnPolsamManewry
+        '
+        Me.cbKonfSygnPolsamManewry.AutoSize = True
+        Me.cbKonfSygnPolsamManewry.Location = New System.Drawing.Point(0, 16)
+        Me.cbKonfSygnPolsamManewry.Name = "cbKonfSygnPolsamManewry"
+        Me.cbKonfSygnPolsamManewry.Size = New System.Drawing.Size(117, 17)
+        Me.cbKonfSygnPolsamManewry.TabIndex = 41
+        Me.cbKonfSygnPolsamManewry.Text = "Dostępne manewry"
+        Me.cbKonfSygnPolsamManewry.UseVisualStyleBackColor = True
+        '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.Location = New System.Drawing.Point(0, 0)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(62, 13)
+        Me.Label13.TabIndex = 0
+        Me.Label13.Text = "Ustawienia:"
         '
         'pnlKonfTorPodwojny
         '
@@ -754,6 +907,114 @@ Partial Class wndProjektantPosterunku
         Me.lblKonfTorPodwojnyPierwszy.Size = New System.Drawing.Size(66, 13)
         Me.lblKonfTorPodwojnyPierwszy.TabIndex = 29
         Me.lblKonfTorPodwojnyPierwszy.Text = "Tor pierwszy"
+        '
+        'pnlKonfSygnPolsamSwiatla
+        '
+        Me.pnlKonfSygnPolsamSwiatla.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfSygnPolsamSwiatla.Controls.Add(Me.cbKonfSygnPolsamKierPrzeciwny)
+        Me.pnlKonfSygnPolsamSwiatla.Controls.Add(Me.Label20)
+        Me.pnlKonfSygnPolsamSwiatla.Controls.Add(Me.cbKonfSygnPolsamPomPas)
+        Me.pnlKonfSygnPolsamSwiatla.Controls.Add(Me.cbKonfSygnPolsamZielPas)
+        Me.pnlKonfSygnPolsamSwiatla.Controls.Add(Me.cbKonfSygnPolsamBiale)
+        Me.pnlKonfSygnPolsamSwiatla.Controls.Add(Me.cbKonfSygnPolsamPomDol)
+        Me.pnlKonfSygnPolsamSwiatla.Controls.Add(Me.cbKonfSygnPolsamCzer)
+        Me.pnlKonfSygnPolsamSwiatla.Controls.Add(Me.cbKonfSygnPolsamPomGor)
+        Me.pnlKonfSygnPolsamSwiatla.Controls.Add(Me.cbKonfSygnPolsamZiel)
+        Me.pnlKonfSygnPolsamSwiatla.Location = New System.Drawing.Point(3, 167)
+        Me.pnlKonfSygnPolsamSwiatla.Name = "pnlKonfSygnPolsamSwiatla"
+        Me.pnlKonfSygnPolsamSwiatla.Size = New System.Drawing.Size(206, 200)
+        Me.pnlKonfSygnPolsamSwiatla.TabIndex = 50
+        Me.pnlKonfSygnPolsamSwiatla.Visible = False
+        '
+        'cbKonfSygnPolsamKierPrzeciwny
+        '
+        Me.cbKonfSygnPolsamKierPrzeciwny.AutoSize = True
+        Me.cbKonfSygnPolsamKierPrzeciwny.Location = New System.Drawing.Point(0, 179)
+        Me.cbKonfSygnPolsamKierPrzeciwny.Name = "cbKonfSygnPolsamKierPrzeciwny"
+        Me.cbKonfSygnPolsamKierPrzeciwny.Size = New System.Drawing.Size(180, 17)
+        Me.cbKonfSygnPolsamKierPrzeciwny.TabIndex = 58
+        Me.cbKonfSygnPolsamKierPrzeciwny.Text = "Wskaźnik kierunku przeciwnego"
+        Me.cbKonfSygnPolsamKierPrzeciwny.UseVisualStyleBackColor = True
+        '
+        'Label20
+        '
+        Me.Label20.AutoSize = True
+        Me.Label20.Location = New System.Drawing.Point(0, 0)
+        Me.Label20.Name = "Label20"
+        Me.Label20.Size = New System.Drawing.Size(93, 13)
+        Me.Label20.TabIndex = 7
+        Me.Label20.Text = "Dostępne światła:"
+        '
+        'cbKonfSygnPolsamPomPas
+        '
+        Me.cbKonfSygnPolsamPomPas.AutoSize = True
+        Me.cbKonfSygnPolsamPomPas.Location = New System.Drawing.Point(0, 156)
+        Me.cbKonfSygnPolsamPomPas.Name = "cbKonfSygnPolsamPomPas"
+        Me.cbKonfSygnPolsamPomPas.Size = New System.Drawing.Size(118, 17)
+        Me.cbKonfSygnPolsamPomPas.TabIndex = 57
+        Me.cbKonfSygnPolsamPomPas.Text = "Pomarańczowy pas"
+        Me.cbKonfSygnPolsamPomPas.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnPolsamZielPas
+        '
+        Me.cbKonfSygnPolsamZielPas.AutoSize = True
+        Me.cbKonfSygnPolsamZielPas.Location = New System.Drawing.Point(0, 133)
+        Me.cbKonfSygnPolsamZielPas.Name = "cbKonfSygnPolsamZielPas"
+        Me.cbKonfSygnPolsamZielPas.Size = New System.Drawing.Size(80, 17)
+        Me.cbKonfSygnPolsamZielPas.TabIndex = 56
+        Me.cbKonfSygnPolsamZielPas.Text = "Zielony pas"
+        Me.cbKonfSygnPolsamZielPas.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnPolsamBiale
+        '
+        Me.cbKonfSygnPolsamBiale.AutoSize = True
+        Me.cbKonfSygnPolsamBiale.Location = New System.Drawing.Point(0, 110)
+        Me.cbKonfSygnPolsamBiale.Name = "cbKonfSygnPolsamBiale"
+        Me.cbKonfSygnPolsamBiale.Size = New System.Drawing.Size(51, 17)
+        Me.cbKonfSygnPolsamBiale.TabIndex = 55
+        Me.cbKonfSygnPolsamBiale.Text = "Białe"
+        Me.cbKonfSygnPolsamBiale.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnPolsamPomDol
+        '
+        Me.cbKonfSygnPolsamPomDol.AutoSize = True
+        Me.cbKonfSygnPolsamPomDol.Location = New System.Drawing.Point(0, 87)
+        Me.cbKonfSygnPolsamPomDol.Name = "cbKonfSygnPolsamPomDol"
+        Me.cbKonfSygnPolsamPomDol.Size = New System.Drawing.Size(128, 17)
+        Me.cbKonfSygnPolsamPomDol.TabIndex = 54
+        Me.cbKonfSygnPolsamPomDol.Text = "Pomarańczowe dolne"
+        Me.cbKonfSygnPolsamPomDol.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnPolsamCzer
+        '
+        Me.cbKonfSygnPolsamCzer.AutoSize = True
+        Me.cbKonfSygnPolsamCzer.Location = New System.Drawing.Point(0, 64)
+        Me.cbKonfSygnPolsamCzer.Name = "cbKonfSygnPolsamCzer"
+        Me.cbKonfSygnPolsamCzer.Size = New System.Drawing.Size(73, 17)
+        Me.cbKonfSygnPolsamCzer.TabIndex = 53
+        Me.cbKonfSygnPolsamCzer.Text = "Czerwone"
+        Me.cbKonfSygnPolsamCzer.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnPolsamPomGor
+        '
+        Me.cbKonfSygnPolsamPomGor.AutoSize = True
+        Me.cbKonfSygnPolsamPomGor.Location = New System.Drawing.Point(0, 41)
+        Me.cbKonfSygnPolsamPomGor.Name = "cbKonfSygnPolsamPomGor"
+        Me.cbKonfSygnPolsamPomGor.Size = New System.Drawing.Size(129, 17)
+        Me.cbKonfSygnPolsamPomGor.TabIndex = 52
+        Me.cbKonfSygnPolsamPomGor.Text = "Pomarańczowe górne"
+        Me.cbKonfSygnPolsamPomGor.UseVisualStyleBackColor = True
+        '
+        'cbKonfSygnPolsamZiel
+        '
+        Me.cbKonfSygnPolsamZiel.AutoSize = True
+        Me.cbKonfSygnPolsamZiel.Location = New System.Drawing.Point(0, 18)
+        Me.cbKonfSygnPolsamZiel.Name = "cbKonfSygnPolsamZiel"
+        Me.cbKonfSygnPolsamZiel.Size = New System.Drawing.Size(61, 17)
+        Me.cbKonfSygnPolsamZiel.TabIndex = 51
+        Me.cbKonfSygnPolsamZiel.Text = "Zielone"
+        Me.cbKonfSygnPolsamZiel.UseVisualStyleBackColor = True
         '
         'pnlKonfRozjazd
         '
@@ -1076,84 +1337,6 @@ Partial Class wndProjektantPosterunku
         Me.Label12.TabIndex = 0
         Me.Label12.Text = "Prędkość maksymalna:"
         '
-        'pnlKonfSygnPowt
-        '
-        Me.pnlKonfSygnPowt.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.pnlKonfSygnPowt.Controls.Add(Me.rbKonfSygnPowtKolejnoscIII)
-        Me.pnlKonfSygnPowt.Controls.Add(Me.rbKonfSygnPowtKolejnoscII)
-        Me.pnlKonfSygnPowt.Controls.Add(Me.rbKonfSygnPowtKolejnoscI)
-        Me.pnlKonfSygnPowt.Controls.Add(Me.cboKonfSygnPowtSygnObslugiwany)
-        Me.pnlKonfSygnPowt.Controls.Add(Me.Label40)
-        Me.pnlKonfSygnPowt.Controls.Add(Me.Label38)
-        Me.pnlKonfSygnPowt.Location = New System.Drawing.Point(118, 311)
-        Me.pnlKonfSygnPowt.Name = "pnlKonfSygnPowt"
-        Me.pnlKonfSygnPowt.Size = New System.Drawing.Size(177, 80)
-        Me.pnlKonfSygnPowt.TabIndex = 29
-        Me.pnlKonfSygnPowt.Visible = False
-        '
-        'rbKonfSygnPowtKolejnoscIII
-        '
-        Me.rbKonfSygnPowtKolejnoscIII.AutoSize = True
-        Me.rbKonfSygnPowtKolejnoscIII.Location = New System.Drawing.Point(71, 16)
-        Me.rbKonfSygnPowtKolejnoscIII.Name = "rbKonfSygnPowtKolejnoscIII"
-        Me.rbKonfSygnPowtKolejnoscIII.Size = New System.Drawing.Size(34, 17)
-        Me.rbKonfSygnPowtKolejnoscIII.TabIndex = 32
-        Me.rbKonfSygnPowtKolejnoscIII.TabStop = True
-        Me.rbKonfSygnPowtKolejnoscIII.Text = "III"
-        Me.rbKonfSygnPowtKolejnoscIII.UseVisualStyleBackColor = True
-        '
-        'rbKonfSygnPowtKolejnoscII
-        '
-        Me.rbKonfSygnPowtKolejnoscII.AutoSize = True
-        Me.rbKonfSygnPowtKolejnoscII.Location = New System.Drawing.Point(34, 16)
-        Me.rbKonfSygnPowtKolejnoscII.Name = "rbKonfSygnPowtKolejnoscII"
-        Me.rbKonfSygnPowtKolejnoscII.Size = New System.Drawing.Size(31, 17)
-        Me.rbKonfSygnPowtKolejnoscII.TabIndex = 31
-        Me.rbKonfSygnPowtKolejnoscII.TabStop = True
-        Me.rbKonfSygnPowtKolejnoscII.Text = "II"
-        Me.rbKonfSygnPowtKolejnoscII.UseVisualStyleBackColor = True
-        '
-        'rbKonfSygnPowtKolejnoscI
-        '
-        Me.rbKonfSygnPowtKolejnoscI.AutoSize = True
-        Me.rbKonfSygnPowtKolejnoscI.Location = New System.Drawing.Point(0, 16)
-        Me.rbKonfSygnPowtKolejnoscI.Name = "rbKonfSygnPowtKolejnoscI"
-        Me.rbKonfSygnPowtKolejnoscI.Size = New System.Drawing.Size(28, 17)
-        Me.rbKonfSygnPowtKolejnoscI.TabIndex = 30
-        Me.rbKonfSygnPowtKolejnoscI.TabStop = True
-        Me.rbKonfSygnPowtKolejnoscI.Text = "I"
-        Me.rbKonfSygnPowtKolejnoscI.UseVisualStyleBackColor = True
-        '
-        'cboKonfSygnPowtSygnObslugiwany
-        '
-        Me.cboKonfSygnPowtSygnObslugiwany.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cboKonfSygnPowtSygnObslugiwany.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboKonfSygnPowtSygnObslugiwany.FormattingEnabled = True
-        Me.cboKonfSygnPowtSygnObslugiwany.Location = New System.Drawing.Point(0, 52)
-        Me.cboKonfSygnPowtSygnObslugiwany.Name = "cboKonfSygnPowtSygnObslugiwany"
-        Me.cboKonfSygnPowtSygnObslugiwany.Size = New System.Drawing.Size(177, 21)
-        Me.cboKonfSygnPowtSygnObslugiwany.TabIndex = 33
-        '
-        'Label40
-        '
-        Me.Label40.AutoSize = True
-        Me.Label40.Location = New System.Drawing.Point(0, 0)
-        Me.Label40.Name = "Label40"
-        Me.Label40.Size = New System.Drawing.Size(56, 13)
-        Me.Label40.TabIndex = 3
-        Me.Label40.Text = "Kolejność:"
-        '
-        'Label38
-        '
-        Me.Label38.AutoSize = True
-        Me.Label38.Location = New System.Drawing.Point(0, 36)
-        Me.Label38.Name = "Label38"
-        Me.Label38.Size = New System.Drawing.Size(124, 13)
-        Me.Label38.TabIndex = 1
-        Me.Label38.Text = "Sygnalizator powtarzany:"
-        '
         'pnlKonfAdres
         '
         Me.pnlKonfAdres.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
@@ -1183,114 +1366,6 @@ Partial Class wndProjektantPosterunku
         Me.Label64.Size = New System.Drawing.Size(37, 13)
         Me.Label64.TabIndex = 0
         Me.Label64.Text = "Adres:"
-        '
-        'pnlKonfSygnSwiatla
-        '
-        Me.pnlKonfSygnSwiatla.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnKierPrzeciwny)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.Label20)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnPomPas)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnZielPas)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnBiale)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnPomDol)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnCzer)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnPomGor)
-        Me.pnlKonfSygnSwiatla.Controls.Add(Me.cbKonfSygnZiel)
-        Me.pnlKonfSygnSwiatla.Location = New System.Drawing.Point(32, 121)
-        Me.pnlKonfSygnSwiatla.Name = "pnlKonfSygnSwiatla"
-        Me.pnlKonfSygnSwiatla.Size = New System.Drawing.Size(206, 200)
-        Me.pnlKonfSygnSwiatla.TabIndex = 40
-        Me.pnlKonfSygnSwiatla.Visible = False
-        '
-        'cbKonfSygnKierPrzeciwny
-        '
-        Me.cbKonfSygnKierPrzeciwny.AutoSize = True
-        Me.cbKonfSygnKierPrzeciwny.Location = New System.Drawing.Point(0, 179)
-        Me.cbKonfSygnKierPrzeciwny.Name = "cbKonfSygnKierPrzeciwny"
-        Me.cbKonfSygnKierPrzeciwny.Size = New System.Drawing.Size(180, 17)
-        Me.cbKonfSygnKierPrzeciwny.TabIndex = 48
-        Me.cbKonfSygnKierPrzeciwny.Text = "Wskaźnik kierunku przeciwnego"
-        Me.cbKonfSygnKierPrzeciwny.UseVisualStyleBackColor = True
-        '
-        'Label20
-        '
-        Me.Label20.AutoSize = True
-        Me.Label20.Location = New System.Drawing.Point(0, 0)
-        Me.Label20.Name = "Label20"
-        Me.Label20.Size = New System.Drawing.Size(93, 13)
-        Me.Label20.TabIndex = 7
-        Me.Label20.Text = "Dostępne światła:"
-        '
-        'cbKonfSygnPomPas
-        '
-        Me.cbKonfSygnPomPas.AutoSize = True
-        Me.cbKonfSygnPomPas.Location = New System.Drawing.Point(0, 156)
-        Me.cbKonfSygnPomPas.Name = "cbKonfSygnPomPas"
-        Me.cbKonfSygnPomPas.Size = New System.Drawing.Size(118, 17)
-        Me.cbKonfSygnPomPas.TabIndex = 47
-        Me.cbKonfSygnPomPas.Text = "Pomarańczowy pas"
-        Me.cbKonfSygnPomPas.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnZielPas
-        '
-        Me.cbKonfSygnZielPas.AutoSize = True
-        Me.cbKonfSygnZielPas.Location = New System.Drawing.Point(0, 133)
-        Me.cbKonfSygnZielPas.Name = "cbKonfSygnZielPas"
-        Me.cbKonfSygnZielPas.Size = New System.Drawing.Size(80, 17)
-        Me.cbKonfSygnZielPas.TabIndex = 46
-        Me.cbKonfSygnZielPas.Text = "Zielony pas"
-        Me.cbKonfSygnZielPas.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnBiale
-        '
-        Me.cbKonfSygnBiale.AutoSize = True
-        Me.cbKonfSygnBiale.Location = New System.Drawing.Point(0, 110)
-        Me.cbKonfSygnBiale.Name = "cbKonfSygnBiale"
-        Me.cbKonfSygnBiale.Size = New System.Drawing.Size(51, 17)
-        Me.cbKonfSygnBiale.TabIndex = 45
-        Me.cbKonfSygnBiale.Text = "Białe"
-        Me.cbKonfSygnBiale.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnPomDol
-        '
-        Me.cbKonfSygnPomDol.AutoSize = True
-        Me.cbKonfSygnPomDol.Location = New System.Drawing.Point(0, 87)
-        Me.cbKonfSygnPomDol.Name = "cbKonfSygnPomDol"
-        Me.cbKonfSygnPomDol.Size = New System.Drawing.Size(128, 17)
-        Me.cbKonfSygnPomDol.TabIndex = 44
-        Me.cbKonfSygnPomDol.Text = "Pomarańczowe dolne"
-        Me.cbKonfSygnPomDol.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnCzer
-        '
-        Me.cbKonfSygnCzer.AutoSize = True
-        Me.cbKonfSygnCzer.Location = New System.Drawing.Point(0, 64)
-        Me.cbKonfSygnCzer.Name = "cbKonfSygnCzer"
-        Me.cbKonfSygnCzer.Size = New System.Drawing.Size(73, 17)
-        Me.cbKonfSygnCzer.TabIndex = 43
-        Me.cbKonfSygnCzer.Text = "Czerwone"
-        Me.cbKonfSygnCzer.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnPomGor
-        '
-        Me.cbKonfSygnPomGor.AutoSize = True
-        Me.cbKonfSygnPomGor.Location = New System.Drawing.Point(0, 41)
-        Me.cbKonfSygnPomGor.Name = "cbKonfSygnPomGor"
-        Me.cbKonfSygnPomGor.Size = New System.Drawing.Size(129, 17)
-        Me.cbKonfSygnPomGor.TabIndex = 42
-        Me.cbKonfSygnPomGor.Text = "Pomarańczowe górne"
-        Me.cbKonfSygnPomGor.UseVisualStyleBackColor = True
-        '
-        'cbKonfSygnZiel
-        '
-        Me.cbKonfSygnZiel.AutoSize = True
-        Me.cbKonfSygnZiel.Location = New System.Drawing.Point(0, 18)
-        Me.cbKonfSygnZiel.Name = "cbKonfSygnZiel"
-        Me.cbKonfSygnZiel.Size = New System.Drawing.Size(61, 17)
-        Me.cbKonfSygnZiel.TabIndex = 41
-        Me.cbKonfSygnZiel.Text = "Zielone"
-        Me.cbKonfSygnZiel.UseVisualStyleBackColor = True
         '
         'pnlKonfSygnOdcNast
         '
@@ -1377,38 +1452,6 @@ Partial Class wndProjektantPosterunku
         Me.Label21.Size = New System.Drawing.Size(75, 13)
         Me.Label21.TabIndex = 0
         Me.Label21.Text = "Typ przycisku:"
-        '
-        'pnlKonfSygnSygnNast
-        '
-        Me.pnlKonfSygnSygnNast.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.pnlKonfSygnSygnNast.Controls.Add(Me.Label23)
-        Me.pnlKonfSygnSygnNast.Controls.Add(Me.cboKonfSygnSygnNast)
-        Me.pnlKonfSygnSygnNast.Location = New System.Drawing.Point(47, 164)
-        Me.pnlKonfSygnSygnNast.Name = "pnlKonfSygnSygnNast"
-        Me.pnlKonfSygnSygnNast.Size = New System.Drawing.Size(206, 40)
-        Me.pnlKonfSygnSygnNast.TabIndex = 31
-        Me.pnlKonfSygnSygnNast.Visible = False
-        '
-        'Label23
-        '
-        Me.Label23.AutoSize = True
-        Me.Label23.Location = New System.Drawing.Point(0, 0)
-        Me.Label23.Name = "Label23"
-        Me.Label23.Size = New System.Drawing.Size(127, 13)
-        Me.Label23.TabIndex = 7
-        Me.Label23.Text = "Sygnalizator następujący:"
-        '
-        'cboKonfSygnSygnNast
-        '
-        Me.cboKonfSygnSygnNast.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.cboKonfSygnSygnNast.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboKonfSygnSygnNast.FormattingEnabled = True
-        Me.cboKonfSygnSygnNast.Location = New System.Drawing.Point(0, 16)
-        Me.cboKonfSygnSygnNast.Name = "cboKonfSygnSygnNast"
-        Me.cboKonfSygnSygnNast.Size = New System.Drawing.Size(206, 21)
-        Me.cboKonfSygnSygnNast.TabIndex = 32
         '
         'pnlKonfPosiadaPrzycisk
         '
@@ -3047,6 +3090,35 @@ Partial Class wndProjektantPosterunku
         Me.btnPrzejazdSygnDrogDodaj.Text = "Dodaj"
         Me.btnPrzejazdSygnDrogDodaj.UseVisualStyleBackColor = True
         '
+        'plpPulpit
+        '
+        Me.plpPulpit.AllowDrop = True
+        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
+        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
+        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
+        Me.plpPulpit.MozliwoscZaznaczeniaOdcinka = False
+        Me.plpPulpit.Name = "plpPulpit"
+        Me.plpPulpit.projDodatkoweObiekty = Pulpit.Dodatki.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projZaznaczonaLampa = Nothing
+        Me.plpPulpit.projZaznaczonyLicznik = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
+        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
+        Pulpit1.Adres = CType(0US, UShort)
+        Pulpit1.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit1
+        Me.plpPulpit.Size = New System.Drawing.Size(790, 645)
+        Me.plpPulpit.TabIndex = 4
+        Me.plpPulpit.TrybProjektowy = True
+        Me.plpPulpit.WarunekZaznaczeniaKostki = Nothing
+        Me.plpPulpit.ZaznaczonaKostka = Nothing
+        Me.plpPulpit.ZaznaczonyOdcinek = Nothing
+        '
         'wndProjektantPosterunku
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -3070,9 +3142,19 @@ Partial Class wndProjektantPosterunku
         Me.splKartaPulpit.Panel2.ResumeLayout(False)
         CType(Me.splKartaPulpit, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splKartaPulpit.ResumeLayout(False)
+        Me.pnlKonfSygnInfSygnPowtarzany.ResumeLayout(False)
+        Me.pnlKonfSygnInfSygnPowtarzany.PerformLayout()
+        Me.pnlKonfSygnPowtKolejnosc.ResumeLayout(False)
+        Me.pnlKonfSygnPowtKolejnosc.PerformLayout()
+        Me.pnlKonfSygnInfSwiatla.ResumeLayout(False)
+        Me.pnlKonfSygnInfSwiatla.PerformLayout()
+        Me.pnlKonfSygnPolsamUstawienia.ResumeLayout(False)
+        Me.pnlKonfSygnPolsamUstawienia.PerformLayout()
         Me.pnlKonfTorPodwojny.ResumeLayout(False)
         Me.TableLayoutPanel1.ResumeLayout(False)
         Me.TableLayoutPanel1.PerformLayout()
+        Me.pnlKonfSygnPolsamSwiatla.ResumeLayout(False)
+        Me.pnlKonfSygnPolsamSwiatla.PerformLayout()
         Me.pnlKonfRozjazd.ResumeLayout(False)
         Me.pnlKonfRozjazd.PerformLayout()
         Me.GroupBox3.ResumeLayout(False)
@@ -3087,18 +3169,12 @@ Partial Class wndProjektantPosterunku
         Me.Panel1.PerformLayout()
         Me.pnlKonfTor.ResumeLayout(False)
         Me.pnlKonfTor.PerformLayout()
-        Me.pnlKonfSygnPowt.ResumeLayout(False)
-        Me.pnlKonfSygnPowt.PerformLayout()
         Me.pnlKonfAdres.ResumeLayout(False)
         Me.pnlKonfAdres.PerformLayout()
-        Me.pnlKonfSygnSwiatla.ResumeLayout(False)
-        Me.pnlKonfSygnSwiatla.PerformLayout()
         Me.pnlKonfSygnOdcNast.ResumeLayout(False)
         Me.pnlKonfSygnOdcNast.PerformLayout()
         Me.pnlKonfPrzycisk.ResumeLayout(False)
         Me.pnlKonfPrzycisk.PerformLayout()
-        Me.pnlKonfSygnSygnNast.ResumeLayout(False)
-        Me.pnlKonfSygnSygnNast.PerformLayout()
         Me.pnlKonfPosiadaPrzycisk.ResumeLayout(False)
         Me.pnlKonfPosiadaPrzycisk.PerformLayout()
         Me.pnlKonfNazwa.ResumeLayout(False)
@@ -3214,15 +3290,15 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents txtKonfTorPodwPredk1 As TextBox
     Friend WithEvents Label16 As Label
     Friend WithEvents Label15 As Label
-    Friend WithEvents pnlKonfSygnSwiatla As Panel
+    Friend WithEvents pnlKonfSygnPolsamSwiatla As Panel
     Friend WithEvents Label20 As Label
-    Friend WithEvents cbKonfSygnPomPas As CheckBox
-    Friend WithEvents cbKonfSygnZielPas As CheckBox
-    Friend WithEvents cbKonfSygnBiale As CheckBox
-    Friend WithEvents cbKonfSygnPomDol As CheckBox
-    Friend WithEvents cbKonfSygnCzer As CheckBox
-    Friend WithEvents cbKonfSygnPomGor As CheckBox
-    Friend WithEvents cbKonfSygnZiel As CheckBox
+    Friend WithEvents cbKonfSygnPolsamPomPas As CheckBox
+    Friend WithEvents cbKonfSygnPolsamZielPas As CheckBox
+    Friend WithEvents cbKonfSygnPolsamBiale As CheckBox
+    Friend WithEvents cbKonfSygnPolsamPomDol As CheckBox
+    Friend WithEvents cbKonfSygnPolsamCzer As CheckBox
+    Friend WithEvents cbKonfSygnPolsamPomGor As CheckBox
+    Friend WithEvents cbKonfSygnPolsamZiel As CheckBox
     Friend WithEvents cboKonfSygnOdcinekNast As ComboBox
     Friend WithEvents Label19 As Label
     Friend WithEvents pnlKonfPrzycisk As Panel
@@ -3248,8 +3324,6 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents rbKonfRozjazdWprost1Minus As RadioButton
     Friend WithEvents cboKonfRozjazdWprost2 As ComboBox
     Friend WithEvents cboKonfRozjazdWprost1 As ComboBox
-    Friend WithEvents cboKonfSygnSygnNast As ComboBox
-    Friend WithEvents Label23 As Label
     Friend WithEvents tbpLampy As TabPage
     Friend WithEvents splKartaLampy As SplitContainer
     Friend WithEvents lvLampy As ListView
@@ -3302,15 +3376,14 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents mnuZapiszJako As ToolStripMenuItem
     Friend WithEvents Label36 As Label
     Friend WithEvents plpPulpit As Pulpit.PulpitSterowniczy
-    Friend WithEvents pnlKonfSygnPowt As Panel
+    Friend WithEvents pnlKonfSygnPowtKolejnosc As Panel
     Friend WithEvents rbKonfSygnPowtKolejnoscIII As RadioButton
     Friend WithEvents rbKonfSygnPowtKolejnoscII As RadioButton
     Friend WithEvents rbKonfSygnPowtKolejnoscI As RadioButton
-    Friend WithEvents cboKonfSygnPowtSygnObslugiwany As ComboBox
+    Friend WithEvents cboKonfSygnInfSygnPowtarzany As ComboBox
     Friend WithEvents Label40 As Label
     Friend WithEvents Label38 As Label
     Friend WithEvents pnlKonfSygnOdcNast As Panel
-    Friend WithEvents pnlKonfSygnSygnNast As Panel
     Friend WithEvents tbpPrzejazdy As TabPage
     Friend WithEvents splKartaPrzejazdy As SplitContainer
     Friend WithEvents lvPrzejazdy As ListView
@@ -3402,7 +3475,7 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents pnlKonfAdres As Panel
     Friend WithEvents txtKonfAdres As TextBox
     Friend WithEvents Label64 As Label
-    Friend WithEvents cbKonfSygnKierPrzeciwny As CheckBox
+    Friend WithEvents cbKonfSygnPolsamKierPrzeciwny As CheckBox
     Friend WithEvents TableLayoutPanel1 As TableLayoutPanel
     Friend WithEvents cbKonfPrzycisk As CheckBox
     Friend WithEvents rbKonfRozjazdZasadniczyMinus As RadioButton
@@ -3431,4 +3504,13 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents pnlKonfTorPodwojny As Panel
     Friend WithEvents lblKonfTorPodwojnyPierwszy As Label
     Friend WithEvents lblKonfTorPodwojnyDrugi As Label
+    Friend WithEvents pnlKonfSygnInfSwiatla As Panel
+    Friend WithEvents cbKonfSygnInfPom As CheckBox
+    Friend WithEvents cbKonfSygnInfZiel As CheckBox
+    Friend WithEvents Label39 As Label
+    Friend WithEvents pnlKonfSygnPolsamUstawienia As Panel
+    Friend WithEvents cbKonfSygnPolsamBrakDrogiHamowania As CheckBox
+    Friend WithEvents cbKonfSygnPolsamManewry As CheckBox
+    Friend WithEvents Label13 As Label
+    Friend WithEvents pnlKonfSygnInfSygnPowtarzany As Panel
 End Class

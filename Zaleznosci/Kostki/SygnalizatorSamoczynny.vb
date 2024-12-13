@@ -1,5 +1,5 @@
 ﻿Public Class SygnalizatorSamoczynny
-    Inherits SygnalizatorUzalezniony
+    Inherits SygnalizatorWylaczanyPoPrzejechaniu
 
     Public Property Stan As StanSygnalizatoraSamoczynnego = StanSygnalizatoraSamoczynnego.BrakWyjazdu
 

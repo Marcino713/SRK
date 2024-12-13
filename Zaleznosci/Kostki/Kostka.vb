@@ -22,7 +22,8 @@ Public MustInherit Class Kostka
         {TypKostki.SygnalizatorOstrzegawczyPrzejazdowy, Function() New SygnalizatorOstrzegawczyPrzejazdowy},
         {TypKostki.PrzejazdKolejowy, Function() New PrzejazdKolejowoDrogowyKostka},
         {TypKostki.ZakretPodwojny, Function() New ZakretPodwojny},
-        {TypKostki.Most, Function() New Most}
+        {TypKostki.Most, Function() New Most},
+        {TypKostki.SygnalizatorOstrzegawczy, Function() New SygnalizatorOstrzegawczy}
     }
 
     Public ReadOnly Property Typ As TypKostki
@@ -35,10 +36,6 @@ Public MustInherit Class Kostka
 
     Public Shared Function CzySygnalizator(k As Kostka) As Boolean
         Return TypeOf k Is Sygnalizator
-    End Function
-
-    Public Shared Function CzySygnalizatorUzalezniony(k As Kostka) As Boolean
-        Return TypeOf k Is SygnalizatorUzalezniony
     End Function
 
     Public Shared Function CzySygnalizatorPolsamoczynny(k As Kostka) As Boolean
@@ -143,4 +140,5 @@ Public Enum TypKostki
     PrzejazdKolejowy = 15
     ZakretPodwojny = 16
     Most = 17
+    SygnalizatorOstrzegawczy = 18
 End Enum

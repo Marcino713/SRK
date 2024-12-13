@@ -49,7 +49,8 @@
         plpPulpit.TypRysownika = WybranyTypRysownika
         plpPulpit.Wysrodkuj()
 
-        PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygnSygnNast, pnlKonfSygnOdcNast, pnlKonfPosiadaPrzycisk, pnlKonfSygnSwiatla, pnlKonfSygnPowt, pnlKonfTor, pnlKonfNapis, pnlKonfKier, pnlKonfAdres, pnlKonfNazwa, pnlKonfTorPodwojny}
+        PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygnOdcNast, pnlKonfPosiadaPrzycisk, pnlKonfSygnPolsamSwiatla, pnlKonfSygnPowtKolejnosc, pnlKonfTor, pnlKonfNapis,
+            pnlKonfKier, pnlKonfAdres, pnlKonfNazwa, pnlKonfTorPodwojny, pnlKonfSygnPolsamUstawienia, pnlKonfSygnInfSwiatla, pnlKonfSygnInfSygnPowtarzany}
         For i As Integer = 0 To PaneleKonfKostek.Length - 1
             PaneleKonfKostek(i).Width = splKartaPulpit.Panel2.Width
         Next
@@ -82,7 +83,7 @@
 
         pnlPrzejazdAutomatyzacjaKolorWyjazd.BackColor = plpPulpit.Rysownik.KOLOR_TOR_TEN_ODCINEK
         pnlPrzejazdAutomatyzacjaKolorPrzyjazd.BackColor = plpPulpit.Rysownik.KOLOR_TOR_LICZNIK_ODCINEK_2
-        pnlPrzejazdAutomatyzacjaKolorSygnalizator.BackColor = plpPulpit.Rysownik.KOLOR_TLO_SYGNALIZATOR_PRZEJAZDOWY
+        pnlPrzejazdAutomatyzacjaKolorSygnalizator.BackColor = plpPulpit.Rysownik.KOLOR_TLO_SYGNALIZATOR_WYROZNIONY
     End Sub
 
     Private Sub wndProjektantPosterunku_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
@@ -152,6 +153,7 @@
             UtworzKostkeDoListy(p, New Zaleznosci.SygnalizatorSamoczynny() With {.Nazwa = "105"}, "Sygnalizator samoczynny"),
             UtworzKostkeDoListy(p, New Zaleznosci.SygnalizatorManewrowy() With {.Nazwa = "Tm5"}, "Sygnalizator manewrowy"),
             UtworzKostkeDoListy(p, New Zaleznosci.SygnalizatorPowtarzajacy() With {.SygnalizatorPowtarzany = sygnPolsamPowt}, "Sygnalizator powtarzający"),
+            UtworzKostkeDoListy(p, New Zaleznosci.SygnalizatorOstrzegawczy() With {.SygnalizatorPowtarzany = sygnPolsamPowt}, "Sygnalizator ostrzegawczy"),
             UtworzKostkeDoListy(p, sygnPolsam, "Sygnalizator półsamoczynny"),
             UtworzKostkeDoListy(p, New Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy() With {.Nazwa = "107"}, "Sygnalizator przejazdowy"),
             UtworzKostkeDoListy(p, New Zaleznosci.PrzejazdKolejowoDrogowyKostka(), "Przejazd kolejowy"),
@@ -570,53 +572,52 @@
         If sygn IsNot Nothing Then
             Dim el As Wspolne.ObiektComboBox(Of Zaleznosci.OdcinekToru) = DirectCast(cboKonfSygnOdcinekNast.SelectedItem, Wspolne.ObiektComboBox(Of Zaleznosci.OdcinekToru))
             sygn.OdcinekNastepujacy = el.Wartosc
+            plpPulpit.Invalidate()
         End If
     End Sub
 
-    Private Sub cboKonfSygnSygnNast_SelectedIndexChanged() Handles cboKonfSygnSygnNast.SelectedIndexChanged
-        If cboKonfSygnSygnNast.SelectedItem Is Nothing Then Exit Sub
-        Dim sygn As Zaleznosci.SygnalizatorUzalezniony = TryCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorUzalezniony)
-
-        If sygn IsNot Nothing Then
-            Dim el As Wspolne.ObiektComboBox(Of Zaleznosci.Kostka) = DirectCast(cboKonfSygnSygnNast.SelectedItem, Wspolne.ObiektComboBox(Of Zaleznosci.Kostka))
-            sygn.SygnalizatorNastepny = DirectCast(el.Wartosc, Zaleznosci.Sygnalizator)
-        End If
+    Private Sub cbKonfSygnPolsamManewry_CheckedChanged() Handles cbKonfSygnPolsamManewry.CheckedChanged
+        UstawUstawienieSygnPolsam(cbKonfSygnPolsamManewry, Zaleznosci.UstawieniaSygnalizatoraPolsamoczynnego.DostepneManewry)
     End Sub
 
-    Private Sub cbKonfSygnZiel_CheckedChanged() Handles cbKonfSygnZiel.CheckedChanged
-        UstawDostepneSwiatlo(cbKonfSygnZiel, Zaleznosci.DostepneSwiatlaEnum.Zielone)
+    Private Sub cbKonfSygnPolsamBrakDrogiHamowania_CheckedChanged() Handles cbKonfSygnPolsamBrakDrogiHamowania.CheckedChanged
+        UstawUstawienieSygnPolsam(cbKonfSygnPolsamBrakDrogiHamowania, Zaleznosci.UstawieniaSygnalizatoraPolsamoczynnego.BrakDrogiHamowania)
     End Sub
 
-    Private Sub cbKonfSygnPomGor_CheckedChanged() Handles cbKonfSygnPomGor.CheckedChanged
-        UstawDostepneSwiatlo(cbKonfSygnPomGor, Zaleznosci.DostepneSwiatlaEnum.PomaranczoweGora)
+    Private Sub cbKonfSygnPolsamZiel_CheckedChanged() Handles cbKonfSygnPolsamZiel.CheckedChanged
+        UstawDostepneSwiatloSygnPolsam(cbKonfSygnPolsamZiel, Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.Zielone)
     End Sub
 
-    Private Sub cbKonfSygnCzer_CheckedChanged() Handles cbKonfSygnCzer.CheckedChanged
-        UstawDostepneSwiatlo(cbKonfSygnCzer, Zaleznosci.DostepneSwiatlaEnum.Czerwone)
+    Private Sub cbKonfSygnPolsamPomGor_CheckedChanged() Handles cbKonfSygnPolsamPomGor.CheckedChanged
+        UstawDostepneSwiatloSygnPolsam(cbKonfSygnPolsamPomGor, Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.PomaranczoweGora)
     End Sub
 
-    Private Sub cbKonfSygnPomDol_CheckedChanged() Handles cbKonfSygnPomDol.CheckedChanged
-        UstawDostepneSwiatlo(cbKonfSygnPomDol, Zaleznosci.DostepneSwiatlaEnum.PomaranczoweDol)
+    Private Sub cbKonfSygnPolsamCzer_CheckedChanged() Handles cbKonfSygnPolsamCzer.CheckedChanged
+        UstawDostepneSwiatloSygnPolsam(cbKonfSygnPolsamCzer, Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.Czerwone)
     End Sub
 
-    Private Sub cbKonfSygnBiale_CheckedChanged() Handles cbKonfSygnBiale.CheckedChanged
-        UstawDostepneSwiatlo(cbKonfSygnBiale, Zaleznosci.DostepneSwiatlaEnum.Biale)
+    Private Sub cbKonfSygnPolsamPomDol_CheckedChanged() Handles cbKonfSygnPolsamPomDol.CheckedChanged
+        UstawDostepneSwiatloSygnPolsam(cbKonfSygnPolsamPomDol, Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.PomaranczoweDol)
     End Sub
 
-    Private Sub cbKonfSygnZielPas_CheckedChanged() Handles cbKonfSygnZielPas.CheckedChanged
-        UstawDostepneSwiatlo(cbKonfSygnZielPas, Zaleznosci.DostepneSwiatlaEnum.ZielonyPas)
+    Private Sub cbKonfSygnPolsamBiale_CheckedChanged() Handles cbKonfSygnPolsamBiale.CheckedChanged
+        UstawDostepneSwiatloSygnPolsam(cbKonfSygnPolsamBiale, Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.Biale)
     End Sub
 
-    Private Sub cbKonfSygnPomPas_CheckedChanged() Handles cbKonfSygnPomPas.CheckedChanged
-        UstawDostepneSwiatlo(cbKonfSygnPomPas, Zaleznosci.DostepneSwiatlaEnum.PomaranczowyPas)
+    Private Sub cbKonfSygnPolsamZielPas_CheckedChanged() Handles cbKonfSygnPolsamZielPas.CheckedChanged
+        UstawDostepneSwiatloSygnPolsam(cbKonfSygnPolsamZielPas, Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.ZielonyPas)
     End Sub
 
-    Private Sub cbKonfSygnKierPrzeciwny_CheckedChanged() Handles cbKonfSygnKierPrzeciwny.CheckedChanged
-        UstawDostepneSwiatlo(cbKonfSygnKierPrzeciwny, Zaleznosci.DostepneSwiatlaEnum.WskaznikKierunkuPrzeciwnego)
+    Private Sub cbKonfSygnPolsamPomPas_CheckedChanged() Handles cbKonfSygnPolsamPomPas.CheckedChanged
+        UstawDostepneSwiatloSygnPolsam(cbKonfSygnPolsamPomPas, Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.PomaranczowyPas)
+    End Sub
+
+    Private Sub cbKonfSygnPolsamKierPrzeciwny_CheckedChanged() Handles cbKonfSygnPolsamKierPrzeciwny.CheckedChanged
+        UstawDostepneSwiatloSygnPolsam(cbKonfSygnPolsamKierPrzeciwny, Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.WskaznikKierunkuPrzeciwnego)
     End Sub
 
 
-    'Sygnalizator powtarzający
+    'Sygnalizator informujący
     Private Sub rbKonfSygnPowtKolejnoscI_CheckedChanged() Handles rbKonfSygnPowtKolejnoscI.CheckedChanged
         UstawKolejnoscSygnalizatoraPowtarzajacego(rbKonfSygnPowtKolejnoscI, Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Pierwszy)
     End Sub
@@ -629,20 +630,30 @@
         UstawKolejnoscSygnalizatoraPowtarzajacego(rbKonfSygnPowtKolejnoscIII, Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Trzeci)
     End Sub
 
-    Private Sub cboKonfSygnPowtSygnObslugiwany_SelectedIndexChanged() Handles cboKonfSygnPowtSygnObslugiwany.SelectedIndexChanged
-        If cboKonfSygnPowtSygnObslugiwany.SelectedItem Is Nothing Then Exit Sub
-        Dim el As Wspolne.ObiektComboBox(Of Zaleznosci.Kostka) = DirectCast(cboKonfSygnPowtSygnObslugiwany.SelectedItem, Wspolne.ObiektComboBox(Of Zaleznosci.Kostka))
-        Dim sygnPowt As Zaleznosci.SygnalizatorPowtarzajacy = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy)
-        sygnPowt.SygnalizatorPowtarzany = DirectCast(el.Wartosc, Zaleznosci.SygnalizatorPolsamoczynny)
-        txtKonfNazwa.Text = sygnPowt.Nazwa
+    Private Sub cboKonfSygnInfSygnPowtarzany_SelectedIndexChanged() Handles cboKonfSygnInfSygnPowtarzany.SelectedIndexChanged
+        If cboKonfSygnInfSygnPowtarzany.SelectedItem Is Nothing Then Exit Sub
+        Dim el As Wspolne.ObiektComboBox(Of Zaleznosci.Kostka) = DirectCast(cboKonfSygnInfSygnPowtarzany.SelectedItem, Wspolne.ObiektComboBox(Of Zaleznosci.Kostka))
+        Dim sygnInf As Zaleznosci.SygnalizatorInformujacy = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorInformujacy)
+        sygnInf.SygnalizatorPowtarzany = DirectCast(el.Wartosc, Zaleznosci.SygnalizatorPolsamoczynny)
+        txtKonfNazwa.Text = sygnInf.Nazwa
         plpPulpit.Invalidate()
     End Sub
+
+    Private Sub cbKonfSygnInfZiel_CheckedChanged() Handles cbKonfSygnInfZiel.CheckedChanged
+        UstawDostepneSwiatloSygnInf(cbKonfSygnInfZiel, Zaleznosci.DostepneSwiatlaSygnInformujacy.Zielone)
+    End Sub
+
+    Private Sub cbKonfSygnInfPom_CheckedChanged() Handles cbKonfSygnInfPom.CheckedChanged
+        UstawDostepneSwiatloSygnInf(cbKonfSygnInfPom, Zaleznosci.DostepneSwiatlaSygnInformujacy.Pomaranczowe)
+    End Sub
+
 
     'Posiadanie przycisku
     Private Sub cbKonfPrzycisk_CheckedChanged() Handles cbKonfPrzycisk.CheckedChanged
         DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.IPrzycisk).PosiadaPrzycisk = cbKonfPrzycisk.Checked
         plpPulpit.Invalidate()
     End Sub
+
 
     'Przycisk
     Private Sub cboKonfPrzyciskTyp_SelectedIndexChanged() Handles cboKonfPrzyciskTyp.SelectedIndexChanged
@@ -801,8 +812,8 @@
                     nowePanele = PokazKonfRozjazd()
                 Case Zaleznosci.TypKostki.SygnalizatorManewrowy, Zaleznosci.TypKostki.SygnalizatorSamoczynny, Zaleznosci.TypKostki.SygnalizatorPolsamoczynny, Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy
                     nowePanele = PokazKonfSygn()
-                Case Zaleznosci.TypKostki.SygnalizatorPowtarzajacy
-                    nowePanele = PokazKonfSygnPowt()
+                Case Zaleznosci.TypKostki.SygnalizatorPowtarzajacy, Zaleznosci.TypKostki.SygnalizatorOstrzegawczy
+                    nowePanele = PokazKonfSygnInf()
                 Case Zaleznosci.TypKostki.Przycisk, Zaleznosci.TypKostki.PrzyciskTor
                     nowePanele = PokazKonfPrzycisk()
                 Case Zaleznosci.TypKostki.Napis
@@ -941,16 +952,6 @@
             PokazKonfSygnOdcinki()
         End If
 
-        If sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Or sygn.Typ = Zaleznosci.TypKostki.SygnalizatorSamoczynny Then
-            panele.Add(pnlKonfSygnSygnNast)
-            cboKonfSygnSygnNast.Items.Clear()
-            Dim sygnalizatory As Wspolne.ObiektComboBox(Of Zaleznosci.Kostka)() = PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzySygnalizatorUzalezniony, AddressOf PobierzNazweToru)
-            cboKonfSygnSygnNast.Items.Add(PUSTY_CBO_KOSTKA)
-            cboKonfSygnSygnNast.Items.AddRange(sygnalizatory)
-            Dim sygn_nast As Zaleznosci.Sygnalizator = DirectCast(sygn, Zaleznosci.SygnalizatorUzalezniony).SygnalizatorNastepny
-            ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfSygnSygnNast, sygn_nast)
-        End If
-
         If sygn.Typ = Zaleznosci.TypKostki.SygnalizatorManewrowy Then
             panele.Add(pnlKonfPosiadaPrzycisk)
             Dim tm As Zaleznosci.SygnalizatorManewrowy = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorManewrowy)
@@ -958,43 +959,61 @@
         End If
 
         If sygn.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Then
-            panele.Add(pnlKonfSygnSwiatla)
-            Dim sw As Zaleznosci.DostepneSwiatlaEnum = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny).DostepneSwiatla
-            cbKonfSygnZiel.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.Zielone) <> 0
-            cbKonfSygnPomGor.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.PomaranczoweGora) <> 0
-            cbKonfSygnCzer.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.Czerwone) <> 0
-            cbKonfSygnPomDol.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.PomaranczoweDol) <> 0
-            cbKonfSygnBiale.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.Biale) <> 0
-            cbKonfSygnZielPas.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.ZielonyPas) <> 0
-            cbKonfSygnPomPas.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.PomaranczowyPas) <> 0
-            cbKonfSygnKierPrzeciwny.Checked = (sw And Zaleznosci.DostepneSwiatlaEnum.WskaznikKierunkuPrzeciwnego) <> 0
+            Dim sygnPolsam As Zaleznosci.SygnalizatorPolsamoczynny = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny)
+
+            panele.Add(pnlKonfSygnPolsamUstawienia)
+            Dim ust As Zaleznosci.UstawieniaSygnalizatoraPolsamoczynnego = sygnPolsam.Ustawienia
+            cbKonfSygnPolsamManewry.Checked = (ust And Zaleznosci.UstawieniaSygnalizatoraPolsamoczynnego.DostepneManewry) <> 0
+            cbKonfSygnPolsamBrakDrogiHamowania.Checked = (ust And Zaleznosci.UstawieniaSygnalizatoraPolsamoczynnego.BrakDrogiHamowania) <> 0
+
+            panele.Add(pnlKonfSygnPolsamSwiatla)
+            Dim sw As Zaleznosci.DostepneSwiatlaSygnPolsamoczynny = sygnPolsam.DostepneSwiatla
+            cbKonfSygnPolsamZiel.Checked = (sw And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.Zielone) <> 0
+            cbKonfSygnPolsamPomGor.Checked = (sw And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.PomaranczoweGora) <> 0
+            cbKonfSygnPolsamCzer.Checked = (sw And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.Czerwone) <> 0
+            cbKonfSygnPolsamPomDol.Checked = (sw And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.PomaranczoweDol) <> 0
+            cbKonfSygnPolsamBiale.Checked = (sw And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.Biale) <> 0
+            cbKonfSygnPolsamZielPas.Checked = (sw And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.ZielonyPas) <> 0
+            cbKonfSygnPolsamPomPas.Checked = (sw And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.PomaranczowyPas) <> 0
+            cbKonfSygnPolsamKierPrzeciwny.Checked = (sw And Zaleznosci.DostepneSwiatlaSygnPolsamoczynny.WskaznikKierunkuPrzeciwnego) <> 0
         End If
 
         Return panele
     End Function
 
-    Private Function PokazKonfSygnPowt() As List(Of Panel)
-        Dim sygn As Zaleznosci.SygnalizatorPowtarzajacy = CType(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy)
+    Private Function PokazKonfSygnInf() As List(Of Panel)
+        Dim sygn As Zaleznosci.SygnalizatorInformujacy = CType(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorInformujacy)
+        Dim sygnPowt As Zaleznosci.SygnalizatorPowtarzajacy = TryCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPowtarzajacy)
+        Dim panele As New List(Of Panel) From {pnlKonfAdres, pnlKonfNazwa, pnlKonfTor}
 
         PokazKonfAdres()
         PokazKonfNazwa(False)
         PokazKonfTor(sygn)
 
-        Select Case sygn.Kolejnosc
-            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Pierwszy
-                rbKonfSygnPowtKolejnoscI.Checked = True
-            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Drugi
-                rbKonfSygnPowtKolejnoscII.Checked = True
-            Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Trzeci
-                rbKonfSygnPowtKolejnoscIII.Checked = True
-        End Select
+        If sygnPowt IsNot Nothing Then
+            Select Case sygnPowt.Kolejnosc
+                Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Pierwszy
+                    rbKonfSygnPowtKolejnoscI.Checked = True
+                Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Drugi
+                    rbKonfSygnPowtKolejnoscII.Checked = True
+                Case Zaleznosci.KolejnoscSygnalizatoraPowtarzajacego.Trzeci
+                    rbKonfSygnPowtKolejnoscIII.Checked = True
+            End Select
+
+            panele.Add(pnlKonfSygnPowtKolejnosc)
+        End If
 
         Dim sygnalizatory As Wspolne.ObiektComboBox(Of Zaleznosci.Kostka)() = PobierzKostkiDoComboBox(AddressOf Zaleznosci.Kostka.CzySygnalizatorPolsamoczynny, AddressOf PobierzNazweToru)
-        cboKonfSygnPowtSygnObslugiwany.Items.Clear()
-        cboKonfSygnPowtSygnObslugiwany.Items.AddRange(sygnalizatory)
-        ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfSygnPowtSygnObslugiwany, sygn.SygnalizatorPowtarzany)
+        cboKonfSygnInfSygnPowtarzany.Items.Clear()
+        cboKonfSygnInfSygnPowtarzany.Items.AddRange(sygnalizatory)
+        ZaznaczElement(Of Zaleznosci.Kostka)(cboKonfSygnInfSygnPowtarzany, sygn.SygnalizatorPowtarzany)
+        panele.Add(pnlKonfSygnInfSygnPowtarzany)
 
-        Return New List(Of Panel) From {pnlKonfAdres, pnlKonfNazwa, pnlKonfTor, pnlKonfSygnPowt}
+        cbKonfSygnInfZiel.Checked = (sygn.DostepneSwiatla And Zaleznosci.DostepneSwiatlaSygnInformujacy.Zielone) <> 0
+        cbKonfSygnInfPom.Checked = (sygn.DostepneSwiatla And Zaleznosci.DostepneSwiatlaSygnInformujacy.Pomaranczowe) <> 0
+        panele.Add(pnlKonfSygnInfSwiatla)
+
+        Return panele
     End Function
 
     Private Function PokazKonfPrzycisk() As List(Of Panel)
@@ -1122,7 +1141,16 @@
         ZaznaczElement(Of Zaleznosci.Kostka)(cbo, rozjazdWybrany)
     End Sub
 
-    Private Sub UstawDostepneSwiatlo(cb As CheckBox, kolor As Zaleznosci.DostepneSwiatlaEnum)
+    Private Sub UstawUstawienieSygnPolsam(cb As CheckBox, ustawienie As Zaleznosci.UstawieniaSygnalizatoraPolsamoczynnego)
+        Dim sygn As Zaleznosci.SygnalizatorPolsamoczynny = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny)
+        If cb.Checked Then
+            sygn.Ustawienia = sygn.Ustawienia Or ustawienie
+        Else
+            sygn.Ustawienia = sygn.Ustawienia And (Not ustawienie)
+        End If
+    End Sub
+
+    Private Sub UstawDostepneSwiatloSygnPolsam(cb As CheckBox, kolor As Zaleznosci.DostepneSwiatlaSygnPolsamoczynny)
         Dim sygn As Zaleznosci.SygnalizatorPolsamoczynny = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorPolsamoczynny)
         If cb.Checked Then
             sygn.DostepneSwiatla = sygn.DostepneSwiatla Or kolor
@@ -1137,6 +1165,15 @@
             sygnPowt.Kolejnosc = kolejnosc
             txtKonfNazwa.Text = sygnPowt.Nazwa
             plpPulpit.Invalidate()
+        End If
+    End Sub
+
+    Private Sub UstawDostepneSwiatloSygnInf(cb As CheckBox, kolor As Zaleznosci.DostepneSwiatlaSygnInformujacy)
+        Dim sygn As Zaleznosci.SygnalizatorInformujacy = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.SygnalizatorInformujacy)
+        If cb.Checked Then
+            sygn.DostepneSwiatla = sygn.DostepneSwiatla Or kolor
+        Else
+            sygn.DostepneSwiatla = sygn.DostepneSwiatla And (Not kolor)
         End If
     End Sub
 

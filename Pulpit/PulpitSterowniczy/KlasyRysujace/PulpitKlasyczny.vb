@@ -54,11 +54,11 @@
     Private Const KRAWEDZ_RAMKA_ZAZN As Single = 0.04F     'grubość krawędzi ramki zaznaczenia lamp
     Private Const DODATKOWY_MARGINES As Single = 0.01F     'margines uwzględniany w elementach, aby te lekko nachodziły na siebie i nie rysowały się przerwy między nimi
 
-    Private ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")          'tor przypisany do innego odcinka
-    Private ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")         'tor przypisany do zaznaczonego odcinka
-    Private ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")       'tor nieprzypisany do żadnego odcinka
-    Private ReadOnly KOLOR_TOR_LICZNIK_ODCINEK_2 As Color = KolorRGB("#D11AFF")   'drugi odcinek obsługiwany przez parę liczników osi
-    Private ReadOnly KOLOR_TLO_SYGNALIZATOR_TOP As Color = KolorRGB("#FF9900")    'tło sygnalizatora ostrzegawczego przejazdowego, który jest przypisany do zaznaczonego obiektu automatyzacji przejazdu
+    Private ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")                'tor przypisany do innego odcinka
+    Private ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")               'tor przypisany do zaznaczonego odcinka
+    Private ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")             'tor nieprzypisany do żadnego odcinka
+    Private ReadOnly KOLOR_TOR_LICZNIK_ODCINEK_2 As Color = KolorRGB("#D11AFF")         'drugi odcinek obsługiwany przez parę liczników osi
+    Private ReadOnly KOLOR_TLO_SYGNALIZATOR_WYROZNIONY As Color = KolorRGB("#FF9900")   'tło sygnalizatora wyróżnionego (przypisanego do zaznaczonego obiektu automatyzacji przejazdu/sygnalizatora informującego)
     Private PEDZEL_TLO_KOSTKI As TPedzel
     Private PEDZEL_KRAWEDZIE_KOSTEK As TOlowek
     Private PEDZEL_KRAWEDZ As TOlowek
@@ -97,7 +97,7 @@
     Private PEDZEL_KOLKO_TEKST As TPedzel
     Private PEDZEL_OBSZAR_ZAZN_RAMKA As TOlowek
     Private PEDZEL_OBSZAR_ZAZN_TLO As TPedzel
-    Private PEDZEL_PRZEJAZD_SYGN_TOP As TPedzel
+    Private PEDZEL_PRZEJAZD_SYGN_WYROZNIONY As TPedzel
     Private PEDZEL_PRZEJAZD_ROGATKA As TPedzel
     Private PEDZEL_PRZEJAZD_ROGATKA_ZAZN As TPedzel
     Private PEDZEL_PRZEJAZD_SYGN_DROG As TPedzel
@@ -128,6 +128,7 @@
         {Zaleznosci.TypKostki.RozjazdPrawo, Sub(k) RysujRozjazdPrawo(CType(k, Zaleznosci.RozjazdPrawo))},
         {Zaleznosci.TypKostki.SygnalizatorManewrowy, Sub(k) RysujSygnalizatorManewrowy(CType(k, Zaleznosci.SygnalizatorManewrowy))},
         {Zaleznosci.TypKostki.SygnalizatorPowtarzajacy, Sub(k) RysujSygnalizatorPowtarzajacy(CType(k, Zaleznosci.SygnalizatorPowtarzajacy))},
+        {Zaleznosci.TypKostki.SygnalizatorOstrzegawczy, Sub(k) RysujSygnalizatorOstrzegawczy(CType(k, Zaleznosci.SygnalizatorOstrzegawczy))},
         {Zaleznosci.TypKostki.SygnalizatorPolsamoczynny, Sub(k) RysujSygnalizatorPolsamoczynny(CType(k, Zaleznosci.SygnalizatorPolsamoczynny))},
         {Zaleznosci.TypKostki.SygnalizatorSamoczynny, Sub(k) RysujSygnalizatorSamoczynny(CType(k, Zaleznosci.SygnalizatorSamoczynny))},
         {Zaleznosci.TypKostki.SygnalizatorOstrzegawczyPrzejazdowy, Sub(k) RysujSygnalizatorTOP(CType(k, Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy))},
@@ -151,7 +152,7 @@
     Private zainicjalizowano As Boolean = False
     Private pulpit As Zaleznosci.Pulpit
     Private rysujSzczeliny As Boolean
-    Private sygnTopWyrozniony As Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy
+    Private sygnWyrozniony As Zaleznosci.Sygnalizator
     Private wysokiStanMigania As Boolean
 
     Private Delegate Sub RysujElement(element As Zaleznosci.Kostka)
@@ -186,9 +187,9 @@
         End Get
     End Property
 
-    Private ReadOnly Property IRysownik_KOLOR_TLO_SYGNALIZATOR_PRZEJAZDOWY As Color Implements IRysownik.KOLOR_TLO_SYGNALIZATOR_PRZEJAZDOWY
+    Private ReadOnly Property IRysownik_KOLOR_TLO_SYGNALIZATOR_WYROZNIONY As Color Implements IRysownik.KOLOR_TLO_SYGNALIZATOR_WYROZNIONY
         Get
-            Return KOLOR_TLO_SYGNALIZATOR_TOP
+            Return KOLOR_TLO_SYGNALIZATOR_WYROZNIONY
         End Get
     End Property
 
@@ -244,7 +245,7 @@
         PEDZEL_KOLKO_TEKST = urz.UtworzPedzel(KolorRGB("#FF1A71"))
         PEDZEL_OBSZAR_ZAZN_RAMKA = urz.UtworzOlowek(KolorRGB("#00D8DB"))
         PEDZEL_OBSZAR_ZAZN_TLO = urz.UtworzPedzel(KolorRGB("#00D8DB", 70))
-        PEDZEL_PRZEJAZD_SYGN_TOP = urz.UtworzPedzel(KOLOR_TLO_SYGNALIZATOR_TOP)
+        PEDZEL_PRZEJAZD_SYGN_WYROZNIONY = urz.UtworzPedzel(KOLOR_TLO_SYGNALIZATOR_WYROZNIONY)
         PEDZEL_PRZEJAZD_ROGATKA = urz.UtworzPedzel(KolorRGB("#00BBFF"))
         PEDZEL_PRZEJAZD_ROGATKA_ZAZN = urz.UtworzPedzel(KolorRGB("#000DFF"))
         PEDZEL_PRZEJAZD_SYGN_DROG = urz.UtworzPedzel(KolorRGB("#FF66D1"))
@@ -262,15 +263,14 @@
         If Not zainicjalizowano Then Exit Sub
 
         pulpit = ps.Pulpit
-        sygnTopWyrozniony = If(ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja, ps.projZaznaczonyPrzejazdAutomatyzacja?.Sygnalizator, Nothing)
         wysokiStanMigania = ps.WysokiStanMigania
         rysujSzczeliny = Not (
             ps.TrybProjektowy And (
                 ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Or
                 ps.projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Or
-                ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy Or
-                ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja)
+                ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy)
             )
+        UstawSygnWyrozniony(ps)
 
         urz.RozpocznijRysunek(grp, ps.BackColor)
 
@@ -397,10 +397,24 @@
         urz.ZakonczRysunek()
     End Sub
 
+    Private Sub UstawSygnWyrozniony(ps As PulpitSterowniczy)
+        sygnWyrozniony = Nothing
+
+        If ps.TrybProjektowy Then
+            If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then
+                sygnWyrozniony = TryCast(ps.ZaznaczonaKostka, Zaleznosci.SygnalizatorInformujacy)?.SygnalizatorPowtarzany
+            ElseIf ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja Then
+                sygnWyrozniony = ps.projZaznaczonyPrzejazdAutomatyzacja?.Sygnalizator
+            End If
+        End If
+    End Sub
+
     Private Sub RysujKostke(x As Integer, y As Integer, kostka As Zaleznosci.Kostka, ps As PulpitSterowniczy)
         UstawKolorSzczeliny(kostka)
 
         Select Case ps.projDodatkoweObiekty
+            Case RysujDodatkoweObiekty.Nic
+                UstawKolorToruDlaSygnalizatora(kostka, ps.ZaznaczonaKostka)
             Case RysujDodatkoweObiekty.OdcinkiTorow
                 UstawKolorToruDlaOdcinka(kostka, ps.ZaznaczonyOdcinek)
             Case RysujDodatkoweObiekty.Liczniki
@@ -703,26 +717,47 @@
     End Sub
 
     Private Sub RysujSygnalizatorPowtarzajacy(sygnalizator As Zaleznosci.SygnalizatorPowtarzajacy)
-        Dim pedzPomc As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.BrakWyjazdu, PEDZEL_SYGN_POMC_JASNY, PEDZEL_SYGN_POMC)
-        Dim pedzZiel As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraPowtarzajacego.Zezwalajacy, PEDZEL_SYGN_ZIEL_JASNY, PEDZEL_SYGN_ZIEL)
+        Dim pedzle As TPedzel() = PobierzPedzleSygnalizatorInformujacy(sygnalizator)
+        RysujSygnalizatorInformujacy(sygnalizator, pedzle(0), pedzle(1))
+    End Sub
 
+    Private Sub RysujSygnalizatorOstrzegawczy(sygnalizator As Zaleznosci.SygnalizatorOstrzegawczy)
+        Dim pedzle As TPedzel() = PobierzPedzleSygnalizatorInformujacy(sygnalizator)
+        RysujSygnalizatorInformujacy(sygnalizator, pedzle(1), pedzle(0))
+    End Sub
+
+    Private Function PobierzPedzleSygnalizatorInformujacy(sygnalizator As Zaleznosci.SygnalizatorInformujacy) As TPedzel()
+        Return {
+             If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraInformujacego.BrakWyjazdu, PEDZEL_SYGN_POMC_JASNY, PEDZEL_SYGN_POMC),
+             If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraInformujacego.Zezwalajacy, PEDZEL_SYGN_ZIEL_JASNY, PEDZEL_SYGN_ZIEL)
+        }
+    End Function
+
+    Private Sub RysujSygnalizatorInformujacy(sygnalizator As Zaleznosci.SygnalizatorInformujacy, swiatlo1 As TPedzel, swiatlo2 As TPedzel)
         urz.WypelnijTloSygnalizatora(PEDZEL_SYGN_TLO, SYGN_POZ, 2 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
-        urz.WypelnijKolo(pedzPomc, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
-        urz.WypelnijKolo(pedzZiel, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+        urz.WypelnijKolo(swiatlo1, 1.0F * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+        urz.WypelnijKolo(swiatlo2, 2.0F * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         RysujSlupSygnalizatora(2)
         RysujTorProsty(sygnalizator, False)
         RysujNazweDolKostki(sygnalizator.Nazwa)
     End Sub
 
     Private Sub RysujSygnalizatorPolsamoczynny(sygnalizator As Zaleznosci.SygnalizatorPolsamoczynny)
-        Dim pedzCzer As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.BrakWyjazdu, PEDZEL_SYGN_CZER_JASNY, PEDZEL_SYGN_CZER)
-        Dim pedzZiel As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zezwalajacy, PEDZEL_SYGN_ZIEL_JASNY, PEDZEL_SYGN_ZIEL)
-        Dim pedzBial As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Manewrowy Or (sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zastepczy And wysokiStanMigania), PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
+        Dim wyrozniony As Boolean = sygnalizator Is sygnWyrozniony
+        Dim pedzTlo As TPedzel = If(wyrozniony, PEDZEL_PRZEJAZD_SYGN_WYROZNIONY, PEDZEL_SYGN_TLO)
 
-        urz.WypelnijTloSygnalizatora(PEDZEL_SYGN_TLO, SYGN_POZ, 3 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
-        urz.WypelnijKolo(pedzCzer, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
-        urz.WypelnijKolo(pedzZiel, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
-        urz.WypelnijKolo(pedzBial, 3 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+        urz.WypelnijTloSygnalizatora(pedzTlo, SYGN_POZ, 3.0F * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
+
+        If Not wyrozniony Then
+            Dim pedzCzer As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.BrakWyjazdu, PEDZEL_SYGN_CZER_JASNY, PEDZEL_SYGN_CZER)
+            Dim pedzZiel As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zezwalajacy, PEDZEL_SYGN_ZIEL_JASNY, PEDZEL_SYGN_ZIEL)
+            Dim pedzBial As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Manewrowy Or (sygnalizator.Stan = Zaleznosci.StanSygnalizatora.Zastepczy And wysokiStanMigania), PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
+
+            urz.WypelnijKolo(pedzCzer, 1.0F * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+            urz.WypelnijKolo(pedzZiel, 2.0F * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+            urz.WypelnijKolo(pedzBial, 3.0F * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+        End If
+
         RysujSlupSygnalizatora(3)
         RysujTorProsty(sygnalizator, True)
     End Sub
@@ -737,17 +772,17 @@
     End Sub
 
     Private Sub RysujSygnalizatorTOP(sygnalizator As Zaleznosci.SygnalizatorOstrzegawczyPrzejazdowy)
-        Dim wyrozniony As Boolean = sygnalizator Is sygnTopWyrozniony
-        Dim pedzTlo As TPedzel = If(wyrozniony, PEDZEL_PRZEJAZD_SYGN_TOP, PEDZEL_SYGN_TLO)
+        Dim wyrozniony As Boolean = sygnalizator Is sygnWyrozniony
+        Dim pedzTlo As TPedzel = If(wyrozniony, PEDZEL_PRZEJAZD_SYGN_WYROZNIONY, PEDZEL_SYGN_TLO)
 
-        urz.WypelnijTloSygnalizatora(pedzTlo, SYGN_POZ, 2 * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
+        urz.WypelnijTloSygnalizatora(pedzTlo, SYGN_POZ, 2.0F * SYGN_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
 
         If Not wyrozniony Then
             Dim pedzBial As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraOstrzegawczegoPrzejazdowego.PrzejazdZamkniety, PEDZEL_SYGN_BIAL_JASNY, PEDZEL_SYGN_BIAL)
             Dim pedzPomc As TPedzel = If(trybProjektowy Or sygnalizator.Stan = Zaleznosci.StanSygnalizatoraOstrzegawczegoPrzejazdowego.PrzejazdUszkodzony, PEDZEL_SYGN_POMC_JASNY, PEDZEL_SYGN_POMC)
 
-            urz.WypelnijKolo(pedzBial, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
-            urz.WypelnijKolo(pedzPomc, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+            urz.WypelnijKolo(pedzBial, 1.0F * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
+            urz.WypelnijKolo(pedzPomc, 2.0F * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         End If
 
         RysujSlupSygnalizatora(2)
@@ -768,8 +803,8 @@
         RysujTorProsty(przejazd, False)
         urz.WypelnijKolo(PEDZEL_SYGN_TLO, PRZEJAZD_KONTR_POZ, SYGN_POZ, SYGN_TLO_PROMIEN)
         urz.WypelnijKolo(pedzAwaria, PRZEJAZD_KONTR_POZ, SYGN_POZ, SYGN_PROMIEN)
-        urz.WypelnijKolo(PEDZEL_SYGN_TLO, PRZEJAZD_KONTR_POZ, 3 * SYGN_POZ, SYGN_TLO_PROMIEN)
-        urz.WypelnijKolo(pedzStan, PRZEJAZD_KONTR_POZ, 3 * SYGN_POZ, SYGN_PROMIEN)
+        urz.WypelnijKolo(PEDZEL_SYGN_TLO, PRZEJAZD_KONTR_POZ, 3.0F * SYGN_POZ, SYGN_TLO_PROMIEN)
+        urz.WypelnijKolo(pedzStan, PRZEJAZD_KONTR_POZ, 3.0F * SYGN_POZ, SYGN_PROMIEN)
     End Sub
 
     Private Sub RysujPrzycisk(wcisniety As Boolean, pedzel As TPedzel, Optional poczx As Single = 0.0F, Optional poczy As Single = 0.0F, Optional dodatekX As Single = 0.0F)
@@ -982,6 +1017,18 @@
         pedzelToruDrugi = PEDZEL_TOR_WOLNY
         Return TryCast(k, Zaleznosci.Tor)
     End Function
+
+    Private Sub UstawKolorToruDlaSygnalizatora(k As Zaleznosci.Kostka, zazn As Zaleznosci.Kostka)
+        Dim t As Zaleznosci.Tor = InicjalizujPedzleIPobierzTor(k)
+        Dim sygn As Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu = TryCast(zazn, Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu)
+
+        If t IsNot Nothing AndAlso sygn?.OdcinekNastepujacy IsNot Nothing Then
+            Dim p As Zaleznosci.TorPodwojnyNiezalezny = TryCast(k, Zaleznosci.TorPodwojnyNiezalezny)
+
+            If t.NalezyDoOdcinka Is sygn.OdcinekNastepujacy Then pedzelToruPierwszy = PEDZEL_TOR_TEN_ODCINEK
+            If p?.NalezyDoOdcinkaDrugi Is sygn.OdcinekNastepujacy Then pedzelToruDrugi = PEDZEL_TOR_TEN_ODCINEK
+        End If
+    End Sub
 
     Private Sub UstawKolorToruDlaOdcinkaTrybDzialania(k As Zaleznosci.Kostka, zazn As Zaleznosci.OdcinekToru)
         Dim t As Zaleznosci.Tor = InicjalizujPedzleIPobierzTor(k)
