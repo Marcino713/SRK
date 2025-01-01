@@ -6,6 +6,7 @@
 
     Public Property Stan As StanSygnalizatoraManewrowego = StanSygnalizatoraManewrowego.BrakWyjazdu
     Public Property Wcisniety As Boolean Implements IPrzycisk.Wcisniety
+    Public Property Zablokowany As Boolean Implements IPrzycisk.Zablokowany
 
     Public Sub New()
         MyBase.New(TypKostki.SygnalizatorManewrowy)

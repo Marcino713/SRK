@@ -60,6 +60,16 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Komunikaty\UstawBlokadeSygnalizatora.vb" />
+    <Compile Include="Komunikaty\UstawBlokadeZwrotnicy.vb" />
+    <Compile Include="Komunikaty\UstawionoTrybSamoczynnySygnalizatora.vb" />
+    <Compile Include="Komunikaty\UstawTrybSamoczynnySygnalizatora.vb" />
+    <Compile Include="Komunikaty\UstawZamkniecieOdcinka.vb" />
+    <Compile Include="Komunikaty\WyzerowanoLicznikOsi.vb" />
+    <Compile Include="Komunikaty\ZerujLicznikOsi.vb" />
+    <Compile Include="Komunikaty\ZmienionoBlokadeSygnalizatora.vb" />
+    <Compile Include="Komunikaty\ZmienionoBlokadeZwrotnicy.vb" />
+    <Compile Include="Komunikaty\ZmienionoZamkniecieOdcinka.vb" />
     <Compile Include="Kostki\IMigacz.vb" />
     <Compile Include="KomunikatyUrzadzen\OtworzRogatkeUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\UstawionoJasnoscLampyUrz.vb" />

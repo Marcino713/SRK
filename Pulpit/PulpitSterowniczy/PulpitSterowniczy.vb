@@ -28,6 +28,11 @@ Public Class PulpitSterowniczy
     Private WcisnietyPrzycisk As Zaleznosci.IPrzycisk = Nothing
     Private RysowanieWlaczone As Boolean = True
     Private Migacz As Migacz
+    Private TabliczkiZamkniecOdcinkow As New Dictionary(Of UShort, Zaleznosci.PunktCalkowity)
+    Private MenuZwrotnica As Zaleznosci.Rozjazd
+    Private MenuSygnalizator As Zaleznosci.Sygnalizator
+    Private MenuOdcinek As Zaleznosci.OdcinekToru
+    Private MenuOdcinekPunkt As Zaleznosci.PunktCalkowity
 
     Private actWlaczZegarMigania As Action = Sub() tmrMiganie.Start()
     Private actWylaczZegarMigania As Action = Sub() tmrMiganie.Stop()
@@ -381,6 +386,21 @@ Public Class PulpitSterowniczy
     <Description("Zaznaczono odcinek toru w trybie działania"), Category(KATEG_ZDARZ)>
     Public Event ZaznaczonoOdcinek(odcinek As Zaleznosci.OdcinekToru)
 
+    <Description("Zmiana blokady zwrotnicy"), Category(KATEG_ZDARZ)>
+    Public Event BlokadaZwrotnicy(zwrotnica As Zaleznosci.Rozjazd)
+
+    <Description("Zmiana blokady sygnalizatora"), Category(KATEG_ZDARZ)>
+    Public Event BlokadaSygnalizatora(sygnalizator As Zaleznosci.Sygnalizator)
+
+    <Description("Zmiana trybu działania sygnalizatora półsamoczynnego"), Category(KATEG_ZDARZ)>
+    Public Event TrybSamoczynnySygnalizatora(sygnalizator As Zaleznosci.SygnalizatorPolsamoczynny)
+
+    <Description("Zmiana zamknięcia odcinka toru"), Category(KATEG_ZDARZ)>
+    Public Event ZamkniecieOdcinka(odcinek As Zaleznosci.OdcinekToru, wspolrzedne As Zaleznosci.PunktCalkowity)
+
+    <Description("Zerowanie licznika osi"), Category(KATEG_ZDARZ)>
+    Public Event ZerowanieLicznikaOsi(odcinek As Zaleznosci.OdcinekToru)
+
     <Description("Zmiana ostatnio zaznaczonej lampy"), Category(KATEG_ZDARZ)>
     Public Event ZmianaZaznaczeniaOstatniejLampy(lampa As Zaleznosci.Lampa)
 
@@ -403,6 +423,7 @@ Public Class PulpitSterowniczy
     Public Event projZmianaZaznaczeniaSygnalizatoraDrogowego(sygnalizator As Zaleznosci.PrzejazdElementWykonawczy)
 
     Public Delegate Function ZaznaczalnoscKostki(k As Zaleznosci.Kostka) As Boolean
+    Public Delegate Sub PrzetwarzanieTabliczkiZamkniecia(punkt As Zaleznosci.PunktCalkowity)
 
     Public Sub New()
         InitializeComponent()
@@ -421,8 +442,14 @@ Public Class PulpitSterowniczy
         _projZaznaczonyPrzejazdRogatka = Nothing
         _projZaznaczonyPrzejazdSygnDrog = Nothing
         _Rysownik.UniewaznioneSasiedztwoTorow = True
-        ZaznaczonaKostka = Nothing  'przypisanie do własności zamiast zmiennej, żeby wywołały się zdarzenia
         projZaznaczonaLampa = Nothing
+        ZaznaczonyLicznikOsiAdres = Nothing
+
+        SyncLock Me
+            TabliczkiZamkniecOdcinkow.Clear()
+        End SyncLock
+
+        ZaznaczonaKostka = Nothing  'przypisanie do własności zamiast zmiennej, żeby wywołały się zdarzenia
         Invalidate()
     End Sub
 
@@ -458,8 +485,26 @@ Public Class PulpitSterowniczy
         actWylaczZegarMigania()
     End Sub
 
-    Private Sub ctmWysrodkuj_Click() Handles ctmWysrodkuj.Click
-        Wysrodkuj()
+    Public Sub DodajTabliczkeZamkniecia(adresOdcinka As UShort, wspolrzedne As Zaleznosci.PunktCalkowity)
+        SyncLock Me
+            If Not TabliczkiZamkniecOdcinkow.ContainsKey(adresOdcinka) Then
+                TabliczkiZamkniecOdcinkow.Add(adresOdcinka, wspolrzedne)
+            End If
+        End SyncLock
+    End Sub
+
+    Public Sub UsunTabliczkeZamkniecia(adresOdcinka As UShort)
+        SyncLock Me
+            TabliczkiZamkniecOdcinkow.Remove(adresOdcinka)
+        End SyncLock
+    End Sub
+
+    Public Sub PrzetworzTabliczkiZamkniec(metoda As PrzetwarzanieTabliczkiZamkniecia)
+        SyncLock Me
+            For Each kv As KeyValuePair(Of UShort, Zaleznosci.PunktCalkowity) In TabliczkiZamkniecOdcinkow
+                metoda(kv.Value)
+            Next
+        End SyncLock
     End Sub
 
     Private Sub PulpitSterowniczy_Load() Handles Me.Load
@@ -583,28 +628,9 @@ Public Class PulpitSterowniczy
         Else
 
             If _MozliwoscZaznaczeniaOdcinka Then
-                Dim zazn As Zaleznosci.OdcinekToru = Nothing
-
-                If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
-                    Dim tor As Zaleznosci.Tor = TryCast(Pulpit.Kostki(p.X, p.Y), Zaleznosci.Tor)
-
-                    If tor IsNot Nothing Then
-                        Dim pozycja As Zaleznosci.PrzynaleznoscToruDoOdcinka = Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy
-
-                        Dim podw As Zaleznosci.TorPodwojnyNiezalezny = TryCast(tor, Zaleznosci.TorPodwojnyNiezalezny)
-                        If podw IsNot Nothing Then
-                            pozycja = PobierzFragmentToruPodwojnego(e.Location, podw)
-                        End If
-
-                        If pozycja = Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy Then
-                            zazn = tor.NalezyDoOdcinka
-                        ElseIf pozycja = Zaleznosci.PrzynaleznoscToruDoOdcinka.Drugi Then
-                            zazn = podw.NalezyDoOdcinkaDrugi
-                        End If
-                    End If
-                End If
-
-                ZaznaczonyOdcinek = zazn
+                Dim odc As Zaleznosci.OdcinekToru = PobierzKliknietyOdcinek(p, e.Location)
+                If odc IsNot Nothing AndAlso odc.Zamkniety Then odc = Nothing
+                ZaznaczonyOdcinek = odc
             End If
 
             If _MozliwoscZaznaczeniaLamp And PoprzZaznLampyWObszarze Is Nothing Then     'zaznaczenie pojedynczej lampy kliknięciem
@@ -703,7 +729,9 @@ Public Class PulpitSterowniczy
         End If
     End Sub
 
-    Private Sub PulpitSterowniczy_MouseUp() Handles Me.MouseUp
+    Private Sub PulpitSterowniczy_MouseUp(sender As Object, e As MouseEventArgs) Handles Me.MouseUp
+        If Not e.Button = MouseButtons.Left Then Exit Sub
+
         PoprzedniPunkt.X = PUSTA_WSPOLRZEDNA
         PoprzedniPunkt.Y = PUSTA_WSPOLRZEDNA
 
@@ -718,6 +746,8 @@ Public Class PulpitSterowniczy
     End Sub
 
     Private Sub PulpitSterowniczy_MouseDown(sender As Object, e As MouseEventArgs) Handles Me.MouseDown
+        If Not e.Button = MouseButtons.Left Then Exit Sub
+
         PoprzZaznLampyWObszarze = Nothing
 
         If Not TrybProjektowy AndAlso _MozliwoscZaznaczeniaLamp Then
@@ -757,7 +787,7 @@ Public Class PulpitSterowniczy
             If _MozliwoscWcisnieciaPrzycisku AndAlso _Pulpit.CzyKostkaNiepusta(p) Then
 
                 Dim prz As Zaleznosci.IPrzycisk = TryCast(Pulpit.Kostki(p.X, p.Y), Zaleznosci.IPrzycisk)
-                If prz?.PosiadaPrzycisk = True Then
+                If prz IsNot Nothing AndAlso prz.PosiadaPrzycisk AndAlso (Not prz.Zablokowany) Then
                     WcisnietyPrzycisk = prz
                     WcisnietyPrzycisk.Wcisniety = True
                     Invalidate()
@@ -813,6 +843,91 @@ Public Class PulpitSterowniczy
         End If
     End Sub
 
+    Private Sub ctxMenu_Opening() Handles ctxMenu.Opening
+        Dim pokazZwrotn As Boolean = False
+        Dim pokazSygnManewr As Boolean = False
+        Dim pokazSygnPolsam As Boolean = False
+        Dim pokazOdcinek As Boolean = False
+
+        MenuZwrotnica = Nothing
+        MenuSygnalizator = Nothing
+        MenuOdcinek = Nothing
+        MenuOdcinekPunkt = Nothing
+
+        If (Not TrybProjektowy) And _MozliwoscWcisnieciaPrzycisku Then
+            Dim klik As Point = PointToClient(MousePosition)
+            Dim p As Zaleznosci.PunktCalkowity = PobierzKliknieteWspolrzedneKostki(klik)
+
+            If _Pulpit.CzyKostkaNiepusta(p) Then
+                Dim k As Zaleznosci.Kostka = _Pulpit.Kostki(p.X, p.Y)
+                Dim z As Zaleznosci.Rozjazd = TryCast(k, Zaleznosci.Rozjazd)
+                Dim s As Zaleznosci.Sygnalizator = TryCast(k, Zaleznosci.Sygnalizator)
+
+                'kostka
+                If z IsNot Nothing Then
+                    pokazZwrotn = True
+                    MenuZwrotnica = z
+
+                ElseIf s IsNot Nothing Then
+                    If s.Typ = Zaleznosci.TypKostki.SygnalizatorManewrowy Then
+                        pokazSygnManewr = True
+                        MenuSygnalizator = s
+                    ElseIf s.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Then
+                        pokazSygnPolsam = True
+                        MenuSygnalizator = s
+                    End If
+
+                End If
+
+                'odcinek toru
+                Dim odc As Zaleznosci.OdcinekToru = PobierzKliknietyOdcinek(p, klik)
+                If odc IsNot Nothing Then
+                    pokazOdcinek = True
+                    MenuOdcinek = odc
+                    MenuOdcinekPunkt = p
+                End If
+            End If
+        End If
+
+        ctmBlokadaZwrotnicy.Visible = pokazZwrotn
+        ctmBlokadaSygnalizatora.Visible = pokazSygnManewr Or pokazSygnPolsam
+        ctmTrybSamoczynny.Visible = pokazSygnPolsam
+        tspUrzadzenia.Visible = pokazZwrotn Or pokazSygnManewr Or pokazSygnPolsam
+        ctmZamkniecieOdcinka.Visible = pokazOdcinek
+        ctmZerujLicznikOsi.Visible = pokazOdcinek
+        tspOdcinekToru.Visible = pokazOdcinek
+    End Sub
+
+    Private Sub ctmBlokadaZwrotnicy_Click() Handles ctmBlokadaZwrotnicy.Click
+        If MenuZwrotnica Is Nothing Then Exit Sub
+        RaiseEvent BlokadaZwrotnicy(MenuZwrotnica)
+    End Sub
+
+    Private Sub ctmBlokadaSygnalizatora_Click() Handles ctmBlokadaSygnalizatora.Click
+        If MenuSygnalizator Is Nothing Then Exit Sub
+        RaiseEvent BlokadaSygnalizatora(MenuSygnalizator)
+    End Sub
+
+    Private Sub ctmTrybSamoczynny_Click() Handles ctmTrybSamoczynny.Click
+        Dim sygnPolsam As Zaleznosci.SygnalizatorPolsamoczynny = TryCast(MenuSygnalizator, Zaleznosci.SygnalizatorPolsamoczynny)
+        If sygnPolsam Is Nothing Then Exit Sub
+        RaiseEvent TrybSamoczynnySygnalizatora(sygnPolsam)
+    End Sub
+
+    Private Sub ctmZamkniecieOdcinka_Click() Handles ctmZamkniecieOdcinka.Click
+        If MenuOdcinek Is Nothing Or MenuOdcinekPunkt Is Nothing Then Exit Sub
+        RaiseEvent ZamkniecieOdcinka(MenuOdcinek, MenuOdcinekPunkt)
+    End Sub
+
+    Private Sub ctmZerujLicznikOsi_Click() Handles ctmZerujLicznikOsi.Click
+        If MenuOdcinek Is Nothing Then Exit Sub
+        RaiseEvent ZerowanieLicznikaOsi(MenuOdcinek)
+    End Sub
+
+    Private Sub ctmWysrodkuj_Click() Handles ctmWysrodkuj.Click
+        Wysrodkuj()
+    End Sub
+
     Private Sub tmrPrzycisk_Tick() Handles tmrPrzycisk.Tick
         tmrPrzycisk.Stop()
         If WcisnietyPrzycisk IsNot Nothing Then RaiseEvent WcisnietoPrzycisk(DirectCast(WcisnietyPrzycisk, Zaleznosci.Kostka))
@@ -860,6 +975,29 @@ Public Class PulpitSterowniczy
         End If
 
         Return wynik
+    End Function
+
+    Private Function PobierzKliknietyOdcinek(p As Zaleznosci.PunktCalkowity, klik As Point) As Zaleznosci.OdcinekToru
+        If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then
+            Dim tor As Zaleznosci.Tor = TryCast(Pulpit.Kostki(p.X, p.Y), Zaleznosci.Tor)
+
+            If tor IsNot Nothing Then
+                Dim pozycja As Zaleznosci.PrzynaleznoscToruDoOdcinka = Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy
+
+                Dim podw As Zaleznosci.TorPodwojnyNiezalezny = TryCast(tor, Zaleznosci.TorPodwojnyNiezalezny)
+                If podw IsNot Nothing Then
+                    pozycja = PobierzFragmentToruPodwojnego(klik, podw)
+                End If
+
+                If pozycja = Zaleznosci.PrzynaleznoscToruDoOdcinka.Pierwszy Then
+                    Return tor.NalezyDoOdcinka
+                ElseIf pozycja = Zaleznosci.PrzynaleznoscToruDoOdcinka.Drugi Then
+                    Return podw.NalezyDoOdcinkaDrugi
+                End If
+            End If
+        End If
+
+        Return Nothing
     End Function
 
     Private Function PobierzFragmentToruPodwojnego(klik As Point, tor As Zaleznosci.TorPodwojnyNiezalezny) As Zaleznosci.PrzynaleznoscToruDoOdcinka

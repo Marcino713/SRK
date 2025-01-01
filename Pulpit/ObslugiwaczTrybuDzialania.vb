@@ -5,6 +5,8 @@
     Private Rozjazdy As New Dictionary(Of UShort, Zaleznosci.Rozjazd)
     Private Kierunki As New Dictionary(Of UShort, Zaleznosci.Kierunek)
     Private Przejazdy As New Dictionary(Of UShort, Zaleznosci.PrzejazdKolejowoDrogowy)
+    Private Przyciski As New Dictionary(Of UShort, HashSet(Of Zaleznosci.IPrzycisk))
+    Private OdcinkiTorow As New Dictionary(Of UShort, Zaleznosci.OdcinekToru)
     Private WithEvents Klient As Zaleznosci.KlientTCP
 
     Private actCzyscPulpit As Action = AddressOf CzyscPulpit
@@ -22,6 +24,8 @@
         Rozjazdy = pulpit.PobierzRozjazdy()
         Kierunki = pulpit.PobierzKierunkiPoAdresieOdcinka()
         Przejazdy = pulpit.PobierzPrzejazdyKolejowoDrogowe()
+        Przyciski = pulpit.PobierzPrzyciskiSygnalizatorowIZwrotnic()
+        OdcinkiTorow = pulpit.PobierzOdcinkiTorow()
 
         plpPulpit.InicjalizujMigacz()
     End Sub
@@ -137,7 +141,7 @@
     Private Sub Klient_OdebranoZmienionoStanPrzejazdu(kom As Zaleznosci.ZmienionoStanPrzejazdu) Handles Klient.OdebranoZmienionoStanPrzejazdu
         Dim prz As Zaleznosci.PrzejazdKolejowoDrogowy = Nothing
 
-        If kom.Blad = Zaleznosci.BladZmianyStanuPrzejazdu.Brak AndAlso Przejazdy.TryGetValue(kom.Numer, prz) Then
+        If kom.Blad = Zaleznosci.BladZmianyStanuPrzejazdu.Brak AndAlso Przejazdy.TryGetValue(kom.NumerPrzejazdu, prz) Then
             For Each k As Zaleznosci.PrzejazdKolejowoDrogowyKostka In prz.KostkiPrzejazdy
                 k.Stan = kom.Stan
                 k.Awaria = kom.Awaria
@@ -147,10 +151,68 @@
         End If
     End Sub
 
+    Private Sub Klient_OdebranoZmienionoBlokadeZwrotnicy(kom As Zaleznosci.ZmienionoBlokadeZwrotnicy) Handles Klient.OdebranoZmienionoBlokadeZwrotnicy
+        Dim z As Zaleznosci.Rozjazd = Nothing
+
+        If (kom.Stan = Zaleznosci.StanZmienionejBlokadyZwrotnicy.Zablokowana Or kom.Stan = Zaleznosci.StanZmienionejBlokadyZwrotnicy.Odblokowana) AndAlso Rozjazdy.TryGetValue(kom.Adres, z) Then
+            z.Zablokowany = kom.Stan = Zaleznosci.StanZmienionejBlokadyZwrotnicy.Zablokowana
+            UstawBlokadePrzyciskow(kom.Adres, z.Zablokowany)
+            plpPulpit.Invalidate()
+        End If
+    End Sub
+
+    Private Sub Klient_OdebranoZmienionoBlokadeSygnalizatora(kom As Zaleznosci.ZmienionoBlokadeSygnalizatora) Handles Klient.OdebranoZmienionoBlokadeSygnalizatora
+        Dim k As Zaleznosci.Kostka = Nothing
+
+        If (kom.Stan = Zaleznosci.StanZmienionejBlokadySygnalizatora.Zablokowany Or kom.Stan = Zaleznosci.StanZmienionejBlokadySygnalizatora.Odblokowany) AndAlso Sygnalizatory.TryGetValue(kom.Adres, k) Then
+            Dim zablokowany As Boolean = kom.Stan = Zaleznosci.StanZmienionejBlokadySygnalizatora.Zablokowany
+
+            If k.Typ = Zaleznosci.TypKostki.SygnalizatorManewrowy Then
+                CType(k, Zaleznosci.SygnalizatorManewrowy).Zablokowany = zablokowany
+                UstawBlokadePrzyciskow(kom.Adres, zablokowany)
+            ElseIf k.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Then
+                CType(k, Zaleznosci.SygnalizatorPolsamoczynny).Zablokowany = zablokowany
+                UstawBlokadePrzyciskow(kom.Adres, zablokowany)
+            End If
+
+            plpPulpit.Invalidate()
+        End If
+    End Sub
+
+    Private Sub Klient_OdebranoZmienionoZamkniecieOdcinka(kom As Zaleznosci.ZmienionoZamkniecieOdcinka) Handles Klient.OdebranoZmienionoZamkniecieOdcinka
+        Dim odc As Zaleznosci.OdcinekToru = Nothing
+
+        If (kom.Stan = Zaleznosci.StanZamykanegoOdcinka.Otwarty Or kom.Stan = Zaleznosci.StanZamykanegoOdcinka.Zamkniety) AndAlso OdcinkiTorow.TryGetValue(kom.Adres, odc) Then
+            odc.Zamkniety = kom.Stan = Zaleznosci.StanZamykanegoOdcinka.Zamkniety
+            plpPulpit.Invalidate()
+        End If
+    End Sub
+
+    Private Sub Klient_OdebranoUstawionoTrybSamoczynnySygnalizatora(kom As Zaleznosci.UstawionoTrybSamoczynnySygnalizatora) Handles Klient.OdebranoUstawionoTrybSamoczynnySygnalizatora
+        Dim k As Zaleznosci.Kostka = Nothing
+
+        If (kom.Stan = Zaleznosci.StanTrybuSamoczynnegoSygnalizatora.TrybSamoczynny Or kom.Stan = Zaleznosci.StanTrybuSamoczynnegoSygnalizatora.TrybPolsamoczynny) AndAlso Sygnalizatory.TryGetValue(kom.Adres, k) Then
+            If k.Typ = Zaleznosci.TypKostki.SygnalizatorPolsamoczynny Then
+                CType(k, Zaleznosci.SygnalizatorPolsamoczynny).TrybSamoczynny = kom.Stan = Zaleznosci.StanTrybuSamoczynnegoSygnalizatora.TrybSamoczynny
+            End If
+        End If
+    End Sub
+
+    Private Sub UstawBlokadePrzyciskow(adres As UShort, zablokowany As Boolean)
+        Dim prz As HashSet(Of Zaleznosci.IPrzycisk) = Nothing
+
+        If Przyciski.TryGetValue(adres, prz) Then
+            For Each p As Zaleznosci.IPrzycisk In prz
+                p.Zablokowany = zablokowany
+            Next
+        End If
+    End Sub
+
     Private Sub CzyscPulpit()
         If Not CzyscKoniec Then Exit Sub
 
         plpPulpit.UsunMigacz()
+        plpPulpit.Czysc()
         PokazPulpit(New Zaleznosci.Pulpit)
     End Sub
 End Class

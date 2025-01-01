@@ -187,6 +187,35 @@ Public Class Pulpit
         Return slownik
     End Function
 
+    Public Function PobierzPrzyciskiSygnalizatorowIZwrotnic() As Dictionary(Of UShort, HashSet(Of IPrzycisk))
+        Dim slownik As New Dictionary(Of UShort, HashSet(Of IPrzycisk))
+
+        PrzeiterujKostki(Sub(x, y, k)
+                             If k.Typ = TypKostki.Przycisk Then
+                                 Dim p As Przycisk = CType(k, Przycisk)
+
+                                 If p.TypPrzycisku = TypPrzyciskuEnum.SygnalZastepczy Or p.TypPrzycisku = TypPrzyciskuEnum.ZwolnieniePrzebiegu Or p.TypPrzycisku = TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego Then
+                                     If p.SygnalizatorPolsamoczynny IsNot Nothing Then DodajPrzyciskDoSlownika(slownik, p.SygnalizatorPolsamoczynny.Adres, p)
+                                 ElseIf p.TypPrzycisku = TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnManewrowego Then
+                                     If p.SygnalizatorManewrowy IsNot Nothing Then DodajPrzyciskDoSlownika(slownik, p.SygnalizatorManewrowy.Adres, p)
+                                 ElseIf p.TypPrzycisku = TypPrzyciskuEnum.KasowanieRozprucia Then
+                                     If p.Rozjazd IsNot Nothing Then DodajPrzyciskDoSlownika(slownik, p.Rozjazd.Adres, p)
+                                 End If
+
+                             ElseIf k.Typ = TypKostki.PrzyciskTor Then
+                                 Dim p As PrzyciskTor = CType(k, PrzyciskTor)
+
+                                 If p.TypPrzycisku = TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy Then
+                                     If p.SygnalizatorManewrowy IsNot Nothing Then DodajPrzyciskDoSlownika(slownik, p.SygnalizatorManewrowy.Adres, p)
+                                 Else
+                                     If p.SygnalizatorPolsamoczynny IsNot Nothing Then DodajPrzyciskDoSlownika(slownik, p.SygnalizatorPolsamoczynny.Adres, p)
+                                 End If
+
+                             End If
+                         End Sub)
+        Return slownik
+    End Function
+
     Public Function PobierzKostkiZeWspolrzednymi() As Dictionary(Of Kostka, Punkt)
         Dim slownik As New Dictionary(Of Kostka, Punkt)
         PrzeiterujKostki(Sub(x, y, k) slownik.Add(k, New Punkt(x, y)))
@@ -640,6 +669,16 @@ Public Class Pulpit
             (kierunek = KierunekEdycjiPulpitu.Lewo And x < wspolrzednaGraniczna)
     End Function
 
+    Private Sub DodajPrzyciskDoSlownika(slownik As Dictionary(Of UShort, HashSet(Of IPrzycisk)), adres As UShort, przycisk As IPrzycisk)
+        Dim przyciski As HashSet(Of IPrzycisk) = Nothing
+
+        If Not slownik.TryGetValue(adres, przyciski) Then
+            przyciski = New HashSet(Of IPrzycisk)
+            slownik.Add(adres, przyciski)
+        End If
+
+        przyciski.Add(przycisk)
+    End Sub
 End Class
 
 Friend Class TypObiektuPlikuPulpitu

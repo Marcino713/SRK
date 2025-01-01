@@ -65,6 +65,8 @@ Public Enum ZajetoscToru As Byte
     Zajety
     PrzebiegUtwierdzony
     BlokadaNieustawiona
+    Zamkniety
+    LicznikOsiWyzerowany
 End Enum
 
 <Flags>

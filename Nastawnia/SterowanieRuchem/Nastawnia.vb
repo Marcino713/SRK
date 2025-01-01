@@ -10,6 +10,7 @@ Public Class wndNastawnia
     Private WithEvents OknoWybieraniaPociagu As wndWyborPociagu = Nothing
     Private WithEvents OknoOswietlenia As wndOswietlenie = Nothing
     Private ObslugiwaczPulpitu As Pulpit.ObslugiwaczTrybuDzialania
+    Private ObslugiwaczZamkniecOdcinkow As New ObslugaZamkniecOdcinkow
     Private TrybObserwatora As Boolean = False
     Private WlaczoneOknoWyboruPost As Boolean = False
     Private Lampy As New Dictionary(Of UShort, Zaleznosci.Lampa)
@@ -241,14 +242,14 @@ Public Class wndNastawnia
                     Case Zaleznosci.TypPrzyciskuEnum.ZamknieciePrzejazdu
                         If prz.Przejazd IsNot Nothing Then
                             Klient.WyslijUstawStanPrzejazdu(New Zaleznosci.UstawStanPrzejazdu() With {
-                                                            .Numer = prz.Przejazd.Numer,
+                                                            .NumerPrzejazdu = prz.Przejazd.Numer,
                                                             .Stan = Zaleznosci.UstawianyStanPrzejazdu.Zamkniety})
                         End If
 
                     Case Zaleznosci.TypPrzyciskuEnum.OtwarciePrzejazdu
                         If prz.Przejazd IsNot Nothing Then
                             Klient.WyslijUstawStanPrzejazdu(New Zaleznosci.UstawStanPrzejazdu() With {
-                                                            .Numer = prz.Przejazd.Numer,
+                                                            .NumerPrzejazdu = prz.Przejazd.Numer,
                                                             .Stan = Zaleznosci.UstawianyStanPrzejazdu.Otwarty})
                         End If
 
@@ -284,6 +285,54 @@ Public Class wndNastawnia
                 Klient.WyslijUstawStanSygnalizatora(New Zaleznosci.UstawStanSygnalizatora() With {.Adres = tm.Adres, .Stan = Zaleznosci.UstawianyStanSygnalizatora.Manewrowy})
 
         End Select
+    End Sub
+
+    Private Sub plpPulpit_BlokadaZwrotnicy(zwrotnica As Zaleznosci.Rozjazd) Handles plpPulpit.BlokadaZwrotnicy
+        Dim zablokowana As Boolean = zwrotnica.Zablokowany
+
+        If Wspolne.ZadajPytanie($"Czy {If(zablokowana, "od", "za")}blokować zwrotnicę {zwrotnica.Nazwa}?") = DialogResult.Yes Then
+            Klient.WyslijUstawBlokadeZwrotnicy(New Zaleznosci.UstawBlokadeZwrotnicy() With {.Adres = zwrotnica.Adres, .Zablokowana = Not zablokowana})
+        End If
+    End Sub
+
+    Private Sub plpPulpit_BlokadaSygnalizatora(sygnalizator As Zaleznosci.Sygnalizator) Handles plpPulpit.BlokadaSygnalizatora
+        Dim zablokowany As Boolean
+        Dim napis As String
+
+        If sygnalizator.Typ = Zaleznosci.TypKostki.SygnalizatorManewrowy Then
+            zablokowany = CType(sygnalizator, Zaleznosci.SygnalizatorManewrowy).Zablokowany
+            napis = "manewrowy"
+        Else
+            zablokowany = CType(sygnalizator, Zaleznosci.SygnalizatorPolsamoczynny).Zablokowany
+            napis = "półsamoczynny"
+        End If
+
+        If Wspolne.ZadajPytanie($"Czy {If(zablokowany, "od", "za")}blokować sygnalizator {napis} {sygnalizator.Nazwa}?") = DialogResult.Yes Then
+            Klient.WyslijUstawBlokadeSygnalizatora(New Zaleznosci.UstawBlokadeSygnalizatora() With {.Adres = sygnalizator.Adres, .Zablokowany = Not zablokowany})
+        End If
+    End Sub
+
+    Private Sub plpPulpit_TrybSamoczynnySygnalizatora(sygnalizator As Zaleznosci.SygnalizatorPolsamoczynny) Handles plpPulpit.TrybSamoczynnySygnalizatora
+        Dim trybSam As Boolean = sygnalizator.TrybSamoczynny
+
+        If Wspolne.ZadajPytanie($"Czy ustawić tryb {If(trybSam, "pół", Nothing)}samoczynny sygnalizatora {sygnalizator.Nazwa}?") = DialogResult.Yes Then
+            Klient.WyslijUstawTrybSamoczynnySygnalizatora(New Zaleznosci.UstawTrybSamoczynnySygnalizatora() With {.Adres = sygnalizator.Adres, .TrybSamoczynny = Not trybSam})
+        End If
+    End Sub
+
+    Private Sub plpPulpit_ZamkniecieOdcinka(odcinek As Zaleznosci.OdcinekToru, wspolrzedne As Zaleznosci.PunktCalkowity) Handles plpPulpit.ZamkniecieOdcinka
+        Dim zamkniety As Boolean = odcinek.Zamkniety
+
+        If Wspolne.ZadajPytanie($"Czy {If(zamkniety, "otworzyć", "zamknąć")} odcinek toru {odcinek.Nazwa}?") = DialogResult.Yes Then
+            Dim kom As New Zaleznosci.UstawZamkniecieOdcinka() With {.Adres = odcinek.Adres, .Zamkniety = Not zamkniety}
+            ObslugiwaczZamkniecOdcinkow.UstawZamkniecieOdcinka(Klient, kom, wspolrzedne)
+        End If
+    End Sub
+
+    Private Sub plpPulpit_ZerowanieLicznikaOsi(odcinek As Zaleznosci.OdcinekToru) Handles plpPulpit.ZerowanieLicznikaOsi
+        If Wspolne.ZadajPytanie($"Czy wyzerować licznik osi odcinka toru {odcinek.Nazwa}?") = DialogResult.Yes Then
+            Klient.WyslijZerujLicznikOsi(New Zaleznosci.ZerujLicznikOsi() With {.AdresOdcinka = odcinek.Adres})
+        End If
     End Sub
 
     Private Sub Klient_ZakonczonoPolaczenie() Handles Klient.ZakonczonoPolaczenie
@@ -323,6 +372,10 @@ Public Class wndNastawnia
         Next
     End Sub
 
+    Private Sub Klient_OdebranoZmienionoZamkniecieOdcinka(kom As Zaleznosci.ZmienionoZamkniecieOdcinka) Handles Klient.OdebranoZmienionoZamkniecieOdcinka
+        If ObslugiwaczZamkniecOdcinkow.PrzetworzZamkniecieOdcinka(kom, plpPulpit) Then plpPulpit.Invalidate()
+    End Sub
+
     Private Sub WczytajPolaczenia(Okno As FileDialog, MetodaOtwierajaca As Func(Of String, Zaleznosci.PolaczeniaPosterunkow), KomunikatBledu As String)
         Okno.Filter = Wspolne.FILTR_PLIKU_POLACZEN
 
@@ -341,6 +394,7 @@ Public Class wndNastawnia
         Invoke(actPokazStatus, "Rozłączono", Color.Red, False)
         Invoke(actPokazNazweOkna, String.Empty)
         Invoke(actZamknijOkna)
+        ObslugiwaczZamkniecOdcinkow = New ObslugaZamkniecOdcinkow
     End Sub
 
     Private Sub ZamknijPolaczenie(klient As Object)

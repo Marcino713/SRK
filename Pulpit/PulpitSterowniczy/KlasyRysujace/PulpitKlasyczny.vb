@@ -37,6 +37,7 @@
     Private Const PRZYCISK_TLO_PROMIEN As Single = 0.115F  'promień tła przycisku
     Private Const PRZYCISK_RAMKA_PROMIEN As Single = 0.08F 'promień obramowania wciskanej części przycisku
     Private Const PRZYCISK_PROMIEN As Single = 0.055F      'promień wciskanej części przycisku
+    Private Const PRZYCISK_BLOK_PROMIEN As Single = 0.15F  'promień przycisku zablokowanego
     Private Const PRZYCISK_TM_DODATEK As Single = 0.09F    'dodatkowe przesunięcie przycisku na kostce sygnalizatora manewrowego
     Private Const KIER_SZER As Single = 0.3F               'rozmiar trójkąta na kostce kierunku
     Private Const KIER_POZ_X As Single = 0.25F             'pozycja trójkąta kierunku na osi X
@@ -50,6 +51,7 @@
     Private Const TEKST_NAPIS_POZ As Single = 0.12F        'pozycja tekstu w kostce z napisem
     Private Const TEKST_WYS_LINIA As Single = 0.27F        'wysokość tekstu jednoliniowego
     Private Const TEKST_WYS_KOSTKA_NAPIS As Single = 0.78F 'wysokość tekstu w kostce z napisem
+    Private Const TABLICZKA_RAMKA_GRUB As Single = 0.07F   'grubość ramki na tabliczce zamknięcia
     Private Const WSPOLRZEDNE_ROZM As Single = 0.33F       'długość linii na skali
     Private Const KRAWEDZ_RAMKA_ZAZN As Single = 0.04F     'grubość krawędzi ramki zaznaczenia lamp
     Private Const DODATKOWY_MARGINES As Single = 0.01F     'margines uwzględniany w elementach, aby te lekko nachodziły na siebie i nie rysowały się przerwy między nimi
@@ -90,6 +92,9 @@
     Private PEDZEL_PRZYCISK_ZOLTY As TPedzel
     Private PEDZEL_PRZYCISK_RAMKA As TPedzel
     Private PEDZEL_PRZYCISK_WCISNIETY As TPedzel
+    Private PEDZEL_PRZYCISK_ZABLOKOWANY As TPedzel
+    Private PEDZEL_TABLICZKA_TLO As TPedzel
+    Private PEDZEL_TABLICZKA_RAMKA As TPedzel
     Private PEDZEL_TEKST As TPedzel
     Private PEDZEL_ZAZN_KOSTKA As TPedzel
     Private PEDZEL_LAMPA_TLO As TPedzel
@@ -107,8 +112,10 @@
     Private ReadOnly PUNKTY_SZCZELINY_KIERUNKU As PointF()
 
     Private Const DOMYSLNY_ROZMIAR_CZCIONKI As Single = 0.17F
+    Private Const TABLICZKA_TEKST_ROZM As Single = 0.11F   'wysokość tekstu na tabliczce zamknięcia
     Private Const NAZWA_CZCIONKI As String = "Arial"
     Private CZCIONKA As TCzcionka
+    Private CZCIONKA_TABLICZKA As TCzcionka
 
     Private Const NAZWA_SZ As String = "Sz"     'Sygnał zastępczy
     Private Const NAZWA_Z As String = "z"       'Zwolnienie przebiegu
@@ -119,6 +126,8 @@
     Private Const NAZWA_ZWBL As String = "Zwbl" 'Zwolnienie blokady
     Private Const NAZWA_OTW As String = "Otw"   'Otwarcie przejazdu
     Private Const NAZWA_ZAM As String = "Zam"   'Zamknięcie przejazdu
+    Private Const NAZWA_TOR As String = "TOR"   'Tabliczka zamknięcia toru
+    Private Const NAZWA_ZAMKNIETY As String = "ZAMKNIĘTY"
 
     Private ReadOnly METODY_RYSUJACE As New Dictionary(Of Zaleznosci.TypKostki, RysujElement) From {
         {Zaleznosci.TypKostki.Tor, Sub(k) RysujTorProsty(CType(k, Zaleznosci.Tor), True)},
@@ -238,6 +247,9 @@
         PEDZEL_PRZYCISK_ZOLTY = urz.UtworzPedzel(KolorRGB("#CABF3F"))
         PEDZEL_PRZYCISK_RAMKA = urz.UtworzPedzel(KolorRGB("#555555", 120))
         PEDZEL_PRZYCISK_WCISNIETY = urz.UtworzPedzel(KolorRGB("#42FFFC"))
+        PEDZEL_PRZYCISK_ZABLOKOWANY = urz.UtworzPedzel(KolorRGB("#328B4B"))
+        PEDZEL_TABLICZKA_TLO = urz.UtworzPedzel(KolorRGB("#FFFFFF"))
+        PEDZEL_TABLICZKA_RAMKA = urz.UtworzPedzel(KolorRGB("#F01717"))
         PEDZEL_TEKST = urz.UtworzPedzel(KolorRGB("#000000"))
         PEDZEL_ZAZN_KOSTKA = urz.UtworzPedzel(KolorRGB("#009DFF"))
         PEDZEL_LAMPA_TLO = urz.UtworzPedzel(KolorRGB("#FFEA00"))
@@ -250,7 +262,9 @@
         PEDZEL_PRZEJAZD_ROGATKA_ZAZN = urz.UtworzPedzel(KolorRGB("#000DFF"))
         PEDZEL_PRZEJAZD_SYGN_DROG = urz.UtworzPedzel(KolorRGB("#FF66D1"))
         PEDZEL_PRZEJAZD_SYGN_DROG_ZAZN = urz.UtworzPedzel(KolorRGB("#CC0047"))
+
         CZCIONKA = urz.UtworzCzcionke(NAZWA_CZCIONKI, DOMYSLNY_ROZMIAR_CZCIONKI, False)
+        CZCIONKA_TABLICZKA = urz.UtworzCzcionke(NAZWA_CZCIONKI, TABLICZKA_TEKST_ROZM, False)
 
         zainicjalizowano = True
     End Sub
@@ -307,6 +321,9 @@
         End If
 
         ps.Pulpit.PrzeiterujKostki(AddressOf RysujKostke, ps)
+
+        'Rysuj tabliczki zamknięcia
+        ps.PrzetworzTabliczkiZamkniec(AddressOf RysujTabliczkeZamkniecia)
 
         If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Or (Not ps.TrybProjektowy And ps.MozliwoscZaznaczeniaLamp) Then
             Dim zaznLampy As HashSet(Of Zaleznosci.Lampa) = ps.ZaznaczoneLampy
@@ -651,7 +668,7 @@
         End If
         If rozjazd.ZelektryfikowanyDrugi Then RysujUkosnaLinieElektryfikacji(KonfiguracjaElektryfikacjiUkosnej.RozjazdLewo)
         If rozjazd.PosiadaPrzycisk Then
-            RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, PEDZEL_PRZYCISK_CZARNY, 2)
+            RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, rozjazd.Zablokowany, PEDZEL_PRZYCISK_CZARNY, 2)
             dodMargines += 2.0F * SYGN_TLO_PROMIEN
         End If
         If rozjazd.KierunekZasadniczy = Zaleznosci.UstawienieRozjazduEnum.Wprost Then
@@ -682,7 +699,7 @@
             RysujProstaLinieElektryfikacji(obrocic, If(Not obrocic, TOR_ELEKTR_ROZJAZD, 1.0F))
         End If
         If rozjazd.PosiadaPrzycisk Then
-            RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, PEDZEL_PRZYCISK_CZARNY, 2, 2)
+            RysujPrzycisk((Not trybProjektowy) And rozjazd.Wcisniety, rozjazd.Zablokowany, PEDZEL_PRZYCISK_CZARNY, 2, 2)
             dodMargines += 2.0F * SYGN_TLO_PROMIEN
         End If
         If rozjazd.KierunekZasadniczy = Zaleznosci.UstawienieRozjazduEnum.Wprost Then
@@ -712,7 +729,7 @@
         urz.WypelnijKolo(pedzNiebieski, SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         urz.WypelnijKolo(pedzBialy, 2 * SYGN_POZ, SYGN_POZ, SYGN_PROMIEN)
         RysujSlupSygnalizatora(2)
-        If sygnalizator.PosiadaPrzycisk Then RysujPrzycisk((Not trybProjektowy) And sygnalizator.Wcisniety, PEDZEL_PRZYCISK_BIALY, 2.0F, dodatekX:=PRZYCISK_TM_DODATEK)
+        If sygnalizator.PosiadaPrzycisk Then RysujPrzycisk((Not trybProjektowy) And sygnalizator.Wcisniety, sygnalizator.Zablokowany, PEDZEL_PRZYCISK_BIALY, 2.0F, dodatekX:=PRZYCISK_TM_DODATEK)
         RysujTorProsty(sygnalizator, True)
     End Sub
 
@@ -807,13 +824,17 @@
         urz.WypelnijKolo(pedzStan, PRZEJAZD_KONTR_POZ, 3.0F * SYGN_POZ, SYGN_PROMIEN)
     End Sub
 
-    Private Sub RysujPrzycisk(wcisniety As Boolean, pedzel As TPedzel, Optional poczx As Single = 0.0F, Optional poczy As Single = 0.0F, Optional dodatekX As Single = 0.0F)
+    Private Sub RysujPrzycisk(wcisniety As Boolean, zablokowany As Boolean, pedzel As TPedzel, Optional poczx As Single = 0.0F, Optional poczy As Single = 0.0F, Optional dodatekX As Single = 0.0F)
         Dim x As Single = (poczx + 1.0F) * SYGN_POZ + dodatekX
         Dim y As Single = (poczy + 1.0F) * SYGN_POZ
 
-        urz.WypelnijKolo(pedzel, x, y, PRZYCISK_TLO_PROMIEN)
-        urz.WypelnijKolo(PEDZEL_PRZYCISK_RAMKA, x, y, PRZYCISK_RAMKA_PROMIEN)
-        urz.WypelnijKolo(If(wcisniety, PEDZEL_PRZYCISK_WCISNIETY, pedzel), x, y, PRZYCISK_PROMIEN)
+        If zablokowany Then
+            urz.WypelnijKolo(PEDZEL_PRZYCISK_ZABLOKOWANY, x, y, PRZYCISK_BLOK_PROMIEN)
+        Else
+            urz.WypelnijKolo(pedzel, x, y, PRZYCISK_TLO_PROMIEN)
+            urz.WypelnijKolo(PEDZEL_PRZYCISK_RAMKA, x, y, PRZYCISK_RAMKA_PROMIEN)
+            urz.WypelnijKolo(If(wcisniety, PEDZEL_PRZYCISK_WCISNIETY, pedzel), x, y, PRZYCISK_PROMIEN)
+        End If
     End Sub
 
     Private Sub RysujPrzyciskZwykly(przycisk As Zaleznosci.Przycisk)
@@ -869,7 +890,7 @@
 
         End Select
 
-        RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety, pedzel)
+        RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety, przycisk.Zablokowany, pedzel)
         RysujNazwe(nazwaPrzycisku, SYGN_POZ + TEKST_POZ_X_PRZYCISK, TEKST_POZ_Y, przywrocTransformacje:=True)
         RysujNazweDolKostki(nazwaElementu)
     End Sub
@@ -885,7 +906,7 @@
         End If
 
         RysujTorProsty(przycisk, False)
-        RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety, pedzel)
+        RysujPrzycisk((Not trybProjektowy) And przycisk.Wcisniety, przycisk.Zablokowany, pedzel)
 
         Dim nazwa As String
         If przycisk.TypPrzycisku = Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy Then
@@ -981,6 +1002,22 @@
         End If
 
         urz.WypelnijFigure(pedzel, PUNKTY_SZCZELINY_KIERUNKU)
+    End Sub
+
+    Private Sub RysujTabliczkeZamkniecia(p As Zaleznosci.PunktCalkowity)
+        urz.TransformacjaResetuj()
+        urz.TransformacjaPrzesun(p.X, p.Y)
+        urz.TransformacjaDolacz(glownaTransformacja)
+
+        Dim rozmTor As SizeF = urz.ZmierzTekst(CZCIONKA_TABLICZKA, NAZWA_TOR, 1.0F, 1.0F)
+        Dim rozmZamkniety As SizeF = urz.ZmierzTekst(CZCIONKA_TABLICZKA, NAZWA_ZAMKNIETY, 1.0F, 1.0F)
+        Dim wysSrodek As Single = (1.0F - rozmTor.Height - rozmZamkniety.Height) / 2.0F
+        Dim pozPrawo As Single = 1.0F - 2.0F * TABLICZKA_RAMKA_GRUB
+
+        urz.WypelnijProstokat(PEDZEL_TABLICZKA_RAMKA, 0.0F, 0.0F, 1.0F, 1.0F)
+        urz.WypelnijProstokat(PEDZEL_TABLICZKA_TLO, TABLICZKA_RAMKA_GRUB, TABLICZKA_RAMKA_GRUB, pozPrawo, pozPrawo)
+        urz.RysujTekst(PEDZEL_TEKST, CZCIONKA_TABLICZKA, NAZWA_TOR, (1.0F - rozmTor.Width) / 2.0F, wysSrodek, rozmTor.Width, rozmTor.Height)
+        urz.RysujTekst(PEDZEL_TEKST, CZCIONKA_TABLICZKA, NAZWA_ZAMKNIETY, (1.0F - rozmZamkniety.Width) / 2.0F, wysSrodek + rozmTor.Height, rozmZamkniety.Width, rozmZamkniety.Height)
     End Sub
 
     Private Sub RysujKolko(pedzel As TPedzel, x As Single, y As Single)

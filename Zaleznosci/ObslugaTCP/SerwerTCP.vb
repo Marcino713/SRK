@@ -82,6 +82,11 @@ Public Class SerwerTCP
     Public Event OdebranoWybierzPosterunek(post As UShort, kom As WybierzPosterunek)
     Public Event OdebranoZwolnijPrzebieg(post As UShort, kom As ZwolnijPrzebieg)
     Public Event OdebranoUstawStanPrzejazdu(post As UShort, kom As UstawStanPrzejazdu)
+    Public Event OdebranoUstawBlokadeZwrotnicy(post As UShort, kom As UstawBlokadeZwrotnicy)
+    Public Event OdebranoUstawBlokadeSygnalizatora(post As UShort, kom As UstawBlokadeSygnalizatora)
+    Public Event OdebranoUstawZamkniecieOdcinka(post As UShort, kom As UstawZamkniecieOdcinka)
+    Public Event OdebranoZerujLicznikOsi(post As UShort, kom As ZerujLicznikOsi)
+    Public Event OdebranoUstawTrybSamoczynnySygnalizatora(post As UShort, kom As UstawTrybSamoczynnySygnalizatora)
     Public Event DodanoPociag(pociag As StanPociagu)
     Public Event ZmienionNazwePociagu(nrPociagu As UInteger, nazwa As String)
     Public Event ZmienionoLiczbeOsiPociagu(nrPociagu As UInteger, liczbaOsi As UShort)
@@ -435,12 +440,12 @@ Public Class SerwerTCP
             Sub(pol, kom)
                 Dim k As UstawStanPrzejazdu = CType(kom, UstawStanPrzejazdu)
                 WyslijKomunikatDoWszystkichPolaczen(pol, New ZmienionoStanPrzejazdu() With {
-                                    .Numer = k.Numer,
+                                    .NumerPrzejazdu = k.NumerPrzejazdu,
                                     .Stan = If(k.Stan = UstawianyStanPrzejazdu.Zamkniety, StanPrzejazduKolejowego.Zamkniety, StanPrzejazduKolejowego.Otwarty)})
                 RaiseEvent OdebranoUstawStanPrzejazdu(pol.AdresPosterunku, k)
 
                 Dim prz As PrzejazdKolejowoDrogowy = Nothing
-                If Przejazdy.TryGetValue(k.Numer, prz) Then
+                If Przejazdy.TryGetValue(k.NumerPrzejazdu, prz) Then
                     Dim wlaczony As Boolean = k.Stan = UstawianyStanPrzejazdu.Zamkniety
 
                     For Each r As PrzejazdRogatka In prz.Rogatki
@@ -456,6 +461,51 @@ Public Class SerwerTCP
                     Next
                 End If
 
+            End Sub
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_BLOKADE_ZWROTNICY, New PrzetwOdebrKomunikatu(
+            AddressOf UstawBlokadeZwrotnicy.Otworz,
+            Sub(pol, kom)
+                Dim k As UstawBlokadeZwrotnicy = CType(kom, UstawBlokadeZwrotnicy)
+                WyslijKomunikatDoWszystkichPolaczen(pol, New ZmienionoBlokadeZwrotnicy() With {.Adres = k.Adres, .Stan = If(k.Zablokowana, StanZmienionejBlokadyZwrotnicy.Zablokowana, StanZmienionejBlokadyZwrotnicy.Odblokowana)})
+                RaiseEvent OdebranoUstawBlokadeZwrotnicy(pol.AdresPosterunku, k)
+            End Sub
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_BLOKADE_SYGNALIZATORA, New PrzetwOdebrKomunikatu(
+            AddressOf UstawBlokadeSygnalizatora.Otworz,
+            Sub(pol, kom)
+                Dim k As UstawBlokadeSygnalizatora = CType(kom, UstawBlokadeSygnalizatora)
+                WyslijKomunikatDoWszystkichPolaczen(pol, New ZmienionoBlokadeSygnalizatora() With {.Adres = k.Adres, .Stan = If(k.Zablokowany, StanZmienionejBlokadySygnalizatora.Zablokowany, StanZmienionejBlokadySygnalizatora.Odblokowany)})
+                RaiseEvent OdebranoUstawBlokadeSygnalizatora(pol.AdresPosterunku, k)
+            End Sub
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_ZAMKNIECIE_ODCINKA, New PrzetwOdebrKomunikatu(
+            AddressOf UstawZamkniecieOdcinka.Otworz,
+            Sub(pol, kom)
+                Dim k As UstawZamkniecieOdcinka = CType(kom, UstawZamkniecieOdcinka)
+                WyslijKomunikatDoWszystkichPolaczen(pol, New ZmienionoZamkniecieOdcinka() With {.Adres = k.Adres, .Stan = If(k.Zamkniety, StanZamykanegoOdcinka.Zamkniety, StanZamykanegoOdcinka.Otwarty), .Numer = k.Numer})
+                RaiseEvent OdebranoUstawZamkniecieOdcinka(pol.AdresPosterunku, k)
+            End Sub
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.ZERUJ_LICZNIK_OSI, New PrzetwOdebrKomunikatu(
+            AddressOf ZerujLicznikOsi.Otworz,
+            Sub(pol, kom)
+                Dim k As ZerujLicznikOsi = CType(kom, ZerujLicznikOsi)
+                WyslijKomunikatDoWszystkichPolaczen(pol, New WyzerowanoLicznikOsi() With {.AdresOdcinka = k.AdresOdcinka, .Stan = StanZerowanegoLicznikaOsi.Wyzerowano})
+                RaiseEvent OdebranoZerujLicznikOsi(pol.AdresPosterunku, k)
+            End Sub
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.USTAW_TRYB_SAMOCZYNNY_SYGNALIZATORA, New PrzetwOdebrKomunikatu(
+            AddressOf UstawTrybSamoczynnySygnalizatora.Otworz,
+            Sub(pol, kom)
+                Dim k As UstawTrybSamoczynnySygnalizatora = CType(kom, UstawTrybSamoczynnySygnalizatora)
+                pol.WyslijKomunikat(New UstawionoTrybSamoczynnySygnalizatora() With {.Adres = k.Adres, .Stan = If(k.TrybSamoczynny, StanTrybuSamoczynnegoSygnalizatora.TrybSamoczynny, StanTrybuSamoczynnegoSygnalizatora.TrybPolsamoczynny)})
+                RaiseEvent OdebranoUstawTrybSamoczynnySygnalizatora(pol.AdresPosterunku, k)
             End Sub
         ))
     End Sub
@@ -513,6 +563,26 @@ Public Class SerwerTCP
     End Sub
 
     Public Sub WysliZmienionoStanPrzejazdu(post As UShort, kom As ZmienionoStanPrzejazdu)
+        WyslijDoKlienta(post, kom)
+    End Sub
+
+    Public Sub WysliZmienionoBlokadeZwrotnicy(post As UShort, kom As ZmienionoBlokadeZwrotnicy)
+        WyslijDoKlienta(post, kom)
+    End Sub
+
+    Public Sub WysliZmienionoBlokadeSygnalizatora(post As UShort, kom As ZmienionoBlokadeSygnalizatora)
+        WyslijDoKlienta(post, kom)
+    End Sub
+
+    Public Sub WysliZmienionoZamkniecieOdcinka(post As UShort, kom As ZmienionoZamkniecieOdcinka)
+        WyslijDoKlienta(post, kom)
+    End Sub
+
+    Public Sub WysliWyzerowanoLicznikOsi(post As UShort, kom As WyzerowanoLicznikOsi)
+        WyslijDoKlienta(post, kom)
+    End Sub
+
+    Public Sub WysliUstawionoTrybSamoczynnySygnalizatora(post As UShort, kom As UstawionoTrybSamoczynnySygnalizatora)
         WyslijDoKlienta(post, kom)
     End Sub
 

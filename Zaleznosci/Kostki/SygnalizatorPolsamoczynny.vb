@@ -7,6 +7,9 @@
     Public Property Ustawienia As UstawieniaSygnalizatoraPolsamoczynnego = USTAWIENIA_DOMYSLNE
     Public Property DostepneSwiatla As DostepneSwiatlaSygnPolsamoczynny = DOSTEPNE_SWIATLA_DOMYSLNE
 
+    Public Property Zablokowany As Boolean
+    Public Property TrybSamoczynny As Boolean
+
     Private _Stan As StanSygnalizatora = StanSygnalizatora.BrakWyjazdu
     Public Property Stan As StanSygnalizatora
         Get

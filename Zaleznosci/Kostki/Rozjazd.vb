@@ -31,6 +31,7 @@
     End Property
 
     Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
+    Public Property Zablokowany As Boolean Implements IPrzycisk.Zablokowany
     Public Property PrzytnijZakret As PrzycinanieZakretu Implements IZakret.PrzytnijZakret
     Public Property Stan As StanRozjazdu = StanRozjazdu.Niezdefiniowany
 

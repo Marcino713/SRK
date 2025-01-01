@@ -1,7 +1,7 @@
 ﻿Public Class ZmienionoStanPrzejazdu
     Inherits Komunikat
 
-    Public Property Numer As UShort
+    Public Property NumerPrzejazdu As UShort
     Public Property Stan As StanPrzejazduKolejowego
     Public Property Awaria As Boolean
     Public Property Blad As BladZmianyStanuPrzejazdu
@@ -13,7 +13,7 @@
     End Property
 
     Public Overrides Sub Zapisz(bw As BinaryWriter)
-        bw.Write(Numer)
+        bw.Write(NumerPrzejazdu)
         bw.Write(CByte(Stan))
         bw.Write(Awaria)
         bw.Write(Blad)
@@ -21,7 +21,7 @@
 
     Public Shared Function Otworz(br As BinaryReader) As Komunikat
         Dim kom As New ZmienionoStanPrzejazdu
-        kom.Numer = br.ReadUInt16
+        kom.NumerPrzejazdu = br.ReadUInt16
         kom.Stan = CType(br.ReadByte, StanPrzejazduKolejowego)
         kom.Awaria = br.ReadBoolean
         kom.Blad = CType(br.ReadByte, BladZmianyStanuPrzejazdu)

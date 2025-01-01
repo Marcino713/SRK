@@ -11,6 +11,8 @@ Public Class OdcinekToru
     Public Property Nazwa As String = ""
     Public Property Opis As String = ""
 
+    Public Property Zamkniety As Boolean = False
+
     Private _liczbaTorow As Integer
     Public ReadOnly Property LiczbaTorow As Integer
         Get
@@ -110,6 +112,7 @@ Public Class OdcinekToru
     End Function
 End Class
 
+<Flags>
 Public Enum PrzynaleznoscToruDoOdcinka
     Zaden = 0
     Pierwszy = 1

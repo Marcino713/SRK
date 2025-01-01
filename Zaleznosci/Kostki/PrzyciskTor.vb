@@ -27,8 +27,8 @@
         End Set
     End Property
 
-
     Public Property Wcisniety As Boolean = False Implements IPrzycisk.Wcisniety
+    Public Property Zablokowany As Boolean Implements IPrzycisk.Zablokowany
 
     Public Sub New()
         MyBase.New(TypKostki.PrzyciskTor)

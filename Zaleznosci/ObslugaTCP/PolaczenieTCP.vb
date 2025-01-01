@@ -174,6 +174,7 @@ Friend Class PolaczenieTCP
         bw.Write(tcp.Wersja.WersjaGlowna)
         bw.Write(tcp.Wersja.WersjaBoczna)
         bw.Write(kom.Typ)
+        bw.Write(kom.Numer)
 
         kom.Zapisz(bw)
 
@@ -220,6 +221,7 @@ Friend Class PolaczenieTCP
         If Not wersja.CzyObslugiwana(tcp.ObslugiwaneWersje) Then Exit Sub
 
         Dim typ As UShort = br.ReadUInt16
+        Dim numer As Integer = br.ReadInt32
 
         SyncLock slockStanPolaczenia
             If Not (
@@ -238,6 +240,7 @@ Friend Class PolaczenieTCP
         If tcp.DaneFabrykiObiektow.TryGetValue(typ, metody) Then
             If (Not metody.MetodaTworzaca.Equals(Nothing)) And (Not metody.MetodaZglaszajacaZdarzenie.Equals(Nothing)) Then
                 Dim kom As Komunikat = metody.MetodaTworzaca(br)
+                kom.Numer = numer
                 metody.MetodaZglaszajacaZdarzenie(Me, kom)
             End If
         End If

@@ -17,6 +17,7 @@ Public Class KlientTCP
     Private AdresIP As String
     Private Port As UShort
     Private Haslo As String
+    Private NumerKomunikatu As Integer
     Private DaneDH As KlientDaneDH
     Private WatekNawiazywaniaPolaczenia As Thread
 
@@ -42,6 +43,13 @@ Public Class KlientTCP
     Public Event OdebranoUsunietoPociag(kom As UsunietoPociag)
     Public Event OdebranoZmienionoNazwePociagu(kom As ZmienionoNazwePociagu)
     Public Event OdebranoZmienionoStanPrzejazdu(kom As ZmienionoStanPrzejazdu)
+    Public Event OdebranoZmienionoBlokadeZwrotnicy(kom As ZmienionoBlokadeZwrotnicy)
+    Public Event OdebranoZmienionoBlokadeSygnalizatora(kom As ZmienionoBlokadeSygnalizatora)
+    Public Event OdebranoZmienionoZamkniecieOdcinka(kom As ZmienionoZamkniecieOdcinka)
+    Public Event OdebranoWyzerowanoLicznikOsi(kom As WyzerowanoLicznikOsi)
+    Public Event OdebranoUstawionoTrybSamoczynnySygnalizatora(kom As UstawionoTrybSamoczynnySygnalizatora)
+
+    Public Delegate Sub PrzetworzNumerKomunikatu(numer As Integer)
 
     Public Sub New()
         DaneFabrykiObiektow.Add(TypKomunikatu.DH_ZAINICJALIZOWANO, New PrzetwOdebrKomunikatu(
@@ -148,70 +156,115 @@ Public Class KlientTCP
             AddressOf ZmienionoStanPrzejazdu.Otworz,
             Sub(pol, kom) RaiseEvent OdebranoZmienionoStanPrzejazdu(CType(kom, ZmienionoStanPrzejazdu))
         ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_BLOKADE_ZWROTNICY, New PrzetwOdebrKomunikatu(
+            AddressOf ZmienionoBlokadeZwrotnicy.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoBlokadeZwrotnicy(CType(kom, ZmienionoBlokadeZwrotnicy))
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_BLOKADE_SYGNALIZATORA, New PrzetwOdebrKomunikatu(
+            AddressOf ZmienionoBlokadeSygnalizatora.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoBlokadeSygnalizatora(CType(kom, ZmienionoBlokadeSygnalizatora))
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_ZAMKNIECIE_ODCINKA, New PrzetwOdebrKomunikatu(
+            AddressOf ZmienionoZamkniecieOdcinka.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoZamkniecieOdcinka(CType(kom, ZmienionoZamkniecieOdcinka))
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.WYZEROWANO_LICZNIK_OSI, New PrzetwOdebrKomunikatu(
+            AddressOf WyzerowanoLicznikOsi.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoWyzerowanoLicznikOsi(CType(kom, WyzerowanoLicznikOsi))
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.USTAWIONO_TRYB_SAMOCZYNNY_SYGNALIZATORA, New PrzetwOdebrKomunikatu(
+            AddressOf UstawionoTrybSamoczynnySygnalizatora.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoUstawionoTrybSamoczynnySygnalizatora(CType(kom, UstawionoTrybSamoczynnySygnalizatora))
+        ))
     End Sub
 
     Public Sub WyslijZakonczDzialanieKlienta(kom As ZakonczDzialanieKlienta)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijUstawJasnoscLamp(kom As UstawJasnoscLamp)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijUstawKierunek(kom As UstawKierunek)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijPotwierdzKierunek(kom As PotwierdzKierunek)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijDodajPociag(kom As DodajPociag)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijUstawPredkoscPociagu(kom As UstawPredkoscPociagu)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijUstawStanSygnalizatora(kom As UstawStanSygnalizatora)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijUstawZwrotnice(kom As UstawZwrotnice)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijUwierzytelnijSie(kom As UwierzytelnijSie)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijWybierzPosterunek(kom As WybierzPosterunek)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijZwolnijPrzebieg(kom As ZwolnijPrzebieg)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijPobierzPociagi(kom As PobierzPociagi)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijWybierzPociag(kom As WybierzPociag)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijWysiadzZPociagu(kom As WysiadzZPociagu)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijUsunPociag(kom As UsunPociag)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
     End Sub
 
     Public Sub WyslijUstawStanPrzejazdu(kom As UstawStanPrzejazdu)
-        Klient?.WyslijKomunikat(kom)
+        Wyslij(kom)
+    End Sub
+
+    Public Sub WyslijUstawBlokadeZwrotnicy(kom As UstawBlokadeZwrotnicy)
+        Wyslij(kom)
+    End Sub
+
+    Public Sub WyslijUstawBlokadeSygnalizatora(kom As UstawBlokadeSygnalizatora)
+        Wyslij(kom)
+    End Sub
+
+    Public Sub WyslijUstawZamkniecieOdcinka(kom As UstawZamkniecieOdcinka, Optional przetwNumer As PrzetworzNumerKomunikatu = Nothing)
+        Wyslij(kom, przetwNumer)
+    End Sub
+
+    Public Sub WyslijZerujLicznikOsi(kom As ZerujLicznikOsi)
+        Wyslij(kom)
+    End Sub
+
+    Public Sub WyslijUstawTrybSamoczynnySygnalizatora(kom As UstawTrybSamoczynnySygnalizatora)
+        Wyslij(kom)
     End Sub
 
     Public Sub Polacz(AdresIp As String, Port As UShort, Haslo As String, Obserwator As Boolean)
@@ -244,6 +297,24 @@ Public Class KlientTCP
         RaiseEvent ZakonczonoPolaczenie()
     End Sub
 
+    Private Sub Wyslij(kom As Komunikat, Optional przetwNumer As PrzetworzNumerKomunikatu = Nothing)
+        Dim nr As Integer = 0
+
+        SyncLock Me
+            If NumerKomunikatu = Integer.MaxValue Then
+                NumerKomunikatu = 1
+            Else
+                NumerKomunikatu += 1
+            End If
+
+            nr = NumerKomunikatu
+        End SyncLock
+
+        kom.Numer = nr
+        If przetwNumer IsNot Nothing Then przetwNumer(nr)
+        Klient?.WyslijKomunikat(kom)
+    End Sub
+
     Private Sub PolaczZSerwerem(obserwator As Object)
         Try
             Dim tcp As New TcpClient()
@@ -255,7 +326,7 @@ Public Class KlientTCP
 
             DaneDH = New KlientDaneDH()
             Dim kom As DHInicjalizuj = DaneDH
-            Klient.WyslijKomunikat(kom)
+            Wyslij(kom)
         Catch
             _Uruchomiony = False
             RaiseEvent BladNawiazywaniaPolaczenia()
@@ -269,7 +340,7 @@ Public Class KlientTCP
         Dim klucz As BigInteger = BigInteger.ModPow(dh.LiczbaB, DaneDH.LiczbaPrywA, DaneDH.LiczbaP)
         DaneDH = Nothing
         Klient.InicjujAes(klucz.ToByteArray)
-        Klient.WyslijKomunikat(New UwierzytelnijSie() With {.Haslo = Haslo, .TrybObserwatora = pol.TrybObserwatora})
+        Wyslij(New UwierzytelnijSie() With {.Haslo = Haslo, .TrybObserwatora = pol.TrybObserwatora})
     End Sub
 
     Private Sub PoprUwierzytelniono(pol As PolaczenieTCP, kom As Komunikat)
