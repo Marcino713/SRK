@@ -36,6 +36,7 @@ Public Class KlientTCP
     Public Event OdebranoZmienionoPredkoscPociagu(kom As ZmienionoPredkoscPociagu)
     Public Event OdebranoZmienionoStanSygnalizatora(kom As ZmienionoStanSygnalizatora)
     Public Event OdebranoZmienionoStanToru(kom As ZmienionoStanToru)
+    Public Event OdebranoZmienionoStanToruNrPociagow(kom As ZmienionoStanToruNrPociagow)
     Public Event OdebranoZmienionoStanZwrotnicy(kom As ZmienionoStanZwrotnicy)
     Public Event OdebranoPobranoPociagi(kom As PobranoPociagi)
     Public Event OdebranoWybranoPociag(kom As WybranoPociag)
@@ -120,6 +121,11 @@ Public Class KlientTCP
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_STAN_TORU, New PrzetwOdebrKomunikatu(
             AddressOf ZmienionoStanToru.Otworz,
             Sub(pol, kom) RaiseEvent OdebranoZmienionoStanToru(CType(kom, ZmienionoStanToru))
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_STAN_TORU_NR_POCIAGOW, New PrzetwOdebrKomunikatu(
+            AddressOf ZmienionoStanToruNrPociagow.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoZmienionoStanToruNrPociagow(CType(kom, ZmienionoStanToruNrPociagow))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_STAN_ZWROTNICY, New PrzetwOdebrKomunikatu(
@@ -373,5 +379,4 @@ Public Class KlientTCP
         _Uruchomiony = False
         RaiseEvent OdebranoZakonczonoSesjeKlienta(CType(kom, ZakonczonoSesjeKlienta))
     End Sub
-
 End Class

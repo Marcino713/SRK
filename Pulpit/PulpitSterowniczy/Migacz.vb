@@ -3,11 +3,12 @@
 
     Private pulpit As PulpitSterowniczy
     Private kostkiMigajace As New HashSet(Of Zaleznosci.Kostka)
+    Private kostkiPrzelaczane As New HashSet(Of Zaleznosci.Kostka)
     Private wlaczony As Boolean = True
     Private slock As New Object
 
     Private _stanMigania As Boolean = True
-    Friend ReadOnly Property WysokiStanMigania As Boolean
+    Friend ReadOnly Property WysokiStanMigania As Boolean Implements Zaleznosci.IMigacz.WysokiStanMigania
         Get
             Return _stanMigania
         End Get
@@ -18,14 +19,36 @@
     End Sub
 
     Public Sub UstawKostke(kostka As Zaleznosci.Kostka) Implements Zaleznosci.IMigacz.UstawKostke
-        If kostka.CzyMiga() Then WlaczKostke(kostka) Else WylaczKostke(kostka)
+        Dim miga As Boolean
+
+        If kostka.CzyPrzelaczana() Then
+            miga = True
+
+            SyncLock slock
+                kostkiPrzelaczane.Add(kostka)
+            End SyncLock
+        Else
+            miga = kostka.CzyMiga()
+
+            SyncLock slock
+                kostkiPrzelaczane.Remove(kostka)
+            End SyncLock
+        End If
+
+        If miga Then WlaczKostke(kostka) Else WylaczKostke(kostka)
     End Sub
 
-    Friend Sub PrzelaczStan()
+    Public Sub PrzelaczStan() Implements Zaleznosci.IMigacz.PrzelaczStan
         _stanMigania = Not _stanMigania
+
+        SyncLock slock
+            For Each k As Zaleznosci.Kostka In kostkiPrzelaczane
+                k.ZmianaMigniecia()
+            Next
+        End SyncLock
     End Sub
 
-    Friend Sub Wylacz()
+    Public Sub Wylacz() Implements Zaleznosci.IMigacz.Wylacz
         SyncLock slock
             wlaczony = False
         End SyncLock

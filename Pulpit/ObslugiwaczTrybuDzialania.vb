@@ -93,6 +93,22 @@
         plpPulpit.Invalidate()
     End Sub
 
+    Private Sub Klient_OdebranoZmienionoStanToruNrPociagow(kom As Zaleznosci.ZmienionoStanToruNrPociagow) Handles Klient.OdebranoZmienionoStanToruNrPociagow
+        Dim t As Zaleznosci.AktualizowanyKawalekToruNrPociagow
+        Dim kostkaNr As Zaleznosci.NumerPociagu
+
+        For i As Integer = 0 To kom.Tory.Length - 1
+            t = kom.Tory(i)
+
+            If plpPulpit.Pulpit.CzyKostkaWZakresiePulpitu(t.WspolrzedneKostki) Then
+                kostkaNr = TryCast(plpPulpit.Pulpit.Kostki(t.WspolrzedneKostki.X, t.WspolrzedneKostki.Y), Zaleznosci.NumerPociagu)
+                kostkaNr?.UstawNumery(t.NumeryPociagow)
+            End If
+        Next
+
+        plpPulpit.Invalidate()
+    End Sub
+
     Private Sub Klient_OdebranoZmienionoStanZwrotnicy(kom As Zaleznosci.ZmienionoStanZwrotnicy) Handles Klient.OdebranoZmienionoStanZwrotnicy
         Dim rozj As Zaleznosci.Rozjazd = Nothing
         If Not Rozjazdy.TryGetValue(kom.Adres, rozj) Then Exit Sub

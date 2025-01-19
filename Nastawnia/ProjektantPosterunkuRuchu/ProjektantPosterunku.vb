@@ -143,6 +143,8 @@
 
         Dim sygnPolsam As New Zaleznosci.SygnalizatorPolsamoczynny With {.Nazwa = "A1/2m"}
         Dim sygnPolsamPowt As New Zaleznosci.SygnalizatorPolsamoczynny With {.Nazwa = "B"}
+        Dim numerPoc As New Zaleznosci.NumerPociagu
+        numerPoc.UstawNumery({101})
 
         Dim kostkiLista As New List(Of ListViewItem) From {
             UtworzKostkeDoListy(p, New Zaleznosci.Tor() With {.Nazwa = "Tor 1"}, "Tor"),
@@ -162,7 +164,8 @@
             UtworzKostkeDoListy(p, New Zaleznosci.Kierunek() With {.Nazwa = "Tor 9"}, "Wjazd/wyjazd ze stacji"),
             UtworzKostkeDoListy(p, New Zaleznosci.Napis() With {.Tekst = "Magazyn"}, "Napis"),
             UtworzKostkeDoListy(p, New Zaleznosci.ZakretPodwojny(), "Zakręt podwójny"),
-            UtworzKostkeDoListy(p, New Zaleznosci.Most(), "Most")
+            UtworzKostkeDoListy(p, New Zaleznosci.Most(), "Most"),
+            UtworzKostkeDoListy(p, numerPoc, "Numer pociągu")
         }
 
         lvPulpitKostki.Items.AddRange(kostkiLista.OrderBy(Function(k) k.Text).ToArray())
@@ -802,7 +805,7 @@
             ZdarzeniaWlaczone = False
 
             Select Case plpPulpit.ZaznaczonaKostka.Typ
-                Case Zaleznosci.TypKostki.Tor, Zaleznosci.TypKostki.Zakret
+                Case Zaleznosci.TypKostki.Tor, Zaleznosci.TypKostki.Zakret, Zaleznosci.TypKostki.NumerPociagu
                     nowePanele = PokazKonfTor()
                 Case Zaleznosci.TypKostki.ZakretPodwojny, Zaleznosci.TypKostki.Most
                     nowePanele = PokazKonfTorPodwojny()

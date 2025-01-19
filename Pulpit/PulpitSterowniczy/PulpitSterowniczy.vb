@@ -27,7 +27,7 @@ Public Class PulpitSterowniczy
     Private PoprzLokalizacjaKostki As New Zaleznosci.PunktCalkowity(PUSTA_WSPOLRZEDNA, PUSTA_WSPOLRZEDNA)
     Private WcisnietyPrzycisk As Zaleznosci.IPrzycisk = Nothing
     Private RysowanieWlaczone As Boolean = True
-    Private Migacz As Migacz
+    Private Migacz As Zaleznosci.IMigacz
     Private TabliczkiZamkniecOdcinkow As New Dictionary(Of UShort, Zaleznosci.PunktCalkowity)
     Private MenuZwrotnica As Zaleznosci.Rozjazd
     Private MenuSygnalizator As Zaleznosci.Sygnalizator
@@ -1175,7 +1175,7 @@ Public Class PulpitSterowniczy
         End If
     End Sub
 
-    Private Sub UstawMigacz(migacz As Migacz)
+    Private Sub UstawMigacz(migacz As Zaleznosci.IMigacz)
         Me.Migacz = migacz
         Pulpit.PrzeiterujKostki(Sub(x, y, k) k.Migacz = migacz)
     End Sub

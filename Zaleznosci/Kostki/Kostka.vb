@@ -23,7 +23,8 @@ Public MustInherit Class Kostka
         {TypKostki.PrzejazdKolejowy, Function() New PrzejazdKolejowoDrogowyKostka},
         {TypKostki.ZakretPodwojny, Function() New ZakretPodwojny},
         {TypKostki.Most, Function() New Most},
-        {TypKostki.SygnalizatorOstrzegawczy, Function() New SygnalizatorOstrzegawczy}
+        {TypKostki.SygnalizatorOstrzegawczy, Function() New SygnalizatorOstrzegawczy},
+        {TypKostki.NumerPociagu, Function() New NumerPociagu}
     }
 
     Public ReadOnly Property Typ As TypKostki
@@ -61,6 +62,13 @@ Public MustInherit Class Kostka
     Public Overridable Function CzyMiga() As Boolean
         Return False
     End Function
+
+    Public Overridable Function CzyPrzelaczana() As Boolean
+        Return False
+    End Function
+
+    Public Overridable Sub ZmianaMigniecia()
+    End Sub
 
     Protected Friend Overridable Sub UsunPowiazanie(kostka As Kostka)
     End Sub
@@ -141,4 +149,5 @@ Public Enum TypKostki
     ZakretPodwojny = 16
     Most = 17
     SygnalizatorOstrzegawczy = 18
+    NumerPociagu = 19
 End Enum

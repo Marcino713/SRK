@@ -317,6 +317,34 @@ Public Class SerwerTCP
                 PolaczenieUart?.UstawStanSygnalizatoraPolsamoczynnego(New UstawStanSygnalizatoraPolsamoczynnegoUrz() With {.AdresPosterunku = pol.AdresPosterunku, .AdresUrzadzenia = k.Adres, .Predkosc = p, .PredkoscPowtarzana = PredkoscPowtarzanaSygnalizatora.VMax})
 
 
+
+
+                Dim nrPoc As New ZmienionoStanToruNrPociagow
+                ReDim nrPoc.Tory(2)
+
+                nrPoc.Tory(0) = New AktualizowanyKawalekToruNrPociagow()
+                nrPoc.Tory(0).WspolrzedneKostki = New Punkt(2, 10)
+                ReDim nrPoc.Tory(0).NumeryPociagow(0)
+                nrPoc.Tory(0).NumeryPociagow(0) = 101
+
+                nrPoc.Tory(1) = New AktualizowanyKawalekToruNrPociagow()
+                nrPoc.Tory(1).WspolrzedneKostki = New Punkt(3, 10)
+                ReDim nrPoc.Tory(1).NumeryPociagow(1)
+                nrPoc.Tory(1).NumeryPociagow(0) = 257
+                nrPoc.Tory(1).NumeryPociagow(1) = 264
+
+                nrPoc.Tory(2) = New AktualizowanyKawalekToruNrPociagow()
+                nrPoc.Tory(2).WspolrzedneKostki = New Punkt(4, 10)
+                ReDim nrPoc.Tory(2).NumeryPociagow(2)
+                nrPoc.Tory(2).NumeryPociagow(0) = 257
+                nrPoc.Tory(2).NumeryPociagow(1) = 71100
+                nrPoc.Tory(2).NumeryPociagow(2) = 129870
+
+                WyslijKomunikatDoWszystkichPolaczen(pol, nrPoc)
+
+
+
+
                 RaiseEvent OdebranoUstawStanSygnalizatora(pol.AdresPosterunku, k)
             End Sub
         ))
@@ -349,6 +377,19 @@ Public Class SerwerTCP
 
 
                 PolaczenieUart?.UstawStanSygnalizatoraPolsamoczynnego(New UstawStanSygnalizatoraPolsamoczynnegoUrz() With {.AdresPosterunku = pol.AdresPosterunku, .AdresUrzadzenia = k.Adres, .Predkosc = PredkoscSygnalizatora.V0})
+
+
+
+                Dim nrPoc As New ZmienionoStanToruNrPociagow
+                ReDim nrPoc.Tory(2)
+                nrPoc.Tory(0) = New AktualizowanyKawalekToruNrPociagow()
+                nrPoc.Tory(0).WspolrzedneKostki = New Punkt(2, 10)
+                nrPoc.Tory(1) = New AktualizowanyKawalekToruNrPociagow()
+                nrPoc.Tory(1).WspolrzedneKostki = New Punkt(3, 10)
+                nrPoc.Tory(2) = New AktualizowanyKawalekToruNrPociagow()
+                nrPoc.Tory(2).WspolrzedneKostki = New Punkt(4, 10)
+                WyslijKomunikatDoWszystkichPolaczen(pol, nrPoc)
+
 
 
             End Sub

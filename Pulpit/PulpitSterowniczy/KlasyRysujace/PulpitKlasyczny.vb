@@ -52,15 +52,25 @@
     Private Const TEKST_WYS_LINIA As Single = 0.27F        'wysokość tekstu jednoliniowego
     Private Const TEKST_WYS_KOSTKA_NAPIS As Single = 0.78F 'wysokość tekstu w kostce z napisem
     Private Const TABLICZKA_RAMKA_GRUB As Single = 0.07F   'grubość ramki na tabliczce zamknięcia
+    Private Const KRESKA_DL As Single = 0.1F               'długość kreski wyświetlacza siedmiosegmentowego
+    Private Const KRESKA_SZER_POL As Single = 0.015F       'połowa szerokości kreski wyświetlacza siedmiosegmentowego
+    Private Const KRESKA_MARGIN As Single = 0.003F         'odstęp między segmentami wyświetlacza w punktach styku
+    Private Const LICZBA_ODSTEP As Single = 0.05F          'odstęp między środkami pionowych segmentów sąsiednich liczb na wyświetlaczu siedmiosegmentowym
+    Private Const WYSW_RAMKA_GRUBOSC As Single = 0.023F    'grubość ramki wyświetlacza
+    Private Const WYSW_MARGINES As Single = 0.012F         'margines wewnętrzny wyświetlacza
+    Private Const WYSW_CYFRY As Integer = 6                'liczba cyfr na wyświetlaczu siedmiosegmentowym
     Private Const WSPOLRZEDNE_ROZM As Single = 0.33F       'długość linii na skali
     Private Const KRAWEDZ_RAMKA_ZAZN As Single = 0.04F     'grubość krawędzi ramki zaznaczenia lamp
     Private Const DODATKOWY_MARGINES As Single = 0.01F     'margines uwzględniany w elementach, aby te lekko nachodziły na siebie i nie rysowały się przerwy między nimi
 
-    Private ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")                'tor przypisany do innego odcinka
-    Private ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")               'tor przypisany do zaznaczonego odcinka
-    Private ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")             'tor nieprzypisany do żadnego odcinka
-    Private ReadOnly KOLOR_TOR_LICZNIK_ODCINEK_2 As Color = KolorRGB("#D11AFF")         'drugi odcinek obsługiwany przez parę liczników osi
-    Private ReadOnly KOLOR_TLO_SYGNALIZATOR_WYROZNIONY As Color = KolorRGB("#FF9900")   'tło sygnalizatora wyróżnionego (przypisanego do zaznaczonego obiektu automatyzacji przejazdu/sygnalizatora informującego)
+    'podświetlenie segmentów wyświetlacza dla konkretnych cyfr
+    Private Shared ReadOnly SEGMENTY_LICZB As Integer() = {&H3F, &H6, &H5B, &H4F, &H66, &H6D, &H7D, &H7, &H7F, &H6F}
+
+    Private Shared ReadOnly KOLOR_TOR_PRZYPISANY As Color = KolorRGB("#8C8C8C")                'tor przypisany do innego odcinka
+    Private Shared ReadOnly KOLOR_TOR_TEN_ODCINEK As Color = KolorRGB("#25FF1A")               'tor przypisany do zaznaczonego odcinka
+    Private Shared ReadOnly KOLOR_TOR_NIEPRZYPISANY As Color = KolorRGB("#FF1A1A")             'tor nieprzypisany do żadnego odcinka
+    Private Shared ReadOnly KOLOR_TOR_LICZNIK_ODCINEK_2 As Color = KolorRGB("#D11AFF")         'drugi odcinek obsługiwany przez parę liczników osi
+    Private Shared ReadOnly KOLOR_TLO_SYGNALIZATOR_WYROZNIONY As Color = KolorRGB("#FF9900")   'tło sygnalizatora wyróżnionego (przypisanego do zaznaczonego obiektu automatyzacji przejazdu/sygnalizatora informującego)
     Private PEDZEL_TLO_KOSTKI As TPedzel
     Private PEDZEL_KRAWEDZIE_KOSTEK As TOlowek
     Private PEDZEL_KRAWEDZ As TOlowek
@@ -107,6 +117,10 @@
     Private PEDZEL_PRZEJAZD_ROGATKA_ZAZN As TPedzel
     Private PEDZEL_PRZEJAZD_SYGN_DROG As TPedzel
     Private PEDZEL_PRZEJAZD_SYGN_DROG_ZAZN As TPedzel
+    Private PEDZEL_SEGMENT As TPedzel
+    Private PEDZEL_SEGMENT_JASNY As TPedzel
+    Private PEDZEL_WYSW_TLO As TPedzel
+    Private PEDZEL_WYSW_RAMKA As TPedzel
 
     Private ReadOnly PUNKTY_KIERUNKU As PointF()
     Private ReadOnly PUNKTY_SZCZELINY_KIERUNKU As PointF()
@@ -147,7 +161,8 @@
         {Zaleznosci.TypKostki.Kierunek, Sub(k) RysujKierunek(CType(k, Zaleznosci.Kierunek))},
         {Zaleznosci.TypKostki.Napis, Sub(k) RysujKostkeNapis(CType(k, Zaleznosci.Napis))},
         {Zaleznosci.TypKostki.ZakretPodwojny, Sub(k) RysujZakretPodwojny(CType(k, Zaleznosci.ZakretPodwojny))},
-        {Zaleznosci.TypKostki.Most, Sub(k) RysujMost(CType(k, Zaleznosci.Most))}
+        {Zaleznosci.TypKostki.Most, Sub(k) RysujMost(CType(k, Zaleznosci.Most))},
+        {Zaleznosci.TypKostki.NumerPociagu, Sub(k) RysujKostkeNumerPoc(CType(k, Zaleznosci.NumerPociagu))}
     }
 
     Protected urz As IUrzadzenieRysujace(Of TOlowek, TPedzel, TMacierz, TCzcionka)
@@ -262,6 +277,10 @@
         PEDZEL_PRZEJAZD_ROGATKA_ZAZN = urz.UtworzPedzel(KolorRGB("#000DFF"))
         PEDZEL_PRZEJAZD_SYGN_DROG = urz.UtworzPedzel(KolorRGB("#FF66D1"))
         PEDZEL_PRZEJAZD_SYGN_DROG_ZAZN = urz.UtworzPedzel(KolorRGB("#CC0047"))
+        PEDZEL_SEGMENT = urz.UtworzPedzel(KolorRGB("#2B2B2B"))
+        PEDZEL_SEGMENT_JASNY = urz.UtworzPedzel(KolorRGB("#FF0A2F"))
+        PEDZEL_WYSW_TLO = urz.UtworzPedzel(KolorRGB("#1C1C1C"))
+        PEDZEL_WYSW_RAMKA = urz.UtworzPedzel(KolorRGB("#696969"))
 
         CZCIONKA = urz.UtworzCzcionke(NAZWA_CZCIONKI, DOMYSLNY_ROZMIAR_CZCIONKI, False)
         CZCIONKA_TABLICZKA = urz.UtworzCzcionke(NAZWA_CZCIONKI, TABLICZKA_TEKST_ROZM, False)
@@ -463,11 +482,11 @@
         If METODY_RYSUJACE.TryGetValue(kostka.Typ, metodaRysuj) Then metodaRysuj(kostka)
     End Sub
 
-    Private Sub RysujTorProsty(tor As Zaleznosci.Tor, rysujNazwe As Boolean)
+    Private Sub RysujTorProsty(tor As Zaleznosci.Tor, rysujNazwe As Boolean, Optional przywrocTransformacje As Boolean = False)
         RysujTor(pedzelToruPierwszy, tor.RysowanieDodatkowychTrojkatow, 1.0F)
         If tor.KontrolaNiezajetosci Then RysujSzczelineToru(pedzelSzczelinyPierwszy)
         If tor.Zelektryfikowany Then RysujProstaLinieElektryfikacji(CzyObrocicObiekty)
-        If rysujNazwe Then RysujNazweDolKostki(tor.Nazwa)
+        If rysujNazwe Then RysujNazweDolKostki(tor.Nazwa, przywrocTransformacje)
     End Sub
 
     Private Sub RysujProstaLinieElektryfikacji(czyObrocic As Boolean, Optional dlugosc As Single = 1.0F)
@@ -479,31 +498,31 @@
         Dim punkty As New List(Of PointF)
 
         If (dodatkoweTrojkaty And Zaleznosci.DodatkoweTrojkatyTor.LewoGora) <> 0 Then
-            punkty.Add(New PointF(TOR_TROJKAT, POL - TOR_SZEROKOSC / 2))
-            punkty.Add(New PointF(0, POL - TOR_SZER_ZAKRET / 2))
+            punkty.Add(New PointF(TOR_TROJKAT, POL - TOR_SZEROKOSC / 2.0F))
+            punkty.Add(New PointF(0, POL - TOR_SZER_ZAKRET / 2.0F))
         Else
-            punkty.Add(New PointF(0, POL - TOR_SZEROKOSC / 2))
+            punkty.Add(New PointF(0, POL - TOR_SZEROKOSC / 2.0F))
         End If
 
         If (dodatkoweTrojkaty And Zaleznosci.DodatkoweTrojkatyTor.LewoDol) <> 0 Then
-            punkty.Add(New PointF(0, POL + TOR_SZER_ZAKRET / 2))
-            punkty.Add(New PointF(TOR_TROJKAT, POL + TOR_SZEROKOSC / 2))
+            punkty.Add(New PointF(0, POL + TOR_SZER_ZAKRET / 2.0F))
+            punkty.Add(New PointF(TOR_TROJKAT, POL + TOR_SZEROKOSC / 2.0F))
         Else
-            punkty.Add(New PointF(0, POL + TOR_SZEROKOSC / 2))
+            punkty.Add(New PointF(0, POL + TOR_SZEROKOSC / 2.0F))
         End If
 
         If (dodatkoweTrojkaty And Zaleznosci.DodatkoweTrojkatyTor.PrawoDol) <> 0 Then
-            punkty.Add(New PointF(dlugosc - TOR_TROJKAT, POL + TOR_SZEROKOSC / 2))
-            punkty.Add(New PointF(dlugosc, POL + TOR_SZER_ZAKRET / 2))
+            punkty.Add(New PointF(dlugosc - TOR_TROJKAT, POL + TOR_SZEROKOSC / 2.0F))
+            punkty.Add(New PointF(dlugosc, POL + TOR_SZER_ZAKRET / 2.0F))
         Else
-            punkty.Add(New PointF(dlugosc, POL + TOR_SZEROKOSC / 2))
+            punkty.Add(New PointF(dlugosc, POL + TOR_SZEROKOSC / 2.0F))
         End If
 
         If (dodatkoweTrojkaty And Zaleznosci.DodatkoweTrojkatyTor.PrawoGora) <> 0 Then
-            punkty.Add(New PointF(dlugosc, POL - TOR_SZER_ZAKRET / 2))
-            punkty.Add(New PointF(dlugosc - TOR_TROJKAT, POL - TOR_SZEROKOSC / 2))
+            punkty.Add(New PointF(dlugosc, POL - TOR_SZER_ZAKRET / 2.0F))
+            punkty.Add(New PointF(dlugosc - TOR_TROJKAT, POL - TOR_SZEROKOSC / 2.0F))
         Else
-            punkty.Add(New PointF(dlugosc, POL - TOR_SZEROKOSC / 2))
+            punkty.Add(New PointF(dlugosc, POL - TOR_SZEROKOSC / 2.0F))
         End If
 
         urz.WypelnijFigure(pedzel, punkty.ToArray)
@@ -652,8 +671,8 @@
         End If
     End Sub
 
-    Private Sub RysujNazweDolKostki(nazwa As String)
-        RysujNazwe(nazwa, TEKST_POZ_X, 2.0F * SYGN_POZ + TEKST_POZ_Y)
+    Private Sub RysujNazweDolKostki(nazwa As String, Optional przywrocTransformacje As Boolean = False)
+        RysujNazwe(nazwa, TEKST_POZ_X, 2.0F * SYGN_POZ + TEKST_POZ_Y, przywrocTransformacje:=przywrocTransformacje)
     End Sub
 
     Private Sub RysujRozjazdLewo(rozjazd As Zaleznosci.RozjazdLewo)
@@ -963,6 +982,137 @@
         RysujTor(pedzelToruDrugi, PobierzDodatkoweTrojkatyMostTor2(most.RysowanieDodatkowychTrojkatowDrugi), TOR_PODMOST_DLUGOSC)
         If most.KontrolaNiezajetosciDrugi Then RysujSzczelineToru(pedzelSzczelinyDrugi, TOR_PODMOST_DLUGOSC)
         If most.ZelektryfikowanyDrugi Then RysujProstaLinieElektryfikacji(Not obrocic, TOR_PODMOST_DLUGOSC)
+    End Sub
+
+    Private Sub RysujKostkeNumerPoc(nr As Zaleznosci.NumerPociagu)
+        RysujTorProsty(nr, True, True)
+        RysujWyswSegm(nr.PobierzNumer())
+    End Sub
+
+    Private Sub RysujWyswSegm(liczba As Integer)
+        Static CYFRY_MAX As Integer = WYSW_CYFRY - 1
+        Static CYFRY_SZER As Single = WYSW_CYFRY * (KRESKA_DL + 2.0F * KRESKA_SZER_POL) + CYFRY_MAX * (LICZBA_ODSTEP - 2.0F * KRESKA_SZER_POL)
+        Static CYFRA_WYS As Single = 2.0F * (KRESKA_DL + KRESKA_SZER_POL)
+        Static WYSW_WEWNATRZ_SZER As Single = CYFRY_SZER + 2.0F * WYSW_MARGINES
+        Static WYSW_WEWNATRZ_WYS As Single = CYFRA_WYS + 2.0F * WYSW_MARGINES
+        Static WYSW_ZEWNATRZ_SZER As Single = WYSW_WEWNATRZ_SZER + 2.0F * WYSW_RAMKA_GRUBOSC
+        Static WYSW_ZEWNATRZ_WYS As Single = WYSW_WEWNATRZ_WYS + 2.0F * WYSW_RAMKA_GRUBOSC
+        Static WYSW_X As Single = (1.0F - WYSW_ZEWNATRZ_SZER) / 2.0F
+        Static WYSW_Y As Single = (POL - POL * TOR_SZEROKOSC - WYSW_ZEWNATRZ_WYS) / 2.0F
+        Static CYFRA_Y As Single = WYSW_Y + WYSW_RAMKA_GRUBOSC + WYSW_MARGINES
+
+        Dim transformacja As TMacierz = urz.TransformacjaPobierz
+        Dim cyfry(CYFRY_MAX) As Integer
+        Dim rysujCyfre As Boolean = False
+        Dim x As Single = (1.0F - CYFRY_SZER) / 2.0F
+
+        If CzyObrocicObiekty() Then
+            urz.TransformacjaResetuj()
+            urz.TransformacjaObroc(2 * KAT_PROSTY, WYSW_X + WYSW_ZEWNATRZ_SZER / 2.0F, WYSW_Y + WYSW_ZEWNATRZ_WYS / 2.0F)
+            urz.TransformacjaDolacz(transformacja)
+            transformacja = urz.TransformacjaPobierz
+        End If
+
+        'tło
+        urz.WypelnijProstokat(PEDZEL_WYSW_RAMKA, WYSW_X, WYSW_Y, WYSW_ZEWNATRZ_SZER, WYSW_ZEWNATRZ_WYS)
+        urz.WypelnijProstokat(PEDZEL_WYSW_TLO, WYSW_X + WYSW_RAMKA_GRUBOSC, WYSW_Y + WYSW_RAMKA_GRUBOSC, WYSW_WEWNATRZ_SZER, WYSW_WEWNATRZ_WYS)
+
+        'wyznacz cyfry
+        For i As Integer = 0 To CYFRY_MAX
+            cyfry(CYFRY_MAX - i) = liczba Mod 10
+            liczba \= 10
+        Next
+
+        'rysuj cyfry
+        For i As Integer = 0 To CYFRY_MAX
+            urz.TransformacjaResetuj()
+            urz.TransformacjaPrzesun(x, CYFRA_Y)
+            urz.TransformacjaDolacz(transformacja)
+
+            If cyfry(i) > 0 Then rysujCyfre = True
+            RysujCyfreWyswSegm(If(rysujCyfre, SEGMENTY_LICZB(cyfry(i)), 0))
+
+            x += LICZBA_ODSTEP + KRESKA_DL
+        Next
+    End Sub
+
+    Private Function PobierzPedzelSegmentu(pozycja As Integer, segmenty As Integer) As TPedzel
+        Return If((segmenty And pozycja) = pozycja, PEDZEL_SEGMENT_JASNY, PEDZEL_SEGMENT)
+    End Function
+
+    Private Sub RysujCyfreWyswSegm(segmenty As Integer)
+        'punkty, w których graniczą ze sobą segmenty
+        Static FA As New PointF(KRESKA_SZER_POL, KRESKA_SZER_POL)
+        Static AB As New PointF(KRESKA_SZER_POL + KRESKA_DL, KRESKA_SZER_POL)
+        Static BC As New PointF(KRESKA_SZER_POL + KRESKA_DL, KRESKA_SZER_POL + KRESKA_DL)
+        Static CD As New PointF(KRESKA_SZER_POL + KRESKA_DL, KRESKA_SZER_POL + 2.0F * KRESKA_DL)
+        Static DE As New PointF(KRESKA_SZER_POL, KRESKA_SZER_POL + 2.0F * KRESKA_DL)
+        Static EF As New PointF(KRESKA_SZER_POL, KRESKA_SZER_POL + KRESKA_DL)
+        Static KRESKA_MGSKOS As Single = KRESKA_MARGIN + KRESKA_SZER_POL 'przesunięcie współrzędnej w skosie segmentu wyświetlacza
+
+        'A
+        urz.WypelnijFigure(PobierzPedzelSegmentu(&H1, segmenty), {
+                           New PointF(FA.X + KRESKA_MARGIN, FA.Y),
+                           New PointF(FA.X + KRESKA_MGSKOS, FA.Y - KRESKA_SZER_POL),
+                           New PointF(AB.X - KRESKA_MGSKOS, AB.Y - KRESKA_SZER_POL),
+                           New PointF(AB.X - KRESKA_MARGIN, AB.Y),
+                           New PointF(AB.X - KRESKA_MGSKOS, AB.Y + KRESKA_SZER_POL),
+                           New PointF(FA.X + KRESKA_MGSKOS, FA.Y + KRESKA_SZER_POL)})
+
+        'B
+        urz.WypelnijFigure(PobierzPedzelSegmentu(&H2, segmenty), {
+                           New PointF(AB.X, AB.Y + KRESKA_MARGIN),
+                           New PointF(AB.X + KRESKA_SZER_POL, AB.Y + KRESKA_MGSKOS),
+                           New PointF(BC.X + KRESKA_SZER_POL, BC.Y - KRESKA_MGSKOS),
+                           New PointF(BC.X, BC.Y - KRESKA_MARGIN),
+                           New PointF(BC.X - KRESKA_SZER_POL, BC.Y - KRESKA_MGSKOS),
+                           New PointF(AB.X - KRESKA_SZER_POL, AB.Y + KRESKA_MGSKOS)
+                          })
+
+        'C
+        urz.WypelnijFigure(PobierzPedzelSegmentu(&H4, segmenty), {
+                           New PointF(BC.X, BC.Y + KRESKA_MARGIN),
+                           New PointF(BC.X + KRESKA_SZER_POL, BC.Y + KRESKA_MGSKOS),
+                           New PointF(CD.X + KRESKA_SZER_POL, CD.Y - KRESKA_MGSKOS),
+                           New PointF(CD.X, CD.Y - KRESKA_MARGIN),
+                           New PointF(CD.X - KRESKA_SZER_POL, CD.Y - KRESKA_MGSKOS),
+                           New PointF(BC.X - KRESKA_SZER_POL, BC.Y + KRESKA_MGSKOS)})
+
+        'D
+        urz.WypelnijFigure(PobierzPedzelSegmentu(&H8, segmenty), {
+                           New PointF(DE.X + KRESKA_MARGIN, DE.Y),
+                           New PointF(DE.X + KRESKA_MGSKOS, DE.Y - KRESKA_SZER_POL),
+                           New PointF(CD.X - KRESKA_MGSKOS, CD.Y - KRESKA_SZER_POL),
+                           New PointF(CD.X - KRESKA_MARGIN, CD.Y),
+                           New PointF(CD.X - KRESKA_MGSKOS, CD.Y + KRESKA_SZER_POL),
+                           New PointF(DE.X + KRESKA_MGSKOS, DE.Y + KRESKA_SZER_POL)})
+
+        'E
+        urz.WypelnijFigure(PobierzPedzelSegmentu(&H10, segmenty), {
+                           New PointF(EF.X, EF.Y + KRESKA_MARGIN),
+                           New PointF(EF.X + KRESKA_SZER_POL, EF.Y + KRESKA_MGSKOS),
+                           New PointF(DE.X + KRESKA_SZER_POL, DE.Y - KRESKA_MGSKOS),
+                           New PointF(DE.X, DE.Y - KRESKA_MARGIN),
+                           New PointF(DE.X - KRESKA_SZER_POL, DE.Y - KRESKA_MGSKOS),
+                           New PointF(EF.X - KRESKA_SZER_POL, EF.Y + KRESKA_MGSKOS)})
+
+        'F
+        urz.WypelnijFigure(PobierzPedzelSegmentu(&H20, segmenty), {
+                           New PointF(FA.X, FA.Y + KRESKA_MARGIN),
+                           New PointF(FA.X + KRESKA_SZER_POL, FA.Y + KRESKA_MGSKOS),
+                           New PointF(EF.X + KRESKA_SZER_POL, EF.Y - KRESKA_MGSKOS),
+                           New PointF(EF.X, EF.Y - KRESKA_MARGIN),
+                           New PointF(EF.X - KRESKA_SZER_POL, EF.Y - KRESKA_MGSKOS),
+                           New PointF(FA.X - KRESKA_SZER_POL, FA.Y + KRESKA_MGSKOS)})
+
+        'G
+        urz.WypelnijFigure(PobierzPedzelSegmentu(&H40, segmenty), {
+                           New PointF(EF.X + KRESKA_MARGIN, EF.Y),
+                           New PointF(EF.X + KRESKA_MGSKOS, EF.Y - KRESKA_SZER_POL),
+                           New PointF(BC.X - KRESKA_MGSKOS, BC.Y - KRESKA_SZER_POL),
+                           New PointF(BC.X - KRESKA_MARGIN, BC.Y),
+                           New PointF(BC.X - KRESKA_MGSKOS, BC.Y + KRESKA_SZER_POL),
+                           New PointF(EF.X + KRESKA_MGSKOS, EF.Y + KRESKA_SZER_POL)})
     End Sub
 
     Private Sub RysujKostkeNapis(napis As Zaleznosci.Napis)
