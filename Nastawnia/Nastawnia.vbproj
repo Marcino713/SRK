@@ -65,6 +65,12 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProjektantPosterunkuRuchu\PredkosciDopuszczalneTorow.Designer.vb">
+      <DependentUpon>PredkosciDopuszczalneTorow.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ProjektantPosterunkuRuchu\PredkosciDopuszczalneTorow.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Rozklady\EdytorWyswietlaczaPeronowego.Designer.vb">
       <DependentUpon>EdytorWyswietlaczaPeronowego.vb</DependentUpon>
     </Compile>
@@ -90,10 +96,10 @@
     <Compile Include="ProjektantPosterunkuRuchu\EdytorRozmiaruPowierzchni.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ProjektantPosterunkuRuchu\NazwaStacji.Designer.vb">
-      <DependentUpon>NazwaStacji.vb</DependentUpon>
+    <Compile Include="ProjektantPosterunkuRuchu\DanePosterunku.Designer.vb">
+      <DependentUpon>DanePosterunku.vb</DependentUpon>
     </Compile>
-    <Compile Include="ProjektantPosterunkuRuchu\NazwaStacji.vb">
+    <Compile Include="ProjektantPosterunkuRuchu\DanePosterunku.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="LaczenieStacji\DodawaniePolaczenia.Designer.vb">
@@ -166,6 +172,9 @@
     <Compile Include="TworzycieleWyswietlaczyPeronowych\WyswietlaczPeronowy.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ProjektantPosterunkuRuchu\PredkosciDopuszczalneTorow.resx">
+      <DependentUpon>PredkosciDopuszczalneTorow.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Rozklady\EdytorWyswietlaczaPeronowego.resx">
       <DependentUpon>EdytorWyswietlaczaPeronowego.vb</DependentUpon>
     </EmbeddedResource>
@@ -181,8 +190,8 @@
       <DependentUpon>ProjektantPosterunku.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProjektantPosterunkuRuchu\NazwaStacji.resx">
-      <DependentUpon>NazwaStacji.vb</DependentUpon>
+    <EmbeddedResource Include="ProjektantPosterunkuRuchu\DanePosterunku.resx">
+      <DependentUpon>DanePosterunku.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LaczenieStacji\DodawaniePolaczenia.resx">

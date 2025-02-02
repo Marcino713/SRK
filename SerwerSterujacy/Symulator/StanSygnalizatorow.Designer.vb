@@ -1,6 +1,6 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class wndStanSygnalizatorow
-    Inherits System.Windows.Forms.Form
+    Inherits Wspolne.OknoPrzywracalne
 
     'Form overrides dispose to clean up the component list.
     <System.Diagnostics.DebuggerNonUserCode()>

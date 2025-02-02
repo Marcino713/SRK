@@ -12,7 +12,7 @@ Public Class Pulpit
     Public Shared ReadOnly ObslugiwaneWersje As WersjaPliku() = {New WersjaPliku(0, 1)}
     Private Const NAGLOWEK As String = "STAC"
 
-    Private Shared ReadOnly TworzycieleObiektow As New Dictionary(Of UShort, UtworzObiektPulpitu) From {
+    Private Shared ReadOnly TWORZYCIELE_OBIEKTOW As New Dictionary(Of UShort, UtworzObiektPulpitu) From {
         {TypObiektuPlikuPulpitu.KOSTKA, AddressOf Kostka.UtworzObiekt},
         {TypObiektuPlikuPulpitu.ODCINEK_TORU, AddressOf OdcinekToru.UtworzObiekt},
         {TypObiektuPlikuPulpitu.LICZNIK_OSI, AddressOf ParaLicznikowOsi.UtworzObiekt},
@@ -29,8 +29,10 @@ Public Class Pulpit
         End Get
     End Property
 
-    Public Property Nazwa As String = ""
     Public Property Adres As UShort = 0
+    Public Property Nazwa As String = ""
+    Public Property SkrotTelegraficzny As String = ""
+    Public Property Typ As TypPosterunku = TypPosterunku.Inny
 
     Private _DataUtworzenia As Date
     Public ReadOnly Property DataUtworzenia As Date
@@ -342,6 +344,25 @@ Public Class Pulpit
         PrzeiterujKostki(Sub(x, y, k) k.UsunPrzejazdZPowiazan(przejazd))
     End Sub
 
+    Public Function ZnajdzMaksymalnaPredkoscSieci() As UShort
+        Dim maks As UShort
+
+        PrzeiterujKostki(Sub(x, y, k)
+                             Dim t As Tor = TryCast(k, Tor)
+                             Dim p As TorPodwojny = TryCast(k, TorPodwojny)
+
+                             If t IsNot Nothing AndAlso t.Predkosc > maks Then
+                                 maks = t.Predkosc
+                             End If
+
+                             If p IsNot Nothing AndAlso p.PredkoscDrugi > maks Then
+                                 maks = p.PredkoscDrugi
+                             End If
+                         End Sub)
+
+        Return maks
+    End Function
+
     Public Sub PowiekszPulpit(kierunek As KierunekEdycjiPulpitu, rozmiar As Integer)
         If rozmiar < 0 Then
             Throw New ArgumentException("Rozmiar nie może być ujemny.")
@@ -553,6 +574,8 @@ Public Class Pulpit
                 bw.Write(DataUtworzenia.ToBinary)
                 bw.Write(Adres)
                 ZapiszTekst(bw, Nazwa)
+                ZapiszTekst(bw, SkrotTelegraficzny)
+                bw.Write(Typ)
 
                 'Pulpit
                 PrzeiterujKostki(Sub(x, y, k)
@@ -615,6 +638,8 @@ Public Class Pulpit
             p._DataUtworzenia = Date.FromBinary(data)
             p.Adres = br.ReadUInt16
             p.Nazwa = OdczytajTekst(br)
+            p.SkrotTelegraficzny = OdczytajTekst(br)
+            p.Typ = CType(br.ReadInt32(), TypPosterunku)
 
             'Pulpit
             Do Until str.Position >= str.Length
@@ -638,7 +663,7 @@ Public Class Pulpit
         Dim ob As IObiektPlikuTyp = Nothing
         Dim metodaTworzaca As UtworzObiektPulpitu = Nothing
 
-        If TworzycieleObiektow.TryGetValue(typ, metodaTworzaca) Then
+        If TWORZYCIELE_OBIEKTOW.TryGetValue(typ, metodaTworzaca) Then
             ob = metodaTworzaca(b, konf)
             If ob IsNot Nothing Then Return New SegmPliku() With {.Dane = b, .Obiekt = ob}
         End If
@@ -714,4 +739,24 @@ Public Enum RodzajObiektuBlokujacegoZmniejszaniePulpitu
     Lampa
     PrzejazdRogatka
     PrzejazdSygnalizatorDrogowy
+End Enum
+
+<Flags>
+Public Enum TypPosterunku
+    Inny = &H0
+    BocznicaStacyjna = &H1
+    BocznicaSzlakowa = &H2
+    GrupaTorowTowarowych = &H4
+    Ladownia = &H8
+    Mijanka = &H10
+    PosterunekBocznicowyStacyjny = &H20
+    PosterunekBocznicowySzlakowy = &H40
+    PosterunekOdgalezny = &H80
+    PosterunekOdstepowy = &H100
+    PrzejscieGraniczne = &H200
+    PrzystanekOsobowy = &H400
+    PrzystanekSluzbowy = &H800
+    PunktPrzeladunkowy = &H1000
+    Stacja = &H2000
+    StacjaTechniczna = &H4000
 End Enum

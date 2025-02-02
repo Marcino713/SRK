@@ -178,6 +178,8 @@
     Private rysujSzczeliny As Boolean
     Private sygnWyrozniony As Zaleznosci.Sygnalizator
     Private wysokiStanMigania As Boolean
+    Private zaznaczPredkosc As Boolean
+    Private predkoscMaksymalna As UShort
 
     Private Delegate Sub RysujElement(element As Zaleznosci.Kostka)
 
@@ -301,7 +303,8 @@
             ps.TrybProjektowy And (
                 ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Liczniki Or
                 ps.projDodatkoweObiekty = RysujDodatkoweObiekty.OdcinkiTorow Or
-                ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy)
+                ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy Or
+                ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PredkosciTorow)
             )
         UstawSygnWyrozniony(ps)
 
@@ -339,6 +342,7 @@
             UniewaznioneSasiedztwoTorow = False
         End If
 
+        predkoscMaksymalna = ps.PredkoscMaksymalna
         ps.Pulpit.PrzeiterujKostki(AddressOf RysujKostke, ps)
 
         'Rysuj tabliczki zamknięcia
@@ -437,7 +441,7 @@
         sygnWyrozniony = Nothing
 
         If ps.TrybProjektowy Then
-            If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then
+            If ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Or ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PredkosciTorow Then
                 sygnWyrozniony = TryCast(ps.ZaznaczonaKostka, Zaleznosci.SygnalizatorInformujacy)?.SygnalizatorPowtarzany
             ElseIf ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja Then
                 sygnWyrozniony = ps.projZaznaczonyPrzejazdAutomatyzacja?.Sygnalizator
@@ -447,10 +451,14 @@
 
     Private Sub RysujKostke(x As Integer, y As Integer, kostka As Zaleznosci.Kostka, ps As PulpitSterowniczy)
         UstawKolorSzczeliny(kostka)
+        zaznaczPredkosc = False
 
         Select Case ps.projDodatkoweObiekty
             Case RysujDodatkoweObiekty.Nic
                 UstawKolorToruDlaSygnalizatora(kostka, ps.ZaznaczonaKostka)
+            Case RysujDodatkoweObiekty.PredkosciTorow
+                UstawKolorToruDlaPredkosci(kostka)
+                zaznaczPredkosc = True
             Case RysujDodatkoweObiekty.OdcinkiTorow
                 UstawKolorToruDlaOdcinka(kostka, ps.ZaznaczonyOdcinek)
             Case RysujDodatkoweObiekty.Liczniki
@@ -471,7 +479,12 @@
         urz.TransformacjaDolacz(glownaTransformacja)
         obrot = kostka.Obrot
 
-        Dim zaznaczona As Boolean = kostka Is ps.ZaznaczonaKostka And ((ps.TrybProjektowy And ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic) Or ((Not ps.TrybProjektowy) And ps.MozliwoscZaznaczeniaKostki))
+        Dim zaznaczona As Boolean = kostka Is ps.ZaznaczonaKostka And
+            (
+                (ps.TrybProjektowy And (ps.projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Or ps.projDodatkoweObiekty = RysujDodatkoweObiekty.PredkosciTorow)) Or
+                ((Not ps.TrybProjektowy) And ps.MozliwoscZaznaczeniaKostki)
+            )
+
         If zaznaczona Then
             Dim polKrawedzi As Single = KRAWEDZ_SZER * POL
             Dim rozm As Single = 1.0F - KRAWEDZ_SZER
@@ -677,8 +690,8 @@
 
     Private Sub RysujRozjazdLewo(rozjazd As Zaleznosci.RozjazdLewo)
         Dim dodMargines As Single = TEKST_POZ_X
-        RysujZakret(pedzelToruPierwszy, rozjazd.PrzytnijZakret)
         RysujTor(pedzelToruPierwszy, rozjazd.RysowanieDodatkowychTrojkatow, 1)
+        RysujZakret(If(zaznaczPredkosc, pedzelToruDrugi, pedzelToruPierwszy), rozjazd.PrzytnijZakret)
         If rozjazd.KontrolaNiezajetosci Then RysujSzczelineToru(pedzelSzczelinyPierwszy)
         If rozjazd.KontrolaNiezajetosciDrugi Then RysujSzczelineZakretu(pedzelSzczelinyDrugi, margines_prawy:=SZCZEL_MARG_POZIOM_ROZJ)
         If rozjazd.Zelektryfikowany Then
@@ -707,7 +720,7 @@
         urz.TransformacjaResetuj()
         urz.TransformacjaObroc(3 * KAT_PROSTY, POL, POL)
         urz.TransformacjaDolacz(transformacja)
-        RysujZakret(pedzelToruPierwszy, rozjazd.PrzytnijZakret)
+        RysujZakret(If(zaznaczPredkosc, pedzelToruDrugi, pedzelToruPierwszy), rozjazd.PrzytnijZakret)
         If rozjazd.KontrolaNiezajetosciDrugi Then RysujSzczelineZakretu(pedzelSzczelinyDrugi, margines_lewy:=SZCZEL_MARG_POZIOM_ROZJ)
         If rozjazd.ZelektryfikowanyDrugi Then RysujUkosnaLinieElektryfikacji(KonfiguracjaElektryfikacjiUkosnej.RozjazdPrawo)
         urz.TransformacjaResetuj()
@@ -1214,6 +1227,19 @@
 
             If t.NalezyDoOdcinka Is sygn.OdcinekNastepujacy Then pedzelToruPierwszy = PEDZEL_TOR_TEN_ODCINEK
             If p?.NalezyDoOdcinkaDrugi Is sygn.OdcinekNastepujacy Then pedzelToruDrugi = PEDZEL_TOR_TEN_ODCINEK
+        End If
+    End Sub
+
+    Private Sub UstawKolorToruDlaPredkosci(k As Zaleznosci.Kostka)
+        Dim t As Zaleznosci.Tor = InicjalizujPedzleIPobierzTor(k)
+
+        If t IsNot Nothing Then
+            pedzelToruPierwszy = urz.UtworzPedzel(KolorSkaliPredkosci(t.Predkosc, predkoscMaksymalna))
+
+            Dim p As Zaleznosci.TorPodwojny = TryCast(k, Zaleznosci.TorPodwojny)
+            If p IsNot Nothing Then
+                pedzelToruDrugi = urz.UtworzPedzel(KolorSkaliPredkosci(p.PredkoscDrugi, predkoscMaksymalna))
+            End If
         End If
     End Sub
 

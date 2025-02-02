@@ -817,7 +817,7 @@ Public Class SerwerTCP
                 End If
 
                 PosterunkiLista.Add(obs)
-                ZnajdzMaksymalnaPredkoscSieci(pol.DanePulpitu)
+                MaksymalnaPredkoscSieci = pol.DanePulpitu.ZnajdzMaksymalnaPredkoscSieci()
                 ZnajdzSygnalizatoryPowtarzajace(pol.DanePulpitu)
                 Dim prz As Dictionary(Of UShort, PrzejazdKolejowoDrogowy) = pol.DanePulpitu.PobierzPrzejazdyKolejowoDrogowe
                 If prz.Count > 0 Then Przejazdy = prz
@@ -1173,21 +1173,6 @@ Public Class SerwerTCP
                 Next
             End If
         End SyncLock
-    End Sub
-
-    Private Sub ZnajdzMaksymalnaPredkoscSieci(p As Pulpit)
-        p.PrzeiterujKostki(Sub(x, y, k)
-                               Dim t As Tor = TryCast(k, Tor)
-                               Dim r As Rozjazd = TryCast(k, Rozjazd)
-
-                               If t IsNot Nothing AndAlso t.Predkosc > MaksymalnaPredkoscSieci Then
-                                   MaksymalnaPredkoscSieci = t.Predkosc
-                               End If
-
-                               If r IsNot Nothing AndAlso r.PredkoscDrugi > MaksymalnaPredkoscSieci Then
-                                   MaksymalnaPredkoscSieci = r.PredkoscDrugi
-                               End If
-                           End Sub)
     End Sub
 
     Private Sub ZnajdzSygnalizatoryPowtarzajace(p As Pulpit)

@@ -18,9 +18,10 @@ Public Class PulpitSterowniczy
     Private Const KATEG_ZDARZ_PROJ As String = "Zdarzenia trybu projektowego"
     Private ReadOnly KLAWISZE_STRZALEK As New HashSet(Of Keys) From {Keys.Up, Keys.Down, Keys.Left, Keys.Right}
 
-    Public PoczatekZaznaczeniaLamp As PointF
-    Public KoniecZaznaczeniaLamp As PointF
-    Public ZaznaczonyLicznikOsiAdres As UShort?
+    Friend PoczatekZaznaczeniaLamp As PointF
+    Friend KoniecZaznaczeniaLamp As PointF
+    Friend ZaznaczonyLicznikOsiAdres As UShort?
+    Friend PredkoscMaksymalna As UShort
     Private PoprzZaznLampyWObszarze As HashSet(Of Zaleznosci.Lampa)     'Nothing - tryb zaznaczania pojedynczej lampy; niepusty obiekt - tryb zaznaczania obszarem
     Private KolejnoscZaznaczeniaLamp As New List(Of Zaleznosci.Lampa)
     Private PoprzedniPunkt As New Point(PUSTA_WSPOLRZEDNA, PUSTA_WSPOLRZEDNA)
@@ -130,20 +131,20 @@ Public Class PulpitSterowniczy
             Return _TypRysownika
         End Get
         Set(value As TypRysownika)
-            If value = _TypRysownika Then Exit Property
+            If value <> _TypRysownika Then
+                Select Case value
+                    Case TypRysownika.KlasycznyGDI
+                        _Rysownik = New PulpitKlasycznyGDI()
+                        DoubleBuffered = True
+                    Case TypRysownika.KlasycznyDirect2D
+                        _Rysownik = New PulpitKlasycznyDirect2D()
+                        DoubleBuffered = False
+                End Select
 
-            Select Case value
-                Case TypRysownika.KlasycznyGDI
-                    _Rysownik = New PulpitKlasycznyGDI()
-                    DoubleBuffered = True
-                Case TypRysownika.KlasycznyDirect2D
-                    _Rysownik = New PulpitKlasycznyDirect2D()
-                    DoubleBuffered = False
-            End Select
-
-            _Rysownik.Inicjalizuj(Handle, CUInt(Width), CUInt(Height))
-            _TypRysownika = value
-            Invalidate()
+                _Rysownik.Inicjalizuj(Handle, CUInt(Width), CUInt(Height))
+                _TypRysownika = value
+                Invalidate()
+            End If
         End Set
     End Property
 
@@ -218,7 +219,7 @@ Public Class PulpitSterowniczy
             If value IsNot _ZaznaczonaKostka And (_TrybProjektowy Or _MozliwoscZaznaczeniaKostki) Then
                 _ZaznaczonaKostka = value
                 RaiseEvent ZmianaZaznaczeniaKostki(value)
-                If Not TrybProjektowy Or _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then Invalidate()
+                If Not TrybProjektowy Or _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Or _projDodatkoweObiekty = RysujDodatkoweObiekty.PredkosciTorow Then Invalidate()
             End If
         End Set
     End Property
@@ -295,11 +296,11 @@ Public Class PulpitSterowniczy
             Return _projZaznaczonaLampa
         End Get
         Set(value As Zaleznosci.Lampa)
-            If _projZaznaczonaLampa Is value Then Exit Property
-
-            _projZaznaczonaLampa = value
-            RaiseEvent projZmianaZaznaczeniaLampy(value)
-            If _projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then Invalidate()
+            If _projZaznaczonaLampa IsNot value Then
+                _projZaznaczonaLampa = value
+                RaiseEvent projZmianaZaznaczeniaLampy(value)
+                If _projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then Invalidate()
+            End If
         End Set
     End Property
 
@@ -327,7 +328,13 @@ Public Class PulpitSterowniczy
                 projZaznaczonyPrzejazdAutomatyzacja = Nothing
                 projZaznaczonyPrzejazdRogatka = Nothing
                 projZaznaczonyPrzejazdSygnDrog = Nothing
-                If _projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy Then Invalidate()
+
+                If _projDodatkoweObiekty = RysujDodatkoweObiekty.Przejazdy Or
+                    _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyAutomatyzacja Or
+                    _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyRogatki Or
+                    _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdySygnDrog Then
+                    Invalidate()
+                End If
             End If
         End Set
     End Property
@@ -351,11 +358,11 @@ Public Class PulpitSterowniczy
             Return _projZaznaczonyPrzejazdRogatka
         End Get
         Set(value As Zaleznosci.PrzejazdRogatka)
-            If _projZaznaczonyPrzejazdRogatka Is value Then Exit Property
-
-            _projZaznaczonyPrzejazdRogatka = value
-            RaiseEvent projZmianaZaznaczeniaRogatki(value)
-            If _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyRogatki Then Invalidate()
+            If _projZaznaczonyPrzejazdRogatka IsNot value Then
+                _projZaznaczonyPrzejazdRogatka = value
+                RaiseEvent projZmianaZaznaczeniaRogatki(value)
+                If _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdyRogatki Then Invalidate()
+            End If
         End Set
     End Property
 
@@ -366,11 +373,11 @@ Public Class PulpitSterowniczy
             Return _projZaznaczonyPrzejazdSygnDrog
         End Get
         Set(value As Zaleznosci.PrzejazdElementWykonawczy)
-            If _projZaznaczonyPrzejazdSygnDrog Is value Then Exit Property
-
-            _projZaznaczonyPrzejazdSygnDrog = value
-            RaiseEvent projZmianaZaznaczeniaSygnalizatoraDrogowego(value)
-            If _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdySygnDrog Then Invalidate()
+            If _projZaznaczonyPrzejazdSygnDrog IsNot value Then
+                _projZaznaczonyPrzejazdSygnDrog = value
+                RaiseEvent projZmianaZaznaczeniaSygnalizatoraDrogowego(value)
+                If _projDodatkoweObiekty = RysujDodatkoweObiekty.PrzejazdySygnDrog Then Invalidate()
+            End If
         End Set
     End Property
 
@@ -421,6 +428,9 @@ Public Class PulpitSterowniczy
 
     <Description("Zmiana zaznaczonego sygnalizatora drogowego przejazdu kolejowo-drogowego"), Category(KATEG_ZDARZ_PROJ)>
     Public Event projZmianaZaznaczeniaSygnalizatoraDrogowego(sygnalizator As Zaleznosci.PrzejazdElementWykonawczy)
+
+    <Description("Usunięcie kostki"), Category(KATEG_ZDARZ_PROJ)>
+    Public Event projUsunietoKostke()
 
     Public Delegate Function ZaznaczalnoscKostki(k As Zaleznosci.Kostka) As Boolean
     Public Delegate Sub PrzetwarzanieTabliczkiZamkniecia(punkt As Zaleznosci.PunktCalkowity)
@@ -507,6 +517,19 @@ Public Class PulpitSterowniczy
         End SyncLock
     End Sub
 
+    Public Function ObliczMaksymalnaPredkosc() As UShort
+        PredkoscMaksymalna = _Pulpit.ZnajdzMaksymalnaPredkoscSieci()
+        Return PredkoscMaksymalna
+    End Function
+
+    Protected Overrides Function IsInputKey(keyData As Keys) As Boolean
+        If KLAWISZE_STRZALEK.Contains(keyData) Then
+            Return True
+        Else
+            Return MyBase.IsInputKey(keyData)
+        End If
+    End Function
+
     Private Sub PulpitSterowniczy_Load() Handles Me.Load
         _Rysownik.Inicjalizuj(Handle, CUInt(Width), CUInt(Height))
     End Sub
@@ -533,9 +556,39 @@ Public Class PulpitSterowniczy
             ElseIf e.KeyData = Keys.Delete Then
                 Pulpit.UsunKostke(_ZaznaczonaKostka)
                 _Rysownik.UniewaznioneSasiedztwoTorow = True
-                _ZaznaczonaKostka = Nothing
-            End If
+                ZaznaczonaKostka = Nothing
+                RaiseEvent projUsunietoKostke()
 
+            ElseIf KLAWISZE_STRZALEK.Contains(e.KeyData) Then
+                Dim p As Zaleznosci.Punkt = _Pulpit.ZnajdzKostke(_ZaznaczonaKostka)
+                Dim przesX As Integer
+                Dim przesY As Integer
+                Dim maxX As Integer
+                Dim maxY As Integer
+
+                If e.KeyData = Keys.Up AndAlso p.Y <> 0 Then
+                    przesY = -1
+                    maxY = -1
+
+                ElseIf e.KeyData = Keys.Down AndAlso p.Y <> (Pulpit.Wysokosc - 1) Then
+                    przesY = 1
+                    maxY = Pulpit.Wysokosc
+
+                ElseIf e.KeyData = Keys.Left AndAlso p.X <> 0 Then
+                    przesX = -1
+                    maxX = -1
+
+                ElseIf e.KeyData = Keys.Right AndAlso p.X <> (Pulpit.Szerokosc - 1) Then
+                    przesX = 1
+                    maxX = Pulpit.Szerokosc
+                End If
+
+                If przesX <> 0 Or przesY <> 0 Then
+                    Dim nast As Zaleznosci.Kostka = ZnajdzNajblizszaKostke(p.X + przesX, p.Y + przesY, przesX, przesY, maxX, maxY)
+                    If nast IsNot Nothing Then ZaznaczonaKostka = nast
+                End If
+
+            End If
         End If
     End Sub
 
@@ -620,7 +673,7 @@ Public Class PulpitSterowniczy
             ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.Lampy Then
                 projZaznaczonaLampa = PobierzKliknietaLampe(e.Location)
 
-            ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Then
+            ElseIf _projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Or _projDodatkoweObiekty = RysujDodatkoweObiekty.PredkosciTorow Then
                 zaznaczycKostke = _Pulpit.CzyKostkaWZakresiePulpitu(p)
 
             End If
@@ -772,7 +825,7 @@ Public Class PulpitSterowniczy
 
         Dim p As Zaleznosci.PunktCalkowity = PobierzKliknieteWspolrzedneKostki(e.Location)
 
-        If TrybProjektowy And projDodatkoweObiekty = RysujDodatkoweObiekty.Nic And ((ModifierKeys And Keys.Shift) <> 0) Then      'Przesuń kostkę
+        If TrybProjektowy And (_projDodatkoweObiekty = RysujDodatkoweObiekty.Nic Or _projDodatkoweObiekty = RysujDodatkoweObiekty.PredkosciTorow) And ((ModifierKeys And Keys.Shift) <> 0) Then      'Przesuń kostkę
             If _Pulpit.CzyKostkaNiepusta(p) Then
                 PoprzLokalizacjaKostki = p
                 ZaznaczonaKostka = Pulpit.Kostki(p.X, p.Y)
@@ -939,43 +992,6 @@ Public Class PulpitSterowniczy
             Invalidate()
         End If
     End Sub
-
-    Protected Overrides Function ProcessCmdKey(ByRef msg As Message, keyData As Keys) As Boolean
-        Dim wynik As Boolean = False
-
-        If TrybProjektowy AndAlso _ZaznaczonaKostka IsNot Nothing AndAlso KLAWISZE_STRZALEK.Contains(keyData) Then
-            Dim p As Zaleznosci.Punkt = _Pulpit.ZnajdzKostke(_ZaznaczonaKostka)
-            Dim przesX As Integer
-            Dim przesY As Integer
-            Dim maxX As Integer
-            Dim maxY As Integer
-
-            If keyData = Keys.Up AndAlso p.Y <> 0 Then
-                przesY = -1
-                maxY = -1
-
-            ElseIf keyData = Keys.Down AndAlso p.Y <> (Pulpit.Wysokosc - 1) Then
-                przesY = 1
-                maxY = Pulpit.Wysokosc
-
-            ElseIf keyData = Keys.Left AndAlso p.X <> 0 Then
-                przesX = -1
-                maxX = -1
-
-            ElseIf keyData = Keys.Right AndAlso p.X <> (Pulpit.Szerokosc - 1) Then
-                przesX = 1
-                maxX = Pulpit.Szerokosc
-            End If
-
-            If przesX <> 0 Or przesY <> 0 Then
-                Dim nast As Zaleznosci.Kostka = ZnajdzNajblizszaKostke(p.X + przesX, p.Y + przesY, przesX, przesY, maxX, maxY)
-                If nast IsNot Nothing Then ZaznaczonaKostka = nast
-                wynik = True
-            End If
-        End If
-
-        Return wynik
-    End Function
 
     Private Function PobierzKliknietyOdcinek(p As Zaleznosci.PunktCalkowity, klik As Point) As Zaleznosci.OdcinekToru
         If _Pulpit.CzyKostkaWZakresiePulpitu(p) Then

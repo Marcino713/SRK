@@ -96,6 +96,8 @@
     <Compile Include="Kostki\Most.vb" />
     <Compile Include="Kostki\TorPodwojny.vb" />
     <Compile Include="Kostki\ZakretPodwojny.vb" />
+    <Compile Include="ObslugaTCP\DanePolaczeniaKlienta.vb" />
+    <Compile Include="ObslugaTCP\NawiazywaczPolaczeniaKlienta.vb" />
     <Compile Include="ObslugaTCP\ObserwatorPosterunku.vb" />
     <Compile Include="Urzadzenia\KomunikatUrzadzenia.vb" />
     <Compile Include="Komunikaty\DHInicjalizuj.vb" />

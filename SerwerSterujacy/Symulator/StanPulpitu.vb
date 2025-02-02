@@ -34,7 +34,12 @@ Friend Class wndStanPulpitu
 
         Text = $"{Text} - {danePulpitu.Nazwa}"
         PokazLaczenie()
-        klient.Polacz(IPAddress.Loopback.ToString(), konfiguracja.Port, konfiguracja.HasloObserwatora, True)
+        Dim dane As New Zaleznosci.DanePolaczeniaKlienta With {
+            .AdresIp = IPAddress.Loopback.ToString(),
+            .Port = konfiguracja.Port,
+            .Haslo = konfiguracja.HasloObserwatora,
+            .Obserwator = True}
+        klient.Polacz(dane)
     End Sub
 
     Friend Sub ZaznaczKostke(kostka As Zaleznosci.Kostka)

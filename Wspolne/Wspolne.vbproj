@@ -61,6 +61,7 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IOknoZPytaniemOZamkniecie.vb" />
     <Compile Include="KomunikatZLista.Designer.vb">
       <DependentUpon>KomunikatZLista.vb</DependentUpon>
     </Compile>
@@ -84,6 +85,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ObiektComboBox.vb" />
+    <Compile Include="OknoPrzywracalne.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="KomunikatZLista.resx">

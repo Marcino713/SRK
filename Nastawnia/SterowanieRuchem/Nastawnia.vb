@@ -3,7 +3,10 @@ Imports System.Threading
 
 Public Class wndNastawnia
     Private Const CZEKANIE_NA_ZAMKNIECIE As Integer = 2000
+    Private Const NAZWA_OKNA_OBSERWATOR As String = " (tryb obserwatora)"
     Private ReadOnly NAZWA_OKNA As String
+
+    Friend PytajOZamkniecie As Boolean = True
 
     Private WithEvents Klient As New Zaleznosci.KlientTCP
     Private WithEvents OknoDodawaniaPociagu As wndDodawaniePociagu = Nothing
@@ -17,11 +20,12 @@ Public Class wndNastawnia
     Private PredkoscMaksymalna As UShort
     Private KursorDomyslny As Cursor
     Private OknaSterowaniaPociagami As New HashSet(Of wndSterowaniePociagiem)
+    Private OtwarteOknaProjektowe As New HashSet(Of Wspolne.IOknoZPytaniemOZamkniecie)
     Private CzyUsuwacOknaSterowaniaPociagami As Boolean = True
 
     Private actPokazStatus As Action(Of String, Color, Boolean) = AddressOf PokazStatusPolaczenia
-    Private actPokazNazweOkna As Action(Of String) = AddressOf PokazNazweOkna
-    Private actZamknijOkna As Action = Sub() ZamknijOkna()
+    Private actPokazNazweOkna As Action(Of Zaleznosci.Pulpit) = AddressOf PokazNazweOkna
+    Private actZamknijOknaSterowania As Action = Sub() ZamknijOknaSterowania()
     Private actPokazBlad As Action(Of String) = AddressOf Wspolne.PokazBlad
     Private actPokazKomunikat As Action(Of String) = AddressOf Wspolne.PokazKomunikat
 
@@ -43,11 +47,20 @@ Public Class wndNastawnia
         If CzyUsuwacOknaSterowaniaPociagami Then OknaSterowaniaPociagami.Remove(okno)
     End Sub
 
+    Friend Sub UsunOkno(okno As Wspolne.IOknoZPytaniemOZamkniecie)
+        OtwarteOknaProjektowe.Remove(okno)
+    End Sub
+
     Private Sub wndNastawnia_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        If Not ZamknijOknaProjektowe() Then
+            e.Cancel = True
+            Exit Sub
+        End If
+
         If Not Klient.Uruchomiony Then Exit Sub
 
         If Wspolne.ZadajPytanie("Zamknąć okno? Spowoduje to rozłączenie z serwerem.") = DialogResult.Yes Then
-            actZamknijOkna()
+            actZamknijOknaSterowania()
             Klient.WyslijZakonczDzialanieKlienta(New Zaleznosci.ZakonczDzialanieKlienta() With {.Przyczyna = Zaleznosci.PrzyczynaZakonczeniaDzialaniaKlienta.ZatrzymanieKlienta})
             Dim t As New Thread(AddressOf ZamknijPolaczenie)
             t.Start(Klient)
@@ -71,13 +84,13 @@ Public Class wndNastawnia
             ObslugiwaczPulpitu.PokazPulpit(wnd.Pulpit)
             Lampy = wnd.Pulpit.PobierzLampy()
             actPokazStatus("Połączono", Color.Green, True)
-            actPokazNazweOkna(wnd.Pulpit.Nazwa)
+            actPokazNazweOkna(wnd.Pulpit)
         End If
     End Sub
 
     Private Sub mnuRozlaczZSerwerem_Click() Handles mnuRozlaczZSerwerem.Click
         If Wspolne.ZadajPytanie("Czy rozłączyć z serwerem?") = DialogResult.Yes Then
-            actZamknijOkna()
+            actZamknijOknaSterowania()
             Klient.WyslijZakonczDzialanieKlienta(New Zaleznosci.ZakonczDzialanieKlienta() With {.Przyczyna = Zaleznosci.PrzyczynaZakonczeniaDzialaniaKlienta.ZatrzymanieKlienta})
             actPokazStatus("Rozłączanie...", Color.Blue, True)
         End If
@@ -96,7 +109,7 @@ Public Class wndNastawnia
             plpPulpit.MozliwoscWcisnieciaPrzycisku = False
             plpPulpit.MozliwoscZaznaczeniaOdcinka = True
         Else
-            OknoDodawaniaPociagu.Focus()
+            OknoDodawaniaPociagu.Przywroc()
         End If
     End Sub
 
@@ -105,7 +118,7 @@ Public Class wndNastawnia
             OknoWybieraniaPociagu = New wndWyborPociagu(Klient)
             OknoWybieraniaPociagu.Show()
         Else
-            OknoWybieraniaPociagu.Focus()
+            OknoWybieraniaPociagu.Przywroc()
         End If
     End Sub
 
@@ -116,17 +129,19 @@ Public Class wndNastawnia
             plpPulpit.MozliwoscZaznaczeniaLamp = True
             plpPulpit.Cursor = Cursors.Default
         Else
-            OknoOswietlenia.Focus()
+            OknoOswietlenia.Przywroc()
         End If
     End Sub
 
     Private Sub mnuEdytorWyswietlaczaPeronowego_Click() Handles mnuEdytorWyswietlaczaPeronowego.Click
-        Dim wnd As New wndEdytorWyswietlaczaPeronowego
+        Dim wnd As New wndEdytorWyswietlaczaPeronowego(Me)
+        OtwarteOknaProjektowe.Add(wnd)
         wnd.Show()
     End Sub
 
     Private Sub mnuProjektantPosterunku_Click() Handles mnuProjektantPosterunku.Click
-        Dim wnd As New wndProjektantPosterunku()
+        Dim wnd As New wndProjektantPosterunku(Me)
+        OtwarteOknaProjektowe.Add(wnd)
         wnd.Show()
     End Sub
 
@@ -384,7 +399,8 @@ Public Class wndNastawnia
             If polaczenia Is Nothing Then
                 Wspolne.PokazBlad(KomunikatBledu)
             Else
-                Dim wnd As New wndKonfiguratorPolaczen(polaczenia)
+                Dim wnd As New wndKonfiguratorPolaczen(polaczenia, Me)
+                OtwarteOknaProjektowe.Add(wnd)
                 wnd.Show()
             End If
         End If
@@ -392,8 +408,8 @@ Public Class wndNastawnia
 
     Private Sub CzyscOkno()
         Invoke(actPokazStatus, "Rozłączono", Color.Red, False)
-        Invoke(actPokazNazweOkna, String.Empty)
-        Invoke(actZamknijOkna)
+        Invoke(actPokazNazweOkna, CType(Nothing, Zaleznosci.Pulpit))
+        Invoke(actZamknijOknaSterowania)
         ObslugiwaczZamkniecOdcinkow = New ObslugaZamkniecOdcinkow
     End Sub
 
@@ -419,17 +435,31 @@ Public Class wndNastawnia
         mnuOswietlenie.Enabled = dostepnyBezObserwatora
     End Sub
 
-    Private Sub PokazNazweOkna(nazwaPosterunku As String)
-        If String.IsNullOrEmpty(nazwaPosterunku) Then
+    Private Sub PokazNazweOkna(pulpit As Zaleznosci.Pulpit)
+        If pulpit Is Nothing Then
             Text = NAZWA_OKNA
         Else
-            Dim obs As String = Nothing
-            If TrybObserwatora Then obs = $" (tryb obserwatora)"
-            Text = $"{NAZWA_OKNA} - {nazwaPosterunku}{obs}"
+            Text = Wspolne.PobierzTytulOkna(pulpit, NAZWA_OKNA, If(TrybObserwatora, NAZWA_OKNA_OBSERWATOR, String.Empty))
         End If
     End Sub
 
-    Private Sub ZamknijOkna()
+    Private Function ZamknijOknaProjektowe() As Boolean
+        Dim okna As New List(Of Wspolne.IOknoZPytaniemOZamkniecie)(OtwarteOknaProjektowe)
+        PytajOZamkniecie = False
+
+        For Each o As Wspolne.IOknoZPytaniemOZamkniecie In okna
+            If o.SpytajOZamkniecie() Then
+                o.Zamknij()
+            Else
+                PytajOZamkniecie = True
+                Return False
+            End If
+        Next
+
+        Return True
+    End Function
+
+    Private Sub ZamknijOknaSterowania()
         OknoDodawaniaPociagu?.Close()
         OknoWybieraniaPociagu?.Close()
         OknoOswietlenia?.Close()
@@ -446,7 +476,8 @@ Public Class wndNastawnia
     Private Sub WczytajPlikiPosterunkow(argumenty As String())
         For Each arg As String In argumenty
             If arg.EndsWith(Zaleznosci.Pulpit.ROZSZERZENIE_PLIKU) AndAlso File.Exists(arg) Then
-                Dim wnd As New wndProjektantPosterunku(arg)
+                Dim wnd As New wndProjektantPosterunku(arg, Me)
+                OtwarteOknaProjektowe.Add(wnd)
                 wnd.Show()
             End If
         Next

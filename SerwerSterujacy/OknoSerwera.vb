@@ -109,7 +109,7 @@ Public Class wndOknoSerwera
             OknoAdresyIp = New wndListaAdresowIP(Serwer.AkceptacjaAdresow)
             OknoAdresyIp.Show()
         Else
-            OknoAdresyIp.Focus()
+            OknoAdresyIp.Przywroc()
         End If
     End Sub
 
@@ -139,7 +139,7 @@ Public Class wndOknoSerwera
             OknoPociagow = New wndPociagi(Serwer)
             OknoPociagow.Show()
         Else
-            OknoPociagow.Focus()
+            OknoPociagow.Przywroc()
         End If
     End Sub
 
@@ -168,7 +168,7 @@ Public Class wndOknoSerwera
             OknoSymulatora = New wndSymulator(Serwer.PobierzPosterunki, urz, konf)
             OknoSymulatora.Show()
         Else
-            OknoSymulatora.Focus()
+            OknoSymulatora.Przywroc()
         End If
     End Sub
 

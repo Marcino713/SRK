@@ -1,23 +1,45 @@
-﻿Imports System.ComponentModel
+﻿Public Class wndKonfiguratorPolaczen
+    Implements Wspolne.IOknoZPytaniemOZamkniecie
 
-Public Class wndKonfiguratorPolaczen
     Private polaczenia As Zaleznosci.PolaczeniaPosterunkow
     Private ZaznaczonyPosterunek As Zaleznosci.LaczonyPlikPosterunku
-    Private czyZamknacBezPytania As Boolean = False
+    Private oknoGlowne As wndNastawnia
 
-    Public Sub New(polaczenia As Zaleznosci.PolaczeniaPosterunkow)
+    Public Sub New(polaczenia As Zaleznosci.PolaczeniaPosterunkow, oknoGlowne As wndNastawnia)
         InitializeComponent()
 
         Me.polaczenia = polaczenia
+        Me.oknoGlowne = oknoGlowne
 
         OdswiezPosterunkiListView()
         OdswiezPosterunkiComboBox()
     End Sub
 
-    Private Sub wndKonfiguratorPolaczen_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
-        If Not czyZamknacBezPytania Then
+    Public Sub Zamknij() Implements Wspolne.IOknoZPytaniemOZamkniecie.Zamknij
+        Close()
+    End Sub
+
+    ''' <summary>
+    ''' Pyta użytkownika o zapisanie pliku, ewentualnie zapisuje i zwraca wartość określającą, czy można zamknąć okno konfiguratora
+    ''' </summary>
+    Public Function PrzetworzPorzuceniePliku() As Boolean Implements Wspolne.IOknoZPytaniemOZamkniecie.SpytajOZamkniecie
+        Dim wynik As DialogResult = Wspolne.ZadajPytanieTrzyodpowiedziowe("Zapisać plik?")
+
+        If wynik = DialogResult.Yes Then Return ZapiszPolaczenia()
+
+        If wynik = DialogResult.Cancel Then
+            Return False
+        Else
+            Return True
+        End If
+    End Function
+
+    Private Sub wndKonfiguratorPolaczen_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        If oknoGlowne.PytajOZamkniecie Then
             e.Cancel = Not PrzetworzPorzuceniePliku()
         End If
+
+        If Not e.Cancel Then oknoGlowne.UsunOkno(Me)
     End Sub
 
     Private Sub cboPosterunek_SelectedIndexChanged() Handles cboPosterunek.SelectedIndexChanged
@@ -59,10 +81,7 @@ Public Class wndKonfiguratorPolaczen
     End Sub
 
     Private Sub btnZamknij_Click() Handles btnZamknij.Click
-        If PrzetworzPorzuceniePliku() Then
-            czyZamknacBezPytania = True
-            Close()
-        End If
+        Close()
     End Sub
 
     Private Sub OdswiezPosterunkiListView()
@@ -147,21 +166,6 @@ Public Class wndKonfiguratorPolaczen
 
     Private Function PobierzNazweStacjiToru(posterunek As Zaleznosci.LaczonyPlikPosterunku, tor As Zaleznosci.OdcinekToru) As String
         Return $"{tor.Nazwa} ({posterunek.NazwaPosterunku})"
-    End Function
-
-    ''' <summary>
-    ''' Pyta użytkownika o zapisanie pliku, ewentualnie zapisuje i zwraca wartość określającą, czy można zamknąć okno konfiguratora
-    ''' </summary>
-    Private Function PrzetworzPorzuceniePliku() As Boolean
-        Dim wynik As DialogResult = Wspolne.ZadajPytanieTrzyodpowiedziowe("Zapisać plik?")
-
-        If wynik = DialogResult.Yes Then Return ZapiszPolaczenia()
-
-        If wynik = DialogResult.Cancel Then
-            Return False
-        Else
-            Return True
-        End If
     End Function
 
     Private Function ZapiszPolaczenia() As Boolean

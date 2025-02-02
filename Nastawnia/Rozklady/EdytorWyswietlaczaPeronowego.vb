@@ -1,9 +1,33 @@
 ﻿Friend Class wndEdytorWyswietlaczaPeronowego
+    Implements Wspolne.IOknoZPytaniemOZamkniecie
+
     Private dane As New DaneWyswietlaczaPeronowego
     Private wyswietlacz As WyswietlaczPeronowy
+    Private oknoGlowne As wndNastawnia
+
+    Friend Sub New(oknoGlowne As wndNastawnia)
+        InitializeComponent()
+        Me.oknoGlowne = oknoGlowne
+    End Sub
+
+    Public Function SpytajOZamkniecie() As Boolean Implements Wspolne.IOknoZPytaniemOZamkniecie.SpytajOZamkniecie
+        Return Wspolne.ZadajPytanie("Czy zakończyć projektowanie wyświetlacza peronowego?") = DialogResult.Yes
+    End Function
+
+    Public Sub Zamknij() Implements Wspolne.IOknoZPytaniemOZamkniecie.Zamknij
+        Close()
+    End Sub
 
     Private Sub wndEdytorWyswietlaczaPeronowego_Load() Handles Me.Load
         PokazStyleWyswietlaczy()
+    End Sub
+
+    Private Sub wndEdytorWyswietlaczaPeronowego_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        If oknoGlowne.PytajOZamkniecie AndAlso Not SpytajOZamkniecie() Then
+            e.Cancel = True
+        Else
+            oknoGlowne.UsunOkno(Me)
+        End If
     End Sub
 
     Private Sub txtPrzewoznik_TextChanged() Handles txtPrzewoznik.TextChanged

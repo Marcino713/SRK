@@ -34,8 +34,9 @@ Partial Class wndProjektantPosterunku
         Me.mnuDodajKostki = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuUsunKostki = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
-        Me.mnuNazwa = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuDanePosterunku = New System.Windows.Forms.ToolStripMenuItem()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
+        Me.plpPulpit = New Pulpit.PulpitSterowniczy()
         Me.Label36 = New System.Windows.Forms.Label()
         Me.tabUstawienia = New System.Windows.Forms.TabControl()
         Me.tbpPulpit = New System.Windows.Forms.TabPage()
@@ -295,7 +296,7 @@ Partial Class wndProjektantPosterunku
         Me.Label53 = New System.Windows.Forms.Label()
         Me.btnPrzejazdSygnDrogUsun = New System.Windows.Forms.Button()
         Me.btnPrzejazdSygnDrogDodaj = New System.Windows.Forms.Button()
-        Me.plpPulpit = New Pulpit.PulpitSterowniczy()
+        Me.mnuPredkosciTorow = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuMenu.SuspendLayout()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
@@ -385,7 +386,7 @@ Partial Class wndProjektantPosterunku
         '
         'mnuNarzedzia
         '
-        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuNowy, Me.mnuOtworz, Me.mnuZapisz, Me.mnuZapiszJako, Me.ToolStripSeparator1, Me.mnuDodajKostki, Me.mnuUsunKostki, Me.ToolStripSeparator2, Me.mnuNazwa})
+        Me.mnuNarzedzia.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuNowy, Me.mnuOtworz, Me.mnuZapisz, Me.mnuZapiszJako, Me.ToolStripSeparator1, Me.mnuDodajKostki, Me.mnuUsunKostki, Me.ToolStripSeparator2, Me.mnuDanePosterunku, Me.mnuPredkosciTorow})
         Me.mnuNarzedzia.Name = "mnuNarzedzia"
         Me.mnuNarzedzia.Size = New System.Drawing.Size(70, 20)
         Me.mnuNarzedzia.Text = "Narzędzia"
@@ -394,56 +395,56 @@ Partial Class wndProjektantPosterunku
         '
         Me.mnuNowy.Name = "mnuNowy"
         Me.mnuNowy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.N), System.Windows.Forms.Keys)
-        Me.mnuNowy.Size = New System.Drawing.Size(216, 22)
+        Me.mnuNowy.Size = New System.Drawing.Size(209, 22)
         Me.mnuNowy.Text = "Nowy..."
         '
         'mnuOtworz
         '
         Me.mnuOtworz.Name = "mnuOtworz"
         Me.mnuOtworz.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
-        Me.mnuOtworz.Size = New System.Drawing.Size(216, 22)
+        Me.mnuOtworz.Size = New System.Drawing.Size(209, 22)
         Me.mnuOtworz.Text = "Otwórz..."
         '
         'mnuZapisz
         '
         Me.mnuZapisz.Name = "mnuZapisz"
         Me.mnuZapisz.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.S), System.Windows.Forms.Keys)
-        Me.mnuZapisz.Size = New System.Drawing.Size(216, 22)
+        Me.mnuZapisz.Size = New System.Drawing.Size(209, 22)
         Me.mnuZapisz.Text = "Zapisz..."
         '
         'mnuZapiszJako
         '
         Me.mnuZapiszJako.Name = "mnuZapiszJako"
-        Me.mnuZapiszJako.Size = New System.Drawing.Size(216, 22)
+        Me.mnuZapiszJako.Size = New System.Drawing.Size(209, 22)
         Me.mnuZapiszJako.Text = "Zapisz jako..."
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(213, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(206, 6)
         '
         'mnuDodajKostki
         '
         Me.mnuDodajKostki.Name = "mnuDodajKostki"
-        Me.mnuDodajKostki.Size = New System.Drawing.Size(216, 22)
+        Me.mnuDodajKostki.Size = New System.Drawing.Size(209, 22)
         Me.mnuDodajKostki.Text = "Dodaj kostki..."
         '
         'mnuUsunKostki
         '
         Me.mnuUsunKostki.Name = "mnuUsunKostki"
-        Me.mnuUsunKostki.Size = New System.Drawing.Size(216, 22)
+        Me.mnuUsunKostki.Size = New System.Drawing.Size(209, 22)
         Me.mnuUsunKostki.Text = "Usuń kostki..."
         '
         'ToolStripSeparator2
         '
         Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
-        Me.ToolStripSeparator2.Size = New System.Drawing.Size(213, 6)
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(206, 6)
         '
-        'mnuNazwa
+        'mnuDanePosterunku
         '
-        Me.mnuNazwa.Name = "mnuNazwa"
-        Me.mnuNazwa.Size = New System.Drawing.Size(216, 22)
-        Me.mnuNazwa.Text = "Zmień nazwę posterunku..."
+        Me.mnuDanePosterunku.Name = "mnuDanePosterunku"
+        Me.mnuDanePosterunku.Size = New System.Drawing.Size(209, 22)
+        Me.mnuDanePosterunku.Text = "Zmień dane posterunku..."
         '
         'splOkno
         '
@@ -462,6 +463,35 @@ Partial Class wndProjektantPosterunku
         Me.splOkno.Size = New System.Drawing.Size(1006, 670)
         Me.splOkno.SplitterDistance = 788
         Me.splOkno.TabIndex = 1
+        '
+        'plpPulpit
+        '
+        Me.plpPulpit.AllowDrop = True
+        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
+        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
+        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
+        Me.plpPulpit.MozliwoscZaznaczeniaOdcinka = False
+        Me.plpPulpit.Name = "plpPulpit"
+        Me.plpPulpit.projDodatkoweObiekty = Pulpit.Dodatki.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projZaznaczonaLampa = Nothing
+        Me.plpPulpit.projZaznaczonyLicznik = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
+        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
+        Pulpit1.Adres = CType(0US, UShort)
+        Pulpit1.Nazwa = ""
+        Me.plpPulpit.Pulpit = Pulpit1
+        Me.plpPulpit.Size = New System.Drawing.Size(790, 645)
+        Me.plpPulpit.TabIndex = 4
+        Me.plpPulpit.TrybProjektowy = True
+        Me.plpPulpit.WarunekZaznaczeniaKostki = Nothing
+        Me.plpPulpit.ZaznaczonaKostka = Nothing
+        Me.plpPulpit.ZaznaczonyOdcinek = Nothing
         '
         'Label36
         '
@@ -1333,9 +1363,9 @@ Partial Class wndProjektantPosterunku
         Me.Label12.AutoSize = True
         Me.Label12.Location = New System.Drawing.Point(0, 0)
         Me.Label12.Name = "Label12"
-        Me.Label12.Size = New System.Drawing.Size(116, 13)
+        Me.Label12.Size = New System.Drawing.Size(167, 13)
         Me.Label12.TabIndex = 0
-        Me.Label12.Text = "Prędkość maksymalna:"
+        Me.Label12.Text = "Prędkość maksymalna [km/godz]:"
         '
         'pnlKonfAdres
         '
@@ -3090,34 +3120,11 @@ Partial Class wndProjektantPosterunku
         Me.btnPrzejazdSygnDrogDodaj.Text = "Dodaj"
         Me.btnPrzejazdSygnDrogDodaj.UseVisualStyleBackColor = True
         '
-        'plpPulpit
+        'mnuPredkosciTorow
         '
-        Me.plpPulpit.AllowDrop = True
-        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
-        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
-        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
-        Me.plpPulpit.MozliwoscZaznaczeniaOdcinka = False
-        Me.plpPulpit.Name = "plpPulpit"
-        Me.plpPulpit.projDodatkoweObiekty = Pulpit.Dodatki.RysujDodatkoweObiekty.Nic
-        Me.plpPulpit.projZaznaczonaLampa = Nothing
-        Me.plpPulpit.projZaznaczonyLicznik = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
-        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit1.Adres = CType(0US, UShort)
-        Pulpit1.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit1
-        Me.plpPulpit.Size = New System.Drawing.Size(790, 645)
-        Me.plpPulpit.TabIndex = 4
-        Me.plpPulpit.TrybProjektowy = True
-        Me.plpPulpit.WarunekZaznaczeniaKostki = Nothing
-        Me.plpPulpit.ZaznaczonaKostka = Nothing
-        Me.plpPulpit.ZaznaczonyOdcinek = Nothing
+        Me.mnuPredkosciTorow.Name = "mnuPredkosciTorow"
+        Me.mnuPredkosciTorow.Size = New System.Drawing.Size(209, 22)
+        Me.mnuPredkosciTorow.Text = "Pokaż prędkości torów"
         '
         'wndProjektantPosterunku
         '
@@ -3249,7 +3256,7 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents lvPulpitKostki As ListView
     Friend WithEvents imlKostki As ImageList
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
-    Friend WithEvents mnuNazwa As ToolStripMenuItem
+    Friend WithEvents mnuDanePosterunku As ToolStripMenuItem
     Friend WithEvents tabUstawienia As TabControl
     Friend WithEvents tbpPulpit As TabPage
     Friend WithEvents tbpOdcinki As TabPage
@@ -3513,4 +3520,5 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents cbKonfSygnPolsamManewry As CheckBox
     Friend WithEvents Label13 As Label
     Friend WithEvents pnlKonfSygnInfSygnPowtarzany As Panel
+    Friend WithEvents mnuPredkosciTorow As ToolStripMenuItem
 End Class

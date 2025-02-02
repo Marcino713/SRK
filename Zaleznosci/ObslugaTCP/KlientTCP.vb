@@ -1,9 +1,4 @@
-﻿Imports System.Net
-Imports System.Net.Sockets
-Imports System.Numerics
-Imports System.Threading
-
-Public Class KlientTCP
+﻿Public Class KlientTCP
     Inherits ZarzadzanieTCP
 
     Private _Uruchomiony As Boolean = False
@@ -14,12 +9,8 @@ Public Class KlientTCP
     End Property
 
     Private Klient As PolaczenieTCP
-    Private AdresIP As String
-    Private Port As UShort
-    Private Haslo As String
     Private NumerKomunikatu As Integer
-    Private DaneDH As KlientDaneDH
-    Private WatekNawiazywaniaPolaczenia As Thread
+    Private WithEvents NawiazywaniePolaczenia As NawiazywaczPolaczeniaKlienta
 
     Public Event BladNawiazywaniaPolaczenia()
     Public Event ZakonczonoPolaczenie()
@@ -53,9 +44,14 @@ Public Class KlientTCP
     Public Delegate Sub PrzetworzNumerKomunikatu(numer As Integer)
 
     Public Sub New()
-        DaneFabrykiObiektow.Add(TypKomunikatu.DH_ZAINICJALIZOWANO, New PrzetwOdebrKomunikatu(
-            AddressOf DHZainicjalizowano.Otworz,
-            AddressOf PrzetworzDH
+        DaneFabrykiObiektow.Add(TypKomunikatu.ZAKONCZONO_DZIALANIE_SERWERA, New PrzetwOdebrKomunikatu(
+            AddressOf ZakonczonoDzialanieSerwera.Otworz,
+            AddressOf PrzetworzZakonczonoDzialanieSerwera
+        ))
+
+        DaneFabrykiObiektow.Add(TypKomunikatu.ZAKONCZONO_SESJE_KLIENTA, New PrzetwOdebrKomunikatu(
+            AddressOf ZakonczonoSesjeKlienta.Otworz,
+            AddressOf PrzetworzZakonczonoSesjeKlienta
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.INFORMACJA, New PrzetwOdebrKomunikatu(
@@ -63,34 +59,14 @@ Public Class KlientTCP
             Sub(pol, kom) RaiseEvent OdebranoInformacje(CType(kom, Informacja))
         ))
 
-        DaneFabrykiObiektow.Add(TypKomunikatu.ZAKONCZONO_DZIALANIE_SERWERA, New PrzetwOdebrKomunikatu(
-            AddressOf ZakonczonoDzialanieSerwera.Otworz,
-            AddressOf ZakonczonoDzialSerwera
-        ))
-
-        DaneFabrykiObiektow.Add(TypKomunikatu.DODANO_POCIAG, New PrzetwOdebrKomunikatu(
-            AddressOf DodanoPociag.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoDodanoPociag(CType(kom, DodanoPociag))
-        ))
-
-        DaneFabrykiObiektow.Add(TypKomunikatu.NIEUWIERZYTELNIONO, New PrzetwOdebrKomunikatu(
-            AddressOf Nieuwierzytelniono.Otworz,
-            Sub(pol, kom) RaiseEvent OdebranoNieuwierzytelniono(CType(kom, Nieuwierzytelniono))
-        ))
-
-        DaneFabrykiObiektow.Add(TypKomunikatu.UWIERZYTELNIONO_POPRAWNIE, New PrzetwOdebrKomunikatu(
-            AddressOf UwierzytelnionoPoprawnie.Otworz,
-            AddressOf PoprUwierzytelniono
-        ))
-
         DaneFabrykiObiektow.Add(TypKomunikatu.WYBRANO_POSTERUNEK, New PrzetwOdebrKomunikatu(
             AddressOf WybranoPosterunek.Otworz,
             AddressOf WybrPosterunek
         ))
 
-        DaneFabrykiObiektow.Add(TypKomunikatu.ZAKONCZONO_SESJE_KLIENTA, New PrzetwOdebrKomunikatu(
-            AddressOf ZakonczonoSesjeKlienta.Otworz,
-            AddressOf ZakSesjeKlienta
+        DaneFabrykiObiektow.Add(TypKomunikatu.DODANO_POCIAG, New PrzetwOdebrKomunikatu(
+            AddressOf DodanoPociag.Otworz,
+            Sub(pol, kom) RaiseEvent OdebranoDodanoPociag(CType(kom, DodanoPociag))
         ))
 
         DaneFabrykiObiektow.Add(TypKomunikatu.ZMIENIONO_JASNOSC_LAMP, New PrzetwOdebrKomunikatu(
@@ -273,34 +249,51 @@ Public Class KlientTCP
         Wyslij(kom)
     End Sub
 
-    Public Sub Polacz(AdresIp As String, Port As UShort, Haslo As String, Obserwator As Boolean)
-        Me.AdresIP = AdresIp
-        Me.Port = Port
-        Me.Haslo = Haslo
-
-        WatekNawiazywaniaPolaczenia = New Thread(AddressOf PolaczZSerwerem)
-        WatekNawiazywaniaPolaczenia.Start(Obserwator)
+    Public Sub Polacz(dane As DanePolaczeniaKlienta)
+        If Not _Uruchomiony And NawiazywaniePolaczenia Is Nothing Then
+            NawiazywaniePolaczenia = New NawiazywaczPolaczeniaKlienta(dane)
+        End If
     End Sub
 
     Public Sub Zakoncz(czekaj As Boolean)
-        If Not _Uruchomiony Then Exit Sub
-
+        Dim n As NawiazywaczPolaczeniaKlienta = NawiazywaniePolaczenia
         Dim k As PolaczenieTCP = Klient
+        NawiazywaniePolaczenia = Nothing
         Klient = Nothing
+        n?.Zakoncz()
         k?.Zakoncz(czekaj)
-
-        Try
-            WatekNawiazywaniaPolaczenia?.Abort()
-        Catch
-        End Try
-
         _Uruchomiony = False
     End Sub
 
     Friend Overrides Sub PrzetworzZakonczeniePolaczenia(pol As PolaczenieTCP)
-        Klient = Nothing
-        _Uruchomiony = False
+        ZamknijKlienta()
         RaiseEvent ZakonczonoPolaczenie()
+    End Sub
+
+    Private Sub NawiazywaniePolaczenia_BladNawiazywaniaPolaczenia() Handles NawiazywaniePolaczenia.BladNawiazywaniaPolaczenia
+        NawiazywaniePolaczenia = Nothing
+        RaiseEvent BladNawiazywaniaPolaczenia()
+    End Sub
+
+    Private Sub NawiazywaniePolaczenia_OdebranoNieuwierzytelniono(kom As Nieuwierzytelniono) Handles NawiazywaniePolaczenia.OdebranoNieuwierzytelniono
+        NawiazywaniePolaczenia = Nothing
+        RaiseEvent OdebranoNieuwierzytelniono(kom)
+    End Sub
+
+    Private Sub NawiazywaniePolaczenia_OdebranoZakonczonoDzialanieSerwera(pol As PolaczenieTCP, kom As ZakonczonoDzialanieSerwera) Handles NawiazywaniePolaczenia.OdebranoZakonczonoDzialanieSerwera
+        PrzetworzZakonczonoDzialanieSerwera(pol, kom)
+    End Sub
+
+    Private Sub NawiazywaniePolaczenia_OdebranoZakonczonoSesjeKlienta(pol As PolaczenieTCP, kom As ZakonczonoSesjeKlienta) Handles NawiazywaniePolaczenia.OdebranoZakonczonoSesjeKlienta
+        PrzetworzZakonczonoSesjeKlienta(pol, kom)
+    End Sub
+
+    Private Sub NawiazywaniePolaczenia_Polaczono(pol As PolaczenieTCP, kom As UwierzytelnionoPoprawnie) Handles NawiazywaniePolaczenia.Polaczono
+        NawiazywaniePolaczenia = Nothing
+        pol.ZmienPolaczenie(Me)
+        Klient = pol
+        _Uruchomiony = True
+        RaiseEvent OdebranoUwierzytelnionoPoprawnie(kom)
     End Sub
 
     Private Sub Wyslij(kom As Komunikat, Optional przetwNumer As PrzetworzNumerKomunikatu = Nothing)
@@ -321,46 +314,6 @@ Public Class KlientTCP
         Klient?.WyslijKomunikat(kom)
     End Sub
 
-    Private Sub PolaczZSerwerem(obserwator As Object)
-        Try
-            Dim tcp As New TcpClient()
-            tcp.Connect(New IPEndPoint(IPAddress.Parse(AdresIP), Port))
-            Klient = New PolaczenieTCP(Me, tcp) With {
-                .TrybObserwatora = CBool(obserwator)
-            }
-            _Uruchomiony = True
-
-            DaneDH = New KlientDaneDH()
-            Dim kom As DHInicjalizuj = DaneDH
-            Wyslij(kom)
-        Catch
-            _Uruchomiony = False
-            RaiseEvent BladNawiazywaniaPolaczenia()
-        End Try
-
-        WatekNawiazywaniaPolaczenia = Nothing
-    End Sub
-
-    Private Sub PrzetworzDH(pol As PolaczenieTCP, kom As Komunikat)
-        Dim dh As DHZainicjalizowano = CType(kom, DHZainicjalizowano)
-        Dim klucz As BigInteger = BigInteger.ModPow(dh.LiczbaB, DaneDH.LiczbaPrywA, DaneDH.LiczbaP)
-        DaneDH = Nothing
-        Klient.InicjujAes(klucz.ToByteArray)
-        Wyslij(New UwierzytelnijSie() With {.Haslo = Haslo, .TrybObserwatora = pol.TrybObserwatora})
-    End Sub
-
-    Private Sub PoprUwierzytelniono(pol As PolaczenieTCP, kom As Komunikat)
-        pol.UstawStanWyborPosterunku()
-        RaiseEvent OdebranoUwierzytelnionoPoprawnie(CType(kom, UwierzytelnionoPoprawnie))
-    End Sub
-
-    Private Sub ZakonczonoDzialSerwera(pol As PolaczenieTCP, kom As Komunikat)
-        Klient = Nothing
-        pol.Zakoncz(False)
-        _Uruchomiony = False
-        RaiseEvent OdebranoZakonczonoDzialanieSerwera(CType(kom, ZakonczonoDzialanieSerwera))
-    End Sub
-
     Private Sub WybrPosterunek(pol As PolaczenieTCP, kom As Komunikat)
         Dim wybrPost As WybranoPosterunek = CType(kom, WybranoPosterunek)
         If wybrPost.Stan = StanUstawianegoPosterunku.WybranoPoprawnie Then
@@ -373,10 +326,20 @@ Public Class KlientTCP
         RaiseEvent OdebranoWybranoPosterunek(wybrPost)
     End Sub
 
-    Private Sub ZakSesjeKlienta(pol As PolaczenieTCP, kom As Komunikat)
-        Klient = Nothing
+    Private Sub PrzetworzZakonczonoDzialanieSerwera(pol As PolaczenieTCP, kom As Komunikat)
+        ZamknijKlienta()
         pol.Zakoncz(False)
-        _Uruchomiony = False
+        RaiseEvent OdebranoZakonczonoDzialanieSerwera(CType(kom, ZakonczonoDzialanieSerwera))
+    End Sub
+
+    Private Sub PrzetworzZakonczonoSesjeKlienta(pol As PolaczenieTCP, kom As Komunikat)
+        ZamknijKlienta()
+        pol.Zakoncz(False)
         RaiseEvent OdebranoZakonczonoSesjeKlienta(CType(kom, ZakonczonoSesjeKlienta))
+    End Sub
+
+    Private Sub ZamknijKlienta()
+        Klient = Nothing
+        _Uruchomiony = False
     End Sub
 End Class

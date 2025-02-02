@@ -1,6 +1,7 @@
 ﻿Public Class wndWyborPosterunku
     Private Const STAN_WOLNY As String = "Wolny"
     Private Const STAN_ZAJETY As String = "Zajęty"
+    Private Const POLACZENIE_ROZLACZONO As String = "Rozłączono"
 
     Private _Pulpit As Zaleznosci.Pulpit
     Friend ReadOnly Property Pulpit As Zaleznosci.Pulpit
@@ -25,7 +26,8 @@
 
     Private WithEvents Klient As Zaleznosci.KlientTCP
     Private WybranyAdres As UShort
-    Private post As Zaleznosci.DanePosterunku()
+    Private Posterunki As Zaleznosci.DanePosterunku()
+    Private Rozlaczanie As Boolean
 
     Private actOdswiezPosterunki As Action = AddressOf OdswiezPosterunki
     Private actPokazStan As Action(Of Boolean, String) = AddressOf PokazStanPolaczenia
@@ -36,6 +38,7 @@
 
     Friend Sub New(obiektKlienta As Zaleznosci.KlientTCP)
         InitializeComponent()
+        lblStanLaczenia.Text = POLACZENIE_ROZLACZONO
         Klient = obiektKlienta
     End Sub
 
@@ -69,7 +72,20 @@
 
         actWyczyscPosterunki()
         actPokazStan(False, "Łączenie...")
-        Klient.Polacz(txtAdres.Text, port, txtHaslo.Text, _TrybObserwatora)
+        Rozlaczanie = False
+        Dim dane As New Zaleznosci.DanePolaczeniaKlienta With {
+            .AdresIp = txtAdres.Text,
+            .Port = port,
+            .Haslo = txtHaslo.Text,
+            .Obserwator = _TrybObserwatora}
+        Klient.Polacz(dane)
+    End Sub
+
+    Private Sub btnRozlacz_Click() Handles btnRozlacz.Click
+        Rozlaczanie = True
+        Klient.Zakoncz(False)
+        Invoke(actWyczyscPosterunki)
+        Invoke(actPokazStan, True, POLACZENIE_ROZLACZONO)
     End Sub
 
     Private Sub lvPosterunki_SelectedIndexChanged() Handles lvPosterunki.SelectedIndexChanged
@@ -109,7 +125,7 @@
 
     Private Sub Klient_OdebranoUwierzytelnionoPoprawnie(kom As Zaleznosci.UwierzytelnionoPoprawnie) Handles Klient.OdebranoUwierzytelnionoPoprawnie
         _PredkoscMaksymalnaSieci = kom.PredkoscMaksymalna
-        post = kom.Posterunki
+        Posterunki = kom.Posterunki
 
         Invoke(actPokazStan, False, "Połączono")
         Invoke(actOdswiezPosterunki)
@@ -135,9 +151,9 @@
     End Sub
 
     Private Sub Klient_ZakonczonoPolaczenie() Handles Klient.ZakonczonoPolaczenie
-        Invoke(actPokazBlad, "Połączenie z serwerem zostało zakończone.")
+        If Not Rozlaczanie Then Invoke(actPokazBlad, "Połączenie z serwerem zostało zakończone.")
         Invoke(actWyczyscPosterunki)
-        Invoke(actPokazStan, True, "")
+        Invoke(actPokazStan, True, POLACZENIE_ROZLACZONO)
     End Sub
 
     Private Sub Klient_OdebranoZakonczonoDzialanieSerwera(kom As Zaleznosci.ZakonczonoDzialanieSerwera) Handles Klient.OdebranoZakonczonoDzialanieSerwera
@@ -146,7 +162,7 @@
     End Sub
 
     Private Sub Klient_OdebranoZakonczonoSesjeKlienta(kom As Zaleznosci.ZakonczonoSesjeKlienta) Handles Klient.OdebranoZakonczonoSesjeKlienta
-        Invoke(actPokazBlad, PrzyczynaZakonczeniaSesjiKlientaToString(kom.Przyczyna))
+        If Not Rozlaczanie Then Invoke(actPokazBlad, PrzyczynaZakonczeniaSesjiKlientaToString(kom.Przyczyna))
         Invoke(actZamknijOkno)
     End Sub
 
@@ -169,8 +185,8 @@
     Private Sub OdswiezPosterunki()
         lvPosterunki.Items.Clear()
         btnWybierz.Enabled = False
-        If post Is Nothing Then Exit Sub
-        Dim postEn As IEnumerable(Of Zaleznosci.DanePosterunku) = post.OrderBy(Function(p) p.Adres)
+        If Posterunki Is Nothing Then Exit Sub
+        Dim postEn As IEnumerable(Of Zaleznosci.DanePosterunku) = Posterunki.OrderBy(Function(p) p.Adres)
 
         For Each p As Zaleznosci.DanePosterunku In postEn
             Dim lvi As New ListViewItem(New String() {p.Adres.ToString, p.Nazwa, StanPosterunkuToString(p.Stan)}) With {
@@ -185,12 +201,13 @@
         txtPort.Enabled = dostepnosc
         txtHaslo.Enabled = dostepnosc
         btnPolacz.Enabled = dostepnosc
+        btnRozlacz.Enabled = Not dostepnosc
         cbTrybObserwatora.Enabled = dostepnosc
         lblStanLaczenia.Text = opis
     End Sub
 
     Private Sub WyczyscListePosterunkow()
-        post = Nothing
+        Posterunki = Nothing
         OdswiezPosterunki()
     End Sub
 

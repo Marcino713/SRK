@@ -4,6 +4,25 @@
     Public Const FILTR_PLIKU_PULPITU As String = OPIS_PLIKU_PULPITU & "|*" & Zaleznosci.Pulpit.ROZSZERZENIE_PLIKU
     Public Const FILTR_PLIKU_POLACZEN As String = OPIS_PLIKU_POLACZEN & "|*" & Zaleznosci.PolaczeniaPosterunkow.ROZSZERZENIE_PLIKU
 
+    Private ReadOnly SKROT_TYPU_POSTERUNKU As New Dictionary(Of Zaleznosci.TypPosterunku, String) From {
+        {Zaleznosci.TypPosterunku.Inny, ""},
+        {Zaleznosci.TypPosterunku.BocznicaStacyjna, "BST"},
+        {Zaleznosci.TypPosterunku.BocznicaSzlakowa, "BSZ"},
+        {Zaleznosci.TypPosterunku.GrupaTorowTowarowych, "GT"},
+        {Zaleznosci.TypPosterunku.Ladownia, "L"},
+        {Zaleznosci.TypPosterunku.Mijanka, "M"},
+        {Zaleznosci.TypPosterunku.PosterunekBocznicowyStacyjny, "PBST"},
+        {Zaleznosci.TypPosterunku.PosterunekBocznicowySzlakowy, "PBSZ"},
+        {Zaleznosci.TypPosterunku.PosterunekOdgalezny, "PODG"},
+        {Zaleznosci.TypPosterunku.PosterunekOdstepowy, "ODST"},
+        {Zaleznosci.TypPosterunku.PrzejscieGraniczne, "PGR"},
+        {Zaleznosci.TypPosterunku.PrzystanekOsobowy, "PO"},
+        {Zaleznosci.TypPosterunku.PrzystanekSluzbowy, "PS"},
+        {Zaleznosci.TypPosterunku.PunktPrzeladunkowy, "PP"},
+        {Zaleznosci.TypPosterunku.Stacja, "ST"},
+        {Zaleznosci.TypPosterunku.StacjaTechniczna, "STTH"}
+    }
+
     Public Function ZadajPytanie(pytanie As String) As DialogResult
         Return MessageBox.Show(pytanie, "Pytanie", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
     End Function
@@ -40,6 +59,44 @@
         Dim ozn As String = nr.ToString
         If Not String.IsNullOrEmpty(nazwa) Then ozn &= " " & nazwa
         Return ozn
+    End Function
+
+    Public Function PobierzTytulOkna(pulpit As Zaleznosci.Pulpit, poczatek As String, koniec As String) As String
+        Dim sb As New Text.StringBuilder(300)
+        sb.Append(poczatek)
+
+        If pulpit.Nazwa <> String.Empty Then
+            sb.Append(" - ")
+            sb.Append(pulpit.Nazwa)
+        End If
+
+        If pulpit.SkrotTelegraficzny <> String.Empty Then
+            sb.Append(" (")
+            sb.Append(pulpit.SkrotTelegraficzny)
+            sb.Append(")"c)
+        End If
+
+        If pulpit.Typ <> 0 Then
+            sb.Append(" (")
+            sb.Append(PobierzTypPosterunku(pulpit.Typ))
+            sb.Append(")"c)
+        End If
+
+        sb.Append(koniec)
+        Return sb.ToString()
+    End Function
+
+    Public Function PobierzTypPosterunku(typ As Zaleznosci.TypPosterunku) As String
+        Dim lista As New List(Of String)(SKROT_TYPU_POSTERUNKU.Count)
+
+        For Each kv As KeyValuePair(Of Zaleznosci.TypPosterunku, String) In SKROT_TYPU_POSTERUNKU
+            If (typ And kv.Key) <> 0 Then
+                lista.Add(kv.Value)
+            End If
+        Next
+
+        lista.Sort()
+        Return String.Join(", ", lista).ToLower()
     End Function
 
     Public Function CzyRozne(a As UShort?, b As UShort?) As Boolean

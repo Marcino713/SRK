@@ -65,6 +65,10 @@ Friend Class PolaczenieTCP
         WatekOdbierania.Start()
     End Sub
 
+    Friend Sub ZmienPolaczenie(zarzTCP As ZarzadzanieTCP)
+        tcp = zarzTCP
+    End Sub
+
     Friend Sub Zakoncz(czekaj As Boolean)
         Koniec = True
 

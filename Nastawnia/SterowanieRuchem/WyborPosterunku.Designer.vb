@@ -42,6 +42,7 @@ Partial Class wndWyborPosterunku
         Me.ColumnHeader1 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader2 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
         Me.ColumnHeader3 = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+        Me.btnRozlacz = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
@@ -50,6 +51,7 @@ Partial Class wndWyborPosterunku
         '
         Me.GroupBox1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox1.Controls.Add(Me.btnRozlacz)
         Me.GroupBox1.Controls.Add(Me.cbTrybObserwatora)
         Me.GroupBox1.Controls.Add(Me.lblStanLaczenia)
         Me.GroupBox1.Controls.Add(Me.btnPolacz)
@@ -159,7 +161,7 @@ Partial Class wndWyborPosterunku
         Me.GroupBox2.Location = New System.Drawing.Point(211, 12)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Size = New System.Drawing.Size(682, 525)
-        Me.GroupBox2.TabIndex = 6
+        Me.GroupBox2.TabIndex = 7
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Dostępne posterunki ruchu"
         '
@@ -169,7 +171,7 @@ Partial Class wndWyborPosterunku
         Me.btnAnuluj.Location = New System.Drawing.Point(601, 496)
         Me.btnAnuluj.Name = "btnAnuluj"
         Me.btnAnuluj.Size = New System.Drawing.Size(75, 23)
-        Me.btnAnuluj.TabIndex = 11
+        Me.btnAnuluj.TabIndex = 12
         Me.btnAnuluj.Text = "Anuluj"
         Me.btnAnuluj.UseVisualStyleBackColor = True
         '
@@ -179,7 +181,7 @@ Partial Class wndWyborPosterunku
         Me.rbTrybSamoczynny.Location = New System.Drawing.Point(178, 19)
         Me.rbTrybSamoczynny.Name = "rbTrybSamoczynny"
         Me.rbTrybSamoczynny.Size = New System.Drawing.Size(85, 17)
-        Me.rbTrybSamoczynny.TabIndex = 8
+        Me.rbTrybSamoczynny.TabIndex = 9
         Me.rbTrybSamoczynny.Text = "Samoczynny"
         Me.rbTrybSamoczynny.UseVisualStyleBackColor = True
         '
@@ -190,7 +192,7 @@ Partial Class wndWyborPosterunku
         Me.rbTrybPolsamoczynny.Location = New System.Drawing.Point(72, 19)
         Me.rbTrybPolsamoczynny.Name = "rbTrybPolsamoczynny"
         Me.rbTrybPolsamoczynny.Size = New System.Drawing.Size(100, 17)
-        Me.rbTrybPolsamoczynny.TabIndex = 7
+        Me.rbTrybPolsamoczynny.TabIndex = 8
         Me.rbTrybPolsamoczynny.TabStop = True
         Me.rbTrybPolsamoczynny.Text = "Półsamoczynny"
         Me.rbTrybPolsamoczynny.UseVisualStyleBackColor = True
@@ -211,7 +213,7 @@ Partial Class wndWyborPosterunku
         Me.btnWybierz.Location = New System.Drawing.Point(520, 496)
         Me.btnWybierz.Name = "btnWybierz"
         Me.btnWybierz.Size = New System.Drawing.Size(75, 23)
-        Me.btnWybierz.TabIndex = 10
+        Me.btnWybierz.TabIndex = 11
         Me.btnWybierz.Text = "Wybierz"
         Me.btnWybierz.UseVisualStyleBackColor = True
         '
@@ -227,7 +229,7 @@ Partial Class wndWyborPosterunku
         Me.lvPosterunki.MultiSelect = False
         Me.lvPosterunki.Name = "lvPosterunki"
         Me.lvPosterunki.Size = New System.Drawing.Size(670, 448)
-        Me.lvPosterunki.TabIndex = 9
+        Me.lvPosterunki.TabIndex = 10
         Me.lvPosterunki.UseCompatibleStateImageBehavior = False
         Me.lvPosterunki.View = System.Windows.Forms.View.Details
         '
@@ -244,6 +246,16 @@ Partial Class wndWyborPosterunku
         '
         Me.ColumnHeader3.Text = "Stan"
         Me.ColumnHeader3.Width = 100
+        '
+        'btnRozlacz
+        '
+        Me.btnRozlacz.Enabled = False
+        Me.btnRozlacz.Location = New System.Drawing.Point(87, 159)
+        Me.btnRozlacz.Name = "btnRozlacz"
+        Me.btnRozlacz.Size = New System.Drawing.Size(75, 23)
+        Me.btnRozlacz.TabIndex = 6
+        Me.btnRozlacz.Text = "Rozłącz"
+        Me.btnRozlacz.UseVisualStyleBackColor = True
         '
         'wndWyborPosterunku
         '
@@ -282,4 +294,5 @@ Partial Class wndWyborPosterunku
     Friend WithEvents Label4 As Label
     Friend WithEvents btnAnuluj As Button
     Friend WithEvents cbTrybObserwatora As CheckBox
+    Friend WithEvents btnRozlacz As Button
 End Class

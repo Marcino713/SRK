@@ -1,4 +1,6 @@
 ﻿Public Module Dodatki
+    Private Const KOLOR_MAX As Single = 255.0F
+
     Public Function KolorRGB(wartosc As String, Optional przezroczystosc As Byte = 255) As Color
         If wartosc.Length <> 7 Then
             Throw New ArgumentException("Wartość koloru musi być siedmioznakowym ciagiem.")
@@ -10,6 +12,17 @@
             Integer.Parse(wartosc(3) & wartosc(4), Globalization.NumberStyles.HexNumber),
             Integer.Parse(wartosc(5) & wartosc(6), Globalization.NumberStyles.HexNumber)
             )
+    End Function
+
+    Public Function KolorSkaliPredkosci(predkosc As UShort, predkoscMax As UShort) As Color
+        If predkoscMax = 0 Then
+            Return Color.FromArgb(CInt(KOLOR_MAX), 0, 0)
+        Else
+            Dim wsp As Single = CSng(predkosc) / predkoscMax
+            If wsp < 0.0F Then wsp = 0.0F
+            If wsp > 1.0F Then wsp = 1.0F
+            Return Color.FromArgb(CInt((1.0F - wsp) * KOLOR_MAX), CInt(wsp * KOLOR_MAX), 0)
+        End If
     End Function
 
     Public Class PrzeciaganaKostka
@@ -36,6 +49,7 @@
         PrzejazdyAutomatyzacja
         PrzejazdyRogatki
         PrzejazdySygnDrog
+        PredkosciTorow
     End Enum
 
     Public Enum DodatkoweObiektyTrybDzialania

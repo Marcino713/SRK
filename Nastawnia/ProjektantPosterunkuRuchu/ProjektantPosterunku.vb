@@ -1,4 +1,6 @@
 ﻿Public Class wndProjektantPosterunku
+    Implements Wspolne.IOknoZPytaniemOZamkniecie
+
     Private ReadOnly NAZWA_OKNA As String
     Private Const ROZMIAR_KOSTKI_LISTA As Integer = 48
     Private Const ROZMIAR_CZCIONKI_MIN As Single = 0.05F
@@ -16,6 +18,8 @@
     Private ReadOnly LISTA_TYP_PRZYCISKU As Object()
     Private ReadOnly LISTA_TYP_PRZYCISKU_TOR As Object()
 
+    Private WithEvents wndPredkosci As wndPredkosciDopuszczalneTorow
+    Private OknoGlowne As wndNastawnia
     Private PaneleKonfKostek As Panel()
     Private ZnacznikPaneluWyswietlonego As New Object
     Private ZdarzeniaWlaczone As Boolean = True
@@ -32,18 +36,38 @@
 
 #Region "Okno"
 
-    Public Sub New()
+    Public Sub New(oknoGlowne As wndNastawnia)
         InitializeComponent()
+        Me.OknoGlowne = oknoGlowne
         NAZWA_OKNA = Text
 
         LISTA_TYP_PRZYCISKU = DodajRodzajePrzyciskow()
         LISTA_TYP_PRZYCISKU_TOR = DodajRodzajePrzyciskowToru()
     End Sub
 
-    Public Sub New(sciezka As String)
-        Me.New()
+    Public Sub New(sciezka As String, oknoGlowne As wndNastawnia)
+        Me.New(oknoGlowne)
         OtworzPlik(sciezka)
     End Sub
+
+    Public Sub Zamknij() Implements Wspolne.IOknoZPytaniemOZamkniecie.Zamknij
+        Close()
+    End Sub
+
+    ''' <summary>
+    ''' Pyta użytkownika o zapisanie pliku, ewentualnie zapisuje i zwraca wartość określającą, czy można przejść do następnego kroku (np. wczytania pliku)
+    ''' </summary>
+    Public Function PrzetworzPorzucaniePliku() As Boolean Implements Wspolne.IOknoZPytaniemOZamkniecie.SpytajOZamkniecie
+        Dim wynik As DialogResult = Wspolne.ZadajPytanieTrzyodpowiedziowe("Zapisać plik?")
+
+        If wynik = DialogResult.Yes Then Return Zapisz(False)
+
+        If wynik = DialogResult.Cancel Then
+            Return False
+        Else
+            Return True
+        End If
+    End Function
 
     Private Sub wndProjektantPosterunku_Load() Handles Me.Load
         plpPulpit.TypRysownika = WybranyTypRysownika
@@ -87,13 +111,37 @@
     End Sub
 
     Private Sub wndProjektantPosterunku_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
-        e.Cancel = Not PrzetworzPorzucaniePliku()
+        e.Cancel = OknoGlowne.PytajOZamkniecie AndAlso Not PrzetworzPorzucaniePliku()
+
+        If Not e.Cancel Then
+            Dim wnd As wndPredkosciDopuszczalneTorow = wndPredkosci
+            wndPredkosci = Nothing
+            wnd?.Close()
+            OknoGlowne.UsunOkno(Me)
+        End If
+    End Sub
+
+    Private Sub wndPredkosci_FormClosed() Handles wndPredkosci.FormClosed
+        wndPredkosci = Nothing
+
+        If plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.PredkosciTorow Then
+            plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.Nic
+        End If
     End Sub
 
     Private Sub tabUstawienia_Selected() Handles tabUstawienia.Selected
+        Dim zakladkaPulpit As Boolean = False
+
         If tabUstawienia.SelectedTab Is tbpPulpit Then
-            plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.Nic
+            If wndPredkosci Is Nothing Then
+                plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.Nic
+            Else
+                plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.PredkosciTorow
+            End If
+
+            zakladkaPulpit = True
             Dim zazn As Zaleznosci.Kostka = plpPulpit.ZaznaczonaKostka
+
             If zazn IsNot Nothing Then
                 If TypeOf zazn Is Zaleznosci.SygnalizatorWylaczanyPoPrzejechaniu Then
                     PokazKonfSygnOdcinki()
@@ -121,6 +169,8 @@
             OdswiezListeOdcinkowPrzejazdAutomatyzacja()
             OdswiezListeSygnalizatorowPrzejazdAutomatyzacja()
         End If
+
+        wndPredkosci?.ZmianaAktywnejZakladki(zakladkaPulpit)
     End Sub
 
     Private Function UtworzKostkeDoListy(pulpit As Pulpit.PulpitSterowniczy, kostka As Zaleznosci.Kostka, nazwa As String) As ListViewItem
@@ -172,24 +222,21 @@
     End Sub
 
     Private Sub UstawTytulOkna()
-        If plpPulpit.Pulpit.Nazwa = "" Then
-            Text = NAZWA_OKNA
-        Else
-            Text = $"{NAZWA_OKNA} - {plpPulpit.Pulpit.Nazwa}"
-        End If
+        Text = Wspolne.PobierzTytulOkna(plpPulpit.Pulpit, NAZWA_OKNA, String.Empty)
     End Sub
 
     Private Sub CzyscDane(Optional nowyPulpit As Zaleznosci.Pulpit = Nothing)
         plpPulpit.Czysc(nowyPulpit)
         OdswiezListeLamp()
+        OdswiezMaksymalnaPredkosc()
         tabUstawienia_Selected()
+        UstawTytulOkna()
     End Sub
 
     Private Sub OtworzPlik(sciezka As String)
         Dim pulpitNowy As Zaleznosci.Pulpit = Zaleznosci.Pulpit.Otworz(sciezka)
         If pulpitNowy IsNot Nothing Then
             CzyscDane(pulpitNowy)
-            UstawTytulOkna()
         Else
             Wspolne.PokazBlad($"Nie udało się otworzyć pliku {sciezka}.")
         End If
@@ -235,21 +282,6 @@
         End If
     End Function
 
-    ''' <summary>
-    ''' Pyta użytkownika o zapisanie pliku, ewentualnie zapisuje i zwraca wartość określającą, czy można przejść do następnego kroku (np. wczytania pliku)
-    ''' </summary>
-    Private Function PrzetworzPorzucaniePliku() As Boolean
-        Dim wynik As DialogResult = Wspolne.ZadajPytanieTrzyodpowiedziowe("Zapisać plik?")
-
-        If wynik = DialogResult.Yes Then Return Zapisz(False)
-
-        If wynik = DialogResult.Cancel Then
-            Return False
-        Else
-            Return True
-        End If
-    End Function
-
 #End Region 'Okno
 
 #Region "Menu"
@@ -257,7 +289,6 @@
     Private Sub mnuNowy_Click() Handles mnuNowy.Click
         If PrzetworzPorzucaniePliku() Then
             CzyscDane()
-            UstawTytulOkna()
         End If
     End Sub
 
@@ -330,12 +361,25 @@
         End If
     End Sub
 
-    Private Sub mnuNazwa_Click() Handles mnuNazwa.Click
-        Dim wnd As New wndNazwaStacji(plpPulpit.Pulpit.Adres, plpPulpit.Pulpit.Nazwa, plpPulpit.Pulpit.DataUtworzenia)
-        If wnd.ShowDialog = DialogResult.OK Then
-            plpPulpit.Pulpit.Adres = wnd.Adres
-            plpPulpit.Pulpit.Nazwa = wnd.Nazwa
+    Private Sub mnuDanePosterunku_Click() Handles mnuDanePosterunku.Click
+        Dim wnd As New wndDanePosterunku(plpPulpit.Pulpit)
+        If wnd.ShowDialog() = DialogResult.OK Then
             UstawTytulOkna()
+        End If
+    End Sub
+
+    Private Sub mnuPredkosciTorow_Click() Handles mnuPredkosciTorow.Click
+        If wndPredkosci Is Nothing Then
+            wndPredkosci = New wndPredkosciDopuszczalneTorow()
+            wndPredkosci.ZmianaAktywnejZakladki(tabUstawienia.SelectedTab Is tbpPulpit)
+            wndPredkosci.ZmienPredkosc(plpPulpit.ObliczMaksymalnaPredkosc())
+            wndPredkosci.Show()
+
+            If plpPulpit.projDodatkoweObiekty = Pulpit.Dodatki.RysujDodatkoweObiekty.Nic Then
+                plpPulpit.projDodatkoweObiekty = Pulpit.RysujDodatkoweObiekty.PredkosciTorow
+            End If
+        Else
+            wndPredkosci.Przywroc()
         End If
     End Sub
 
@@ -410,6 +454,7 @@
     'Tor
     Private Sub txtKonfTorPredkosc_TextChanged() Handles txtKonfTorPredkosc.TextChanged
         DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Tor).Predkosc = PobierzKrotkaLiczbeNieujemna(txtKonfTorPredkosc)
+        OdswiezMaksymalnaPredkosc()
     End Sub
 
     Private Sub txtKonfTorDlugosc_TextChanged() Handles txtKonfTorDlugosc.TextChanged
@@ -429,10 +474,12 @@
     'Tor podwójny
     Private Sub txtKonfTorPodwPredk1_TextChanged() Handles txtKonfTorPodwPredk1.TextChanged
         DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.TorPodwojny).Predkosc = PobierzKrotkaLiczbeNieujemna(txtKonfTorPodwPredk1)
+        OdswiezMaksymalnaPredkosc()
     End Sub
 
     Private Sub txtKonfTorPodwPredk2_TextChanged() Handles txtKonfTorPodwPredk2.TextChanged
         DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.TorPodwojny).PredkoscDrugi = PobierzKrotkaLiczbeNieujemna(txtKonfTorPodwPredk2)
+        OdswiezMaksymalnaPredkosc()
     End Sub
 
     Private Sub txtKonfTorPodwDlugosc1_TextChanged() Handles txtKonfTorPodwDlugosc1.TextChanged
@@ -1513,6 +1560,7 @@
     Private Sub btnLampaDodaj_Click() Handles btnLampaDodaj.Click
         plpPulpit.Pulpit.Lampy.Add(New Zaleznosci.Lampa())
         OdswiezListeLamp()
+        If plpPulpit.projZaznaczonaLampa Is Nothing Then plpPulpit.Invalidate()
     End Sub
 
     Private Sub btnLampaUsun_Click() Handles btnLampaUsun.Click
@@ -1823,6 +1871,7 @@
         plpPulpit.projZaznaczonyPrzejazd.Rogatki.Add(New Zaleznosci.PrzejazdRogatka())
         OdswiezListePrzejazdRogatki()
         OdswiezLiczbeRogatek()
+        If plpPulpit.projZaznaczonyPrzejazdRogatka Is Nothing Then plpPulpit.Invalidate()
     End Sub
 
     Private Sub btnPrzejazdRogatkaUsun_Click() Handles btnPrzejazdRogatkaUsun.Click
@@ -1906,6 +1955,7 @@
         plpPulpit.projZaznaczonyPrzejazd.SygnalizatoryDrogowe.Add(New Zaleznosci.PrzejazdElementWykonawczy)
         OdswiezListePrzejazdSygnDrog()
         OdswiezLiczbeSygnDrog()
+        If plpPulpit.projZaznaczonyPrzejazdSygnDrog Is Nothing Then plpPulpit.Invalidate()
     End Sub
 
     Private Sub btnPrzejazdSygnDrogUsun_Click() Handles btnPrzejazdSygnDrogUsun.Click
@@ -2183,6 +2233,10 @@
         If sygnalizator IsNot Nothing Then ZaznaczElementNaLiscie(lvPrzejazdSygnDrog, sygnalizator)
     End Sub
 
+    Private Sub plpPulpit_projUsunietoKostke() Handles plpPulpit.projUsunietoKostke
+        OdswiezMaksymalnaPredkosc()
+    End Sub
+
 #End Region 'Pulpit
 
 #Region "Reszta"
@@ -2270,6 +2324,13 @@
 
         Return liczba
     End Function
+
+    Private Sub OdswiezMaksymalnaPredkosc()
+        If wndPredkosci IsNot Nothing Then
+            wndPredkosci.ZmienPredkosc(plpPulpit.ObliczMaksymalnaPredkosc())
+            plpPulpit.Invalidate()
+        End If
+    End Sub
 
     Private Class OpakowywaczEnum(Of T)
         Public Element As T

@@ -138,7 +138,7 @@
         If zaznaczonyWiersz Is Nothing Then Exit Sub
 
         If zaznaczonyWiersz.OknoPulpitu IsNot Nothing Then
-            zaznaczonyWiersz.OknoPulpitu.Focus()
+            zaznaczonyWiersz.OknoPulpitu.Przywroc()
         Else
             zaznaczonyWiersz.OknoPulpitu = New wndStanPulpitu(Me, zaznaczonyWiersz.Pulpit, symulator, rysownik, konfiguracja)
             zaznaczonyWiersz.OknoPulpitu.Show()
@@ -150,7 +150,7 @@
         If zaznaczonyWiersz Is Nothing Then Exit Sub
 
         If zaznaczonyWiersz.OknoSygnalizacji IsNot Nothing Then
-            zaznaczonyWiersz.OknoSygnalizacji.Focus()
+            zaznaczonyWiersz.OknoSygnalizacji.Przywroc()
         Else
             zaznaczonyWiersz.OknoSygnalizacji = New wndStanSygnalizatorow(Me, zaznaczonyWiersz.Pulpit, migacz)
             zaznaczonyWiersz.OknoSygnalizacji.Show()
@@ -162,7 +162,7 @@
         If zaznaczonyWiersz Is Nothing Then Exit Sub
 
         If zaznaczonyWiersz.OknoZwrotnic IsNot Nothing Then
-            zaznaczonyWiersz.OknoZwrotnic.Focus()
+            zaznaczonyWiersz.OknoZwrotnic.Przywroc()
         Else
             zaznaczonyWiersz.OknoZwrotnic = New wndStanZwrotnic(Me, zaznaczonyWiersz.Pulpit, symulator)
             zaznaczonyWiersz.OknoZwrotnic.Show()
