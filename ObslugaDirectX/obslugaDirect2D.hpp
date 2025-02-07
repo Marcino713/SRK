@@ -38,6 +38,9 @@ extern "C" {
 	void DLL TransformacjaObrocD2D(DaneOkna* hOkno, float kat, float srodekX, float srodekY);
 	void DLL TransformacjaSkalujD2D(DaneOkna* hOkno, float skalowanie);
 
+	void DLL UstawPrzyciecieD2D(DaneOkna* hOkno, float x, float y, float szer, float wys);
+	void DLL UsunPrzyciecieD2D(DaneOkna* hOkno);
+
 	void DLL RysujLinieD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, float grubosc, float x1, float y1, float x2, float y2);
 	void DLL RysujProstokatD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, float grubosc, float lewo, float gora, float prawo, float dol);
 

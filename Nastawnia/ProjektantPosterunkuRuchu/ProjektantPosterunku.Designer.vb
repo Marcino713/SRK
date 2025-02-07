@@ -35,8 +35,8 @@ Partial Class wndProjektantPosterunku
         Me.mnuUsunKostki = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuDanePosterunku = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuPredkosciTorow = New System.Windows.Forms.ToolStripMenuItem()
         Me.splOkno = New System.Windows.Forms.SplitContainer()
-        Me.plpPulpit = New Pulpit.PulpitSterowniczy()
         Me.Label36 = New System.Windows.Forms.Label()
         Me.tabUstawienia = New System.Windows.Forms.TabControl()
         Me.tbpPulpit = New System.Windows.Forms.TabPage()
@@ -296,7 +296,12 @@ Partial Class wndProjektantPosterunku
         Me.Label53 = New System.Windows.Forms.Label()
         Me.btnPrzejazdSygnDrogUsun = New System.Windows.Forms.Button()
         Me.btnPrzejazdSygnDrogDodaj = New System.Windows.Forms.Button()
-        Me.mnuPredkosciTorow = New System.Windows.Forms.ToolStripMenuItem()
+        Me.pnlKonfBudynek = New System.Windows.Forms.Panel()
+        Me.Label23 = New System.Windows.Forms.Label()
+        Me.Label62 = New System.Windows.Forms.Label()
+        Me.txtKonfBudynekTekst = New System.Windows.Forms.TextBox()
+        Me.cboKonfBudynekRodzaj = New System.Windows.Forms.ComboBox()
+        Me.plpPulpit = New Pulpit.PulpitSterowniczy()
         Me.mnuMenu.SuspendLayout()
         CType(Me.splOkno, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splOkno.Panel1.SuspendLayout()
@@ -373,6 +378,7 @@ Partial Class wndProjektantPosterunku
         Me.splPrzejazdSygnDrog.Panel1.SuspendLayout()
         Me.splPrzejazdSygnDrog.Panel2.SuspendLayout()
         Me.splPrzejazdSygnDrog.SuspendLayout()
+        Me.pnlKonfBudynek.SuspendLayout()
         Me.SuspendLayout()
         '
         'mnuMenu
@@ -446,6 +452,12 @@ Partial Class wndProjektantPosterunku
         Me.mnuDanePosterunku.Size = New System.Drawing.Size(209, 22)
         Me.mnuDanePosterunku.Text = "Zmień dane posterunku..."
         '
+        'mnuPredkosciTorow
+        '
+        Me.mnuPredkosciTorow.Name = "mnuPredkosciTorow"
+        Me.mnuPredkosciTorow.Size = New System.Drawing.Size(209, 22)
+        Me.mnuPredkosciTorow.Text = "Pokaż prędkości torów"
+        '
         'splOkno
         '
         Me.splOkno.Dock = System.Windows.Forms.DockStyle.Fill
@@ -463,35 +475,6 @@ Partial Class wndProjektantPosterunku
         Me.splOkno.Size = New System.Drawing.Size(1006, 670)
         Me.splOkno.SplitterDistance = 788
         Me.splOkno.TabIndex = 1
-        '
-        'plpPulpit
-        '
-        Me.plpPulpit.AllowDrop = True
-        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
-        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
-        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
-        Me.plpPulpit.MozliwoscZaznaczeniaOdcinka = False
-        Me.plpPulpit.Name = "plpPulpit"
-        Me.plpPulpit.projDodatkoweObiekty = Pulpit.Dodatki.RysujDodatkoweObiekty.Nic
-        Me.plpPulpit.projZaznaczonaLampa = Nothing
-        Me.plpPulpit.projZaznaczonyLicznik = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
-        Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
-        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
-        Pulpit1.Adres = CType(0US, UShort)
-        Pulpit1.Nazwa = ""
-        Me.plpPulpit.Pulpit = Pulpit1
-        Me.plpPulpit.Size = New System.Drawing.Size(790, 645)
-        Me.plpPulpit.TabIndex = 4
-        Me.plpPulpit.TrybProjektowy = True
-        Me.plpPulpit.WarunekZaznaczeniaKostki = Nothing
-        Me.plpPulpit.ZaznaczonaKostka = Nothing
-        Me.plpPulpit.ZaznaczonyOdcinek = Nothing
         '
         'Label36
         '
@@ -544,6 +527,7 @@ Partial Class wndProjektantPosterunku
         '
         'splKartaPulpit.Panel2
         '
+        Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfBudynek)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnInfSygnPowtarzany)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnPowtKolejnosc)
         Me.splKartaPulpit.Panel2.Controls.Add(Me.pnlKonfSygnInfSwiatla)
@@ -3120,11 +3104,88 @@ Partial Class wndProjektantPosterunku
         Me.btnPrzejazdSygnDrogDodaj.Text = "Dodaj"
         Me.btnPrzejazdSygnDrogDodaj.UseVisualStyleBackColor = True
         '
-        'mnuPredkosciTorow
+        'pnlKonfBudynek
         '
-        Me.mnuPredkosciTorow.Name = "mnuPredkosciTorow"
-        Me.mnuPredkosciTorow.Size = New System.Drawing.Size(209, 22)
-        Me.mnuPredkosciTorow.Text = "Pokaż prędkości torów"
+        Me.pnlKonfBudynek.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.pnlKonfBudynek.Controls.Add(Me.cboKonfBudynekRodzaj)
+        Me.pnlKonfBudynek.Controls.Add(Me.txtKonfBudynekTekst)
+        Me.pnlKonfBudynek.Controls.Add(Me.Label62)
+        Me.pnlKonfBudynek.Controls.Add(Me.Label23)
+        Me.pnlKonfBudynek.Location = New System.Drawing.Point(8, 10)
+        Me.pnlKonfBudynek.Name = "pnlKonfBudynek"
+        Me.pnlKonfBudynek.Size = New System.Drawing.Size(124, 82)
+        Me.pnlKonfBudynek.TabIndex = 1
+        Me.pnlKonfBudynek.Visible = False
+        '
+        'Label23
+        '
+        Me.Label23.AutoSize = True
+        Me.Label23.Location = New System.Drawing.Point(0, 0)
+        Me.Label23.Name = "Label23"
+        Me.Label23.Size = New System.Drawing.Size(37, 13)
+        Me.Label23.TabIndex = 0
+        Me.Label23.Text = "Tekst:"
+        '
+        'Label62
+        '
+        Me.Label62.AutoSize = True
+        Me.Label62.Location = New System.Drawing.Point(0, 39)
+        Me.Label62.Name = "Label62"
+        Me.Label62.Size = New System.Drawing.Size(43, 13)
+        Me.Label62.TabIndex = 1
+        Me.Label62.Text = "Rodzaj:"
+        '
+        'txtKonfBudynekTekst
+        '
+        Me.txtKonfBudynekTekst.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtKonfBudynekTekst.Location = New System.Drawing.Point(0, 16)
+        Me.txtKonfBudynekTekst.Name = "txtKonfBudynekTekst"
+        Me.txtKonfBudynekTekst.Size = New System.Drawing.Size(124, 20)
+        Me.txtKonfBudynekTekst.TabIndex = 2
+        '
+        'cboKonfBudynekRodzaj
+        '
+        Me.cboKonfBudynekRodzaj.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cboKonfBudynekRodzaj.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboKonfBudynekRodzaj.FormattingEnabled = True
+        Me.cboKonfBudynekRodzaj.Location = New System.Drawing.Point(0, 55)
+        Me.cboKonfBudynekRodzaj.Name = "cboKonfBudynekRodzaj"
+        Me.cboKonfBudynekRodzaj.Size = New System.Drawing.Size(124, 21)
+        Me.cboKonfBudynekRodzaj.TabIndex = 3
+        '
+        'plpPulpit
+        '
+        Me.plpPulpit.AllowDrop = True
+        Me.plpPulpit.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.plpPulpit.Cursor = System.Windows.Forms.Cursors.SizeAll
+        Me.plpPulpit.Location = New System.Drawing.Point(0, 0)
+        Me.plpPulpit.MozliwoscZaznaczeniaLamp = False
+        Me.plpPulpit.MozliwoscZaznaczeniaOdcinka = False
+        Me.plpPulpit.Name = "plpPulpit"
+        Me.plpPulpit.projDodatkoweObiekty = Pulpit.Dodatki.RysujDodatkoweObiekty.Nic
+        Me.plpPulpit.projZaznaczonaLampa = Nothing
+        Me.plpPulpit.projZaznaczonyLicznik = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazd = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdAutomatyzacja = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdRogatka = Nothing
+        Me.plpPulpit.projZaznaczonyPrzejazdSygnDrog = Nothing
+        Me.plpPulpit.Przesuniecie = New System.Drawing.Point(0, 0)
+        Pulpit1.Adres = CType(0US, UShort)
+        Pulpit1.Nazwa = ""
+        Pulpit1.SkrotTelegraficzny = ""
+        Pulpit1.Typ = Zaleznosci.TypPosterunku.Inny
+        Me.plpPulpit.Pulpit = Pulpit1
+        Me.plpPulpit.Size = New System.Drawing.Size(790, 645)
+        Me.plpPulpit.TabIndex = 4
+        Me.plpPulpit.TrybProjektowy = True
+        Me.plpPulpit.WarunekZaznaczeniaKostki = Nothing
+        Me.plpPulpit.ZaznaczonaKostka = Nothing
+        Me.plpPulpit.ZaznaczonyOdcinek = Nothing
         '
         'wndProjektantPosterunku
         '
@@ -3243,6 +3304,8 @@ Partial Class wndProjektantPosterunku
         Me.splPrzejazdSygnDrog.Panel2.PerformLayout()
         CType(Me.splPrzejazdSygnDrog, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splPrzejazdSygnDrog.ResumeLayout(False)
+        Me.pnlKonfBudynek.ResumeLayout(False)
+        Me.pnlKonfBudynek.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -3521,4 +3584,9 @@ Partial Class wndProjektantPosterunku
     Friend WithEvents Label13 As Label
     Friend WithEvents pnlKonfSygnInfSygnPowtarzany As Panel
     Friend WithEvents mnuPredkosciTorow As ToolStripMenuItem
+    Friend WithEvents pnlKonfBudynek As Panel
+    Friend WithEvents cboKonfBudynekRodzaj As ComboBox
+    Friend WithEvents txtKonfBudynekTekst As TextBox
+    Friend WithEvents Label62 As Label
+    Friend WithEvents Label23 As Label
 End Class

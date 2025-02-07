@@ -15,6 +15,9 @@
     Private Declare Auto Sub TransformacjaObrocD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, kat As Single, srodekX As Single, srodekY As Single)
     Private Declare Auto Sub TransformacjaSkalujD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, skalowanie As Single)
 
+    Private Declare Auto Sub UstawPrzyciecieD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, x As Single, y As Single, szer As Single, wys As Single)
+    Private Declare Auto Sub UsunPrzyciecieD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr)
+
     Private Declare Auto Sub RysujLinieD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, pedzel As IntPtr, grubosc As Single, x1 As Single, y1 As Single, x2 As Single, y2 As Single)
     Private Declare Auto Sub RysujProstokatD2D Lib "ObslugaDirectX.dll" (hOkno As IntPtr, pedzel As IntPtr, grubosc As Single, lewo As Single, gora As Single, prawo As Single, dol As Single)
 
@@ -100,6 +103,14 @@
 
     Public Sub TransformacjaSkaluj(skalowanie As Single) Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).TransformacjaSkaluj
         TransformacjaSkalujD2D(hOkno, skalowanie)
+    End Sub
+
+    Public Sub UstawPrzyciecie(x As Single, y As Single, szer As Single, wys As Single) Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).UstawPrzyciecie
+        UstawPrzyciecieD2D(hOkno, x, y, szer, wys)
+    End Sub
+
+    Public Sub UsunPrzyciecie() Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).UsunPrzyciecie
+        UsunPrzyciecieD2D(hOkno)
     End Sub
 
     Public Sub RysujLinie(pedzel As IntPtr, grubosc As Single, x1 As Single, y1 As Single, x2 As Single, y2 As Single) Implements IUrzadzenieRysujace(Of IntPtr, IntPtr, IntPtr, IntPtr).RysujLinie

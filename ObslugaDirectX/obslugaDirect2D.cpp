@@ -80,6 +80,14 @@ void DLL TransformacjaSkalujD2D(DaneOkna* hOkno, float skalowanie) {
 	hOkno->obraz->SetTransform(transformacja * D2D1::Matrix3x2F::Scale(skalowanie, skalowanie));
 }
 
+void DLL UstawPrzyciecieD2D(DaneOkna* hOkno, float x, float y, float szer, float wys) {
+	hOkno->obraz->PushAxisAlignedClip(D2D1::RectF(x, y, x + szer, y + wys), D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+}
+
+void DLL UsunPrzyciecieD2D(DaneOkna* hOkno) {
+	hOkno->obraz->PopAxisAlignedClip();
+}
+
 void DLL RysujLinieD2D(DaneOkna* hOkno, ID2D1SolidColorBrush* pedzel, float grubosc, float x1, float y1, float x2, float y2) {
 	hOkno->obraz->DrawLine(D2D1::Point2F(x1, y1), D2D1::Point2F(x2, y2), pedzel, grubosc);
 }

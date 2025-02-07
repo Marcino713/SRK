@@ -48,6 +48,7 @@
     Private Const TEKST_POZ_X_PRZYCISK As Single = 0.17F   'dodatkowy margines dla tekstu obok przycisku
     Private Const TEKST_POZ_X As Single = 0.1F             'dodatkowy margines dla tekstu
     Private Const TEKST_POZ_Y As Single = 0.12F            'dodatkowy margines dla tekstu
+    Private Const TEKST_DOL As Single = 2.0F * SYGN_POZ + TEKST_POZ_Y   'pozycja Y tekstu na dole kostki
     Private Const TEKST_NAPIS_POZ As Single = 0.12F        'pozycja tekstu w kostce z napisem
     Private Const TEKST_WYS_LINIA As Single = 0.27F        'wysokość tekstu jednoliniowego
     Private Const TEKST_WYS_KOSTKA_NAPIS As Single = 0.78F 'wysokość tekstu w kostce z napisem
@@ -59,6 +60,17 @@
     Private Const WYSW_RAMKA_GRUBOSC As Single = 0.023F    'grubość ramki wyświetlacza
     Private Const WYSW_MARGINES As Single = 0.012F         'margines wewnętrzny wyświetlacza
     Private Const WYSW_CYFRY As Integer = 6                'liczba cyfr na wyświetlaczu siedmiosegmentowym
+    Private Const BUDYNEK_SZER As Single = 0.51F           'szerokość budynku
+    Private Const BUDYNEK_WYS As Single = 0.31F            'wysokość budynku
+    Private Const BUDYNEK_X As Single = (1.0F - BUDYNEK_SZER) / 2.0F    'współrzędna X początku budynku
+    Private Const BUDYNEK_Y As Single = (TEKST_DOL + (TEKST_WYS_LINIA - DOMYSLNY_ROZMIAR_CZCIONKI) / 2.0F - BUDYNEK_WYS) / 2.0F 'współrzędna Y początku budynku
+    Private Const BUDYNEK_KRAWEDZ As Single = 0.015F       'grubość krawędzi budynku
+    Private Const BUDYNEK_KOLKO_PROMIEN As Single = 0.03F  'promień kółka wewnątrz budynku
+    Private Const NASTAWNIA_MARG As Single = 0.05F         'różnica wymiarów zewnętrznych nastawni względem budynku
+    Private Const NASTAWNIA_SIATKA_ODSTEP As Single = 0.1F 'odstęp między liniami siatki w nastawni
+    Private Const NASTAWNIA_SIATKA_MARGINES As Single = 0.005F  'dodatkowy margines dla linii siatki w nastawni
+    Private Const NASTAWNIA_KRESKA_SZER As Single = 0.035F 'grubość kreski poziomej wewnątrz nastawni
+    Private Const NASTAWNIA_KRESKA_DL As Single = 0.2F     'długość kreski poziomej wewnątrz nastawni
     Private Const WSPOLRZEDNE_ROZM As Single = 0.33F       'długość linii na skali
     Private Const KRAWEDZ_RAMKA_ZAZN As Single = 0.04F     'grubość krawędzi ramki zaznaczenia lamp
     Private Const DODATKOWY_MARGINES As Single = 0.01F     'margines uwzględniany w elementach, aby te lekko nachodziły na siebie i nie rysowały się przerwy między nimi
@@ -121,6 +133,8 @@
     Private PEDZEL_SEGMENT_JASNY As TPedzel
     Private PEDZEL_WYSW_TLO As TPedzel
     Private PEDZEL_WYSW_RAMKA As TPedzel
+    Private PEDZEL_BUDYNEK As TOlowek
+    Private PEDZEL_BUDYNEK_KOLKO As TPedzel
 
     Private ReadOnly PUNKTY_KIERUNKU As PointF()
     Private ReadOnly PUNKTY_SZCZELINY_KIERUNKU As PointF()
@@ -162,7 +176,8 @@
         {Zaleznosci.TypKostki.Napis, Sub(k) RysujKostkeNapis(CType(k, Zaleznosci.Napis))},
         {Zaleznosci.TypKostki.ZakretPodwojny, Sub(k) RysujZakretPodwojny(CType(k, Zaleznosci.ZakretPodwojny))},
         {Zaleznosci.TypKostki.Most, Sub(k) RysujMost(CType(k, Zaleznosci.Most))},
-        {Zaleznosci.TypKostki.NumerPociagu, Sub(k) RysujKostkeNumerPoc(CType(k, Zaleznosci.NumerPociagu))}
+        {Zaleznosci.TypKostki.NumerPociagu, Sub(k) RysujKostkeNumerPoc(CType(k, Zaleznosci.NumerPociagu))},
+        {Zaleznosci.TypKostki.Budynek, Sub(k) RysujKostkeBudynek(CType(k, Zaleznosci.Budynek))}
     }
 
     Protected urz As IUrzadzenieRysujace(Of TOlowek, TPedzel, TMacierz, TCzcionka)
@@ -283,6 +298,8 @@
         PEDZEL_SEGMENT_JASNY = urz.UtworzPedzel(KolorRGB("#FF0A2F"))
         PEDZEL_WYSW_TLO = urz.UtworzPedzel(KolorRGB("#1C1C1C"))
         PEDZEL_WYSW_RAMKA = urz.UtworzPedzel(KolorRGB("#696969"))
+        PEDZEL_BUDYNEK = urz.UtworzOlowek(KolorRGB("#000000"))
+        PEDZEL_BUDYNEK_KOLKO = urz.UtworzPedzel(KolorRGB("#000000"))
 
         CZCIONKA = urz.UtworzCzcionke(NAZWA_CZCIONKI, DOMYSLNY_ROZMIAR_CZCIONKI, False)
         CZCIONKA_TABLICZKA = urz.UtworzCzcionke(NAZWA_CZCIONKI, TABLICZKA_TEKST_ROZM, False)
@@ -685,7 +702,7 @@
     End Sub
 
     Private Sub RysujNazweDolKostki(nazwa As String, Optional przywrocTransformacje As Boolean = False)
-        RysujNazwe(nazwa, TEKST_POZ_X, 2.0F * SYGN_POZ + TEKST_POZ_Y, przywrocTransformacje:=przywrocTransformacje)
+        RysujNazwe(nazwa, TEKST_POZ_X, TEKST_DOL, przywrocTransformacje:=przywrocTransformacje)
     End Sub
 
     Private Sub RysujRozjazdLewo(rozjazd As Zaleznosci.RozjazdLewo)
@@ -741,7 +758,7 @@
             RysujPlus(ROZJAZD_ZNAK_BOK_X, 1.0F - ROZJAZD_ZNAK_BOK_Y)
             RysujMinus(ROZJAZD_ZNAK_WPROST_X, 1.0F - ROZJAZD_ZNAK_WPROST_Y)
         End If
-        RysujNazwe(rozjazd.Nazwa, TEKST_POZ_X, 2.0F * SYGN_POZ + TEKST_POZ_Y, dodatkowyMarginesSzer:=dodMargines)
+        RysujNazwe(rozjazd.Nazwa, TEKST_POZ_X, TEKST_DOL, dodatkowyMarginesSzer:=dodMargines)
     End Sub
 
     Private Sub RysujPlus(x As Single, y As Single)
@@ -1003,16 +1020,16 @@
     End Sub
 
     Private Sub RysujWyswSegm(liczba As Integer)
-        Static CYFRY_MAX As Integer = WYSW_CYFRY - 1
-        Static CYFRY_SZER As Single = WYSW_CYFRY * (KRESKA_DL + 2.0F * KRESKA_SZER_POL) + CYFRY_MAX * (LICZBA_ODSTEP - 2.0F * KRESKA_SZER_POL)
-        Static CYFRA_WYS As Single = 2.0F * (KRESKA_DL + KRESKA_SZER_POL)
-        Static WYSW_WEWNATRZ_SZER As Single = CYFRY_SZER + 2.0F * WYSW_MARGINES
-        Static WYSW_WEWNATRZ_WYS As Single = CYFRA_WYS + 2.0F * WYSW_MARGINES
-        Static WYSW_ZEWNATRZ_SZER As Single = WYSW_WEWNATRZ_SZER + 2.0F * WYSW_RAMKA_GRUBOSC
-        Static WYSW_ZEWNATRZ_WYS As Single = WYSW_WEWNATRZ_WYS + 2.0F * WYSW_RAMKA_GRUBOSC
-        Static WYSW_X As Single = (1.0F - WYSW_ZEWNATRZ_SZER) / 2.0F
-        Static WYSW_Y As Single = (POL - POL * TOR_SZEROKOSC - WYSW_ZEWNATRZ_WYS) / 2.0F
-        Static CYFRA_Y As Single = WYSW_Y + WYSW_RAMKA_GRUBOSC + WYSW_MARGINES
+        Const CYFRY_MAX As Integer = WYSW_CYFRY - 1
+        Const CYFRY_SZER As Single = WYSW_CYFRY * (KRESKA_DL + 2.0F * KRESKA_SZER_POL) + CYFRY_MAX * (LICZBA_ODSTEP - 2.0F * KRESKA_SZER_POL)
+        Const CYFRA_WYS As Single = 2.0F * (KRESKA_DL + KRESKA_SZER_POL)
+        Const WYSW_WEWNATRZ_SZER As Single = CYFRY_SZER + 2.0F * WYSW_MARGINES
+        Const WYSW_WEWNATRZ_WYS As Single = CYFRA_WYS + 2.0F * WYSW_MARGINES
+        Const WYSW_ZEWNATRZ_SZER As Single = WYSW_WEWNATRZ_SZER + 2.0F * WYSW_RAMKA_GRUBOSC
+        Const WYSW_ZEWNATRZ_WYS As Single = WYSW_WEWNATRZ_WYS + 2.0F * WYSW_RAMKA_GRUBOSC
+        Const WYSW_X As Single = (1.0F - WYSW_ZEWNATRZ_SZER) / 2.0F
+        Const WYSW_Y As Single = (POL - POL * TOR_SZEROKOSC - WYSW_ZEWNATRZ_WYS) / 2.0F
+        Const CYFRA_Y As Single = WYSW_Y + WYSW_RAMKA_GRUBOSC + WYSW_MARGINES
 
         Dim transformacja As TMacierz = urz.TransformacjaPobierz
         Dim cyfry(CYFRY_MAX) As Integer
@@ -1126,6 +1143,49 @@
                            New PointF(BC.X - KRESKA_MARGIN, BC.Y),
                            New PointF(BC.X - KRESKA_MGSKOS, BC.Y + KRESKA_SZER_POL),
                            New PointF(EF.X + KRESKA_MGSKOS, EF.Y + KRESKA_SZER_POL)})
+    End Sub
+
+    Private Sub RysujKostkeBudynek(bud As Zaleznosci.Budynek)
+        Const BUDYNEK_KOLKO_Y As Single = BUDYNEK_Y + BUDYNEK_WYS / 2.0F
+        Const NASTAWNIA_KOLKO_Y As Single = BUDYNEK_Y + 2.0F * BUDYNEK_WYS / 3.0F
+        Const NASTAWNIA_LINIA_Y As Single = BUDYNEK_Y + BUDYNEK_WYS / 3.0F
+
+        Dim kolkoY As Single
+
+        urz.RysujProstokat(PEDZEL_BUDYNEK, BUDYNEK_KRAWEDZ, BUDYNEK_X, BUDYNEK_Y, BUDYNEK_SZER, BUDYNEK_WYS)
+
+        If bud.TypBudynku = Zaleznosci.RodzajBudynku.Nastawnia Then
+            kolkoY = NASTAWNIA_KOLKO_Y
+
+            'nastawnia
+            urz.RysujProstokat(PEDZEL_BUDYNEK, BUDYNEK_KRAWEDZ, BUDYNEK_X - NASTAWNIA_MARG, BUDYNEK_Y - NASTAWNIA_MARG, BUDYNEK_SZER + 2.0F * NASTAWNIA_MARG, BUDYNEK_WYS + 2.0F * NASTAWNIA_MARG)
+            urz.RysujLinie(PEDZEL_BUDYNEK, NASTAWNIA_KRESKA_SZER, POL - NASTAWNIA_KRESKA_DL / 2.0F, NASTAWNIA_LINIA_Y, POL + NASTAWNIA_KRESKA_DL / 2.0F, NASTAWNIA_LINIA_Y)
+            urz.UstawPrzyciecie(BUDYNEK_X, BUDYNEK_Y, BUDYNEK_SZER, BUDYNEK_WYS)
+
+            'siatka wewnątrz nastawni
+            Dim x1 As Single = 0.0F
+            Dim x2 As Single = 1.0F
+
+            For i As Integer = 0 To 7
+                RysujLinieSiatkiBudynku(x1, 1.0F)
+                RysujLinieSiatkiBudynku(x2, -1.0F)
+
+                x1 += NASTAWNIA_SIATKA_ODSTEP
+                x2 -= NASTAWNIA_SIATKA_ODSTEP
+            Next
+
+            urz.UsunPrzyciecie()
+        Else
+            kolkoY = BUDYNEK_KOLKO_Y
+        End If
+
+        urz.WypelnijKolo(PEDZEL_BUDYNEK_KOLKO, POL, kolkoY, BUDYNEK_KOLKO_PROMIEN)
+        RysujNazweDolKostki(bud.Tekst)
+    End Sub
+
+    Private Sub RysujLinieSiatkiBudynku(x As Single, kierunek As Single)
+        Const Y As Single = BUDYNEK_Y - NASTAWNIA_SIATKA_MARGINES
+        urz.RysujLinie(PEDZEL_BUDYNEK, BUDYNEK_KRAWEDZ, x, Y + BUDYNEK_WYS, x + kierunek * BUDYNEK_WYS, Y)
     End Sub
 
     Private Sub RysujKostkeNapis(napis As Zaleznosci.Napis)

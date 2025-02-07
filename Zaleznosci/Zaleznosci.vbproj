@@ -71,6 +71,7 @@
     <Compile Include="Komunikaty\ZmienionoBlokadeZwrotnicy.vb" />
     <Compile Include="Komunikaty\ZmienionoStanToruNrPociagow.vb" />
     <Compile Include="Komunikaty\ZmienionoZamkniecieOdcinka.vb" />
+    <Compile Include="Kostki\Budynek.vb" />
     <Compile Include="Kostki\IMigacz.vb" />
     <Compile Include="KomunikatyUrzadzen\OtworzRogatkeUrz.vb" />
     <Compile Include="KomunikatyUrzadzen\UstawionoJasnoscLampyUrz.vb" />

@@ -55,6 +55,14 @@ Friend Class UrzadzenieRysujaceGDI
         gr.ScaleTransform(skalowanie, skalowanie, MatrixOrder.Append)
     End Sub
 
+    Public Sub UstawPrzyciecie(x As Single, y As Single, szer As Single, wys As Single) Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).UstawPrzyciecie
+        gr.SetClip(New RectangleF(x, y, szer, wys))
+    End Sub
+
+    Public Sub UsunPrzyciecie() Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).UsunPrzyciecie
+        gr.ResetClip()
+    End Sub
+
     Public Sub RysujLinie(pedzel As Pen, grubosc As Single, x1 As Single, y1 As Single, x2 As Single, y2 As Single) Implements IUrzadzenieRysujace(Of Pen, Brush, Matrix, Font).RysujLinie
         pedzel.Width = grubosc
         gr.DrawLine(pedzel, x1, y1, x2, y2)

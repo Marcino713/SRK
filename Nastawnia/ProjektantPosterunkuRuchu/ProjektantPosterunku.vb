@@ -15,6 +15,7 @@
     Private ReadOnly STAWNOSC_SBL As New Dictionary(Of Zaleznosci.StawnoscSBL, OpakowywaczEnum(Of Zaleznosci.StawnoscSBL))
     Private ReadOnly TYP_PRZYCISKU As New Dictionary(Of Zaleznosci.TypPrzyciskuEnum, OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuEnum))
     Private ReadOnly TYP_PRZYCISKU_TOR As New Dictionary(Of Zaleznosci.TypPrzyciskuTorEnum, OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuTorEnum))
+    Private ReadOnly TYP_BUDYNKU As New Dictionary(Of Zaleznosci.RodzajBudynku, OpakowywaczEnum(Of Zaleznosci.RodzajBudynku))
     Private ReadOnly LISTA_TYP_PRZYCISKU As Object()
     Private ReadOnly LISTA_TYP_PRZYCISKU_TOR As Object()
 
@@ -74,7 +75,8 @@
         plpPulpit.Wysrodkuj()
 
         PaneleKonfKostek = {pnlKonfPrzycisk, pnlKonfRozjazd, pnlKonfSygnOdcNast, pnlKonfPosiadaPrzycisk, pnlKonfSygnPolsamSwiatla, pnlKonfSygnPowtKolejnosc, pnlKonfTor, pnlKonfNapis,
-            pnlKonfKier, pnlKonfAdres, pnlKonfNazwa, pnlKonfTorPodwojny, pnlKonfSygnPolsamUstawienia, pnlKonfSygnInfSwiatla, pnlKonfSygnInfSygnPowtarzany}
+            pnlKonfKier, pnlKonfAdres, pnlKonfNazwa, pnlKonfTorPodwojny, pnlKonfSygnPolsamUstawienia, pnlKonfSygnInfSwiatla, pnlKonfSygnInfSygnPowtarzany, pnlKonfBudynek}
+
         For i As Integer = 0 To PaneleKonfKostek.Length - 1
             PaneleKonfKostek(i).Width = splKartaPulpit.Panel2.Width
         Next
@@ -90,6 +92,7 @@
         UstawAktywnoscPolPrzejazdSygnDrog(False)
 
         PokazStawnoscSBL()
+        PokazRodzajeBudynkow()
 
         pnlTorKolorTenOdcinek.BackColor = plpPulpit.Rysownik.KOLOR_TOR_TEN_ODCINEK
         pnlTorKolorInnyOdcinek.BackColor = plpPulpit.Rysownik.KOLOR_TOR_PRZYPISANY
@@ -215,7 +218,8 @@
             UtworzKostkeDoListy(p, New Zaleznosci.Napis() With {.Tekst = "Magazyn"}, "Napis"),
             UtworzKostkeDoListy(p, New Zaleznosci.ZakretPodwojny(), "Zakręt podwójny"),
             UtworzKostkeDoListy(p, New Zaleznosci.Most(), "Most"),
-            UtworzKostkeDoListy(p, numerPoc, "Numer pociągu")
+            UtworzKostkeDoListy(p, numerPoc, "Numer pociągu"),
+            UtworzKostkeDoListy(p, New Zaleznosci.Budynek() With {.TypBudynku = Zaleznosci.RodzajBudynku.Nastawnia, .Tekst = "Sw"}, "Budynek")
         }
 
         lvPulpitKostki.Items.AddRange(kostkiLista.OrderBy(Function(k) k.Text).ToArray())
@@ -844,6 +848,20 @@
     End Sub
 
 
+    'Budynek
+    Private Sub txtKonfBudynekTekst_TextChanged() Handles txtKonfBudynekTekst.TextChanged
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Budynek).Tekst = txtKonfBudynekTekst.Text
+        plpPulpit.Invalidate()
+    End Sub
+
+    Private Sub cboKonfBudynekRodzaj_SelectedIndexChanged() Handles cboKonfBudynekRodzaj.SelectedIndexChanged
+        If cboKonfBudynekRodzaj.SelectedItem Is Nothing Then Exit Sub
+        DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Budynek).TypBudynku =
+            DirectCast(cboKonfBudynekRodzaj.SelectedItem, Wspolne.ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.RodzajBudynku))).Wartosc.Element
+        plpPulpit.Invalidate()
+    End Sub
+
+
     'Wyświetlanie paneli
     Private Sub PokazPanelKonf()
         Dim nowePanele As List(Of Panel) = Nothing
@@ -870,6 +888,8 @@
                     nowePanele = PokazKonfNapis()
                 Case Zaleznosci.TypKostki.Kierunek
                     nowePanele = PokazKonfKier()
+                Case Zaleznosci.TypKostki.Budynek
+                    nowePanele = PokazKonfBudynek()
             End Select
 
             ZdarzeniaWlaczone = True
@@ -1113,31 +1133,41 @@
         Return New List(Of Panel) From {pnlKonfNazwa, pnlKonfTor, pnlKonfKier}
     End Function
 
+    Private Function PokazKonfBudynek() As List(Of Panel)
+        Dim budynek As Zaleznosci.Budynek = DirectCast(plpPulpit.ZaznaczonaKostka, Zaleznosci.Budynek)
+
+        txtKonfBudynekTekst.Text = budynek.Tekst
+        ZaznaczElement(cboKonfBudynekRodzaj, TYP_BUDYNKU(budynek.TypBudynku))
+        Return New List(Of Panel) From {pnlKonfBudynek}
+    End Function
+
     'Inne
     Private Sub PokazStawnoscSBL()
         cboKonfKierStawnosc.Items.Clear()
-        DodajRodzajStawnosciSBL(Zaleznosci.StawnoscSBL.Dwustawna, "Dwustawna")
-        DodajRodzajStawnosciSBL(Zaleznosci.StawnoscSBL.Trzystawna, "Trzystawna")
-        DodajRodzajStawnosciSBL(Zaleznosci.StawnoscSBL.Czterostawna, "Czterostawna")
+        DodajElementOpakowywanyDoCbo(STAWNOSC_SBL, cboKonfKierStawnosc, Zaleznosci.StawnoscSBL.Dwustawna, "Dwustawna")
+        DodajElementOpakowywanyDoCbo(STAWNOSC_SBL, cboKonfKierStawnosc, Zaleznosci.StawnoscSBL.Trzystawna, "Trzystawna")
+        DodajElementOpakowywanyDoCbo(STAWNOSC_SBL, cboKonfKierStawnosc, Zaleznosci.StawnoscSBL.Czterostawna, "Czterostawna")
     End Sub
 
-    Private Sub DodajRodzajStawnosciSBL(stawnosc As Zaleznosci.StawnoscSBL, opis As String)
-        cboKonfKierStawnosc.Items.Add(New Wspolne.ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.StawnoscSBL))(DodajElementOpakowywanyDoSlownika(STAWNOSC_SBL, stawnosc), opis))
+    Private Sub PokazRodzajeBudynkow()
+        cboKonfBudynekRodzaj.Items.Clear()
+        DodajElementOpakowywanyDoCbo(TYP_BUDYNKU, cboKonfBudynekRodzaj, Zaleznosci.RodzajBudynku.Ogolny, "Ogólny")
+        DodajElementOpakowywanyDoCbo(TYP_BUDYNKU, cboKonfBudynekRodzaj, Zaleznosci.RodzajBudynku.Nastawnia, "Nastawnia")
     End Sub
 
     Private Function DodajRodzajePrzyciskow() As Object()
         Dim lista As New List(Of Wspolne.ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuEnum)))
 
-        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy, "Sygnał zastępczy")
-        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegu, "Zwolnienie przebiegu pociągowego na sygnalizatorze półsamoczynnym")
-        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego, "Zwolnienie przebiegu manewrowego na sygnalizatorze półsamoczynnym")
-        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnManewrowego, "Zwolnienie przebiegu manewrowego na sygnalizatorze manewrowym")
-        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.WlaczenieSBL, "Włączenie blokady")
-        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.PotwierdzenieSBL, "Potwierdzenie kierunku blokady")
-        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnienieSBL, "Zwolnienie blokady")
-        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.KasowanieRozprucia, "Kasowanie rozprucia")
-        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZamknieciePrzejazdu, "Zamknięcie przejazdu kolejowo-drogowego")
-        DodajElementOpakowywany(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.OtwarciePrzejazdu, "Otwarcie przejazdu kolejowo-drogowego")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.SygnalZastepczy, "Sygnał zastępczy")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebiegu, "Zwolnienie przebiegu pociągowego na sygnalizatorze półsamoczynnym")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnPolsamoczynnego, "Zwolnienie przebiegu manewrowego na sygnalizatorze półsamoczynnym")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnieniePrzebieguManewrowegoZSygnManewrowego, "Zwolnienie przebiegu manewrowego na sygnalizatorze manewrowym")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.WlaczenieSBL, "Włączenie blokady")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.PotwierdzenieSBL, "Potwierdzenie kierunku blokady")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZwolnienieSBL, "Zwolnienie blokady")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.KasowanieRozprucia, "Kasowanie rozprucia")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.ZamknieciePrzejazdu, "Zamknięcie przejazdu kolejowo-drogowego")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU, lista, Zaleznosci.TypPrzyciskuEnum.OtwarciePrzejazdu, "Otwarcie przejazdu kolejowo-drogowego")
 
         Return lista.OrderBy(Function(t) t.Tekst).ToArray
     End Function
@@ -1145,14 +1175,18 @@
     Private Function DodajRodzajePrzyciskowToru() As Object()
         Dim lista As New List(Of Wspolne.ObiektComboBox(Of OpakowywaczEnum(Of Zaleznosci.TypPrzyciskuTorEnum)))
 
-        DodajElementOpakowywany(TYP_PRZYCISKU_TOR, lista, Zaleznosci.TypPrzyciskuTorEnum.JazdaSygnalizatorPolsamoczynny, "Wyjazd na sygnalizatorze półsamoczynnym")
-        DodajElementOpakowywany(TYP_PRZYCISKU_TOR, lista, Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorPolsamoczynny, "Sygnał manewrowy na sygnalizatorze półsamoczynnym")
-        DodajElementOpakowywany(TYP_PRZYCISKU_TOR, lista, Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy, "Sygnał manewrowy na sygnalizatorze manewrowym")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU_TOR, lista, Zaleznosci.TypPrzyciskuTorEnum.JazdaSygnalizatorPolsamoczynny, "Wyjazd na sygnalizatorze półsamoczynnym")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU_TOR, lista, Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorPolsamoczynny, "Sygnał manewrowy na sygnalizatorze półsamoczynnym")
+        DodajElementOpakowywanyDoListy(TYP_PRZYCISKU_TOR, lista, Zaleznosci.TypPrzyciskuTorEnum.ManewrySygnalizatorManewrowy, "Sygnał manewrowy na sygnalizatorze manewrowym")
 
         Return lista.OrderBy(Function(t) t.Tekst).ToArray
     End Function
 
-    Private Sub DodajElementOpakowywany(Of T)(slownik As Dictionary(Of T, OpakowywaczEnum(Of T)), lista As List(Of Wspolne.ObiektComboBox(Of OpakowywaczEnum(Of T))), element As T, nazwa As String)
+    Private Sub DodajElementOpakowywanyDoCbo(Of T)(slownik As Dictionary(Of T, OpakowywaczEnum(Of T)), cbo As ComboBox, element As T, nazwa As String)
+        cbo.Items.Add(New Wspolne.ObiektComboBox(Of OpakowywaczEnum(Of T))(DodajElementOpakowywanyDoSlownika(slownik, element), nazwa))
+    End Sub
+
+    Private Sub DodajElementOpakowywanyDoListy(Of T)(slownik As Dictionary(Of T, OpakowywaczEnum(Of T)), lista As List(Of Wspolne.ObiektComboBox(Of OpakowywaczEnum(Of T))), element As T, nazwa As String)
         lista.Add(New Wspolne.ObiektComboBox(Of OpakowywaczEnum(Of T))(DodajElementOpakowywanyDoSlownika(slownik, element), nazwa))
     End Sub
 

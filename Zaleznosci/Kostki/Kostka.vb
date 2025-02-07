@@ -24,7 +24,8 @@ Public MustInherit Class Kostka
         {TypKostki.ZakretPodwojny, Function() New ZakretPodwojny},
         {TypKostki.Most, Function() New Most},
         {TypKostki.SygnalizatorOstrzegawczy, Function() New SygnalizatorOstrzegawczy},
-        {TypKostki.NumerPociagu, Function() New NumerPociagu}
+        {TypKostki.NumerPociagu, Function() New NumerPociagu},
+        {TypKostki.Budynek, Function() New Budynek}
     }
 
     Public ReadOnly Property Typ As TypKostki
@@ -150,4 +151,5 @@ Public Enum TypKostki
     Most = 17
     SygnalizatorOstrzegawczy = 18
     NumerPociagu = 19
+    Budynek = 20
 End Enum

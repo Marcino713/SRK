@@ -13,6 +13,9 @@
     Sub TransformacjaObroc(kat As Single, srodekX As Single, srodekY As Single)
     Sub TransformacjaSkaluj(skalowanie As Single)
 
+    Sub UstawPrzyciecie(x As Single, y As Single, szer As Single, wys As Single)
+    Sub UsunPrzyciecie()
+
     Sub RysujLinie(pedzel As TOlowek, grubosc As Single, x1 As Single, y1 As Single, x2 As Single, y2 As Single)
     Sub RysujProstokat(pedzel As TOlowek, grubosc As Single, x As Single, y As Single, szer As Single, wys As Single)
 
